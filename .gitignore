@@ -1,0 +1,11 @@
+node_modules
+
+.idea
+.vscode
+.history
+*.log
+.DS_Store
+*.vsix
+package-lock.json
+
+packages/varlet-lowcode-core/lib

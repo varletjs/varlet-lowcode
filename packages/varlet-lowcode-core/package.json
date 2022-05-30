@@ -1,0 +1,22 @@
+{
+  "name": "@varlet/lowcode-core",
+  "version": "0.0.0",
+  "description": "core of varlet low-code",
+  "keywords": [
+    "core",
+    "varlet",
+    "lowcode"
+  ],
+  "author": "haoziqaq <357229046@qq.com>",
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "typescript": "^4.4.4"
+  }
+}
