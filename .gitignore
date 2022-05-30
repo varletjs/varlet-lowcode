@@ -8,4 +8,6 @@ node_modules
 *.vsix
 package-lock.json
 
-packages/varlet-lowcode-core/lib
+.varlet-lowcode
+lib
+playground

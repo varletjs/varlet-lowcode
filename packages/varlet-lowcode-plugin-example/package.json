@@ -1,0 +1,18 @@
+{
+  "name": "@varlet/lowcode-plugin-example",
+  "version": "0.0.0",
+  "main": "lib/varlet-lowcode-plugin-example.umd.js",
+  "module": "lib/varlet-lowcode-plugin-example.es.js",
+  "files": ["lib"],
+  "scripts": {
+    "dev": "varlet-lowcode-plugin-cli dev",
+    "build": "varlet-lowcode-plugin-cli build",
+    "compile": "varlet-lowcode-plugin-cli compile",
+    "preview": "varlet-lowcode-plugin-cli preview"
+  },
+  "devDependencies": {
+    "@varlet/lowcode-plugin-cli": "workspace: *",
+    "live-server": "^1.2.1",
+    "vue": "3.2.25"
+  }
+}
