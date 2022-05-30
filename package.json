@@ -20,6 +20,10 @@
     "root": true,
     "extends": [
       "@varlet"
+    ],
+    "ignorePatterns": [
+      "packages/varlet-lowcode-core/lib/**",
+      "packages/varlet-lowcode-plugin-cli/lib/**"
     ]
   },
   "stylelint": {
