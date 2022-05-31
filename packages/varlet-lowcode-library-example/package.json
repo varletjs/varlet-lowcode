@@ -1,5 +1,5 @@
 {
-  "name": "@varlet/lowcode-plugin-example",
+  "name": "@varlet/lowcode-library-example",
   "version": "0.0.0",
   "main": "lib/varlet-lowcode-plugin-example.umd.js",
   "module": "lib/varlet-lowcode-plugin-example.es.js",

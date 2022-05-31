@@ -10,4 +10,4 @@ package-lock.json
 
 .varlet-lowcode
 lib
-playground
+dist

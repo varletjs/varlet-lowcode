@@ -1,15 +1,16 @@
 {
-  "name": "@varlet/lowcode-plugin-cli",
+  "name": "@varlet/lowcode-cli",
   "version": "0.0.0",
-  "description": "cli of varlet low-code plugin",
+  "description": "cli of varlet low-code",
   "bin": {
-    "varlet-lowcode-plugin-cli": "./lib/index.js"
+    "varlet-lowcode-cli": "./lib/index.js"
   },
   "keywords": [
     "cli",
     "varlet",
     "lowcode",
-    "plugin"
+    "plugin",
+    "library"
   ],
   "author": "haoziqaq <357229046@qq.com>",
   "license": "MIT",

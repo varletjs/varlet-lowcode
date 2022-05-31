@@ -9,6 +9,7 @@ import {
   PLUGIN_OUTPUT_FORMATS,
   PLUGIN_OUTPUT_PATH,
   PLUGIN_TS_ENTRY,
+  USER_PLAYGROUND_DIR,
   VITE_RESOLVE_EXTENSIONS,
 } from '../shared/constant'
 import { InlineConfig, PluginOption } from 'vite'
@@ -26,13 +27,21 @@ export function getEntry() {
   }
 }
 
+export function getRoot() {
+  if (pathExistsSync(resolve(USER_PLAYGROUND_DIR, 'index.html'))) {
+    return USER_PLAYGROUND_DIR
+  }
+
+  return PLAYGROUND_DIR
+}
+
 const commonPlugins = [vue(), jsx()]
 
 export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const host = get(varletLowCodeConfig, 'host')
 
   return {
-    root: PLAYGROUND_DIR,
+    root: getRoot(),
     resolve: {
       extensions: VITE_RESOLVE_EXTENSIONS,
       alias: {
@@ -47,10 +56,7 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
     plugins: [
       ...commonPlugins,
       injectHtml({
-        data: {
-          title: get(varletLowCodeConfig, 'playground.title'),
-          logo: get(varletLowCodeConfig, 'playground.logo'),
-        },
+        data: get(varletLowCodeConfig, 'playground', {}),
       }),
     ],
   }
@@ -69,7 +75,7 @@ export function getBuildConfig(varletLowCodeConfig: Record<string, any>): Inline
       cssTarget: 'chrome61',
       rollupOptions: {
         input: {
-          main: resolve(PLAYGROUND_DIR, 'index.html'),
+          main: resolve(getRoot(), 'index.html'),
         },
       },
     },
