@@ -1,15 +1,17 @@
-import schema, { Schema } from './modules/schema'
-import assets, { Assets } from './modules/assets'
-import events, { Events } from './modules/events'
+import schemaManager, { SchemaManager } from './modules/schema'
+import assetsManager, { AssetsManager } from './modules/assets'
+import eventsManager, { EventManager } from './modules/events'
 
-export type LowCode = Schema & Assets & Events
+export type LowCode = {
+  schemaManager: SchemaManager
+  assetsManager: AssetsManager
+  eventsManager: EventManager
+}
 
 export const lowCode: LowCode = {
-  ...schema,
-
-  ...assets,
-
-  ...events,
+  schemaManager,
+  assetsManager,
+  eventsManager,
 }
 
 export default lowCode

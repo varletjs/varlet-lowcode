@@ -1,23 +1,25 @@
-let assetsInstance: any = null
+export type Assets = any
 
-export interface Assets {
-  importAssets(assets: any): void
+export interface AssetsManager {
+  importAssets(assets: Assets): void
 
   exportAssets(): any
 }
 
-export function importAssets(assets: any) {
-  assetsInstance = assets
+export function createAssetsManager(): AssetsManager {
+  let _assets: Assets
+
+  const assetsManager: AssetsManager = {
+    importAssets(assets: Assets) {
+      _assets = assets
+    },
+
+    exportAssets(): Assets {
+      return _assets
+    },
+  }
+
+  return assetsManager
 }
 
-export function exportAssets(): any {
-  return assetsInstance
-}
-
-export const assets: Assets = {
-  importAssets,
-
-  exportAssets,
-}
-
-export default assets
+export default createAssetsManager()

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "bootstrap": "pnpm install",
+    "bootstrap": "pnpm install && node scripts/bootstrap.mjs",
     "lint": "varlet-cli lint",
     "changelog": "varlet-cli changelog"
   },

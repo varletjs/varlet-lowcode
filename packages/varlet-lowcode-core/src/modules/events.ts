@@ -6,55 +6,7 @@ export interface ListenerDescriptor {
   once: boolean
 }
 
-const listenerDescriptors: ListenerDescriptor[] = []
-
-export function on(event: string, listener: Listener) {
-  listenerDescriptors.push({
-    event,
-    listener,
-    once: false,
-  })
-}
-
-export function once(event: string, listener: Listener) {
-  listenerDescriptors.push({
-    event,
-    listener,
-    once: true,
-  })
-}
-
-export function off(event: string, listener: Listener) {
-  const listenerDescriptorIndex = listenerDescriptors.findIndex((listenerDescriptor) => {
-    return listenerDescriptor.event === event && listenerDescriptor.listener === listener
-  })
-
-  if (listenerDescriptorIndex === -1) {
-    return
-  }
-
-  listenerDescriptors.splice(listenerDescriptorIndex, 1)
-}
-
-export function emit(event: string, ...args: any[]) {
-  const onceListenerDescriptors: ListenerDescriptor[] = []
-
-  listenerDescriptors.forEach((listenerDescriptor) => {
-    if (listenerDescriptor.event === event) {
-      listenerDescriptor.listener(...args)
-
-      if (listenerDescriptor.once) {
-        onceListenerDescriptors.push(listenerDescriptor)
-      }
-    }
-  })
-
-  onceListenerDescriptors.forEach((listenerDescriptor) => {
-    off(listenerDescriptor.event, listenerDescriptor.listener)
-  })
-}
-
-export interface Events {
+export interface EventManager {
   on(event: string, listener: Listener): void
 
   once(event: string, listener: Listener): void
@@ -64,14 +16,64 @@ export interface Events {
   emit(event: string, ...args: any[]): void
 }
 
-export const events: Events = {
-  on,
+export function createEventManager(): EventManager {
+  const listenerDescriptors: ListenerDescriptor[] = []
 
-  once,
+  function on(event: string, listener: Listener) {
+    listenerDescriptors.push({
+      event,
+      listener,
+      once: false,
+    })
+  }
 
-  off,
+  function once(event: string, listener: Listener) {
+    listenerDescriptors.push({
+      event,
+      listener,
+      once: true,
+    })
+  }
 
-  emit,
+  function off(event: string, listener: Listener) {
+    const listenerDescriptorIndex = listenerDescriptors.findIndex((listenerDescriptor) => {
+      return listenerDescriptor.event === event && listenerDescriptor.listener === listener
+    })
+
+    if (listenerDescriptorIndex === -1) {
+      return
+    }
+
+    listenerDescriptors.splice(listenerDescriptorIndex, 1)
+  }
+
+  function emit(event: string, ...args: any[]) {
+    const onceListenerDescriptors: ListenerDescriptor[] = []
+
+    listenerDescriptors.forEach((listenerDescriptor) => {
+      if (listenerDescriptor.event === event) {
+        listenerDescriptor.listener(...args)
+
+        if (listenerDescriptor.once) {
+          onceListenerDescriptors.push(listenerDescriptor)
+        }
+      }
+    })
+
+    onceListenerDescriptors.forEach((listenerDescriptor) => {
+      off(listenerDescriptor.event, listenerDescriptor.listener)
+    })
+  }
+
+  return {
+    on,
+
+    once,
+
+    off,
+
+    emit,
+  }
 }
 
-export default events
+export default createEventManager()
