@@ -23,6 +23,7 @@
     ],
     "ignorePatterns": [
       "packages/varlet-lowcode-core/lib/**",
+      "packages/varlet-lowcode-core/es/**",
       "packages/varlet-lowcode-plugin-cli/lib/**"
     ]
   },
