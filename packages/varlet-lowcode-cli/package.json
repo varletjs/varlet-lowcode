@@ -33,6 +33,7 @@
     "commander": "^8.3.0",
     "chalk": "^4.1.0",
     "vite-plugin-html": "^2.1.0",
+    "vite-plugin-externals": "^0.5.0",
     "lodash": "^4.17.21",
     "chokidar": "^3.5.2"
   },

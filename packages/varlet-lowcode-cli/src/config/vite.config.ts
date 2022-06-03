@@ -1,6 +1,7 @@
 import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
 import { injectHtml } from 'vite-plugin-html'
+import { viteExternalsPlugin } from 'vite-plugin-externals'
 import {
   PLAYGROUND_DIR,
   PLAYGROUND_OUTPUT_PATH,
@@ -58,6 +59,7 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       injectHtml({
         data: get(varletLowCodeConfig, 'playground', {}),
       }),
+      viteExternalsPlugin({ vue: 'Vue' }),
     ],
   }
 }

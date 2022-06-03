@@ -2,6 +2,9 @@
   "name": "@varlet/lowcode-core",
   "version": "0.0.0",
   "description": "core of varlet low-code",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
   "keywords": [
     "core",
     "varlet",
@@ -15,7 +18,7 @@
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc"
+    "build": "tsc && tsc -p tsconfig.cjs.json"
   },
   "dependencies": {
     "typescript": "^4.4.4"

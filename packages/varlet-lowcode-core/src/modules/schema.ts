@@ -6,15 +6,27 @@ export interface SchemaManager {
 
 export type Schema = SchemaNode
 
-export type SchemaNode = {
-  // 节点唯一标识
+export enum BuiltInSchemaNodeNames {
+  PAGE = 'Page',
+  TEXT = 'Text',
+}
+
+export interface SchemaNode {
   id: string
-  // 组件名称
   name: string
-  // 物料属性集合
   props?: Record<string, any>
-  // 子节点集合
-  children?: SchemaNode[]
+  children?: (SchemaNode | SchemaTextNode)[]
+}
+
+export interface SchemaTextNode extends SchemaNode {
+  name: BuiltInSchemaNodeNames.TEXT
+  textContent: string
+}
+
+export interface SchemaPageNode extends SchemaNode {
+  name: BuiltInSchemaNodeNames.PAGE
+  methods?: Record<string, any>
+  reactive?: Record<string, any>
 }
 
 export function createSchemaManager(): SchemaManager {
