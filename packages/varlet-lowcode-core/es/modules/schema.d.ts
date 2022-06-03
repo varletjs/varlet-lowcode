@@ -10,7 +10,7 @@ export interface SchemaNode {
   id: string
   name: string
   props?: Record<string, any>
-  children?: (SchemaNode | SchemaTextNode)[]
+  slots?: Record<string, (SchemaNode | SchemaTextNode)[]>
 }
 export interface SchemaTextNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.TEXT

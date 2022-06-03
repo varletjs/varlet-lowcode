@@ -1,4 +1,4 @@
-import schemaManager, { Schema, SchemaManager } from './modules/schema'
+import schemaManager, { SchemaPageNode, SchemaManager } from './modules/schema'
 import assetsManager, { Assets, AssetsManager } from './modules/assets'
 import eventsManager, { EventManager } from './modules/events'
 
@@ -16,7 +16,7 @@ export type LowCode = {
 const originImportSchema = schemaManager.importSchema
 const originImportAssets = assetsManager.importAssets
 
-schemaManager.importSchema = function (schema: Schema) {
+schemaManager.importSchema = function (schema: SchemaPageNode) {
   originImportSchema.call(this, schema)
 
   eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, schema)

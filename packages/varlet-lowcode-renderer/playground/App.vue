@@ -9,42 +9,50 @@ import { v4 as uuid } from 'uuid'
 const schema: Ref<SchemaPageNode> = ref({
   id: uuid(),
   name: BuiltInSchemaNodeNames.PAGE,
-  children: [
-    {
-      id: uuid(),
-      name: 'Space',
-      children: [
-        {
-          id: uuid(),
-          name: 'Button',
-          props: {
-            type: 'primary',
-          },
-          children: [
+  slots: {
+    default: [
+      {
+        id: uuid(),
+        name: 'Space',
+        slots: {
+          default: [
             {
               id: uuid(),
-              name: BuiltInSchemaNodeNames.TEXT,
-              textContent: 'Hello',
+              name: 'Button',
+              props: {
+                type: 'primary',
+              },
+              slots: {
+                default: [
+                  {
+                    id: uuid(),
+                    name: BuiltInSchemaNodeNames.TEXT,
+                    textContent: 'Hello',
+                  },
+                ],
+              },
+            },
+            {
+              id: uuid(),
+              name: 'Button',
+              props: {
+                type: 'warning',
+              },
+              slots: {
+                default: [
+                  {
+                    id: uuid(),
+                    name: BuiltInSchemaNodeNames.TEXT,
+                    textContent: 'Hello',
+                  },
+                ],
+              },
             },
           ],
         },
-        {
-          id: uuid(),
-          name: 'Button',
-          props: {
-            type: 'warning',
-          },
-          children: [
-            {
-              id: uuid(),
-              name: BuiltInSchemaNodeNames.TEXT,
-              textContent: 'Hello',
-            },
-          ],
-        },
-      ],
-    },
-  ],
+      },
+    ],
+  },
 })
 </script>
 
