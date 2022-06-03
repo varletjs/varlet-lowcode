@@ -4,8 +4,6 @@ export interface SchemaManager {
   exportSchema(): any
 }
 
-export type Schema = SchemaNode
-
 export enum BuiltInSchemaNodeNames {
   PAGE = 'Page',
   TEXT = 'Text',
@@ -30,13 +28,13 @@ export interface SchemaPageNode extends SchemaNode {
 }
 
 export function createSchemaManager(): SchemaManager {
-  let _schema: Schema
+  let _schema: SchemaPageNode
 
-  function importSchema(schema: Schema) {
+  function importSchema(schema: SchemaPageNode) {
     _schema = schema
   }
 
-  function exportSchema(): Schema {
+  function exportSchema(): SchemaPageNode {
     return _schema
   }
 
