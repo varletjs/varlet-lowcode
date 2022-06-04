@@ -25,7 +25,10 @@
       "packages/varlet-lowcode-core/lib/**",
       "packages/varlet-lowcode-core/es/**",
       "packages/varlet-lowcode-plugin-cli/lib/**"
-    ]
+    ],
+    "rules": {
+      "no-new-func": "off"
+    }
   },
   "stylelint": {
     "extends": [
