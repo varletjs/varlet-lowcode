@@ -9,10 +9,17 @@ export enum BuiltInSchemaNodeNames {
   TEXT = 'Text',
 }
 
+export enum BuiltInSchemaNodeBindingTypes {
+  FUNCTION_BINDING = 'Binding',
+  VARIABLE_BINDING = 'Variable',
+}
+
+export type SchemaNodeProps = Record<string, any>
+
 export interface SchemaNode {
   id: string
   name: string
-  props?: Record<string, any>
+  props?: SchemaNodeProps
   slots?: Record<string, (SchemaNode | SchemaTextNode)[]>
 }
 
@@ -23,8 +30,8 @@ export interface SchemaTextNode extends SchemaNode {
 
 export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
-  methods?: Record<string, any>
-  reactive?: Record<string, any>
+  functions?: Record<string, any>
+  variables?: Record<string, any>
 }
 
 export function createSchemaManager(): SchemaManager {

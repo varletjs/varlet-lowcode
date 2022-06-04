@@ -1,14 +1,29 @@
 <script setup lang="ts">
 import Renderer from '../src/Renderer'
-import type { SchemaPageNode } from '@varlet/lowcode-core'
-import type { Ref } from 'vue'
-import { BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import lowCode, { BuiltInEvents , BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
 import { ref } from 'vue'
 import { v4 as uuid } from 'uuid'
+import type { SchemaPageNode } from '@varlet/lowcode-core'
 
-const schema: Ref<SchemaPageNode> = ref({
+const schema = ref<SchemaPageNode>()
+
+lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
+  schema.value = newSchema
+})
+
+lowCode.schemaManager.importSchema({
   id: uuid(),
   name: BuiltInSchemaNodeNames.PAGE,
+  functions: {
+    handleClick: {
+      async: false,
+      params: [],
+      body: 'this.count.value++',
+    },
+  },
+  variables: {
+    count: 1,
+  },
   slots: {
     default: [
       {
@@ -21,13 +36,25 @@ const schema: Ref<SchemaPageNode> = ref({
               name: 'Button',
               props: {
                 type: 'primary',
+                onClick: {
+                  type: BuiltInSchemaNodeBindingTypes.FUNCTION_BINDING,
+                  value: 'handleClick',
+                },
               },
               slots: {
                 default: [
                   {
                     id: uuid(),
                     name: BuiltInSchemaNodeNames.TEXT,
-                    textContent: 'Hello',
+                    textContent: 'Click it: ',
+                  },
+                  {
+                    id: uuid(),
+                    name: BuiltInSchemaNodeNames.TEXT,
+                    textContent: {
+                      type: BuiltInSchemaNodeBindingTypes.VARIABLE_BINDING,
+                      value: 'count',
+                    },
                   },
                 ],
               },

@@ -39,4 +39,3 @@ export default lowCode
 export * from './modules/schema'
 export * from './modules/assets'
 export * from './modules/events'
-export { BuiltInSchemaNodeNames } from './modules/schema'
