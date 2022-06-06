@@ -27,7 +27,9 @@
       "packages/varlet-lowcode-plugin-cli/lib/**"
     ],
     "rules": {
-      "no-new-func": "off"
+      "no-new-func": "off",
+      "no-useless-escape": "off",
+      "no-eval": "off"
     }
   },
   "stylelint": {

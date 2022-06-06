@@ -7,6 +7,7 @@ export var BuiltInSchemaNodeBindingTypes
 ;(function (BuiltInSchemaNodeBindingTypes) {
   BuiltInSchemaNodeBindingTypes['FUNCTION_BINDING'] = 'Binding'
   BuiltInSchemaNodeBindingTypes['VARIABLE_BINDING'] = 'Variable'
+  BuiltInSchemaNodeBindingTypes['EXPRESSION_BINDING'] = 'Expression'
 })(BuiltInSchemaNodeBindingTypes || (BuiltInSchemaNodeBindingTypes = {}))
 export function createSchemaManager() {
   let _schema
