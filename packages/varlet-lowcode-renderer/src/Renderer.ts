@@ -2,6 +2,8 @@ import {
   defineComponent,
   h,
   ref,
+  reactive,
+  computed,
   watch,
   onBeforeMount,
   onMounted,
@@ -10,7 +12,7 @@ import {
   onBeforeUnmount,
   onUnmounted,
 } from 'vue'
-import { BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes, SchemaPageNodeLifeCycles } from '@varlet/lowcode-core'
+import { BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
 import { isPlainObject } from './shared'
 import type { DefineComponent, PropType, VNode } from 'vue'
 import type { SchemaPageNode, SchemaNode, SchemaTextNode, SchemaNodeProps } from '@varlet/lowcode-core'
@@ -24,15 +26,20 @@ type RawSlots = {
   [name: string]: unknown
 }
 
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
-
 type RawProps = Record<string, any>
 
-type ContextLifeCycles<T> = {
-  [P in keyof T]?: () => void
-}
-
-type Context = { _lifeCycles: ContextLifeCycles<SchemaPageNodeLifeCycles> } & Record<string, any>
+Object.assign(window, {
+  ref,
+  reactive,
+  computed,
+  watch,
+  onBeforeMount,
+  onMounted,
+  onBeforeUpdate,
+  onUpdated,
+  onBeforeUnmount,
+  onUnmounted,
+})
 
 export default defineComponent({
   name: 'VarletLowCodeRenderer',
@@ -50,89 +57,22 @@ export default defineComponent({
   },
 
   setup(props) {
-    let ctx: Context = { _lifeCycles: {} }
-    let windowOriginCtx: Record<string, any> = {}
+    const setup = eval(`(${props.schema.code ?? 'function setup() { return {} }'})`)
+    const ctx = setup()
 
-    function exposeFunctions() {
-      const { functions } = props.schema
-
-      Object.assign(
-        ctx,
-        Object.entries(functions ?? {}).reduce((functions, [key, { async, params, body }]) => {
-          const Constructor = async ? AsyncFunction : Function
-          functions[key] = new Constructor(...params, body).bind(ctx)
-
-          return functions
-        }, {} as any)
-      )
-    }
-
-    function exposeLifeCycles() {
-      const { lifeCycles } = props.schema
-
-      Object.assign(
-        ctx._lifeCycles,
-        Object.entries(lifeCycles ?? {}).reduce((lifeCycles, [key, { async, params, body }]) => {
-          const Constructor = async ? AsyncFunction : Function
-          lifeCycles[key] = new Constructor(...params, body).bind(ctx)
-
-          return lifeCycles
-        }, {} as any)
-      )
-    }
-
-    function exposeVariables() {
-      const { variables = {} } = props.schema
-
-      Object.assign(
-        ctx,
-        Object.entries(variables).reduce((variables, [key, value]) => {
-          variables[key] = ref(value)
-
-          return variables
-        }, {} as any)
-      )
-    }
-
-    function exposeWindow() {
-      windowOriginCtx = Object.keys(ctx).reduce((windowOriginCtx, key: string) => {
-        windowOriginCtx[key] = (window as Record<string, any>)[key]
-
-        return windowOriginCtx
-      }, {} as Record<string, any>)
-
+    function hoistWindow() {
       Object.assign(window, ctx)
-    }
-
-    function exposeApis() {
-      Object.assign(window, windowOriginCtx)
-      ctx = { _lifeCycles: {} }
-      windowOriginCtx = {}
       window.$slotsParams = {}
-      exposeVariables()
-      exposeFunctions()
-      exposeLifeCycles()
-      exposeWindow()
     }
 
     function getValueOrBindingValue(value: any) {
       if (isPlainObject(value)) {
         const { value: bindingValue, type: bindingType } = value
 
-        if (bindingType === BuiltInSchemaNodeBindingTypes.FUNCTION_BINDING) {
-          return ctx[bindingValue]
-        }
-
-        if (bindingType === BuiltInSchemaNodeBindingTypes.VARIABLE_BINDING) {
-          return ctx[bindingValue].value
-        }
-
-        if (bindingType === BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING) {
-          return eval(bindingValue)
-        }
-      } else {
-        return value
+        return bindingType === BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING ? eval(bindingValue) : value
       }
+
+      return value
     }
 
     function withPropsBinding(props: SchemaNodeProps) {
@@ -186,22 +126,18 @@ export default defineComponent({
       return {}
     }
 
-    function registryLifeCycles() {
-      onBeforeMount(() => ctx._lifeCycles.onBeforeMount?.())
-      onMounted(() => ctx._lifeCycles.onMounted?.())
-      onBeforeUpdate(() => ctx._lifeCycles.onBeforeUpdate?.())
-      onUpdated(() => ctx._lifeCycles.onUpdated?.())
-      onBeforeUnmount(() => ctx._lifeCycles.onBeforeUnmount?.())
-      onUnmounted(() => ctx._lifeCycles.onUnmounted?.())
-    }
-
     // TODO: handle designer mode logic
-    watch([() => props.schema.variables, () => props.schema.functions, () => props.schema.lifeCycles], exposeApis, {
-      deep: true,
-    })
+    watch(
+      [() => props.schema.variables, () => props.schema.functions, () => props.schema.code],
+      () => {
+        window.location.reload()
+      },
+      {
+        deep: true,
+      }
+    )
 
-    registryLifeCycles()
-    exposeApis()
+    hoistWindow()
 
     return () => h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },

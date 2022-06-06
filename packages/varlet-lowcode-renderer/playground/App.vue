@@ -12,42 +12,23 @@ lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
 })
 
 const countdownId = uuid()
+const code = `
+  function setup() {
+    const count = ref(1)
+    const doubleCount = computed(() => count.value * 2)
+    const handleClick = () => { count.value++ }
+
+    return {
+      count,
+      doubleCount,
+      handleClick
+    }
+  }
+`
 
 lowCode.schemaManager.importSchema({
   id: uuid(),
   name: BuiltInSchemaNodeNames.PAGE,
-  lifeCycles: {
-    onBeforeMount: {
-      async: false,
-      params: [],
-      body: 'console.log(1)',
-    },
-    onMounted: {
-      async: false,
-      params: [],
-      body: 'console.log(2)',
-    },
-    onBeforeUpdate: {
-      async: false,
-      params: [],
-      body: 'console.log(3)',
-    },
-    onUpdated: {
-      async: false,
-      params: [],
-      body: 'console.log(4)',
-    },
-    onBeforeUnmount: {
-      async: false,
-      params: [],
-      body: 'console.log(5)',
-    },
-    onUnmounted: {
-      async: false,
-      params: [],
-      body: 'console.log(6)',
-    },
-  },
   functions: {
     handleClick: {
       async: false,
@@ -58,14 +39,15 @@ lowCode.schemaManager.importSchema({
   variables: {
     count: 1,
   },
+  code,
   slots: {
     default: [
       {
         id: uuid(),
         name: BuiltInSchemaNodeNames.TEXT,
         textContent: {
-          type: BuiltInSchemaNodeBindingTypes.VARIABLE_BINDING,
-          value: 'count',
+          type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+          value: 'doubleCount.value',
         },
       },
       {
@@ -79,7 +61,7 @@ lowCode.schemaManager.importSchema({
               props: {
                 type: 'primary',
                 onClick: {
-                  type: BuiltInSchemaNodeBindingTypes.FUNCTION_BINDING,
+                  type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
                   value: 'handleClick',
                 },
               },
@@ -94,8 +76,8 @@ lowCode.schemaManager.importSchema({
                     id: uuid(),
                     name: BuiltInSchemaNodeNames.TEXT,
                     textContent: {
-                      type: BuiltInSchemaNodeBindingTypes.VARIABLE_BINDING,
-                      value: 'count',
+                      type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                      value: 'count.value',
                     },
                   },
                 ],

@@ -10,8 +10,7 @@ export enum BuiltInSchemaNodeNames {
 }
 
 export enum BuiltInSchemaNodeBindingTypes {
-  FUNCTION_BINDING = 'Binding',
-  VARIABLE_BINDING = 'Variable',
+  OBJECT_BINDING = 'Object',
   EXPRESSION_BINDING = 'Expression',
 }
 
@@ -26,16 +25,7 @@ export interface SchemaNode {
 
 export interface SchemaTextNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.TEXT
-  textContent: string
-}
-
-export interface SchemaPageNodeLifeCycles {
-  onBeforeMount?: SchemaNodeFunction
-  onMounted?: SchemaNodeFunction
-  onBeforeUpdate?: SchemaNodeFunction
-  onUpdated: SchemaNodeFunction
-  onBeforeUnmount: SchemaNodeFunction
-  onUnmounted: SchemaNodeFunction
+  textContent: any
 }
 
 export interface SchemaNodeFunction {
@@ -48,7 +38,6 @@ export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
   functions?: Record<string, SchemaNodeFunction>
   variables?: Record<string, any>
-  lifeCycles?: SchemaPageNodeLifeCycles
   code?: string
 }
 
