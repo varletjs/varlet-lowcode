@@ -14,30 +14,31 @@ export enum BuiltInSchemaNodeBindingTypes {
   EXPRESSION_BINDING = 'Expression',
 }
 
-export type SchemaNodeProps = Record<string, any>
+export type SchemaNodeProps = Record<string, SchemaNodeBinding>
+
+export type SchemaNodeBinding = any
 
 export interface SchemaNode {
   id: string
   name: string
   props?: SchemaNodeProps
   slots?: Record<string, (SchemaNode | SchemaTextNode)[]>
+  if?: SchemaNodeBinding
+  for?: SchemaNodeBinding
+  _items?: Record<string, any>
+  _index?: Record<string, any>
+  _slotProps?: Record<string, any>
 }
 
 export interface SchemaTextNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.TEXT
-  textContent: any
-}
-
-export interface SchemaNodeFunction {
-  async: boolean
-  params: string[]
-  body: string
+  textContent: SchemaNodeBinding
 }
 
 export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
-  functions?: Record<string, SchemaNodeFunction>
-  variables?: Record<string, any>
+  functions?: string[]
+  variables?: string[]
   code?: string
 }
 

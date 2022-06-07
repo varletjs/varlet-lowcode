@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Renderer from '../src/Renderer'
-import lowCode, { BuiltInEvents, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
+import type { SchemaPageNode } from '@varlet/lowcode-core'
+import lowCode, { BuiltInEvents, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 import { ref } from 'vue'
 import { v4 as uuid } from 'uuid'
-import type { SchemaPageNode } from '@varlet/lowcode-core'
 
 const schema = ref<SchemaPageNode>()
 
@@ -11,50 +11,121 @@ lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
   schema.value = newSchema
 })
 
-const countdownId = uuid()
 const code = `
   function setup() {
-    const count = ref(1)
-    const doubleCount = computed(() => count.value * 2)
-    const handleClick = () => { count.value++ }
+    const cache = localStorage.getItem('todo')
+    const show = ref(false)
+    const inputValue = ref('')
+    const todoItems = reactive(cache ? JSON.parse(cache) : [])
+
+    const handleInsert = () => {
+      inputValue.value = ''
+      show.value = true
+    }
+
+    const handleConfirm = (action, done) => {
+      if (action === 'confirm') {
+        if (!inputValue.value) {
+          Varlet.Snackbar.warning('输入点什么吧???')
+          return
+        }
+
+        todoItems.push({
+          id: Date.now(),
+          content: inputValue.value
+        })
+
+        localStorage.setItem('todo', JSON.stringify(todoItems))
+
+        Varlet.Snackbar.success('别光写，要做，OK???')
+
+        done()
+      }
+
+      done()
+    }
 
     return {
-      count,
-      doubleCount,
-      handleClick
+      show,
+      inputValue,
+      todoItems,
+      handleInsert,
+      handleConfirm,
     }
   }
 `
 
+const cardId = uuid()
+
 lowCode.schemaManager.importSchema({
   id: uuid(),
   name: BuiltInSchemaNodeNames.PAGE,
-  functions: {
-    handleClick: {
-      async: false,
-      params: [],
-      body: 'count.value++',
-    },
-  },
-  variables: {
-    count: 1,
-  },
+  functions: ['handleInsert', 'handleConfirm'],
+  variables: ['show', 'inputValue', 'todoItems'],
   code,
   slots: {
     default: [
       {
         id: uuid(),
-        name: BuiltInSchemaNodeNames.TEXT,
-        textContent: {
-          type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-          value: 'doubleCount.value',
+        name: 'Dialog.Component',
+        props: {
+          show: {
+            type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+            value: 'show.value',
+          },
+          'onUpdate:show': {
+            type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+            value: '() => { show.value = false }',
+          },
+          onBeforeClose: {
+            type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+            value: 'handleConfirm',
+          },
+        },
+        slots: {
+          default: [
+            {
+              id: uuid(),
+              name: 'Input',
+              props: {
+                placeholder: '下一步要做什么?',
+                modelValue: {
+                  type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                  value: 'inputValue.value',
+                },
+                'onUpdate:modelValue': {
+                  type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                  value: '(value) => { inputValue.value = value }',
+                },
+              },
+            },
+          ],
         },
       },
       {
         id: uuid(),
         name: 'Space',
+        props: {
+          direction: 'column',
+          size: [16, 16],
+        },
         slots: {
           default: [
+            {
+              id: cardId,
+              name: 'Card',
+              for: {
+                type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                value: 'todoItems',
+              },
+              props: {
+                ripple: true,
+                description: {
+                  type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                  value: `$item['${cardId}'].content`,
+                },
+              },
+            },
             {
               id: uuid(),
               name: 'Button',
@@ -62,7 +133,7 @@ lowCode.schemaManager.importSchema({
                 type: 'primary',
                 onClick: {
                   type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                  value: 'handleClick',
+                  value: 'handleInsert',
                 },
               },
               slots: {
@@ -70,45 +141,7 @@ lowCode.schemaManager.importSchema({
                   {
                     id: uuid(),
                     name: BuiltInSchemaNodeNames.TEXT,
-                    textContent: 'Click it: ',
-                  },
-                  {
-                    id: uuid(),
-                    name: BuiltInSchemaNodeNames.TEXT,
-                    textContent: {
-                      type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                      value: 'count.value',
-                    },
-                  },
-                ],
-              },
-            },
-            {
-              id: countdownId,
-              name: 'Countdown',
-              props: {
-                time: 10000000,
-              },
-              slots: {
-                default: [
-                  {
-                    id: uuid(),
-                    name: 'Button',
-                    props: {
-                      type: 'warning',
-                    },
-                    slots: {
-                      default: [
-                        {
-                          id: uuid(),
-                          name: BuiltInSchemaNodeNames.TEXT,
-                          textContent: {
-                            type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                            value: `JSON.stringify($slotsParams[\'${countdownId}\'].default[0])`,
-                          },
-                        },
-                      ],
-                    },
+                    textContent: 'Insert',
                   },
                 ],
               },

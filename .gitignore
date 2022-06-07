@@ -11,3 +11,4 @@ package-lock.json
 .varlet-lowcode
 lib
 dist
+es
