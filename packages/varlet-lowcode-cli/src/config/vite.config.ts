@@ -125,11 +125,12 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         entry: getEntry()!,
       },
       rollupOptions: {
-        external: ['vue'],
+        external: ['vue', '@varlet/lowcode-core'],
         output: {
           exports: 'named',
           globals: {
             vue: 'Vue',
+            '@varlet/lowcode-core': 'VarletLowCodeCore',
           },
         },
       },
