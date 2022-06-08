@@ -204,13 +204,11 @@ export default defineComponent({
       if (isPlainObject(schemaNode.slots)) {
         return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, schemaNodeChildren]) => {
           rawSlots[slotName] = (slotProps: any) => {
-            if (slotProps) {
-              if (!schemaNode._slotProps) {
-                schemaNode._slotProps = markRaw({})
-              }
-              schemaNode._slotProps[schemaNode.id] = {}
-              schemaNode._slotProps[schemaNode.id][slotName] = slotProps
+            if (!schemaNode._slotProps) {
+              schemaNode._slotProps = markRaw({})
             }
+            schemaNode._slotProps[schemaNode.id] = {}
+            schemaNode._slotProps[schemaNode.id][slotName] = slotProps
 
             const conditionedSchemaNodes = withCondition(schemaNodeChildren as SchemaNode[])
             const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode)
