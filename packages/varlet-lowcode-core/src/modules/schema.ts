@@ -18,14 +18,19 @@ export type SchemaNodeProps = Record<string, SchemaNodeBinding>
 
 export type SchemaNodeBinding = any
 
+export interface SchemaNodeSlot {
+  children?: (SchemaNode | SchemaTextNode)[]
+  _slotProps?: Record<string, any>
+}
+
 export interface SchemaNode {
   id: string
   name: string
   props?: SchemaNodeProps
-  slots?: Record<string, (SchemaNode | SchemaTextNode)[]>
+  slots?: Record<string, SchemaNodeSlot>
   if?: SchemaNodeBinding
   for?: SchemaNodeBinding
-  _items?: Record<string, any>
+  _item?: Record<string, any>
   _index?: Record<string, any>
   _slotProps?: Record<string, any>
 }
@@ -45,8 +50,10 @@ export interface SchemaPageNode extends SchemaNode {
 export function createSchemaManager(): SchemaManager {
   let _schema: SchemaPageNode
 
-  function importSchema(schema: SchemaPageNode) {
-    _schema = schema
+  function importSchema(schema: SchemaPageNode): SchemaPageNode {
+    _schema = JSON.parse(JSON.stringify(schema))
+
+    return _schema
   }
 
   function exportSchema(): SchemaPageNode {

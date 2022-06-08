@@ -3,7 +3,6 @@ import {
   h,
   ref,
   reactive,
-  markRaw,
   computed,
   watch,
   onBeforeMount,
@@ -13,7 +12,7 @@ import {
   onBeforeUnmount,
   onUnmounted,
 } from 'vue'
-import { BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
+import { BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes, SchemaNodeSlot } from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from './shared'
 import { get } from 'lodash-es'
 import type { DefineComponent, PropType, VNode } from 'vue'
@@ -77,7 +76,7 @@ export default defineComponent({
     }
 
     function resolveScopedExpression(expression: string, schemaNode: SchemaNode) {
-      window.$item = schemaNode._items
+      window.$item = schemaNode._item
       window.$index = schemaNode._index
       window.$slotProps = schemaNode._slotProps
 
@@ -137,19 +136,20 @@ export default defineComponent({
       return schemaNodes.filter((schemaNode) => Boolean(getBindingValue(schemaNode.if ?? true, schemaNode)))
     }
 
-    function withScopedVariables(schemaNodes: SchemaNode[], parentSchemaNode: SchemaNode) {
+    function withScopedVariables(schemaNodes: SchemaNode[], parentSchemaNode: SchemaNode, parentSlot: SchemaNodeSlot) {
+      const slotProps = { ...parentSchemaNode._slotProps, ...parentSlot._slotProps}
+      parentSlot._slotProps = slotProps
+
       schemaNodes.forEach((schemaNode) => {
-        if (parentSchemaNode._items) {
-          schemaNode._items = parentSchemaNode._items
+        if (parentSchemaNode._item) {
+          schemaNode._item = parentSchemaNode._item
         }
 
         if (parentSchemaNode._index) {
           schemaNode._index = parentSchemaNode._index
         }
 
-        if (parentSchemaNode._slotProps) {
-          schemaNode._slotProps = parentSchemaNode._slotProps
-        }
+        schemaNode._slotProps = slotProps
       })
 
       return schemaNodes
@@ -173,15 +173,15 @@ export default defineComponent({
         ;(items as any[]).forEach((item, index) => {
           const newSchemaNode = cloneSchemaNode(schemaNode)
 
-          if (!newSchemaNode._items) {
-            newSchemaNode._items = markRaw({})
+          if (!newSchemaNode._item) {
+            newSchemaNode._item = {}
           }
 
           if (!newSchemaNode._index) {
-            newSchemaNode._index = markRaw({})
+            newSchemaNode._index = {}
           }
 
-          newSchemaNode._items[newSchemaNode.id] = item
+          newSchemaNode._item[newSchemaNode.id] = item
           newSchemaNode._index[newSchemaNode.id] = index
 
           flatSchemaNodes.push(newSchemaNode)
@@ -202,16 +202,17 @@ export default defineComponent({
 
     function renderSchemaNodeSlots(schemaNode: SchemaNode): RawSlots {
       if (isPlainObject(schemaNode.slots)) {
-        return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, schemaNodeChildren]) => {
+        return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, slot]) => {
           rawSlots[slotName] = (slotProps: any) => {
-            if (!schemaNode._slotProps) {
-              schemaNode._slotProps = markRaw({})
+            if (!slot._slotProps) {
+              slot._slotProps = {}
             }
-            schemaNode._slotProps[schemaNode.id] = {}
-            schemaNode._slotProps[schemaNode.id][slotName] = slotProps
 
-            const conditionedSchemaNodes = withCondition(schemaNodeChildren as SchemaNode[])
-            const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode)
+            slot._slotProps[schemaNode.id] = slotProps
+
+            const slotChildren = slot.children ?? []
+            const conditionedSchemaNodes = withCondition(slotChildren as SchemaNode[])
+            const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode, slot)
             const loopedSchemaNodes = withLoop(scopedSchemaNodes)
 
             return loopedSchemaNodes.map((schemaNodeChild) => renderSchemaNode(schemaNodeChild))
@@ -224,11 +225,15 @@ export default defineComponent({
       return {}
     }
 
+    const { code } = props.schema
+
     // TODO: handle designer mode logic
     watch(
-      [() => props.schema.variables, () => props.schema.functions, () => props.schema.code],
-      () => {
-        window.location.reload()
+      () => props.schema,
+      (newValue) => {
+        if (code !== newValue.code) {
+          window.location.reload()
+        }
       },
       {
         deep: true,
