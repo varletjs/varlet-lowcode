@@ -1,5 +1,17 @@
+import { isArray, isPlainObject, removeItem, removePrivateProperty } from '../shared'
+
 export interface SchemaManager {
-  importSchema(schema: SchemaPageNode): void
+  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]): void
+
+  cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
+
+  findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
+
+  removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
+
+  normalizedSchemaNode<T extends SchemaNode>(schemaNode: T): T
+
+  importSchema(schemaPageNode: SchemaPageNode): void
 
   exportSchema(): SchemaPageNode
 }
@@ -47,20 +59,96 @@ export interface SchemaPageNode extends SchemaNode {
   code?: string
 }
 
+export type SchemaNodeVisitor = (schemaNode: SchemaNode, schemaNodeSiblings: SchemaNode[] | null) => boolean | void
+
 export function createSchemaManager(): SchemaManager {
   let _schema: SchemaPageNode
 
+  function cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T {
+    return JSON.parse(JSON.stringify(schemaNode))
+  }
+
+  function visitSchemaNode(schemaNode: SchemaNode, visitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]) {
+    const stop = visitor(schemaNode, schemaNodeSiblings ?? null)
+
+    if (stop) {
+      return
+    }
+
+    if (isPlainObject(schemaNode.slots)) {
+      for (const slot of Object.values(schemaNode.slots)) {
+        if (isArray(slot.children) && slot.children.length > 0) {
+          for (const schemaNodeChild of slot.children) {
+            visitSchemaNode(schemaNodeChild, visitor, slot.children)
+          }
+        }
+      }
+    }
+  }
+
+  function findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null {
+    let founded = null
+
+    visitSchemaNode(schemaNode, (schemaNode) => {
+      if (schemaNode.id === id) {
+        founded = schemaNode
+        return true
+      }
+    })
+
+    return founded
+  }
+
+  function removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode {
+    if (schemaNode.id === id) {
+      throw new Error('Cannot delete itself')
+    }
+
+    visitSchemaNode(schemaNode, (schemaNode, schemaNodeSiblings) => {
+      if (schemaNode.id === id) {
+        removeItem(schemaNodeSiblings!, schemaNode)
+        return true
+      }
+    })
+
+    return schemaNode
+  }
+
+  function normalizedSchemaNode<T extends SchemaNode>(schemaNode: T): T {
+    visitSchemaNode(schemaNode, (schemaNode) => {
+      removePrivateProperty(schemaNode)
+
+      if (isPlainObject(schemaNode.slots)) {
+        for (const slot of Object.values(schemaNode.slots)) {
+          removePrivateProperty(slot)
+        }
+      }
+    })
+
+    return schemaNode
+  }
+
   function importSchema(schema: SchemaPageNode): SchemaPageNode {
-    _schema = JSON.parse(JSON.stringify(schema))
+    _schema = cloneSchemaNode(schema)
 
     return _schema
   }
 
   function exportSchema(): SchemaPageNode {
-    return _schema
+    return cloneSchemaNode(_schema)
   }
 
   return {
+    cloneSchemaNode,
+
+    visitSchemaNode,
+
+    findSchemaNodeById,
+
+    removeSchemaNodeById,
+
+    normalizedSchemaNode,
+
     importSchema,
 
     exportSchema,

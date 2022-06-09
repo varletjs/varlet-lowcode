@@ -15,7 +15,7 @@ export function createAssetsManager(): AssetsManager {
     },
 
     exportAssets(): Assets {
-      return _assets
+      return JSON.parse(JSON.stringify(_assets))
     },
   }
 
