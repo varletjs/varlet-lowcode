@@ -29,7 +29,8 @@
     "rules": {
       "no-new-func": "off",
       "no-useless-escape": "off",
-      "no-eval": "off"
+      "no-eval": "off",
+      "vue/no-setup-props-destructure": "off"
     }
   },
   "stylelint": {

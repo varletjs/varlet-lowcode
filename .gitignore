@@ -18,3 +18,4 @@ packages/varlet-lowcode-cli/lib/config
 packages/varlet-lowcode-cli/lib/shared
 packages/varlet-lowcode-cli/lib/index.d.ts
 packages/varlet-lowcode-core/lib
+packages/varlet-lowcode-renderer/lib

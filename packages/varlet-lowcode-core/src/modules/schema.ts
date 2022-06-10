@@ -14,38 +14,46 @@ export enum BuiltInSchemaNodeBindingTypes {
   EXPRESSION_BINDING = 'Expression',
 }
 
-export type SchemaNodeProps = Record<string, any>
+export type SchemaNodeProps = Record<string, SchemaNodeBinding>
+
+export type SchemaNodeBinding = any
+
+export interface SchemaNodeSlot {
+  children?: (SchemaNode | SchemaTextNode)[]
+  _slotProps?: Record<string, any>
+}
 
 export interface SchemaNode {
   id: string
   name: string
   props?: SchemaNodeProps
-  slots?: Record<string, (SchemaNode | SchemaTextNode)[]>
+  slots?: Record<string, SchemaNodeSlot>
+  if?: SchemaNodeBinding
+  for?: SchemaNodeBinding
+  _item?: Record<string, any>
+  _index?: Record<string, any>
+  _slotProps?: Record<string, any>
 }
 
 export interface SchemaTextNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.TEXT
-  textContent: any
-}
-
-export interface SchemaNodeFunction {
-  async: boolean
-  params: string[]
-  body: string
+  textContent: SchemaNodeBinding
 }
 
 export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
-  functions?: Record<string, SchemaNodeFunction>
-  variables?: Record<string, any>
+  functions?: string[]
+  variables?: string[]
   code?: string
 }
 
 export function createSchemaManager(): SchemaManager {
   let _schema: SchemaPageNode
 
-  function importSchema(schema: SchemaPageNode) {
-    _schema = schema
+  function importSchema(schema: SchemaPageNode): SchemaPageNode {
+    _schema = JSON.parse(JSON.stringify(schema))
+
+    return _schema
   }
 
   function exportSchema(): SchemaPageNode {

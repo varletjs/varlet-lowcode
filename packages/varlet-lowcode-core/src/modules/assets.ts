@@ -10,8 +10,8 @@ export function createAssetsManager(): AssetsManager {
   let _assets: Assets
 
   const assetsManager: AssetsManager = {
-    importAssets(assets: Assets) {
-      _assets = assets
+    importAssets(assets: Assets): Assets {
+      _assets = JSON.parse(JSON.stringify(assets))
     },
 
     exportAssets(): Assets {
