@@ -30,7 +30,8 @@
       "no-new-func": "off",
       "no-useless-escape": "off",
       "no-eval": "off",
-      "vue/no-setup-props-destructure": "off"
+      "vue/no-setup-props-destructure": "off",
+      "no-restricted-syntax": "off"
     }
   },
   "stylelint": {

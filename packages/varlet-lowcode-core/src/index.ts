@@ -16,8 +16,8 @@ export type LowCode = {
 const originImportSchema = schemaManager.importSchema
 const originImportAssets = assetsManager.importAssets
 
-schemaManager.importSchema = function (schema: SchemaPageNode) {
-  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, originImportSchema.call(this, schema))
+schemaManager.importSchema = function (schemaPageNode: SchemaPageNode) {
+  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, originImportSchema.call(this, schemaPageNode))
 }
 
 assetsManager.importAssets = function (assets: Assets) {

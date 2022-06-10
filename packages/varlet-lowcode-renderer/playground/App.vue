@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid'
 const schema = shallowRef<SchemaPageNode>()
 
 lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
-  schema.value = newSchema
+  schema.value = lowCode.schemaManager.cloneSchemaNode(newSchema)
 })
 
 const code = `
@@ -206,6 +206,13 @@ lowCode.schemaManager.importSchema({
     },
   },
 })
+
+setTimeout(() => {
+  const schema = lowCode.schemaManager.exportSchema()
+  const card = lowCode.schemaManager.findSchemaNodeById(schema, cardId)
+  card.props.ripple = false
+  lowCode.schemaManager.importSchema(schema)
+}, 2000)
 </script>
 
 <template>
