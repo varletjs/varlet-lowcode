@@ -1,7 +1,7 @@
 import Drag from './Drag'
+import Drop from './Drop'
 
-const Dnd = {
+export default {
   Drag,
+  Drop,
 }
-
-export default Dnd
