@@ -5,6 +5,7 @@
     "module": "CommonJS",
     "strict": true,
     "downlevelIteration": true,
+    "moduleResolution": "node",
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

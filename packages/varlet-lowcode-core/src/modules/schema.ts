@@ -9,9 +9,7 @@ export interface SchemaManager {
 
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
-  normalizedSchemaNode<T extends SchemaNode>(schemaNode: T): T
-
-  importSchema(schemaPageNode: SchemaPageNode): void
+  importSchema(schemaPageNode: SchemaPageNode): SchemaPageNode
 
   exportSchema(): SchemaPageNode
 }
@@ -129,7 +127,7 @@ export function createSchemaManager(): SchemaManager {
   }
 
   function importSchema(schema: SchemaPageNode): SchemaPageNode {
-    _schema = cloneSchemaNode(schema)
+    _schema = normalizedSchemaNode(cloneSchemaNode(schema))
 
     return _schema
   }
@@ -146,8 +144,6 @@ export function createSchemaManager(): SchemaManager {
     findSchemaNodeById,
 
     removeSchemaNodeById,
-
-    normalizedSchemaNode,
 
     importSchema,
 

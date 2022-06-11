@@ -12,14 +12,18 @@ import {
   onBeforeUnmount,
   onUnmounted,
 } from 'vue'
-import { BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes, SchemaNodeSlot } from '@varlet/lowcode-core'
+import lowCode, {
+  BuiltInSchemaNodeNames,
+  BuiltInSchemaNodeBindingTypes,
+  SchemaNodeSlot,
+  Assets,
+} from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from './shared'
 import { get } from 'lodash-es'
-import type { DefineComponent, PropType, VNode } from 'vue'
+import type { PropType, VNode } from 'vue'
 import type { SchemaPageNode, SchemaNode, SchemaTextNode } from '@varlet/lowcode-core'
 
 declare const window: Window & {
-  Varlet: Record<string, DefineComponent>
   $slotProps?: Record<string, any>
   $item?: Record<string, any>
   $index?: Record<string, any>
@@ -52,10 +56,17 @@ export default defineComponent({
       type: String as PropType<'designer' | 'render'>,
       default: 'render',
     },
+
     schema: {
       type: Object as PropType<SchemaPageNode>,
       required: true,
       default: () => ({}),
+    },
+
+    assets: {
+      type: Array as PropType<Assets>,
+      required: true,
+      default: () => [],
     },
   },
 
@@ -113,6 +124,10 @@ export default defineComponent({
       return value
     }
 
+    function getComponent(schemaNodeName: string) {
+      return lowCode.assetsManager.findComponent(props.assets, schemaNodeName)
+    }
+
     function getPropsBinding(schemaNode: SchemaNode) {
       const rawProps = Object.entries(schemaNode.props ?? {}).reduce((rawProps, [key, value]) => {
         rawProps[key] = getBindingValue(value, schemaNode)
@@ -126,10 +141,10 @@ export default defineComponent({
     function withDesigner(schemaNode: SchemaNode) {
       if (props.mode === 'designer') {
         // TODO: wrap designer component
-        return h(get(window.Varlet, schemaNode.name), getPropsBinding(schemaNode), renderSchemaNodeSlots(schemaNode))
+        return h(getComponent(schemaNode.name), getPropsBinding(schemaNode), renderSchemaNodeSlots(schemaNode))
       }
 
-      return h(get(window.Varlet, schemaNode.name), getPropsBinding(schemaNode), renderSchemaNodeSlots(schemaNode))
+      return h(getComponent(schemaNode.name), getPropsBinding(schemaNode), renderSchemaNodeSlots(schemaNode))
     }
 
     function withCondition(schemaNodes: SchemaNode[]): SchemaNode[] {

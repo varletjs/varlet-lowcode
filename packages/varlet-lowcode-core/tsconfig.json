@@ -3,6 +3,7 @@
     "outDir": "./es",
     "target": "es6",
     "strict": true,
+    "moduleResolution": "node",
     "downlevelIteration": true,
     "declaration": true,
     "skipLibCheck": true,

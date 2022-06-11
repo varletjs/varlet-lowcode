@@ -17,11 +17,19 @@ const originImportSchema = schemaManager.importSchema
 const originImportAssets = assetsManager.importAssets
 
 schemaManager.importSchema = function (schemaPageNode: SchemaPageNode) {
-  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, originImportSchema.call(this, schemaPageNode))
+  const newSchema = originImportSchema.call(this, schemaPageNode)
+
+  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+
+  return newSchema
 }
 
 assetsManager.importAssets = function (assets: Assets) {
-  eventsManager.emit(BuiltInEvents.ASSETS_CHANGE, originImportAssets.call(this, assets))
+  const newAssets = originImportAssets.call(this, assets)
+
+  eventsManager.emit(BuiltInEvents.ASSETS_CHANGE, newAssets)
+
+  return newAssets
 }
 
 export const lowCode: LowCode = {

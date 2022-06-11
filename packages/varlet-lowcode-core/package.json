@@ -21,6 +21,14 @@
     "build": "tsc && tsc -p tsconfig.cjs.json"
   },
   "dependencies": {
+    "lodash-es": "^4.17.21",
     "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "vue": "^3.2.25"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.25"
   }
 }
