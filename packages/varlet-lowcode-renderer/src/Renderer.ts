@@ -137,7 +137,7 @@ export default defineComponent({
     }
 
     function withScopedVariables(schemaNodes: SchemaNode[], parentSchemaNode: SchemaNode, parentSlot: SchemaNodeSlot) {
-      const slotProps = { ...parentSchemaNode._slotProps, ...parentSlot._slotProps}
+      const slotProps = { ...parentSchemaNode._slotProps, ...parentSlot._slotProps }
       parentSlot._slotProps = slotProps
 
       schemaNodes.forEach((schemaNode) => {

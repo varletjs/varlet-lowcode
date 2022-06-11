@@ -1,6 +1,7 @@
-import { buildCli, buildCore, runTask } from './build.mjs'
+import { buildCli, buildCore, buildDnd, runTask } from './build.mjs'
 
 await Promise.all([
   runTask('cli', buildCli),
-  runTask('core', buildCore)
+  runTask('core', buildCore),
+  runTask('dnd', buildDnd)
 ])

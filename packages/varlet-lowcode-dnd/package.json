@@ -1,0 +1,28 @@
+{
+  "name": "@varlet/lowcode-dnd",
+  "version": "0.0.0",
+  "main": "lib/varlet-lowcode-dnd.umd.js",
+  "module": "lib/varlet-lowcode-dnd.es.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "dev": "varlet-lowcode-cli dev",
+    "build": "varlet-lowcode-cli build",
+    "compile": "varlet-lowcode-cli compile",
+    "preview": "varlet-lowcode-cli preview"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "@types/uuid": "^8.3.4",
+    "@varlet/lowcode-cli": "workspace: *",
+    "@varlet/lowcode-core": "workspace: *",
+    "live-server": "^1.2.1",
+    "typescript": "^4.4.4",
+    "vue": "3.2.25"
+  }
+}
