@@ -23,7 +23,7 @@ export type Assets = Asset[]
 export interface AssetsManager {
   findComponent(assets: Assets, name: string): DefineComponent
 
-  loadResources(assets: Assets, document: Document): Promise<void[]>
+  loadResources(assets: Assets, document: Document): Promise<void>
 
   importAssets(assets: Assets): Assets
 
@@ -53,38 +53,43 @@ export function createAssetsManager(): AssetsManager {
     return get(self, `${profileLibrary}.${name}`)
   }
 
-  function loadResources(assets: Assets, document: Document): Promise<void[]> {
-    const tasks: Promise<void>[] = []
+  async function loadResources(assets: Assets, document: Document): Promise<void> {
+    const asyncTasks = []
 
-    assets.forEach((asset) => {
-      asset.resources?.forEach((resource) => {
-        let element: HTMLLinkElement | HTMLScriptElement
+    function getTask(element: HTMLLinkElement | HTMLScriptElement) {
+      return new Promise((resolve, reject) => {
+        element.addEventListener('load', () => {
+          resolve(undefined)
+        })
 
-        if (resource.endsWith('.css')) {
-          element = document.createElement('link')
-          element.rel = resource
-          document.head.append(element)
-        } else {
-          element = document.createElement('script')
-          element.src = resource
-          document.body.append(element)
-        }
-
-        tasks.push(
-          new Promise((resolve, reject) => {
-            element.addEventListener('load', () => {
-              resolve()
-            })
-
-            element.addEventListener('error', () => {
-              reject()
-            })
-          })
-        )
+        element.addEventListener('error', () => {
+          reject()
+        })
       })
-    })
+    }
 
-    return Promise.all(tasks)
+    for (const asset of assets) {
+      if (asset.resources) {
+        for (const resource of asset.resources) {
+          let element: HTMLLinkElement | HTMLScriptElement
+
+          if (resource.endsWith('.css')) {
+            element = document.createElement('link')
+            element.rel = resource
+            document.head.append(element)
+            asyncTasks.push(getTask(element))
+          } else {
+            element = document.createElement('script')
+            element.src = resource
+            document.body.append(element)
+
+            await getTask(element)
+          }
+        }
+      }
+    }
+
+    await Promise.all(asyncTasks)
   }
 
   function importAssets(assets: Assets) {

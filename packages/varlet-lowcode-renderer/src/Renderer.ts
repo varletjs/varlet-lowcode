@@ -239,21 +239,6 @@ export default defineComponent({
       return {}
     }
 
-    const { code } = props.schema
-
-    // TODO: handle designer mode logic
-    watch(
-      () => props.schema,
-      (newValue) => {
-        if (code !== newValue.code) {
-          window.location.reload()
-        }
-      },
-      {
-        deep: true,
-      }
-    )
-
     hoistWindow()
 
     return () => h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))

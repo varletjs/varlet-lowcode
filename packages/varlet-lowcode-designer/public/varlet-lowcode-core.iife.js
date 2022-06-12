@@ -1,45 +1,45 @@
 var VarletLowcodeCore = (function (h) {
   'use strict'
-  const M = (t) => Object.prototype.toString.call(t) === '[object Object]',
-    Z = (t) => Array.isArray(t),
-    N = (t) => {
+  const A = (t) => Object.prototype.toString.call(t) === '[object Object]',
+    Y = (t) => Array.isArray(t),
+    M = (t) => {
       Object.keys(t).forEach((e) => {
         e.startsWith('_') && Reflect.deleteProperty(t, e)
       })
     },
-    q = (t, e) => {
+    Z = (t, e) => {
       if (t.length) {
         const r = t.indexOf(e)
         if (r > -1) return t.splice(r, 1)
       }
     }
-  var z = ((t) => ((t.PAGE = 'Page'), (t.TEXT = 'Text'), t))(z || {}),
-    x = ((t) => ((t.OBJECT_BINDING = 'Object'), (t.EXPRESSION_BINDING = 'Expression'), t))(x || {})
-  function G() {
+  var N = ((t) => ((t.PAGE = 'Page'), (t.TEXT = 'Text'), t))(N || {}),
+    z = ((t) => ((t.OBJECT_BINDING = 'Object'), (t.EXPRESSION_BINDING = 'Expression'), t))(z || {})
+  function x() {
     let t
     function e(a) {
       return JSON.parse(JSON.stringify(a))
     }
-    function r(a, s, u) {
-      if (!s(a, u != null ? u : null) && M(a.slots)) {
-        for (const y of Object.values(a.slots))
-          if (Z(y.children) && y.children.length > 0) for (const A of y.children) r(A, s, y.children)
+    function r(a, s, c) {
+      if (!s(a, c != null ? c : null) && A(a.slots)) {
+        for (const S of Object.values(a.slots))
+          if (Y(S.children) && S.children.length > 0) for (const Te of S.children) r(Te, s, S.children)
       }
     }
     function n(a, s) {
-      let u = null
+      let c = null
       return (
-        r(a, (f) => {
-          if (f.id === s) return (u = f), !0
+        r(a, (u) => {
+          if (u.id === s) return (c = u), !0
         }),
-        u
+        c
       )
     }
-    function c(a, s) {
+    function f(a, s) {
       if (a.id === s) throw new Error('Cannot delete itself')
       return (
-        r(a, (u, f) => {
-          if (u.id === s) return q(f, u), !0
+        r(a, (c, u) => {
+          if (c.id === s) return Z(u, c), !0
         }),
         a
       )
@@ -47,7 +47,7 @@ var VarletLowcodeCore = (function (h) {
     function o(a) {
       return (
         r(a, (s) => {
-          if ((N(s), M(s.slots))) for (const u of Object.values(s.slots)) N(u)
+          if ((M(s), A(s.slots))) for (const c of Object.values(s.slots)) M(c)
         }),
         a
       )
@@ -62,95 +62,95 @@ var VarletLowcodeCore = (function (h) {
       cloneSchemaNode: e,
       visitSchemaNode: r,
       findSchemaNodeById: n,
-      removeSchemaNodeById: c,
+      removeSchemaNodeById: f,
       importSchema: i,
       exportSchema: l,
     }
   }
-  var O = G(),
-    Q = typeof global == 'object' && global && global.Object === Object && global,
-    k = Q,
-    tt = typeof self == 'object' && self && self.Object === Object && self,
-    et = k || tt || Function('return this')(),
-    P = et,
-    rt = P.Symbol,
-    g = rt,
-    F = Object.prototype,
-    nt = F.hasOwnProperty,
-    at = F.toString,
-    v = g ? g.toStringTag : void 0
-  function ot(t) {
-    var e = nt.call(t, v),
-      r = t[v]
+  var O = x(),
+    q = typeof global == 'object' && global && global.Object === Object && global,
+    Q = q,
+    k = typeof self == 'object' && self && self.Object === Object && self,
+    tt = Q || k || Function('return this')(),
+    P = tt,
+    et = P.Symbol,
+    g = et,
+    G = Object.prototype,
+    rt = G.hasOwnProperty,
+    nt = G.toString,
+    _ = g ? g.toStringTag : void 0
+  function at(t) {
+    var e = rt.call(t, _),
+      r = t[_]
     try {
-      t[v] = void 0
+      t[_] = void 0
       var n = !0
     } catch {}
-    var c = at.call(t)
-    return n && (e ? (t[v] = r) : delete t[v]), c
+    var f = nt.call(t)
+    return n && (e ? (t[_] = r) : delete t[_]), f
   }
-  var it = Object.prototype,
-    st = it.toString
-  function ct(t) {
-    return st.call(t)
+  var ot = Object.prototype,
+    it = ot.toString
+  function st(t) {
+    return it.call(t)
   }
-  var ut = '[object Null]',
-    ft = '[object Undefined]',
-    H = g ? g.toStringTag : void 0
-  function D(t) {
-    return t == null ? (t === void 0 ? ft : ut) : H && H in Object(t) ? ot(t) : ct(t)
+  var ct = '[object Null]',
+    ut = '[object Undefined]',
+    F = g ? g.toStringTag : void 0
+  function H(t) {
+    return t == null ? (t === void 0 ? ut : ct) : F && F in Object(t) ? at(t) : st(t)
   }
-  function lt(t) {
+  function ft(t) {
     return t != null && typeof t == 'object'
   }
-  var ht = '[object Symbol]'
-  function E(t) {
-    return typeof t == 'symbol' || (lt(t) && D(t) == ht)
+  var lt = '[object Symbol]'
+  function w(t) {
+    return typeof t == 'symbol' || (ft(t) && H(t) == lt)
   }
-  function pt(t, e) {
-    for (var r = -1, n = t == null ? 0 : t.length, c = Array(n); ++r < n; ) c[r] = e(t[r], r, t)
-    return c
+  function ht(t, e) {
+    for (var r = -1, n = t == null ? 0 : t.length, f = Array(n); ++r < n; ) f[r] = e(t[r], r, t)
+    return f
   }
-  var dt = Array.isArray,
-    C = dt,
-    gt = 1 / 0,
-    R = g ? g.prototype : void 0,
-    J = R ? R.toString : void 0
-  function L(t) {
+  var pt = Array.isArray,
+    T = pt,
+    dt = 1 / 0,
+    D = g ? g.prototype : void 0,
+    R = D ? D.toString : void 0
+  function J(t) {
     if (typeof t == 'string') return t
-    if (C(t)) return pt(t, L) + ''
-    if (E(t)) return J ? J.call(t) : ''
+    if (T(t)) return ht(t, J) + ''
+    if (w(t)) return R ? R.call(t) : ''
     var e = t + ''
-    return e == '0' && 1 / t == -gt ? '-0' : e
+    return e == '0' && 1 / t == -dt ? '-0' : e
   }
-  function B(t) {
+  function L(t) {
     var e = typeof t
     return t != null && (e == 'object' || e == 'function')
   }
-  var _t = '[object AsyncFunction]',
+  var gt = '[object AsyncFunction]',
     yt = '[object Function]',
-    vt = '[object GeneratorFunction]',
-    bt = '[object Proxy]'
-  function mt(t) {
-    if (!B(t)) return !1
-    var e = D(t)
-    return e == yt || e == vt || e == _t || e == bt
+    _t = '[object GeneratorFunction]',
+    vt = '[object Proxy]'
+  function bt(t) {
+    if (!L(t)) return !1
+    var e = H(t)
+    return e == yt || e == _t || e == gt || e == vt
   }
-  var St = P['__core-js_shared__'],
-    j = St,
-    K = (function () {
-      var t = /[^.]+$/.exec((j && j.keys && j.keys.IE_PROTO) || '')
+  var mt = P['__core-js_shared__'],
+    C = mt,
+    B = (function () {
+      var t = /[^.]+$/.exec((C && C.keys && C.keys.IE_PROTO) || '')
       return t ? 'Symbol(src)_1.' + t : ''
     })()
-  function Ot(t) {
-    return !!K && K in t
+  function St(t) {
+    return !!B && B in t
   }
-  var Pt = Function.prototype,
-    Et = Pt.toString
-  function Ct(t) {
+  var Ot = Function.prototype,
+    Pt = Ot.toString
+  function wt(t) {
     if (t != null) {
       try {
-        return Et.call(t)
+        return Pt.call(t)
       } catch {}
       try {
         return t + ''
@@ -158,73 +158,74 @@ var VarletLowcodeCore = (function (h) {
     }
     return ''
   }
-  var jt = /[\\^$.*+?()[\]{}|]/g,
-    wt = /^\[object .+?Constructor\]$/,
-    Tt = Function.prototype,
-    $t = Object.prototype,
-    It = Tt.toString,
-    At = $t.hasOwnProperty,
-    Mt = RegExp(
+  var Tt = /[\\^$.*+?()[\]{}|]/g,
+    Ct = /^\[object .+?Constructor\]$/,
+    jt = Function.prototype,
+    Et = Object.prototype,
+    $t = jt.toString,
+    It = Et.hasOwnProperty,
+    At = RegExp(
       '^' +
-        It.call(At)
-          .replace(jt, '\\$&')
+        $t
+          .call(It)
+          .replace(Tt, '\\$&')
           .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') +
         '$'
     )
-  function Nt(t) {
-    if (!B(t) || Ot(t)) return !1
-    var e = mt(t) ? Mt : wt
-    return e.test(Ct(t))
+  function Mt(t) {
+    if (!L(t) || St(t)) return !1
+    var e = bt(t) ? At : Ct
+    return e.test(wt(t))
   }
-  function zt(t, e) {
+  function Nt(t, e) {
     return t == null ? void 0 : t[e]
   }
-  function U(t, e) {
-    var r = zt(t, e)
-    return Nt(r) ? r : void 0
+  function K(t, e) {
+    var r = Nt(t, e)
+    return Mt(r) ? r : void 0
   }
-  function xt(t, e) {
+  function zt(t, e) {
     return t === e || (t !== t && e !== e)
   }
-  var Gt = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
-    Ft = /^\w*$/
-  function Ht(t, e) {
-    if (C(t)) return !1
+  var xt = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
+    Gt = /^\w*$/
+  function Ft(t, e) {
+    if (T(t)) return !1
     var r = typeof t
-    return r == 'number' || r == 'symbol' || r == 'boolean' || t == null || E(t)
+    return r == 'number' || r == 'symbol' || r == 'boolean' || t == null || w(t)
       ? !0
-      : Ft.test(t) || !Gt.test(t) || (e != null && t in Object(e))
+      : Gt.test(t) || !xt.test(t) || (e != null && t in Object(e))
   }
-  var Dt = U(Object, 'create'),
-    b = Dt
-  function Rt() {
-    ;(this.__data__ = b ? b(null) : {}), (this.size = 0)
+  var Ht = K(Object, 'create'),
+    v = Ht
+  function Dt() {
+    ;(this.__data__ = v ? v(null) : {}), (this.size = 0)
   }
-  function Jt(t) {
+  function Rt(t) {
     var e = this.has(t) && delete this.__data__[t]
     return (this.size -= e ? 1 : 0), e
   }
-  var Lt = '__lodash_hash_undefined__',
-    Bt = Object.prototype,
-    Kt = Bt.hasOwnProperty
-  function Ut(t) {
+  var Jt = '__lodash_hash_undefined__',
+    Lt = Object.prototype,
+    Bt = Lt.hasOwnProperty
+  function Kt(t) {
     var e = this.__data__
-    if (b) {
+    if (v) {
       var r = e[t]
-      return r === Lt ? void 0 : r
+      return r === Jt ? void 0 : r
     }
-    return Kt.call(e, t) ? e[t] : void 0
+    return Bt.call(e, t) ? e[t] : void 0
   }
-  var Xt = Object.prototype,
-    Vt = Xt.hasOwnProperty
-  function Wt(t) {
+  var Ut = Object.prototype,
+    Xt = Ut.hasOwnProperty
+  function Vt(t) {
     var e = this.__data__
-    return b ? e[t] !== void 0 : Vt.call(e, t)
+    return v ? e[t] !== void 0 : Xt.call(e, t)
   }
-  var Yt = '__lodash_hash_undefined__'
-  function Zt(t, e) {
+  var Wt = '__lodash_hash_undefined__'
+  function Yt(t, e) {
     var r = this.__data__
-    return (this.size += this.has(t) ? 0 : 1), (r[t] = b && e === void 0 ? Yt : e), this
+    return (this.size += this.has(t) ? 0 : 1), (r[t] = v && e === void 0 ? Wt : e), this
   }
   function p(t) {
     var e = -1,
@@ -234,41 +235,41 @@ var VarletLowcodeCore = (function (h) {
       this.set(n[0], n[1])
     }
   }
-  ;(p.prototype.clear = Rt),
-    (p.prototype.delete = Jt),
-    (p.prototype.get = Ut),
-    (p.prototype.has = Wt),
-    (p.prototype.set = Zt)
-  function qt() {
+  ;(p.prototype.clear = Dt),
+    (p.prototype.delete = Rt),
+    (p.prototype.get = Kt),
+    (p.prototype.has = Vt),
+    (p.prototype.set = Yt)
+  function Zt() {
     ;(this.__data__ = []), (this.size = 0)
   }
-  function m(t, e) {
-    for (var r = t.length; r--; ) if (xt(t[r][0], e)) return r
+  function b(t, e) {
+    for (var r = t.length; r--; ) if (zt(t[r][0], e)) return r
     return -1
   }
-  var Qt = Array.prototype,
-    kt = Qt.splice
-  function te(t) {
+  var qt = Array.prototype,
+    Qt = qt.splice
+  function kt(t) {
     var e = this.__data__,
-      r = m(e, t)
+      r = b(e, t)
     if (r < 0) return !1
     var n = e.length - 1
-    return r == n ? e.pop() : kt.call(e, r, 1), --this.size, !0
+    return r == n ? e.pop() : Qt.call(e, r, 1), --this.size, !0
   }
-  function ee(t) {
+  function te(t) {
     var e = this.__data__,
-      r = m(e, t)
+      r = b(e, t)
     return r < 0 ? void 0 : e[r][1]
   }
-  function re(t) {
-    return m(this.__data__, t) > -1
+  function ee(t) {
+    return b(this.__data__, t) > -1
   }
-  function ne(t, e) {
+  function re(t, e) {
     var r = this.__data__,
-      n = m(r, t)
+      n = b(r, t)
     return n < 0 ? (++this.size, r.push([t, e])) : (r[n][1] = e), this
   }
-  function _(t) {
+  function y(t) {
     var e = -1,
       r = t == null ? 0 : t.length
     for (this.clear(); ++e < r; ) {
@@ -276,36 +277,36 @@ var VarletLowcodeCore = (function (h) {
       this.set(n[0], n[1])
     }
   }
-  ;(_.prototype.clear = qt),
-    (_.prototype.delete = te),
-    (_.prototype.get = ee),
-    (_.prototype.has = re),
-    (_.prototype.set = ne)
-  var ae = U(P, 'Map'),
-    oe = ae
-  function ie() {
-    ;(this.size = 0), (this.__data__ = { hash: new p(), map: new (oe || _)(), string: new p() })
+  ;(y.prototype.clear = Zt),
+    (y.prototype.delete = kt),
+    (y.prototype.get = te),
+    (y.prototype.has = ee),
+    (y.prototype.set = re)
+  var ne = K(P, 'Map'),
+    ae = ne
+  function oe() {
+    ;(this.size = 0), (this.__data__ = { hash: new p(), map: new (ae || y)(), string: new p() })
   }
-  function se(t) {
+  function ie(t) {
     var e = typeof t
     return e == 'string' || e == 'number' || e == 'symbol' || e == 'boolean' ? t !== '__proto__' : t === null
   }
-  function S(t, e) {
+  function m(t, e) {
     var r = t.__data__
-    return se(e) ? r[typeof e == 'string' ? 'string' : 'hash'] : r.map
+    return ie(e) ? r[typeof e == 'string' ? 'string' : 'hash'] : r.map
   }
-  function ce(t) {
-    var e = S(this, t).delete(t)
+  function se(t) {
+    var e = m(this, t).delete(t)
     return (this.size -= e ? 1 : 0), e
   }
+  function ce(t) {
+    return m(this, t).get(t)
+  }
   function ue(t) {
-    return S(this, t).get(t)
+    return m(this, t).has(t)
   }
-  function fe(t) {
-    return S(this, t).has(t)
-  }
-  function le(t, e) {
-    var r = S(this, t),
+  function fe(t, e) {
+    var r = m(this, t),
       n = r.size
     return r.set(t, e), (this.size += r.size == n ? 0 : 1), this
   }
@@ -317,111 +318,107 @@ var VarletLowcodeCore = (function (h) {
       this.set(n[0], n[1])
     }
   }
-  ;(d.prototype.clear = ie),
-    (d.prototype.delete = ce),
-    (d.prototype.get = ue),
-    (d.prototype.has = fe),
-    (d.prototype.set = le)
-  var he = 'Expected a function'
-  function w(t, e) {
-    if (typeof t != 'function' || (e != null && typeof e != 'function')) throw new TypeError(he)
+  ;(d.prototype.clear = oe),
+    (d.prototype.delete = se),
+    (d.prototype.get = ce),
+    (d.prototype.has = ue),
+    (d.prototype.set = fe)
+  var le = 'Expected a function'
+  function j(t, e) {
+    if (typeof t != 'function' || (e != null && typeof e != 'function')) throw new TypeError(le)
     var r = function () {
       var n = arguments,
-        c = e ? e.apply(this, n) : n[0],
+        f = e ? e.apply(this, n) : n[0],
         o = r.cache
-      if (o.has(c)) return o.get(c)
+      if (o.has(f)) return o.get(f)
       var i = t.apply(this, n)
-      return (r.cache = o.set(c, i) || o), i
+      return (r.cache = o.set(f, i) || o), i
     }
-    return (r.cache = new (w.Cache || d)()), r
+    return (r.cache = new (j.Cache || d)()), r
   }
-  w.Cache = d
-  var pe = 500
-  function de(t) {
-    var e = w(t, function (n) {
-        return r.size === pe && r.clear(), n
+  j.Cache = d
+  var he = 500
+  function pe(t) {
+    var e = j(t, function (n) {
+        return r.size === he && r.clear(), n
       }),
       r = e.cache
     return e
   }
-  var ge = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,
-    _e = /\\(\\)?/g,
-    ye = de(function (t) {
+  var de = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,
+    ge = /\\(\\)?/g,
+    ye = pe(function (t) {
       var e = []
       return (
         t.charCodeAt(0) === 46 && e.push(''),
-        t.replace(ge, function (r, n, c, o) {
-          e.push(c ? o.replace(_e, '$1') : n || r)
+        t.replace(de, function (r, n, f, o) {
+          e.push(f ? o.replace(ge, '$1') : n || r)
         }),
         e
       )
     }),
-    ve = ye
-  function be(t) {
-    return t == null ? '' : L(t)
+    _e = ye
+  function ve(t) {
+    return t == null ? '' : J(t)
   }
-  function me(t, e) {
-    return C(t) ? t : Ht(t, e) ? [t] : ve(be(t))
+  function be(t, e) {
+    return T(t) ? t : Ft(t, e) ? [t] : _e(ve(t))
   }
-  var Se = 1 / 0
-  function Oe(t) {
-    if (typeof t == 'string' || E(t)) return t
+  var me = 1 / 0
+  function Se(t) {
+    if (typeof t == 'string' || w(t)) return t
     var e = t + ''
-    return e == '0' && 1 / t == -Se ? '-0' : e
+    return e == '0' && 1 / t == -me ? '-0' : e
   }
-  function Pe(t, e) {
-    e = me(e, t)
-    for (var r = 0, n = e.length; t != null && r < n; ) t = t[Oe(e[r++])]
+  function Oe(t, e) {
+    e = be(e, t)
+    for (var r = 0, n = e.length; t != null && r < n; ) t = t[Se(e[r++])]
     return r && r == n ? t : void 0
   }
-  function T(t, e, r) {
-    var n = t == null ? void 0 : Pe(t, e)
+  function E(t, e, r) {
+    var n = t == null ? void 0 : Oe(t, e)
     return n === void 0 ? r : n
   }
-  function X() {
+  function U() {
     let t
     function e(o, i) {
-      const l = o.find((s) => (s.profile ? T(window, s.profile).materials.some((f) => f.name === i) : !1))
+      const l = o.find((s) => (s.profile ? E(window, s.profile).materials.some((u) => u.name === i) : !1))
       if (!l) throw new Error(`Component ${i} cannot found`)
-      const a = T(self, `${l.profile}.library`)
-      return T(self, `${a}.${i}`)
+      const a = E(self, `${l.profile}.library`)
+      return E(self, `${a}.${i}`)
     }
-    function r(o, i) {
+    async function r(o, i) {
       const l = []
-      return (
-        o.forEach((a) => {
-          var s
-          ;(s = a.resources) == null ||
-            s.forEach((u) => {
-              let f
-              u.endsWith('.css')
-                ? ((f = i.createElement('link')), (f.rel = u), i.head.append(f))
-                : ((f = i.createElement('script')), (f.src = u), i.body.append(f)),
-                l.push(
-                  new Promise((y, A) => {
-                    f.addEventListener('load', () => {
-                      y()
-                    }),
-                      f.addEventListener('error', () => {
-                        A()
-                      })
-                  })
-                )
+      function a(s) {
+        return new Promise((c, u) => {
+          s.addEventListener('load', () => {
+            c(void 0)
+          }),
+            s.addEventListener('error', () => {
+              u()
             })
-        }),
-        Promise.all(l)
-      )
+        })
+      }
+      for (const s of o)
+        if (s.resources)
+          for (const c of s.resources) {
+            let u
+            c.endsWith('.css')
+              ? ((u = i.createElement('link')), (u.rel = c), i.head.append(u), l.push(a(u)))
+              : ((u = i.createElement('script')), (u.src = c), i.body.append(u), await a(u))
+          }
+      await Promise.all(l)
     }
     function n(o) {
       return (t = JSON.parse(JSON.stringify(o))), t
     }
-    function c() {
+    function f() {
       return JSON.parse(JSON.stringify(t))
     }
-    return { findComponent: e, loadResources: r, importAssets: n, exportAssets: c }
+    return { findComponent: e, loadResources: r, importAssets: n, exportAssets: f }
   }
-  var $ = X()
-  function V() {
+  var $ = U()
+  function X() {
     const t = []
     function e(o, i) {
       t.push({ event: o, listener: i, once: !1 })
@@ -433,7 +430,7 @@ var VarletLowcodeCore = (function (h) {
       const l = t.findIndex((a) => a.event === o && a.listener === i)
       l !== -1 && t.splice(l, 1)
     }
-    function c(o, ...i) {
+    function f(o, ...i) {
       const l = []
       t.forEach((a) => {
         a.event === o && (a.listener(...i), a.once && l.push(a))
@@ -442,30 +439,30 @@ var VarletLowcodeCore = (function (h) {
           n(a.event, a.listener)
         })
     }
-    return { on: e, once: r, off: n, emit: c }
+    return { on: e, once: r, off: n, emit: f }
   }
-  var I = V(),
-    W = ((t) => ((t.SCHEMA_CHANGE = 'schema-change'), (t.ASSETS_CHANGE = 'assets-change'), t))(W || {})
-  const Ee = O.importSchema,
-    Ce = $.importAssets
+  var I = X(),
+    V = ((t) => ((t.SCHEMA_CHANGE = 'schema-change'), (t.ASSETS_CHANGE = 'assets-change'), t))(V || {})
+  const Pe = O.importSchema,
+    we = $.importAssets
   ;(O.importSchema = function (t) {
-    const e = Ee.call(this, t)
+    const e = Pe.call(this, t)
     return I.emit('schema-change', e), e
   }),
     ($.importAssets = function (t) {
-      const e = Ce.call(this, t)
+      const e = we.call(this, t)
       return I.emit('assets-change', e), e
     })
-  const Y = { schemaManager: O, assetsManager: $, eventsManager: I }
+  const W = { schemaManager: O, assetsManager: $, eventsManager: I }
   return (
-    (h.BuiltInEvents = W),
-    (h.BuiltInSchemaNodeBindingTypes = x),
-    (h.BuiltInSchemaNodeNames = z),
-    (h.createAssetsManager = X),
-    (h.createEventManager = V),
-    (h.createSchemaManager = G),
-    (h.default = Y),
-    (h.lowCode = Y),
+    (h.BuiltInEvents = V),
+    (h.BuiltInSchemaNodeBindingTypes = z),
+    (h.BuiltInSchemaNodeNames = N),
+    (h.createAssetsManager = U),
+    (h.createEventManager = X),
+    (h.createSchemaManager = x),
+    (h.default = W),
+    (h.lowCode = W),
     Object.defineProperties(h, { __esModule: { value: !0 }, [Symbol.toStringTag]: { value: 'Module' } }),
     h
   )

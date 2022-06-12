@@ -17,7 +17,7 @@ export interface AssetProfileMaterial {
 export declare type Assets = Asset[]
 export interface AssetsManager {
   findComponent(assets: Assets, name: string): DefineComponent
-  loadResources(assets: Assets, document: Document): Promise<void[]>
+  loadResources(assets: Assets, document: Document): Promise<void>
   importAssets(assets: Assets): Assets
   exportAssets(): Assets
 }

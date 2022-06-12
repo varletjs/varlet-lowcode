@@ -15,24 +15,24 @@ type Renderer = typeof RendererComponent & {
   init(this: Renderer, selector: string): void
 }
 
+const schema = shallowRef<SchemaPageNode>({
+  id: uuid(),
+  name: BuiltInSchemaNodeNames.PAGE,
+})
+
+const assets = shallowRef<Assets>([])
+
+window.onSchemaChange = (newSchema: SchemaPageNode) => {
+  schema.value = newSchema
+}
+
+window.onAssetsChange = (newAssets: Assets) => {
+  assets.value = newAssets
+}
+
 function init(this: Renderer, selector: string) {
   this.app = createApp({
     setup() {
-      const schema = shallowRef<SchemaPageNode>({
-        id: uuid(),
-        name: BuiltInSchemaNodeNames.PAGE,
-      })
-
-      const assets = shallowRef<Assets>([])
-
-      window.onSchemaChange = (newSchema: SchemaPageNode) => {
-        schema.value = newSchema
-      }
-
-      window.onAssetsChange = (newAssets: Assets) => {
-        assets.value = newAssets
-      }
-
       return () => {
         return h(RendererComponent, {
           schema: schema.value,

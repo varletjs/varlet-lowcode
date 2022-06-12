@@ -1,11 +1,11 @@
 var m = Object.defineProperty
 var l = Object.getOwnPropertySymbols
-var w = Object.prototype.hasOwnProperty,
-  y = Object.prototype.propertyIsEnumerable
+var y = Object.prototype.hasOwnProperty,
+  v = Object.prototype.propertyIsEnumerable
 var c = (t, e, n) => (e in t ? m(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : (t[e] = n)),
   a = (t, e) => {
-    for (var n in e || (e = {})) w.call(e, n) && c(t, n, e[n])
-    if (l) for (var n of l(e)) y.call(e, n) && c(t, n, e[n])
+    for (var n in e || (e = {})) y.call(e, n) && c(t, n, e[n])
+    if (l) for (var n of l(e)) v.call(e, n) && c(t, n, e[n])
     return t
   }
 var VarletLowcodeRenderer = (function (exports, vue, lowCode) {
@@ -142,17 +142,8 @@ var VarletLowcodeRenderer = (function (exports, vue, lowCode) {
               )
             : {}
         }
-        const { code } = props.schema
         return (
-          vue.watch(
-            () => props.schema,
-            (e) => {
-              code !== e.code && window.location.reload()
-            },
-            { deep: !0 }
-          ),
-          hoistWindow(),
-          () => vue.h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
+          hoistWindow(), () => vue.h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
         )
       },
     }),
@@ -216,20 +207,18 @@ var VarletLowcodeRenderer = (function (exports, vue, lowCode) {
     }
     return stringify(o)
   }
+  const schema = vue.shallowRef({ id: v4(), name: lowCode.BuiltInSchemaNodeNames.PAGE }),
+    assets = vue.shallowRef([])
+  ;(window.onSchemaChange = (t) => {
+    schema.value = t
+  }),
+    (window.onAssetsChange = (t) => {
+      assets.value = t
+    })
   function init(t) {
     ;(this.app = vue.createApp({
       setup() {
-        const e = vue.shallowRef({ id: v4(), name: lowCode.BuiltInSchemaNodeNames.PAGE }),
-          n = vue.shallowRef([])
-        return (
-          (window.onSchemaChange = (o) => {
-            e.value = o
-          }),
-          (window.onAssetsChange = (o) => {
-            n.value = o
-          }),
-          () => vue.h(RendererComponent, { schema: e.value, assets: n.value, mode: 'designer' })
-        )
+        return () => vue.h(RendererComponent, { schema: schema.value, assets: assets.value, mode: 'designer' })
       },
     })),
       this.app.mount(t)

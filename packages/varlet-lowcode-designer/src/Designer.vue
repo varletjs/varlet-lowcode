@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import lowCode, { BuiltInEvents, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import lowCode, { BuiltInEvents, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 import { onMounted, ref, shallowRef } from 'vue'
 import { v4 as uuid } from 'uuid'
 
@@ -16,26 +16,36 @@ const presetAssets = [
 const schema = shallowRef()
 const assets = shallowRef()
 
-const iframe = ref<HTMLIFrameElement>()
+const container = ref<HTMLIFrameElement>()
 let iframeWindow
+let iframeElement: HTMLIFrameElement
 
 lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
+  const oldSchema = schema.value
+
   schema.value = newSchema
 
-  iframeWindow?.onSchemaChange?.(schema.value)
+  if (iframeWindow) {
+    if (oldSchema && oldSchema.code !== schema.value.code) {
+      mountRenderer()
+    } else {
+      iframeWindow.onSchemaChange?.(schema.value)
+    }
+  }
 })
 
 lowCode.eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
   assets.value = newAssets
 
   if (iframeWindow) {
-    await loadRenderer()
+    await mountRenderer()
   }
 })
 
 lowCode.schemaManager.importSchema({
   id: uuid(),
   name: BuiltInSchemaNodeNames.PAGE,
+  code: 'function setup() { return { count: 1 } }',
   slots: {
     default: {
       children: [
@@ -51,7 +61,10 @@ lowCode.schemaManager.importSchema({
                 {
                   id: uuid(),
                   name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: 'hello',
+                  textContent: {
+                    type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                    value: 'count',
+                  },
                 },
               ],
             },
@@ -73,10 +86,22 @@ lowCode.assetsManager.importAssets([
   },
 ])
 
-async function loadRenderer() {
-  const iframeElement = iframe.value!
-  iframeElement.contentDocument.documentElement.innerHTML = ''
-  iframeWindow = window[0] as Record<string, any>
+function mountIframe() {
+  iframeElement = container.value!.querySelector('iframe')
+
+  if (iframeElement) {
+    container.value!.removeChild(iframeElement)
+  }
+
+  iframeElement = document.createElement('iframe')
+  iframeElement.frameBorder = 'none'
+  container.value!.appendChild(iframeElement)
+}
+
+async function mountRenderer() {
+  mountIframe()
+
+  iframeWindow = iframeElement.contentWindow as Record<string, any>
 
   const mergedAssets = [...presetAssets, ...assets.value]
 
@@ -87,18 +112,19 @@ async function loadRenderer() {
   app.id = 'app'
   iframeElement.contentDocument!.body.appendChild(app)
 
-  renderer.init('#app')
-
   iframeWindow.onSchemaChange(schema.value)
   iframeWindow.onAssetsChange(mergedAssets)
+
+  renderer.init('#app')
 }
 
 onMounted(async () => {
-  await loadRenderer()
+  await mountRenderer()
   setTimeout(() => {
     lowCode.schemaManager.importSchema({
       id: uuid(),
       name: BuiltInSchemaNodeNames.PAGE,
+      code: 'function setup() { return { count: 2 } }',
       slots: {
         default: {
           children: [
@@ -114,7 +140,10 @@ onMounted(async () => {
                     {
                       id: uuid(),
                       name: BuiltInSchemaNodeNames.TEXT,
-                      textContent: 'hello',
+                      textContent: {
+                        type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+                        value: 'count',
+                      },
                     },
                   ],
                 },
@@ -129,7 +158,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="varlet-low-code-designer">
+  <div ref="container" class="varlet-low-code-designer">
     <iframe ref="iframe" frameborder="0" />
   </div>
 </template>
