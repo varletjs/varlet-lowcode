@@ -1,35 +1,101 @@
 <script setup lang="ts">
 import lowCode, { BuiltInEvents, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, shallowRef } from 'vue'
 import { v4 as uuid } from 'uuid'
 
+const presetAssets = [
+  {
+    resources: [
+      'https://cdn.jsdelivr.net/npm/vue',
+      './varlet-lowcode-core.iife.js',
+      './varlet-lowcode-renderer.iife.js',
+    ],
+  },
+]
+
+const schema = shallowRef()
+const assets = shallowRef()
+
 const iframe = ref<HTMLIFrameElement>()
+let iframeWindow
+
+lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
+  schema.value = newSchema
+
+  iframeWindow?.onSchemaChange?.(schema.value)
+})
+
+lowCode.eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
+  assets.value = newAssets
+
+  if (iframeWindow) {
+    await loadRenderer()
+  }
+})
+
+lowCode.schemaManager.importSchema({
+  id: uuid(),
+  name: BuiltInSchemaNodeNames.PAGE,
+  slots: {
+    default: {
+      children: [
+        {
+          id: uuid(),
+          props: {
+            type: 'primary',
+          },
+          name: 'Button',
+          slots: {
+            default: {
+              children: [
+                {
+                  id: uuid(),
+                  name: BuiltInSchemaNodeNames.TEXT,
+                  textContent: 'hello',
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  },
+})
+
+lowCode.assetsManager.importAssets([
+  {
+    profile: 'VarletProfile',
+    resources: [
+      'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
+      'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
+      './varlet-profile.js',
+    ],
+  },
+])
+
+async function loadRenderer() {
+  const iframeElement = iframe.value!
+  iframeElement.contentDocument.documentElement.innerHTML = ''
+  iframeWindow = window[0] as Record<string, any>
+
+  const mergedAssets = [...presetAssets, ...assets.value]
+
+  await lowCode.assetsManager.loadResources(mergedAssets, iframeElement.contentDocument!)
+
+  const renderer = iframeWindow.VarletLowcodeRenderer.default
+  const app = iframeElement.contentDocument!.createElement('div')
+  app.id = 'app'
+  iframeElement.contentDocument!.body.appendChild(app)
+
+  renderer.init('#app')
+
+  iframeWindow.onSchemaChange(schema.value)
+  iframeWindow.onAssetsChange(mergedAssets)
+}
 
 onMounted(async () => {
-  const iframeWindow = window[0] as Record<string, any>
-
-  lowCode.eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
-    await lowCode.assetsManager.loadResources(newAssets, iframe.value!.contentDocument!)
-
-    const renderer = iframeWindow.VarletLowcodeRenderer.default
-
-    if (!renderer.app) {
-      const app = iframe.value!.contentDocument!.createElement('div')
-      app.id = 'app'
-      iframe.value!.contentDocument!.body.appendChild(app)
-      renderer.init('#app')
-    } else {
-      renderer.app.unmount()
-      renderer.app.mount('#app')
-    }
-
-    lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
-      console.log(newSchema)
-      iframeWindow.onSchemaChange(newSchema)
-    })
-
-    iframeWindow.onAssetsChange(newAssets)
-
+  await loadRenderer()
+  setTimeout(() => {
     lowCode.schemaManager.importSchema({
       id: uuid(),
       name: BuiltInSchemaNodeNames.PAGE,
@@ -58,56 +124,7 @@ onMounted(async () => {
         },
       },
     })
-
-    setTimeout(() => {
-      lowCode.schemaManager.importSchema({
-        id: uuid(),
-        name: BuiltInSchemaNodeNames.PAGE,
-        slots: {
-          default: {
-            children: [
-              {
-                id: uuid(),
-                props: {
-                  type: 'primary',
-                },
-                name: 'Button',
-                slots: {
-                  default: {
-                    children: [
-                      {
-                        id: uuid(),
-                        name: BuiltInSchemaNodeNames.TEXT,
-                        textContent: 'hello',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-        },
-      })
-    }, 2000)
-  })
-
-  lowCode.assetsManager.importAssets([
-    {
-      resources: [
-        'https://cdn.jsdelivr.net/npm/vue',
-        './varlet-lowcode-core.iife.js',
-        './varlet-lowcode-renderer.iife.js',
-      ],
-    },
-    {
-      profile: 'VarletProfile',
-      resources: [
-        'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
-        'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-        './varlet-profile.js',
-      ],
-    },
-  ])
+  }, 2000)
 })
 </script>
 
