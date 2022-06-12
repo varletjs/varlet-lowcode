@@ -18,6 +18,12 @@ import { get } from 'lodash'
 import { resolve } from 'path'
 import { pathExistsSync, readFileSync, removeSync, writeFileSync } from 'fs-extra'
 
+export const camelize = (s: string): string => s.replace(/-(\w)/g, (_: any, p: string) => p.toUpperCase())
+
+export function bigCamelize(str: string): string {
+  return camelize(str).replace(str.charAt(0), str.charAt(0).toUpperCase())
+}
+
 export function getEntry() {
   if (pathExistsSync(PLUGIN_TS_ENTRY)) {
     return PLUGIN_TS_ENTRY
@@ -119,7 +125,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       emptyOutDir: true,
       outDir: PLUGIN_OUTPUT_PATH,
       lib: {
-        name: `${name}.js`,
+        name: bigCamelize(name),
         formats: PLUGIN_OUTPUT_FORMATS,
         fileName: (format) => `${name}.${format}.js`,
         entry: getEntry()!,
@@ -130,7 +136,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
           exports: 'named',
           globals: {
             vue: 'Vue',
-            '@varlet/lowcode-core': 'VarletLowCodeCore',
+            '@varlet/lowcode-core': 'VarletLowcodeCore',
           },
         },
       },

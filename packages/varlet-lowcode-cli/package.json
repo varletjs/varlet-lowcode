@@ -39,10 +39,12 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.2",
-    "@types/lodash": "^4.14.174"
+    "@types/lodash": "^4.14.174",
+    "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
     "vue": "3.2.25",
-    "live-server": "^1.2.1"
+    "live-server": "^1.2.1",
+    "vue-tsc": "^0.37.3"
   }
 }

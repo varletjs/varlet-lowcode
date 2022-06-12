@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
-    "target": "es6",
-    "module": "CommonJS",
+    "target": "es5",
     "strict": true,
     "downlevelIteration": true,
-    "moduleResolution": "node",
+    "declarationDir": "./types",
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

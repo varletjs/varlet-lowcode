@@ -2,9 +2,9 @@
   "name": "@varlet/lowcode-core",
   "version": "0.0.0",
   "description": "core of varlet low-code",
-  "main": "lib/index.js",
-  "module": "es/index.js",
-  "types": "es/index.d.ts",
+  "main": "lib/varlet-lowcode-core.es.js",
+  "module": "lib/varlet-lowcode-core.es.js",
+  "types": "./types/index.d.ts",
   "keywords": [
     "core",
     "varlet",
@@ -14,19 +14,23 @@
   "license": "MIT",
   "files": [
     "lib",
+    "types",
     "tsconfig.json"
   ],
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc && tsc -p tsconfig.cjs.json"
+    "dts": "vue-tsc --declaration --emitDeclarationOnly",
+    "compile": "pnpm dts && varlet-lowcode-cli compile",
+    "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
     "typescript": "^4.4.4"
   },
   "devDependencies": {
+    "@varlet/lowcode-cli": "workspace: *",
     "@types/lodash-es": "^4.17.6",
-    "vue": "^3.2.25"
+    "vue": "^3.2.25",
+    "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
     "vue": "^3.2.25"

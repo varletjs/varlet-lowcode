@@ -19,7 +19,6 @@ import lowCode, {
   Assets,
 } from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from './shared'
-import { get } from 'lodash-es'
 import type { PropType, VNode } from 'vue'
 import type { SchemaPageNode, SchemaNode, SchemaTextNode } from '@varlet/lowcode-core'
 

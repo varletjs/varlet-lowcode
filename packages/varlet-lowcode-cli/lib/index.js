@@ -18,7 +18,11 @@ program
     .description('Run varlet low-code development environment')
     .action(dev_1.dev);
 program.command('build').description('Build varlet low-code playground for production').action(build_1.build);
-program.command('compile').description('Compile varlet low-code plugin to library code').action(compile_1.compile);
+program
+    .command('compile')
+    .option('-w --watch', 'Compile varlet low-code plugin to library code in watch mode')
+    .description('Compile varlet low-code plugin to library code')
+    .action(compile_1.compile);
 program.command('preview').description('Preview varlet low-code playground for production').action(preview_1.preview);
 program.on('command:*', ([cmd]) => {
     program.outputHelp();

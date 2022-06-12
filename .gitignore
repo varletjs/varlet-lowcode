@@ -19,3 +19,5 @@ packages/varlet-lowcode-cli/lib/shared
 packages/varlet-lowcode-cli/lib/index.d.ts
 packages/varlet-lowcode-core/lib
 packages/varlet-lowcode-renderer/lib
+packages/varlet-lowcode-dnd/lib
+packages/varlet-lowcode-designer/lib
