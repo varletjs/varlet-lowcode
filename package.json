@@ -26,6 +26,7 @@
       "packages/varlet-lowcode-dnd/lib/**",
       "packages/varlet-lowcode-designer/lib/**",
       "packages/varlet-lowcode-renderer/lib/**",
+      "packages/varlet-lowcode-renderer/public/**",
       "packages/varlet-lowcode-designer/public/**",
       "packages/varlet-lowcode-cli/lib/**"
     ],

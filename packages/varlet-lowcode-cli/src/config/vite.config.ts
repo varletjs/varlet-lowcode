@@ -1,7 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
 import { injectHtml } from 'vite-plugin-html'
-import { viteExternalsPlugin } from 'vite-plugin-externals'
 import {
   PLAYGROUND_DIR,
   PLAYGROUND_OUTPUT_PATH,
@@ -10,7 +9,6 @@ import {
   PLUGIN_OUTPUT_FORMATS,
   PLUGIN_OUTPUT_PATH,
   PLUGIN_TS_ENTRY,
-  USER_PLAYGROUND_DIR,
   VITE_RESOLVE_EXTENSIONS,
 } from '../shared/constant'
 import { InlineConfig, PluginOption } from 'vite'
@@ -34,14 +32,6 @@ export function getEntry() {
   }
 }
 
-export function getRoot() {
-  if (pathExistsSync(resolve(USER_PLAYGROUND_DIR, 'index.html'))) {
-    return USER_PLAYGROUND_DIR
-  }
-
-  return PLAYGROUND_DIR
-}
-
 const commonPlugins = [vue(), jsx()]
 
 export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
@@ -49,12 +39,9 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
   const plugins = get(varletLowCodeConfig, 'plugins', [])
 
   return {
-    root: getRoot(),
+    root: PLAYGROUND_DIR,
     resolve: {
       extensions: VITE_RESOLVE_EXTENSIONS,
-      alias: {
-        '@plugin': getEntry()!,
-      },
     },
     server: {
       port: get(varletLowCodeConfig, 'port'),
@@ -66,7 +53,6 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       injectHtml({
         data: get(varletLowCodeConfig, 'playground', {}),
       }),
-      viteExternalsPlugin({ vue: 'Vue' }),
       ...plugins,
     ],
   }
@@ -85,7 +71,7 @@ export function getBuildConfig(varletLowCodeConfig: Record<string, any>): Inline
       cssTarget: 'chrome61',
       rollupOptions: {
         input: {
-          main: resolve(getRoot(), 'index.html'),
+          main: resolve(PLAYGROUND_DIR, 'index.html'),
         },
       },
     },
