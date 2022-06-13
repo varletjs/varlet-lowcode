@@ -2,8 +2,6 @@
 import lowCode, { BuiltInEvents, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 import { onMounted, ref, shallowRef } from 'vue'
 import { v4 as uuid } from 'uuid'
-import * as RendererModule from '@varlet/lowcode-renderer'
-import * as CoreModule from '@varlet/lowcode-core'
 
 const presetAssets = [
   {
@@ -79,11 +77,11 @@ lowCode.schemaManager.importSchema({
 
 lowCode.assetsManager.importAssets([
   {
-    profile: 'VarletProfile',
+    profile: 'VarletLowcodeProfile',
     resources: [
       'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
       'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-      './varlet-profile.js',
+      './varlet-lowcode-profile.iife.js',
     ],
   },
 ])

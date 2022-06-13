@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "strict": true,
+    "downlevelIteration": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "declarationDir": "./types",
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"]
+  },
+  "include": ["src/**/*"]
+}

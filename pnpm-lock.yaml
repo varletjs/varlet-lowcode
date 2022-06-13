@@ -130,6 +130,22 @@ importers:
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
 
+  packages/varlet-lowcode-profile:
+    specifiers:
+      '@varlet/lowcode-cli': 'workspace: *'
+      '@varlet/lowcode-core': 'workspace: *'
+      live-server: ^1.2.1
+      typescript: ^4.4.4
+      vue: 3.2.25
+      vue-tsc: ^0.37.3
+    devDependencies:
+      '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      '@varlet/lowcode-core': link:../varlet-lowcode-core
+      live-server: 1.2.2
+      typescript: 4.7.2
+      vue: 3.2.25
+      vue-tsc: 0.37.3_typescript@4.7.2
+
   packages/varlet-lowcode-renderer:
     specifiers:
       '@types/lodash-es': ^4.17.6
@@ -8058,7 +8074,7 @@ packages:
     dev: true
 
   /statuses/1.5.0:
-    resolution: {integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=}
+    resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
     dev: true
 

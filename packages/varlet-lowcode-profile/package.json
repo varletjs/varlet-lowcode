@@ -1,0 +1,30 @@
+{
+  "name": "@varlet/lowcode-profile",
+  "version": "0.0.0",
+  "main": "lib/varlet-lowcode-profile.es.js",
+  "module": "lib/varlet-lowcode-profile.es.js",
+  "types": "./types/index.d.ts",
+  "files": [
+    "lib",
+    "types",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "dev": "varlet-lowcode-cli dev",
+    "build": "varlet-lowcode-cli build",
+    "compile": "varlet-lowcode-cli compile",
+    "compile:watch": "varlet-lowcode-cli compile -w",
+    "preview": "varlet-lowcode-cli preview"
+  },
+  "devDependencies": {
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-cli": "workspace: *",
+    "live-server": "^1.2.1",
+    "typescript": "^4.4.4",
+    "vue": "3.2.25",
+    "vue-tsc": "^0.37.3"
+  },
+  "peerDependencies": {
+    "@varlet/lowcode-core": "workspace: *"
+  }
+}
