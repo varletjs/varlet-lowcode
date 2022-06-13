@@ -21,3 +21,5 @@ packages/varlet-lowcode-core/lib
 packages/varlet-lowcode-renderer/lib
 packages/varlet-lowcode-dnd/lib
 packages/varlet-lowcode-designer/lib
+packages/varlet-lowcode-designer/public/varlet-lowcode-core.iife.js
+packages/varlet-lowcode-designer/public/varlet-lowcode-renderer.iife.js

@@ -18,8 +18,7 @@
     "tsconfig.json"
   ],
   "scripts": {
-    "dts": "vue-tsc --declaration --emitDeclarationOnly",
-    "compile": "pnpm dts && varlet-lowcode-cli compile",
+    "compile": "varlet-lowcode-cli compile",
     "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "dependencies": {

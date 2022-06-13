@@ -38,6 +38,7 @@ async function startServer(force: boolean | undefined) {
 
 export async function dev(cmd: { force?: boolean }) {
   process.env.NODE_ENV = 'development'
+  process.env.COMMAND = 'dev'
 
   if (!getEntry()) {
     logger.warning('Plugin entry not found')

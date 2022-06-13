@@ -1,18 +1,17 @@
 import RendererComponent from './Renderer'
-import { createApp, h, shallowRef } from 'vue'
+import { createApp, h, ShallowRef, shallowRef } from 'vue'
 import { BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 import type { App } from 'vue'
 import type { Assets, SchemaPageNode } from '@varlet/lowcode-core'
 import { v4 as uuid } from 'uuid'
 
-declare const window: Window & {
-  onSchemaChange(schema: SchemaPageNode): void
-  onAssetsChange(assets: Assets): void
-}
-
 type Renderer = typeof RendererComponent & {
   app: App
   init(this: Renderer, selector: string): void
+  schema: ShallowRef<SchemaPageNode>
+  assets: ShallowRef<Assets>
+  onSchemaChange(schema: SchemaPageNode): void
+  onAssetsChange(assets: Assets): void
 }
 
 const schema = shallowRef<SchemaPageNode>({
@@ -21,14 +20,6 @@ const schema = shallowRef<SchemaPageNode>({
 })
 
 const assets = shallowRef<Assets>([])
-
-window.onSchemaChange = (newSchema: SchemaPageNode) => {
-  schema.value = newSchema
-}
-
-window.onAssetsChange = (newAssets: Assets) => {
-  assets.value = newAssets
-}
 
 function init(this: Renderer, selector: string) {
   this.app = createApp({
@@ -49,6 +40,8 @@ function init(this: Renderer, selector: string) {
 Object.assign(RendererComponent, {
   app: null,
   init,
+  schema,
+  assets,
 })
 
 export default RendererComponent

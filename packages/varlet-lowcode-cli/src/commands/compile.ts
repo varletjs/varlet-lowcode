@@ -21,6 +21,7 @@ async function runTask() {
 
 export async function compile({ watch = false }: { watch: boolean }) {
   process.env.NODE_ENV = 'production'
+  process.env.COMMAND = 'compile'
 
   await runTask()
 

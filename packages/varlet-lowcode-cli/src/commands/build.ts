@@ -7,6 +7,7 @@ import { getVarletLowCodeConfig } from '../config/varletLowcode.config'
 
 export async function build() {
   process.env.NODE_ENV = 'production'
+  process.env.COMMAND = 'build'
 
   if (!getEntry()) {
     logger.warning('Plugin entry not found')

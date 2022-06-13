@@ -46,6 +46,7 @@ const commonPlugins = [vue(), jsx()]
 
 export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const host = get(varletLowCodeConfig, 'host')
+  const plugins = get(varletLowCodeConfig, 'plugins', [])
 
   return {
     root: getRoot(),
@@ -66,6 +67,7 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         data: get(varletLowCodeConfig, 'playground', {}),
       }),
       viteExternalsPlugin({ vue: 'Vue' }),
+      ...plugins,
     ],
   }
 }
@@ -119,6 +121,7 @@ var head=document.querySelector('head');head.appendChild(style)})();`
 
 export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const name = get(varletLowCodeConfig, 'name')
+  const plugins = get(varletLowCodeConfig, 'plugins', [])
 
   return {
     build: {
@@ -141,6 +144,6 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         },
       },
     },
-    plugins: [...commonPlugins, inlineCSS(name)],
+    plugins: [...commonPlugins, inlineCSS(name), ...plugins],
   }
 }
