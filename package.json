@@ -34,8 +34,9 @@
       "no-new-func": "off",
       "no-useless-escape": "off",
       "no-eval": "off",
-      "vue/no-setup-props-destructure": "off",
+      "no-continue": "off",
       "no-restricted-syntax": "off",
+      "vue/no-setup-props-destructure": "off",
       "@typescript-eslint/ban-types": "off"
     }
   },

@@ -23,6 +23,8 @@ export type Assets = Asset[]
 export interface AssetsManager {
   findComponent(assets: Assets, name: string): DefineComponent
 
+  findMaterial(assets: Assets, name: string): AssetProfileMaterial
+
   loadResources(assets: Assets, document: Document): Promise<void>
 
   importAssets(assets: Assets): Assets
@@ -48,9 +50,27 @@ export function createAssetsManager(): AssetsManager {
       throw new Error(`Component ${name} cannot found`)
     }
 
-    const profileLibrary = get(self, `${asset.profile}.library`)
+    const profileLibrary = get(window, `${asset.profile}.library`)
 
-    return get(self, `${profileLibrary}.${name}`)
+    return get(window, `${profileLibrary}.${name}`)
+  }
+
+  function findMaterial(assets: Assets, name: string): AssetProfileMaterial {
+    for (const asset of assets) {
+      if (!asset.profile) {
+        continue
+      }
+
+      const assetProfile = get(window, asset.profile) as AssetProfile
+
+      for (const material of assetProfile.materials) {
+        if (material.name === name) {
+          return material
+        }
+      }
+    }
+
+    throw new Error(`Material ${name} cannot found`)
   }
 
   async function loadResources(assets: Assets, document: Document): Promise<void> {
@@ -104,6 +124,8 @@ export function createAssetsManager(): AssetsManager {
 
   return {
     findComponent,
+
+    findMaterial,
 
     loadResources,
 

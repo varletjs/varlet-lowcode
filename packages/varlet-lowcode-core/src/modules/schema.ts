@@ -1,6 +1,10 @@
 import { isArray, isPlainObject, removeItem, removePrivateProperty } from '../shared'
 
 export interface SchemaManager {
+  createExpressionBinding(expression: string): SchemaNodeBinding
+
+  createObjectBinding(record: Record<string, any>): SchemaNodeBinding
+
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]): void
 
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
@@ -126,6 +130,20 @@ export function createSchemaManager(): SchemaManager {
     return schemaNode
   }
 
+  function createExpressionBinding(expression: string): SchemaNodeBinding {
+    return {
+      type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
+      value: expression,
+    }
+  }
+
+  function createObjectBinding(record: Record<string, any>): SchemaNodeBinding {
+    return {
+      type: BuiltInSchemaNodeBindingTypes.OBJECT_BINDING,
+      value: record,
+    }
+  }
+
   function importSchema(schema: SchemaPageNode): SchemaPageNode {
     _schema = normalizedSchemaNode(cloneSchemaNode(schema))
 
@@ -137,6 +155,10 @@ export function createSchemaManager(): SchemaManager {
   }
 
   return {
+    createExpressionBinding,
+
+    createObjectBinding,
+
     cloneSchemaNode,
 
     visitSchemaNode,
