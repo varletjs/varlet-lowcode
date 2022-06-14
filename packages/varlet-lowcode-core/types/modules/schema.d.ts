@@ -1,4 +1,6 @@
 export interface SchemaManager {
+  createExpressionBinding(expression: string): SchemaNodeBinding
+  createObjectBinding(record: Record<string, any>): SchemaNodeBinding
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]): void
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null

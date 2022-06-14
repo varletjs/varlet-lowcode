@@ -13,10 +13,12 @@ export interface AssetProfileMaterial {
   description?: string
   image?: string
   props?: any[]
+  slots?: string[]
 }
 export declare type Assets = Asset[]
 export interface AssetsManager {
   findComponent(assets: Assets, name: string): DefineComponent
+  findMaterial(assets: Assets, name: string): AssetProfileMaterial
   loadResources(assets: Assets, document: Document): Promise<void>
   importAssets(assets: Assets): Assets
   exportAssets(): Assets

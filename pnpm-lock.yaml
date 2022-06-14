@@ -68,17 +68,21 @@ importers:
   packages/varlet-lowcode-core:
     specifiers:
       '@types/lodash-es': ^4.17.6
+      '@types/uuid': ^8.3.4
       '@varlet/lowcode-cli': 'workspace: *'
       lodash-es: ^4.17.21
       typescript: ^4.4.4
+      uuid: ^8.3.2
       vue: ^3.2.25
       vue-tsc: ^0.37.3
     dependencies:
       lodash-es: 4.17.21
-      typescript: 4.7.2
+      uuid: 8.3.2
     devDependencies:
       '@types/lodash-es': 4.17.6
+      '@types/uuid': 8.3.4
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      typescript: 4.7.2
       vue: 3.2.37
       vue-tsc: 0.37.3_typescript@4.7.2
 

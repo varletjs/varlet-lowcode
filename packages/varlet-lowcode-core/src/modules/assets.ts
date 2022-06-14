@@ -16,6 +16,7 @@ export interface AssetProfileMaterial {
   description?: string
   image?: string
   props?: any[]
+  slots?: string[]
 }
 
 export type Assets = Asset[]
@@ -33,7 +34,7 @@ export interface AssetsManager {
 }
 
 export function createAssetsManager(): AssetsManager {
-  let _assets: Assets
+  let _assets: Assets = []
 
   function findComponent(assets: Assets, name: string): DefineComponent {
     const asset = assets.find((asset) => {

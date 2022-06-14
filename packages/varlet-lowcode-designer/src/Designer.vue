@@ -13,8 +13,8 @@ const presetAssets = [
   },
 ]
 
-const schema = shallowRef()
-const assets = shallowRef()
+const schema = shallowRef(lowCode.schemaManager.exportSchema())
+const assets = shallowRef(lowCode.assetsManager.exportAssets())
 
 const container = ref<HTMLIFrameElement>()
 let renderer: any

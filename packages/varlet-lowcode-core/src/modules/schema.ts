@@ -1,4 +1,5 @@
 import { isArray, isPlainObject, removeItem, removePrivateProperty } from '../shared'
+import { v4 as uuid } from 'uuid'
 
 export interface SchemaManager {
   createExpressionBinding(expression: string): SchemaNodeBinding
@@ -64,7 +65,10 @@ export interface SchemaPageNode extends SchemaNode {
 export type SchemaNodeVisitor = (schemaNode: SchemaNode, schemaNodeSiblings: SchemaNode[] | null) => boolean | void
 
 export function createSchemaManager(): SchemaManager {
-  let _schema: SchemaPageNode
+  let _schema: SchemaPageNode = {
+    id: uuid(),
+    name: BuiltInSchemaNodeNames.PAGE,
+  }
 
   function cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T {
     return JSON.parse(JSON.stringify(schemaNode))

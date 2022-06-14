@@ -1,5 +1,5 @@
 export default {
   name: 'Card',
   description: 'A varlet card component',
-  slots: ['default', 'title', 'description'],
+  slots: ['image', 'title', 'subtitle', 'description', 'content', 'extra', 'close-button'],
 }

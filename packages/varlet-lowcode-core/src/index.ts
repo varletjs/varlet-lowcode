@@ -1,6 +1,7 @@
 import schemaManager, { SchemaPageNode, SchemaManager } from './modules/schema'
 import assetsManager, { Assets, AssetsManager } from './modules/assets'
 import eventsManager, { EventManager } from './modules/events'
+import pluginsManager, { PluginsManager } from './modules/plugins'
 
 export enum BuiltInEvents {
   SCHEMA_CHANGE = 'schema-change',
@@ -11,6 +12,7 @@ export type LowCode = {
   schemaManager: SchemaManager
   assetsManager: AssetsManager
   eventsManager: EventManager
+  pluginsManager: PluginsManager
 }
 
 const originImportSchema = schemaManager.importSchema
@@ -36,6 +38,7 @@ export const lowCode: LowCode = {
   schemaManager,
   assetsManager,
   eventsManager,
+  pluginsManager,
 }
 
 export default lowCode
