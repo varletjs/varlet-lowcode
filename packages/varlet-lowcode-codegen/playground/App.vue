@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Designer from '../src/Designer'
+import Codegen from '../src/Codegen'
 </script>
 
 <template>
-  <designer />
+  <codegen />
 </template>

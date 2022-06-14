@@ -11,12 +11,22 @@ export interface AssetProfile {
   materials: AssetProfileMaterial[]
 }
 
+export interface AssetProfileMaterialCodegen {
+  name: string
+}
+
+export interface AssetProfileMaterialSlot {
+  name: string
+  hasSlotProps: boolean
+}
+
 export interface AssetProfileMaterial {
   name: string
   description?: string
   image?: string
   props?: any[]
-  slots?: string[]
+  slots?: AssetProfileMaterialSlot[]
+  codegen: AssetProfileMaterialCodegen
 }
 
 export type Assets = Asset[]

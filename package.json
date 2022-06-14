@@ -28,6 +28,8 @@
       "packages/varlet-lowcode-renderer/lib/**",
       "packages/varlet-lowcode-renderer/public/**",
       "packages/varlet-lowcode-designer/public/**",
+      "packages/varlet-lowcode-dnd/public/**",
+      "packages/varlet-lowcode-codegen/public/**",
       "packages/varlet-lowcode-cli/lib/**"
     ],
     "rules": {

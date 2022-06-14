@@ -1,5 +1,5 @@
 {
-  "name": "@varlet/lowcode-designer",
+  "name": "@varlet/lowcode-codegen",
   "version": "0.0.0",
   "main": "lib/varlet-lowcode-designer.es.js",
   "module": "lib/varlet-lowcode-designer.es.js",
@@ -17,13 +17,11 @@
     "preview": "varlet-lowcode-cli preview"
   },
   "dependencies": {
-    "@varlet/lowcode-renderer": "workspace:*",
     "@varlet/lowcode-core": "workspace: *",
-    "uuid": "^8.3.2"
+    "@varlet/ui": "latest"
   },
   "devDependencies": {
     "@varlet/lowcode-cli": "workspace: *",
-    "@types/uuid": "^8.3.4",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",

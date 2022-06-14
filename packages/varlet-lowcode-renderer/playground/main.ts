@@ -1,7 +1,7 @@
+import Renderer from '../src/Renderer'
 import { createApp } from 'vue'
 import { v4 as uuid } from 'uuid'
-import lowCode, { BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
-import Renderer from '../src/Renderer'
+import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 
 ;
 
@@ -213,7 +213,7 @@ import Renderer from '../src/Renderer'
     },
   }
 
-  await lowCode.assetsManager.loadResources(assets, document)
+  await assetsManager.loadResources(assets, document)
 
   createApp(Renderer, {
     schema,

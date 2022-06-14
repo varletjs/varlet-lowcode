@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import lowCode, { BuiltInEvents, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import {
+  BuiltInEvents,
+  BuiltInSchemaNodeBindingTypes,
+  BuiltInSchemaNodeNames,
+  schemaManager,
+  assetsManager,
+  eventsManager,
+} from '@varlet/lowcode-core'
 import { onMounted, ref, shallowRef } from 'vue'
 import { v4 as uuid } from 'uuid'
 
@@ -13,14 +20,14 @@ const presetAssets = [
   },
 ]
 
-const schema = shallowRef(lowCode.schemaManager.exportSchema())
-const assets = shallowRef(lowCode.assetsManager.exportAssets())
+const schema = shallowRef(schemaManager.exportSchema())
+const assets = shallowRef(assetsManager.exportAssets())
 
 const container = ref<HTMLIFrameElement>()
 let renderer: any
 let iframeElement: HTMLIFrameElement | null
 
-lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
+eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
   const oldSchema = schema.value
 
   schema.value = newSchema
@@ -34,7 +41,7 @@ lowCode.eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
   }
 })
 
-lowCode.eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
+eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
   assets.value = newAssets
 
   if (renderer) {
@@ -42,7 +49,7 @@ lowCode.eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
   }
 })
 
-lowCode.schemaManager.importSchema({
+schemaManager.importSchema({
   id: uuid(),
   name: BuiltInSchemaNodeNames.PAGE,
   code: 'function setup() { return { count: 1 } }',
@@ -75,7 +82,7 @@ lowCode.schemaManager.importSchema({
   },
 })
 
-lowCode.assetsManager.importAssets([
+assetsManager.importAssets([
   {
     profile: 'VarletLowcodeProfile',
     resources: [
@@ -103,7 +110,7 @@ async function mountRenderer() {
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
   const mergedAssets = [...presetAssets, ...assets.value]
-  await lowCode.assetsManager.loadResources(mergedAssets, iframeElement!.contentDocument!)
+  await assetsManager.loadResources(mergedAssets, iframeElement!.contentDocument!)
 
   renderer = iframeWindow.VarletLowcodeRenderer.default
 
@@ -119,7 +126,7 @@ async function mountRenderer() {
 onMounted(async () => {
   await mountRenderer()
   setTimeout(() => {
-    lowCode.schemaManager.importSchema({
+    schemaManager.importSchema({
       id: uuid(),
       name: BuiltInSchemaNodeNames.PAGE,
       code: 'function setup() { return { count: 2 } }',

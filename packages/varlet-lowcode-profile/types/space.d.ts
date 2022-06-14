@@ -1,5 +1,4 @@
-declare const _default: {
-    name: string;
-    description: string;
-};
-export default _default;
+import { AssetProfileMaterial } from '@varlet/lowcode-core'
+
+declare const _default: AssetProfileMaterial
+export default _default

@@ -34,7 +34,7 @@ export type SchemaNodeProps = Record<string, SchemaNodeBinding>
 export type SchemaNodeBinding = any
 
 export interface SchemaNodeSlot {
-  children?: (SchemaNode | SchemaTextNode)[]
+  children: (SchemaNode | SchemaTextNode)[]
   _slotProps?: Record<string, any>
 }
 

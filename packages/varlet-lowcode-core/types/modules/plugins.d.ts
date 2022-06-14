@@ -18,8 +18,8 @@ export interface SelectorPlugin {
   readonly component: DefineComponent
 }
 export interface PluginsManager {
-  useSkeletonPlugin(skeletonPlugin: SkeletonPlugin): void
-  useSelectorPlugin(selectorPlugin: SelectorPlugin): void
+  useSkeletonPlugin(skeletonPlugin: SkeletonPlugin): PluginsManager
+  useSelectorPlugin(selectorPlugin: SelectorPlugin): PluginsManager
   exportSkeletonPlugins(): SkeletonPlugin[]
   exportSelectorPlugins(): SelectorPlugin[]
 }

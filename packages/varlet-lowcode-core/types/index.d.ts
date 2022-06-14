@@ -1,20 +1,13 @@
-import { SchemaManager } from './modules/schema'
-import { AssetsManager } from './modules/assets'
-import { EventManager } from './modules/events'
-import { PluginsManager } from './modules/plugins'
+import schemaManager from './modules/schema'
+import assetsManager from './modules/assets'
+import eventsManager from './modules/events'
+import pluginsManager from './modules/plugins'
 
 export declare enum BuiltInEvents {
   SCHEMA_CHANGE = 'schema-change',
   ASSETS_CHANGE = 'assets-change',
 }
-export declare type LowCode = {
-  schemaManager: SchemaManager
-  assetsManager: AssetsManager
-  eventsManager: EventManager
-  pluginsManager: PluginsManager
-}
-export declare const lowCode: LowCode
-export default lowCode
+export { schemaManager, assetsManager, eventsManager, pluginsManager }
 export * from './modules/schema'
 export * from './modules/assets'
 export * from './modules/events'

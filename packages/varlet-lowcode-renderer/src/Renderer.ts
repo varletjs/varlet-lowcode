@@ -12,7 +12,8 @@ import {
   onBeforeUnmount,
   onUnmounted,
 } from 'vue'
-import lowCode, {
+import {
+  assetsManager,
   BuiltInSchemaNodeNames,
   BuiltInSchemaNodeBindingTypes,
   SchemaNodeSlot,
@@ -124,7 +125,7 @@ export default defineComponent({
     }
 
     function getComponent(schemaNodeName: string) {
-      return lowCode.assetsManager.findComponent(props.assets, schemaNodeName)
+      return assetsManager.findComponent(props.assets, schemaNodeName)
     }
 
     function getPropsBinding(schemaNode: SchemaNode) {

@@ -19,7 +19,7 @@ export declare enum BuiltInSchemaNodeBindingTypes {
 export declare type SchemaNodeProps = Record<string, SchemaNodeBinding>
 export declare type SchemaNodeBinding = any
 export interface SchemaNodeSlot {
-  children?: (SchemaNode | SchemaTextNode)[]
+  children: (SchemaNode | SchemaTextNode)[]
   _slotProps?: Record<string, any>
 }
 export interface SchemaNode {

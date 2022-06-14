@@ -8,12 +8,20 @@ export interface AssetProfile {
   library: string
   materials: AssetProfileMaterial[]
 }
+export interface AssetProfileMaterialCodegen {
+  name: string
+}
+export interface AssetProfileMaterialSlot {
+  name: string
+  hasSlotProps: boolean
+}
 export interface AssetProfileMaterial {
   name: string
   description?: string
   image?: string
   props?: any[]
-  slots?: string[]
+  slots?: AssetProfileMaterialSlot[]
+  codegen: AssetProfileMaterialCodegen
 }
 export declare type Assets = Asset[]
 export interface AssetsManager {
