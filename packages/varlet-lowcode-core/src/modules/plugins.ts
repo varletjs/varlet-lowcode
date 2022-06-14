@@ -10,7 +10,7 @@ export enum SkeletonLayouts {
 
 export interface SkeletonPlugin {
   readonly name: string
-  readonly layout: 'header-left' | 'header-right' | 'header-center' | 'sidebar-top' | 'sidebar-bottom'
+  readonly layout: SkeletonLayouts
   readonly component: DefineComponent
   readonly icon?: string | DefineComponent
 }
