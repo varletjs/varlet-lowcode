@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button as VarButton } from '@varlet/ui'
-import { schemaManager, eventsManager, assetsManager, BuiltInEvents } from '@varlet/lowcode-core'
+import { schemaManager, eventsManager, assetsManager, BuiltInEvents, AssetProfileMaterial } from '@varlet/lowcode-core'
 import '@varlet/ui/es/button/style/index.js'
 import { isArray, isPlainObject, isString, kebabCase } from './shared'
 import type { SchemaNode, SchemaPageNode, Assets, SchemaNodeSlot } from '@varlet/lowcode-core'
@@ -20,7 +20,7 @@ const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
 }
 
-const convertScopedVariable = (value: string) => {
+const convertVariable = (value: string) => {
   return value
     .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
     .replace(/\$index\.(.+)(?![.\[])/g, '$index_$1')
@@ -28,6 +28,8 @@ const convertScopedVariable = (value: string) => {
     .replace(/\$item\.(.+)(?![.\[])/g, '$item_$1')
     .replace(/\$slotProps\[['"](.+)['"]\]/g, '$slotProps_$1')
     .replace(/\$slotProps\.(.+)(?![.\[])/g, '$slotProps_$1')
+    .replace(/\.value/g, '')
+    .replace(/\[['"]value['"]\]/g, '')
 }
 
 const convertEventName = (key: string) => {
@@ -43,7 +45,7 @@ const convertEventName = (key: string) => {
 const genProps = (schemaNode: SchemaNode): string => {
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
     if (schemaManager.isExpressionBinding(value)) {
-      propsString += ` ${convertEventName(key)}="${convertScopedVariable(value.value)}"\n`
+      propsString += ` ${convertEventName(key)}="${convertVariable(value.value)}"\n`
 
       return propsString
     }
@@ -78,7 +80,7 @@ const genCondition = (schemaNode: SchemaNode): string => {
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.if)) {
-    return `v-if="${convertScopedVariable(schemaNode.if.value)}"`
+    return `v-if="${convertVariable(schemaNode.if.value)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.if)) {
@@ -102,15 +104,15 @@ const genLoop = (schemaNode: SchemaNode): string => {
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.for)) {
-    return `v-for="$item_${schemaNode.id} in ${convertScopedVariable(schemaNode.if.value)}"`
+    return `v-for="$item_${schemaNode.id} in ${convertVariable(schemaNode.for.value)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.for)) {
-    return `v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.if.value)}"`
+    return `v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.for.value)}"`
   }
 
   if (isArray(schemaNode.for)) {
-    return `v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.if)}"`
+    return `v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.for)}"`
   }
 
   if (isString(schemaNode.for)) {
@@ -120,43 +122,43 @@ const genLoop = (schemaNode: SchemaNode): string => {
   return `v-for="$item_${schemaNode.id} in ${schemaNode.for}"`
 }
 
-const genSlots = (schemaNodeSlots: Record<string, SchemaNodeSlot>, schemaNode: SchemaNode) => {
+const genSlots = (
+  schemaNodeSlots: Record<string, SchemaNodeSlot>,
+  schemaNode: SchemaNode,
+  material: AssetProfileMaterial
+) => {
   return Object.entries(schemaNodeSlots)
     .map(([slotName, slot]) => {
-      if (slotName === 'default') {
-        return slot.children.map(genSchemaNode).join('\n')
-      } 
-        const slotPropsVariable = `$slotProps_${schemaNode.id}`
+      const hasSlotProps = material.slots?.find((slot) => slot.name === slotName)?.hasSlotProps ?? false
+      const slotPropsVariable = hasSlotProps ? `="$slotProps_${schemaNode.id}"` : ''
 
-        return `\
-<template #${slotName}="${slotPropsVariable}">
+      if (slotName === 'default' && !hasSlotProps) {
+        return slot.children.map(genSchemaNode).join('\n')
+      }
+
+      return `\
+<template #${slotName}${slotPropsVariable}>
   ${slot.children.map(genSchemaNode).join('\n')}
 </template>
 `
-      
     })
     .join('\n')
 }
 
 const genSchemaNode = (schemaNode: SchemaNode): string => {
-  if (!schemaNode.slots) {
-    return ''
+  if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots?.default.children)) {
+    return schemaNode.slots!.default.children.map(genSchemaNode).join('\n')
   }
 
-  if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots.default.children)) {
-    return schemaNode.slots.default.children.map(genSchemaNode).join('\n')
-  }
-
-  if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots.default.children)) {
+  if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots?.default.children)) {
     return ''
   }
 
   if (schemaManager.isSchemaTextNode(schemaNode)) {
     if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `{{ ${convertScopedVariable(schemaNode.textContent.value)} }}`
-    } 
-      return schemaNode.textContent
-    
+      return `{{ ${convertVariable(schemaNode.textContent.value)} }}`
+    }
+    return schemaNode.textContent
   }
 
   const material = assetsManager.findMaterial(assets, schemaNode.name)
@@ -168,7 +170,8 @@ const genSchemaNode = (schemaNode: SchemaNode): string => {
 
   return `  <${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)}>${genSlots(
     schemaNode.slots,
-    schemaNode
+    schemaNode,
+    material
   )}</${name}>`
 }
 
@@ -178,8 +181,6 @@ const codegen = () => {
   <div class="varlet-low-code-page">
     ${genSchemaNode(schema)}
   </div>
-
-  <var-button></var-button>
 </template>
 `)
 }
