@@ -15,6 +15,11 @@ module.exports = {
             'lib/varlet-lowcode-profile.iife.js',
             '../varlet-lowcode-renderer/public/varlet-lowcode-profile.iife.js'
           )
+
+          require('fs').copyFileSync(
+            'lib/varlet-lowcode-profile.iife.js',
+            '../varlet-lowcode-codegen/public/varlet-lowcode-profile.iife.js'
+          )
         }
       },
     },

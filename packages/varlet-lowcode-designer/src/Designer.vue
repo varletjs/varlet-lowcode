@@ -8,7 +8,6 @@ import {
   eventsManager,
 } from '@varlet/lowcode-core'
 import { onMounted, ref, shallowRef } from 'vue'
-import { v4 as uuid } from 'uuid'
 
 const presetAssets = [
   {
@@ -50,14 +49,14 @@ eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
 })
 
 schemaManager.importSchema({
-  id: uuid(),
+  id: schemaManager.generateId(),
   name: BuiltInSchemaNodeNames.PAGE,
   code: 'function setup() { return { count: 1 } }',
   slots: {
     default: {
       children: [
         {
-          id: uuid(),
+          id: schemaManager.generateId(),
           props: {
             type: 'primary',
           },
@@ -66,12 +65,9 @@ schemaManager.importSchema({
             default: {
               children: [
                 {
-                  id: uuid(),
+                  id: schemaManager.generateId(),
                   name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: {
-                    type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                    value: 'count',
-                  },
+                  textContent: schemaManager.createExpressionBinding('count'),
                 },
               ],
             },
@@ -127,14 +123,14 @@ onMounted(async () => {
   await mountRenderer()
   setTimeout(() => {
     schemaManager.importSchema({
-      id: uuid(),
+      id: schemaManager.generateId(),
       name: BuiltInSchemaNodeNames.PAGE,
       code: 'function setup() { return { count: 2 } }',
       slots: {
         default: {
           children: [
             {
-              id: uuid(),
+              id: schemaManager.generateId(),
               props: {
                 type: 'success',
               },
@@ -143,12 +139,9 @@ onMounted(async () => {
                 default: {
                   children: [
                     {
-                      id: uuid(),
+                      id: schemaManager.generateId(),
                       name: BuiltInSchemaNodeNames.TEXT,
-                      textContent: {
-                        type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                        value: 'count',
-                      },
+                      textContent: schemaManager.createExpressionBinding('count'),
                     },
                   ],
                 },

@@ -1,7 +1,17 @@
-import { isArray, isPlainObject, removeItem, removePrivateProperty } from '../shared'
+import { isArray, isPlainObject, removeHyphen, removeItem, removePrivateProperty } from '../shared'
 import { v4 as uuid } from 'uuid'
 
 export interface SchemaManager {
+  isSchemaPageNode(schemaNode: unknown): schemaNode is SchemaPageNode
+
+  isSchemaTextNode(schemaNode: unknown): schemaNode is SchemaTextNode
+
+  isExpressionBinding(value: unknown): boolean
+
+  generateId(): string
+
+  isObjectBinding(value: unknown): boolean
+
   createExpressionBinding(expression: string): SchemaNodeBinding
 
   createObjectBinding(record: Record<string, any>): SchemaNodeBinding
@@ -68,6 +78,26 @@ export function createSchemaManager(): SchemaManager {
   let _schema: SchemaPageNode = {
     id: uuid(),
     name: BuiltInSchemaNodeNames.PAGE,
+  }
+
+  function isSchemaPageNode(schemaNode: unknown): schemaNode is SchemaPageNode {
+    return (schemaNode as SchemaPageNode).name === BuiltInSchemaNodeNames.PAGE
+  }
+
+  function isSchemaTextNode(schemaNode: unknown): schemaNode is SchemaTextNode {
+    return (schemaNode as SchemaTextNode).name === BuiltInSchemaNodeNames.TEXT
+  }
+
+  function isExpressionBinding(value: unknown): boolean {
+    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING
+  }
+
+  function isObjectBinding(value: unknown): boolean {
+    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.OBJECT_BINDING
+  }
+
+  function generateId() {
+    return removeHyphen(uuid())
   }
 
   function cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T {
@@ -159,20 +189,22 @@ export function createSchemaManager(): SchemaManager {
   }
 
   return {
-    createExpressionBinding,
+    generateId,
 
+    isSchemaPageNode,
+    isSchemaTextNode,
+    isExpressionBinding,
+    isObjectBinding,
+
+    createExpressionBinding,
     createObjectBinding,
 
     cloneSchemaNode,
-
     visitSchemaNode,
-
     findSchemaNodeById,
-
     removeSchemaNodeById,
 
     importSchema,
-
     exportSchema,
   }
 }

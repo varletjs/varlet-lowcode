@@ -19,3 +19,7 @@ export const removeItem = (arr: Array<unknown>, item: unknown) => {
     }
   }
 }
+
+export const removeHyphen = (str: string) => {
+  return str.replace(/-/g, '')
+}

@@ -1,7 +1,6 @@
 import RendererComponent from './Renderer'
 import { createApp, h, ShallowRef, shallowRef } from 'vue'
-import { BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
-import { v4 as uuid } from 'uuid'
+import { BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
 import type { App } from 'vue'
 import type { Assets, SchemaPageNode } from '@varlet/lowcode-core'
 
@@ -13,7 +12,7 @@ type Renderer = typeof RendererComponent & {
 }
 
 const schema = shallowRef<SchemaPageNode>({
-  id: uuid(),
+  id: schemaManager.generateId(),
   name: BuiltInSchemaNodeNames.PAGE,
 })
 

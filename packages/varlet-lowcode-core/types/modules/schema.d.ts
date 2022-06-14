@@ -1,4 +1,9 @@
 export interface SchemaManager {
+  isSchemaPageNode(schemaNode: unknown): schemaNode is SchemaPageNode
+  isSchemaTextNode(schemaNode: unknown): schemaNode is SchemaTextNode
+  isExpressionBinding(value: unknown): boolean
+  generateId(): string
+  isObjectBinding(value: unknown): boolean
   createExpressionBinding(expression: string): SchemaNodeBinding
   createObjectBinding(record: Record<string, any>): SchemaNodeBinding
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]): void

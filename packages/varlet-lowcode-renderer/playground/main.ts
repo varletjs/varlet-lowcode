@@ -1,7 +1,11 @@
 import Renderer from '../src/Renderer'
 import { createApp } from 'vue'
-import { v4 as uuid } from 'uuid'
-import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import {
+  assetsManager,
+  schemaManager,
+  BuiltInSchemaNodeBindingTypes,
+  BuiltInSchemaNodeNames,
+} from '@varlet/lowcode-core'
 
 ;
 
@@ -61,12 +65,12 @@ import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } 
   }
 `
 
-  const cardId = uuid()
-  const countdownId = uuid()
-  const countdown2Id = uuid()
+  const cardId = schemaManager.generateId()
+  const countdownId = schemaManager.generateId()
+  const countdown2Id = schemaManager.generateId()
 
   const schema = {
-    id: uuid(),
+    id: schemaManager.generateId(),
     name: BuiltInSchemaNodeNames.PAGE,
     functions: ['handleInsert', 'handleConfirm'],
     variables: ['show', 'inputValue', 'todoItems'],
@@ -75,38 +79,25 @@ import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } 
       default: {
         children: [
           {
-            id: uuid(),
+            id: schemaManager.generateId(),
             name: 'Dialog.Component',
             props: {
-              show: {
-                type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                value: 'show.value',
-              },
-              'onUpdate:show': {
-                type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                value: '() => { show.value = false }',
-              },
-              onBeforeClose: {
-                type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                value: 'handleConfirm',
-              },
+              show: schemaManager.createExpressionBinding('show.value'),
+              'onUpdate:show': schemaManager.createExpressionBinding('() => { show.value = false }'),
+              onBeforeClose: schemaManager.createExpressionBinding('handleConfirm'),
             },
             slots: {
               default: {
                 children: [
                   {
-                    id: uuid(),
+                    id: schemaManager.generateId(),
                     name: 'Input',
                     props: {
                       placeholder: '下一步要做什么?',
-                      modelValue: {
-                        type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                        value: 'inputValue.value',
-                      },
-                      'onUpdate:modelValue': {
-                        type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                        value: '(value) => { inputValue.value = value }',
-                      },
+                      modelValue: schemaManager.createExpressionBinding('inputValue.value'),
+                      'onUpdate:modelValue': schemaManager.createExpressionBinding(
+                        '(value) => { inputValue.value = value }'
+                      ),
                     },
                   },
                 ],
@@ -114,7 +105,7 @@ import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } 
             },
           },
           {
-            id: uuid(),
+            id: schemaManager.generateId(),
             name: 'Space',
             props: {
               direction: 'column',
@@ -126,33 +117,24 @@ import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } 
                   {
                     id: cardId,
                     name: 'Card',
-                    for: {
-                      type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                      value: 'todoItems',
-                    },
+                    for: schemaManager.createExpressionBinding('todoItems'),
                     props: {
                       ripple: true,
-                      description: {
-                        type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                        value: `$item['${cardId}'].content`,
-                      },
+                      description: schemaManager.createExpressionBinding(`$item['${cardId}'].content`),
                     },
                   },
                   {
-                    id: uuid(),
+                    id: schemaManager.generateId(),
                     name: 'Button',
                     props: {
                       type: 'primary',
-                      onClick: {
-                        type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                        value: 'handleInsert',
-                      },
+                      onClick: schemaManager.createExpressionBinding('handleInsert'),
                     },
                     slots: {
                       default: {
                         children: [
                           {
-                            id: uuid(),
+                            id: schemaManager.generateId(),
                             name: BuiltInSchemaNodeNames.TEXT,
                             textContent: 'Insert',
                           },
@@ -171,12 +153,9 @@ import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } 
                       default: {
                         children: [
                           {
-                            id: uuid(),
+                            id: schemaManager.generateId(),
                             name: BuiltInSchemaNodeNames.TEXT,
-                            textContent: {
-                              type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                              value: `$slotProps['${countdownId}']`,
-                            },
+                            textContent: schemaManager.createExpressionBinding(`$slotProps['${countdownId}']`),
                           },
                           {
                             id: countdown2Id,
@@ -189,12 +168,9 @@ import { assetsManager, BuiltInSchemaNodeBindingTypes, BuiltInSchemaNodeNames } 
                               default: {
                                 children: [
                                   {
-                                    id: uuid(),
+                                    id: schemaManager.generateId(),
                                     name: BuiltInSchemaNodeNames.TEXT,
-                                    textContent: {
-                                      type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
-                                      value: `$slotProps['${countdown2Id}']`,
-                                    },
+                                    textContent: schemaManager.createExpressionBinding(`$slotProps['${countdown2Id}']`),
                                   },
                                 ],
                               },
