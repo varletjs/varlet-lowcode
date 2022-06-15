@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= title %></title>
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link href="<%= logo %>" rel="icon" type="image/png" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+        name="viewport" />
+  <meta property="og:title" content="<%= title %>" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="<%= logo %>" />
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js"></script>
+<script src="./varlet-lowcode-core.iife.js"></script>
+<script type="module" src="/main.ts"></script>
+</body>
+</html>

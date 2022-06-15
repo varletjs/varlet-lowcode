@@ -5,6 +5,7 @@ const destPaths = [
   '../varlet-lowcode-renderer/public',
   '../varlet-lowcode-dnd/public',
   '../varlet-lowcode-codegen/public',
+  '../varlet-lowcode-skeleton/public',
 ]
 
 module.exports = {

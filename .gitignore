@@ -35,4 +35,6 @@ packages/varlet-lowcode-designer/public/varlet-lowcode-profile.iife.js
 packages/varlet-lowcode-codegen/public/varlet-lowcode-core.iife.js
 packages/varlet-lowcode-codegen/public/varlet-lowcode-profile.iife.js
 
+packages/varlet-lowcode-skeleton/public/varlet-lowcode-core.iife.js
+
 packages/varlet-lowcode-profile/lib
