@@ -3,11 +3,13 @@ import type { DefineComponent } from 'vue'
 
 export interface Asset {
   profile?: string
-  resources?: string[]
+  resources: string[]
 }
 
 export interface AssetProfile {
   library: string
+  packageName: string
+  packageVersion: string
   materials: AssetProfileMaterial[]
 }
 
@@ -32,9 +34,13 @@ export interface AssetProfileMaterial {
 export type Assets = Asset[]
 
 export interface AssetsManager {
-  findComponent(assets: Assets, name: string): DefineComponent
+  findComponent(assets: Assets, name: string, library: string): DefineComponent
 
-  findMaterial(assets: Assets, name: string): AssetProfileMaterial
+  findMaterial(assets: Assets, name: string, library: string): AssetProfileMaterial
+
+  findProfile(assets: Assets, name: string, library: string): AssetProfile
+
+  getResources(assets: Assets): string[]
 
   loadResources(assets: Assets, document: Document): Promise<void>
 
@@ -46,19 +52,21 @@ export interface AssetsManager {
 export function createAssetsManager(): AssetsManager {
   let _assets: Assets = []
 
-  function findComponent(assets: Assets, name: string): DefineComponent {
+  function findComponent(assets: Assets, name: string, library?: string): DefineComponent {
     const asset = assets.find((asset) => {
       if (!asset.profile) {
         return false
       }
 
       const assetProfile = get(window, asset.profile) as AssetProfile
+      const matchedName = assetProfile.materials.some((material) => material.name === name)
+      const matchedLibrary = library === assetProfile.library
 
-      return assetProfile.materials.some((material) => material.name === name)
+      return matchedName && matchedLibrary
     })
 
     if (!asset) {
-      throw new Error(`Component ${name} cannot found`)
+      throw new Error(`Component not found by name: ${name} and library: ${library}`)
     }
 
     const profileLibrary = get(window, `${asset.profile}.library`)
@@ -66,7 +74,7 @@ export function createAssetsManager(): AssetsManager {
     return get(window, `${profileLibrary}.${name}`)
   }
 
-  function findMaterial(assets: Assets, name: string): AssetProfileMaterial {
+  function findMaterial(assets: Assets, name: string, library: string): AssetProfileMaterial {
     for (const asset of assets) {
       if (!asset.profile) {
         continue
@@ -74,14 +82,44 @@ export function createAssetsManager(): AssetsManager {
 
       const assetProfile = get(window, asset.profile) as AssetProfile
 
-      for (const material of assetProfile.materials) {
-        if (material.name === name) {
-          return material
+      if (assetProfile.library === library) {
+        for (const material of assetProfile.materials) {
+          if (material.name === name) {
+            return material
+          }
         }
       }
     }
 
-    throw new Error(`Material ${name} cannot found`)
+    throw new Error(`Material not found by name: ${name} and library: ${library}`)
+  }
+
+  function findProfile(assets: Assets, name: string, library: string): AssetProfile {
+    for (const asset of assets) {
+      if (!asset.profile) {
+        continue
+      }
+
+      const assetProfile = get(window, asset.profile) as AssetProfile
+
+      if (assetProfile.library === library) {
+        for (const material of assetProfile.materials) {
+          if (material.name === name) {
+            return assetProfile
+          }
+        }
+      }
+    }
+
+    throw new Error(`Profile not found by name: ${name} and library: ${library}`)
+  }
+
+  function getResources(assets: Assets): string[] {
+    return assets.reduce((resources, asset) => {
+      resources.push(...asset.resources)
+
+      return resources
+    }, [] as string[])
   }
 
   async function loadResources(assets: Assets, document: Document): Promise<void> {
@@ -137,6 +175,10 @@ export function createAssetsManager(): AssetsManager {
     findComponent,
 
     findMaterial,
+
+    findProfile,
+
+    getResources,
 
     loadResources,
 

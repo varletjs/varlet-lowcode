@@ -51,6 +51,7 @@ export interface SchemaNodeSlot {
 export interface SchemaNode {
   id: string
   name: string
+  library?: string
   props?: SchemaNodeProps
   slots?: Record<string, SchemaNodeSlot>
   if?: SchemaNodeBinding

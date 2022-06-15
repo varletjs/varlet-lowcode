@@ -124,8 +124,8 @@ export default defineComponent({
       return value
     }
 
-    function getComponent(schemaNodeName: string) {
-      return assetsManager.findComponent(props.assets, schemaNodeName)
+    function getComponent(schemaNodeName: string, schemaNodeLibrary: string) {
+      return assetsManager.findComponent(props.assets, schemaNodeName, schemaNodeLibrary)
     }
 
     function getPropsBinding(schemaNode: SchemaNode) {
@@ -141,10 +141,18 @@ export default defineComponent({
     function withDesigner(schemaNode: SchemaNode) {
       if (props.mode === 'designer') {
         // TODO: wrap designer component
-        return h(getComponent(schemaNode.name), getPropsBinding(schemaNode), renderSchemaNodeSlots(schemaNode))
+        return h(
+          getComponent(schemaNode.name, schemaNode.library!),
+          getPropsBinding(schemaNode),
+          renderSchemaNodeSlots(schemaNode)
+        )
       }
 
-      return h(getComponent(schemaNode.name), getPropsBinding(schemaNode), renderSchemaNodeSlots(schemaNode))
+      return h(
+        getComponent(schemaNode.name, schemaNode.library!),
+        getPropsBinding(schemaNode),
+        renderSchemaNodeSlots(schemaNode)
+      )
     }
 
     function withCondition(schemaNodes: SchemaNode[]): SchemaNode[] {

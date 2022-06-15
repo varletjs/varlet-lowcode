@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "module": "esnext",
     "target": "es6",
     "strict": true,
     "downlevelIteration": true,
@@ -9,7 +10,8 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "jsx": "preserve",
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client"]
   },
   "include": ["src/**/*"]
 }

@@ -16,12 +16,7 @@ import { InlineConfig, PluginOption } from 'vite'
 import { get } from 'lodash'
 import { resolve } from 'path'
 import { pathExistsSync, readFileSync, removeSync, writeFileSync } from 'fs-extra'
-
-export const camelize = (s: string): string => s.replace(/-(\w)/g, (_: any, p: string) => p.toUpperCase())
-
-export function bigCamelize(str: string): string {
-  return camelize(str).replace(str.charAt(0), str.charAt(0).toUpperCase())
-}
+import { bigCamelize } from '../shared/utils'
 
 export function getEntry() {
   if (pathExistsSync(PLUGIN_TS_ENTRY)) {
@@ -38,6 +33,7 @@ const commonPlugins = [vue(), jsx()]
 export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const host = get(varletLowCodeConfig, 'host')
   const plugins = get(varletLowCodeConfig, 'plugins', [])
+  const define = get(varletLowCodeConfig, 'define', {})
 
   return {
     root: PLAYGROUND_DIR,
@@ -49,6 +45,7 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       host: host === 'localhost' ? '0.0.0.0' : host,
     },
     publicDir: PLAYGROUND_PUBLIC_PATH,
+    define,
     plugins: [
       ...commonPlugins,
       injectHtml({

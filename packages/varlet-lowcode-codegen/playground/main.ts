@@ -1,6 +1,7 @@
 import App from './App.vue'
 import { createApp } from 'vue'
 import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } from '@varlet/lowcode-core'
+
 ;
 
 (async () => {
@@ -15,49 +16,48 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
     },
   ]
 
-  const code = `
-  function setup() {
-    const cache = localStorage.getItem('todo')
-    const show = ref(false)
-    const inputValue = ref('')
-    const todoItems = reactive(cache ? JSON.parse(cache) : [])
+  const code = `\
+function setup() {
+  const cache = localStorage.getItem('todo')
+  const show = ref(false)
+  const inputValue = ref('')
+  const todoItems = reactive(cache ? JSON.parse(cache) : [])
 
-    const handleInsert = () => {
-      inputValue.value = ''
-      show.value = true
-    }
+  const handleInsert = () => {
+    inputValue.value = ''
+    show.value = true
+  }
 
-    const handleConfirm = (action, done) => {
-      if (action === 'confirm') {
-        if (!inputValue.value) {
-          Varlet.Snackbar.warning('输入点什么吧???')
-          return
-        }
-
-        todoItems.push({
-          id: Date.now(),
-          content: inputValue.value
-        })
-
-        localStorage.setItem('todo', JSON.stringify(todoItems))
-
-        Varlet.Snackbar.success('别光写，要做，OK???')
-
-        done()
+  const handleConfirm = (action, done) => {
+    if (action === 'confirm') {
+      if (!inputValue.value) {
+        Varlet.Snackbar.warning('输入点什么吧???')
+        return
       }
+
+      todoItems.push({
+        id: Date.now(),
+        content: inputValue.value
+      })
+
+      localStorage.setItem('todo', JSON.stringify(todoItems))
+
+      Varlet.Snackbar.success('别光写，要做，OK???')
 
       done()
     }
 
-    return {
-      show,
-      inputValue,
-      todoItems,
-      handleInsert,
-      handleConfirm,
-    }
+    done()
   }
-`
+
+  return {
+    show,
+    inputValue,
+    todoItems,
+    handleInsert,
+    handleConfirm,
+  }
+}`
 
   const cardId = schemaManager.generateId()
   const countdownId = schemaManager.generateId()
@@ -75,6 +75,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
           {
             id: schemaManager.generateId(),
             name: 'Dialog.Component',
+            library: 'Varlet',
             props: {
               show: schemaManager.createExpressionBinding('show.value'),
               'onUpdate:show': schemaManager.createExpressionBinding('() => { show.value = false }'),
@@ -86,6 +87,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
                   {
                     id: schemaManager.generateId(),
                     name: 'Input',
+                    library: 'Varlet',
                     props: {
                       placeholder: '下一步要做什么?',
                       modelValue: schemaManager.createExpressionBinding('inputValue.value'),
@@ -101,6 +103,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
           {
             id: schemaManager.generateId(),
             name: 'Space',
+            library: 'Varlet',
             props: {
               direction: 'column',
               size: [16, 16],
@@ -111,6 +114,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
                   {
                     id: cardId,
                     name: 'Card',
+                    library: 'Varlet',
                     for: schemaManager.createExpressionBinding('todoItems'),
                     props: {
                       ripple: true,
@@ -120,6 +124,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
                   {
                     id: schemaManager.generateId(),
                     name: 'Button',
+                    library: 'Varlet',
                     props: {
                       type: 'primary',
                       onClick: schemaManager.createExpressionBinding('handleInsert'),
@@ -139,6 +144,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
                   {
                     id: countdownId,
                     name: 'Countdown',
+                    library: 'Varlet',
                     for: 3,
                     props: {
                       time: 99999,
@@ -154,6 +160,7 @@ import { BuiltInSchemaNodeNames, schemaManager, assetsManager, SchemaPageNode } 
                           {
                             id: countdown2Id,
                             name: 'Countdown',
+                            library: 'Varlet',
                             for: 3,
                             props: {
                               time: 9999999999,

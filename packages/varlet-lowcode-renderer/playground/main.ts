@@ -81,6 +81,7 @@ import {
           {
             id: schemaManager.generateId(),
             name: 'Dialog.Component',
+            library: 'Varlet',
             props: {
               show: schemaManager.createExpressionBinding('show.value'),
               'onUpdate:show': schemaManager.createExpressionBinding('() => { show.value = false }'),
@@ -92,6 +93,7 @@ import {
                   {
                     id: schemaManager.generateId(),
                     name: 'Input',
+                    library: 'Varlet',
                     props: {
                       placeholder: '下一步要做什么?',
                       modelValue: schemaManager.createExpressionBinding('inputValue.value'),
@@ -107,6 +109,7 @@ import {
           {
             id: schemaManager.generateId(),
             name: 'Space',
+            library: 'Varlet',
             props: {
               direction: 'column',
               size: [16, 16],
@@ -117,6 +120,7 @@ import {
                   {
                     id: cardId,
                     name: 'Card',
+                    library: 'Varlet',
                     for: schemaManager.createExpressionBinding('todoItems'),
                     props: {
                       ripple: true,
@@ -126,6 +130,7 @@ import {
                   {
                     id: schemaManager.generateId(),
                     name: 'Button',
+                    library: 'Varlet',
                     props: {
                       type: 'primary',
                       onClick: schemaManager.createExpressionBinding('handleInsert'),
@@ -145,6 +150,7 @@ import {
                   {
                     id: countdownId,
                     name: 'Countdown',
+                    library: 'Varlet',
                     for: 3,
                     props: {
                       time: 99999,
@@ -160,6 +166,7 @@ import {
                           {
                             id: countdown2Id,
                             name: 'Countdown',
+                            library: 'Varlet',
                             for: 3,
                             props: {
                               time: 9999999999,

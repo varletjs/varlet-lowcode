@@ -9,3 +9,9 @@ export function kebabCase(str: string): string {
   const ret = str.replace(/([A-Z])/g, ' $1').trim()
   return ret.split(' ').join('-').toLowerCase()
 }
+
+export const camelize = (s: string): string => s.replace(/-(\w)/g, (_: any, p: string) => p.toUpperCase())
+
+export function bigCamelize(str: string): string {
+  return camelize(str).replace(str.charAt(0), str.charAt(0).toUpperCase())
+}

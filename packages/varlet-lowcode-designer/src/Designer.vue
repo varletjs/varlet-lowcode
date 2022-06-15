@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   BuiltInEvents,
-  BuiltInSchemaNodeBindingTypes,
   BuiltInSchemaNodeNames,
   schemaManager,
   assetsManager,
@@ -57,10 +56,11 @@ schemaManager.importSchema({
       children: [
         {
           id: schemaManager.generateId(),
+          name: 'Button',
+          library: 'Varlet',
           props: {
             type: 'primary',
           },
-          name: 'Button',
           slots: {
             default: {
               children: [
@@ -131,10 +131,11 @@ onMounted(async () => {
           children: [
             {
               id: schemaManager.generateId(),
+              name: 'Button',
+              library: 'Varlet',
               props: {
                 type: 'success',
               },
-              name: 'Button',
               slots: {
                 default: {
                   children: [

@@ -7,4 +7,8 @@ import space from './space'
 
 export const library = 'Varlet'
 
+export const packageName = '@varlet/ui'
+
+export const packageVersion = 'latest'
+
 export const materials = [button, card, countdown, dialog, input, space]
