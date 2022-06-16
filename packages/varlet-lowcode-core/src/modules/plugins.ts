@@ -13,6 +13,7 @@ export interface SkeletonPlugin {
   readonly layout: SkeletonLayouts
   readonly component: DefineComponent
   readonly icon?: string | DefineComponent
+  readonly label?: string
 }
 
 export interface SelectorPlugin {
