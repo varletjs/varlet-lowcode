@@ -30,11 +30,23 @@
       "packages/varlet-lowcode-skeleton/lib/**",
       "packages/varlet-lowcode-codegen/lib/**",
       "packages/varlet-lowcode-cli/lib/**",
+
       "packages/varlet-lowcode-renderer/public/**",
       "packages/varlet-lowcode-designer/public/**",
       "packages/varlet-lowcode-dnd/public/**",
       "packages/varlet-lowcode-codegen/public/**",
       "packages/varlet-lowcode-skeleton/public/**",
+      "packages/varlet-lowcode-core/public/**",
+      "packages/varlet-lowcode-profile/public/**",
+
+      "packages/varlet-lowcode-renderer/dist/**",
+      "packages/varlet-lowcode-designer/dist/**",
+      "packages/varlet-lowcode-dnd/dist/**",
+      "packages/varlet-lowcode-codegen/dist/**",
+      "packages/varlet-lowcode-skeleton/dist/**",
+      "packages/varlet-lowcode-core/dist/**",
+      "packages/varlet-lowcode-profile/dist/**",
+
       "packages/varlet-lowcode-core/types/**",
       "packages/varlet-lowcode-dnd/types/**",
       "packages/varlet-lowcode-designer/types/**",
