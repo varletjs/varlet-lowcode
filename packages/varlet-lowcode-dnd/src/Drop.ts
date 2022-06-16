@@ -1,70 +1,60 @@
-import { defineComponent, h, ref, VNode } from 'vue'
-import type { PropType, Ref } from 'vue'
+import { DirectiveBinding } from 'vue'
+import type { Directive, Plugin, App } from 'vue'
+import { mergeStyle } from './shared'
 
-export type DropStatus = 'enter' | 'dropped' | 'none'
+interface DropOptions {
+  dropStyle?: CSSStyleDeclaration
+  type?: DataTransfer['dropEffect']
+}
 
-export default defineComponent({
-  name: 'VarletLowDrop',
+interface DropHTMLElement extends HTMLElement {
+  _drop?: DropOptions
+}
 
-  props: {
-    type: {
-      type: String as PropType<DataTransfer['dropEffect']>,
-      default: 'none',
-    },
-    dropStyle: {
-      type: Object as PropType<CSSStyleDeclaration>,
-      default: () => ({}),
-    },
-    defaultSlotRender: {
-      type: Object as PropType<VNode>,
-    },
+function onDropEnter(this: DropHTMLElement, e: DragEvent) {
+  if (e.target !== e.currentTarget) return
+  const _drop = this._drop as DropOptions
+  const { dropStyle } = _drop
+  dropStyle && mergeStyle(this, dropStyle)
+}
+
+function onDragLeave(this: DropHTMLElement, e: DragEvent) {
+  if (e.target !== e.currentTarget) return
+  e.dataTransfer!.dropEffect = 'none'
+}
+
+function onDragOver(this: DropHTMLElement, e: DragEvent) {
+  const _drop = this._drop as DropOptions
+  const { type = 'none' } = _drop
+  e.preventDefault()
+  e.dataTransfer!.dropEffect = type
+}
+
+function onDrop(this: DropHTMLElement, e: DragEvent) {
+  // const data = e.dataTransfer!.getData('text/plain')
+}
+
+function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
+  el._drop = { ...props.value }
+  el.addEventListener('dragenter', onDropEnter, { passive: true })
+  el.addEventListener('dragleave', onDragLeave, { passive: true })
+  el.addEventListener('dragover', onDragOver, { passive: true })
+  el.addEventListener('drop', onDrop, { passive: true })
+}
+
+function unmounted(el: HTMLElement) {
+  el.removeEventListener('dragenter', onDropEnter)
+  el.removeEventListener('dragleave', onDragLeave)
+  el.removeEventListener('dragover', onDragOver)
+  el.removeEventListener('drop', onDrop)
+}
+
+const VarletLowCodeDrop: Directive & Plugin = {
+  mounted,
+  unmounted,
+  install(app: App) {
+    app.directive('drop', this)
   },
+}
 
-  emits: ['dragenter', 'dragover', 'dragleave', 'drop'],
-
-  setup(props, ctx) {
-    const { emit: emits } = ctx
-    const { dropStyle, type, defaultSlotRender } = props
-    const dropStatus: Ref<DropStatus> = ref('none')
-
-    const onDragEnter = (e: DragEvent) => {
-      if (e.target !== e.currentTarget) return
-      dropStatus.value = 'enter'
-      emits('dragenter', e)
-    }
-
-    const onDragLeave = (e: DragEvent) => {
-      if (e.target !== e.currentTarget) return
-      dropStatus.value = 'none'
-      e.dataTransfer!.dropEffect = 'none'
-      emits('dragleave', e)
-    }
-
-    const onDragOver = (e: DragEvent) => {
-      e.preventDefault()
-      e.dataTransfer!.dropEffect = type
-      emits('dragover', e)
-    }
-
-    const onDrop = (e: DragEvent) => {
-      dropStatus.value = 'none'
-      const data = e.dataTransfer!.getData('text/plain')
-      emits('drop', data, e)
-    }
-
-    const defaultSlots = ctx.slots.default ? ctx.slots.default() : [defaultSlotRender || h('div', '可以拖拽到这里哟')]
-
-    return () =>
-      h(
-        'div',
-        {
-          style: dropStyle,
-          onDragLeave,
-          onDragOver,
-          onDragEnter,
-          onDrop,
-        },
-        defaultSlots
-      )
-  },
-})
+export default VarletLowCodeDrop
