@@ -1,93 +1,46 @@
 <script setup lang="ts">
-import {
-  BuiltInEvents,
-  BuiltInSchemaNodeNames,
-  schemaManager,
-  assetsManager,
-  eventsManager,
-} from '@varlet/lowcode-core'
-import { onMounted, ref, shallowRef } from 'vue'
+import { BuiltInEvents, schemaManager, assetsManager, eventsManager } from '@varlet/lowcode-core'
+import { onMounted, ref } from 'vue'
 
 const presetAssets = [
   {
     resources: [
       'https://cdn.jsdelivr.net/npm/vue',
-      './varlet-lowcode-core.iife.js',
-      './varlet-lowcode-renderer.iife.js',
+      // TODO: env config
+      './varlet-lowcode-core.umd.js',
+      './varlet-lowcode-renderer.umd.js',
     ],
   },
 ]
 
-const schema = shallowRef(schemaManager.exportSchema())
-const assets = shallowRef(assetsManager.exportAssets())
+let schema = schemaManager.exportSchema()
+let assets = assetsManager.exportAssets()
 
 const container = ref<HTMLIFrameElement>()
 let renderer: any
 let iframeElement: HTMLIFrameElement | null
 
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
-  const oldSchema = schema.value
+  const oldSchema = schema
 
-  schema.value = newSchema
+  schema = newSchema
 
   if (renderer) {
-    if (oldSchema?.code !== schema.value.code) {
+    if (oldSchema?.code !== schema.code) {
       mountRenderer()
     } else {
-      renderer.schema.value = schema.value
+      renderer.schema.value = schema
     }
   }
 })
 
 eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
-  assets.value = newAssets
+  assets = newAssets
 
   if (renderer) {
     await mountRenderer()
   }
 })
-
-schemaManager.importSchema({
-  id: schemaManager.generateId(),
-  name: BuiltInSchemaNodeNames.PAGE,
-  code: 'function setup() { return { count: 1 } }',
-  slots: {
-    default: {
-      children: [
-        {
-          id: schemaManager.generateId(),
-          name: 'Button',
-          library: 'Varlet',
-          props: {
-            type: 'primary',
-          },
-          slots: {
-            default: {
-              children: [
-                {
-                  id: schemaManager.generateId(),
-                  name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: schemaManager.createExpressionBinding('count'),
-                },
-              ],
-            },
-          },
-        },
-      ],
-    },
-  },
-})
-
-assetsManager.importAssets([
-  {
-    profile: 'VarletLowcodeProfile',
-    resources: [
-      'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
-      'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-      './varlet-lowcode-profile.iife.js',
-    ],
-  },
-])
 
 function mountIframe() {
   iframeElement = container.value!.querySelector('iframe')
@@ -105,7 +58,7 @@ async function mountRenderer() {
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
-  const mergedAssets = [...presetAssets, ...assets.value]
+  const mergedAssets = [...presetAssets, ...assets]
   await assetsManager.loadResources(mergedAssets, iframeElement!.contentDocument!)
 
   renderer = iframeWindow.VarletLowcodeRenderer.default
@@ -114,45 +67,13 @@ async function mountRenderer() {
   app.id = 'app'
   iframeElement!.contentDocument!.body.appendChild(app)
 
-  renderer.schema.value = schema.value
+  renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app')
 }
 
 onMounted(async () => {
   await mountRenderer()
-  setTimeout(() => {
-    schemaManager.importSchema({
-      id: schemaManager.generateId(),
-      name: BuiltInSchemaNodeNames.PAGE,
-      code: 'function setup() { return { count: 2 } }',
-      slots: {
-        default: {
-          children: [
-            {
-              id: schemaManager.generateId(),
-              name: 'Button',
-              library: 'Varlet',
-              props: {
-                type: 'success',
-              },
-              slots: {
-                default: {
-                  children: [
-                    {
-                      id: schemaManager.generateId(),
-                      name: BuiltInSchemaNodeNames.TEXT,
-                      textContent: schemaManager.createExpressionBinding('count'),
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-      },
-    })
-  }, 2000)
 })
 </script>
 

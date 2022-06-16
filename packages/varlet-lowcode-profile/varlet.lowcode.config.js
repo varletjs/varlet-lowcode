@@ -1,3 +1,11 @@
+const { ensureDirSync, copySync } = require('fs-extra')
+
+const destPaths = [
+  '../varlet-lowcode-designer/public',
+  '../varlet-lowcode-renderer/public',
+  '../varlet-lowcode-codegen/public',
+]
+
 module.exports = {
   name: 'varlet-lowcode-profile',
   plugins: [
@@ -6,20 +14,10 @@ module.exports = {
       apply: 'build',
       closeBundle() {
         if (process.env.COMMAND === 'compile') {
-          require('fs').copyFileSync(
-            'lib/varlet-lowcode-profile.iife.js',
-            '../varlet-lowcode-designer/public/varlet-lowcode-profile.iife.js'
-          )
-
-          require('fs').copyFileSync(
-            'lib/varlet-lowcode-profile.iife.js',
-            '../varlet-lowcode-renderer/public/varlet-lowcode-profile.iife.js'
-          )
-
-          require('fs').copyFileSync(
-            'lib/varlet-lowcode-profile.iife.js',
-            '../varlet-lowcode-codegen/public/varlet-lowcode-profile.iife.js'
-          )
+          destPaths.forEach((destPath) => {
+            ensureDirSync(destPath)
+            copySync('lib/varlet-lowcode-profile.umd.js', `${destPath}/varlet-lowcode-profile.umd.js`)
+          })
         }
       },
     },

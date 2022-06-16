@@ -1,7 +1,6 @@
 import { Assets } from '@varlet/lowcode-core'
 import type { PropType, VNode } from 'vue'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
-
 declare const _default: import('vue').DefineComponent<
   {
     mode: {

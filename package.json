@@ -26,11 +26,22 @@
       "packages/varlet-lowcode-dnd/lib/**",
       "packages/varlet-lowcode-designer/lib/**",
       "packages/varlet-lowcode-renderer/lib/**",
+      "packages/varlet-lowcode-profile/lib/**",
+      "packages/varlet-lowcode-skeleton/lib/**",
+      "packages/varlet-lowcode-codegen/lib/**",
+      "packages/varlet-lowcode-cli/lib/**",
       "packages/varlet-lowcode-renderer/public/**",
       "packages/varlet-lowcode-designer/public/**",
       "packages/varlet-lowcode-dnd/public/**",
       "packages/varlet-lowcode-codegen/public/**",
-      "packages/varlet-lowcode-cli/lib/**"
+      "packages/varlet-lowcode-skeleton/public/**",
+      "packages/varlet-lowcode-core/types/**",
+      "packages/varlet-lowcode-dnd/types/**",
+      "packages/varlet-lowcode-designer/types/**",
+      "packages/varlet-lowcode-renderer/types/**",
+      "packages/varlet-lowcode-profile/types/**",
+      "packages/varlet-lowcode-skeleton/types/**",
+      "packages/varlet-lowcode-codegen/types/**"
     ],
     "rules": {
       "no-new-func": "off",

@@ -1,5 +1,4 @@
 import type { DefineComponent } from 'vue'
-
 export interface Asset {
   profile?: string
   resources: string[]

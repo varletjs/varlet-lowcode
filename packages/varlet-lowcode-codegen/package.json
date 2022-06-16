@@ -1,8 +1,8 @@
 {
   "name": "@varlet/lowcode-codegen",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-designer.es.js",
-  "module": "lib/varlet-lowcode-designer.es.js",
+  "main": "lib/varlet-lowcode-codegen.es.js",
+  "module": "lib/varlet-lowcode-codegen.es.js",
   "types": "types/index.d.ts",
   "files": [
     "lib",
@@ -10,25 +10,26 @@
     "tsconfig.json"
   ],
   "scripts": {
-    "dev": "varlet-lowcode-cli dev",
-    "build": "varlet-lowcode-cli build",
     "compile": "varlet-lowcode-cli compile",
     "compile:watch": "varlet-lowcode-cli compile -w",
     "preview": "varlet-lowcode-cli preview"
   },
   "dependencies": {
     "@babel/core": "^7.18.5",
-    "@babel/parser": "^7.18.5",
     "@babel/generator": "^7.18.2",
+    "@babel/parser": "^7.18.5",
+    "@babel/standalone": "^7.18.5",
     "@babel/traverse": "^7.18.5",
     "@babel/types": "^7.18.4",
-    "@babel/standalone": "^7.18.5",
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/ui": "latest",
+    "buffer": "^6.0.3",
     "file-saver": "^2.0.5",
-    "jszip": "^3.6.0"
+    "jszip": "^3.6.0",
+    "rollup-plugin-polyfill-node": "^0.9.0"
   },
   "devDependencies": {
+    "@rollup/plugin-inject": "^4.0.4",
     "@types/file-saver": "^2.0.5",
     "@types/node": "*",
     "@varlet/lowcode-cli": "workspace: *",

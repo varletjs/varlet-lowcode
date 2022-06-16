@@ -18,7 +18,7 @@ module.exports = {
         if (process.env.COMMAND === 'compile') {
           destPaths.forEach((destPath) => {
             ensureDirSync(destPath)
-            copySync('lib/varlet-lowcode-core.iife.js', `${destPath}/varlet-lowcode-core.iife.js`)
+            copySync('lib/varlet-lowcode-core.umd.js', `${destPath}/varlet-lowcode-core.umd.js`)
           })
         }
       },

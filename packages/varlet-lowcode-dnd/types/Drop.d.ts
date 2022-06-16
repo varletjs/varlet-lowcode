@@ -1,6 +1,5 @@
 import { VNode } from 'vue'
 import type { PropType } from 'vue'
-
 export declare type DropStatus = 'enter' | 'dropped' | 'none'
 declare const _default: import('vue').DefineComponent<
   {

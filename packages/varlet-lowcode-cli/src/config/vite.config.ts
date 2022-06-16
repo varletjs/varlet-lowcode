@@ -54,6 +54,7 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       viteExternalsPlugin({
         vue: 'Vue',
         '@varlet/lowcode-core': 'VarletLowcodeCore',
+        '@varlet/ui': 'Varlet',
       }),
       ...plugins,
     ],
@@ -110,8 +111,11 @@ var head=document.querySelector('head');head.appendChild(style)})();`
 export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const name = get(varletLowCodeConfig, 'name')
   const plugins = get(varletLowCodeConfig, 'plugins', [])
+  const define = get(varletLowCodeConfig, 'define', {})
 
   return {
+    publicDir: false,
+    define,
     build: {
       emptyOutDir: true,
       outDir: PLUGIN_OUTPUT_PATH,
@@ -128,6 +132,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
           globals: {
             vue: 'Vue',
             '@varlet/lowcode-core': 'VarletLowcodeCore',
+            '@varlet/ui': 'Varlet',
           },
         },
       },

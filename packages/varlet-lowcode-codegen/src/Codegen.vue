@@ -5,25 +5,27 @@ import config from './template/vite.config.js?raw'
 import readme from './template/README.md?raw'
 import traverse from '@babel/traverse'
 import generate from '@babel/generator'
+import JSZip from 'jszip'
 import * as t from '@babel/types'
 import '@varlet/ui/es/button/style/index.js'
 import { Button as VarButton } from '@varlet/ui'
-import { assetsManager, BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
+import { AssetsManager, schemaManager } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { parse } from '@babel/parser'
 import { isArray, isPlainObject, isString, kebabCase } from './shared'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
 
-let schema: SchemaPageNode = schemaManager.exportSchema()
-let assets: Assets = assetsManager.exportAssets()
+const getRendererSchema = (): SchemaPageNode => {
+  return (window[0] as any).VarletLowcodeRenderer.default.schema.value
+}
 
-eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
-  schema = newSchema
-})
+const getRendererAssets = (): Assets => {
+  return (window[0] as any).VarletLowcodeRenderer.default.assets.value
+}
 
-eventsManager.on(BuiltInEvents.ASSETS_CHANGE, (newAssets) => {
-  assets = newAssets
-})
+const getRendererAssetsManager = (): AssetsManager => {
+  return (window[0] as any).VarletLowcodeCore.assetsManager
+}
 
 const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
@@ -72,12 +74,16 @@ const convertEventName = (key: string) => {
 const genPackages = () => {
   const packages: Record<string, [string, string]> = {}
 
-  schemaManager.visitSchemaNode(schema, (schemaNode) => {
+  schemaManager.visitSchemaNode(getRendererSchema(), (schemaNode) => {
     if (schemaManager.isSchemaPageNode(schemaNode) || schemaManager.isSchemaTextNode(schemaNode)) {
       return
     }
 
-    const { packageName, packageVersion } = assetsManager.findProfile(assets, schemaNode.name, schemaNode.library!)
+    const { packageName, packageVersion } = getRendererAssetsManager().findProfile(
+      getRendererAssets(),
+      schemaNode.name,
+      schemaNode.library!
+    )
 
     packages[schemaNode.library!] = [packageName, packageVersion]
   })
@@ -208,7 +214,7 @@ const genSchemaNode = (schemaNode: SchemaNode, depth = 1): string => {
     return `${indent}${schemaNode.textContent}`
   }
 
-  const material = assetsManager.findMaterial(assets, schemaNode.name, schemaNode.library!)
+  const material = getRendererAssetsManager().findMaterial(getRendererAssets(), schemaNode.name, schemaNode.library!)
   const { name } = material.codegen
 
   if (!isPlainObject(schemaNode.slots)) {
@@ -224,6 +230,8 @@ const genSchemaNode = (schemaNode: SchemaNode, depth = 1): string => {
 }
 
 const genApp = (packages: Record<string, [string, string]>) => {
+  const schema = getRendererSchema()
+
   return `\
 <template>
   <div class="varlet-low-code-page">
@@ -296,7 +304,7 @@ ${packagesString.join(',\n')}\
 }
 
 const genIndex = () => {
-  const resources = assetsManager.getResources(assets)
+  const resources = getRendererAssetsManager().getResources(getRendererAssets())
   const scripts = resources.map((resource) => `    <script src="${resource}"><${'/'}script>`)
 
   return index.replace(
@@ -325,7 +333,6 @@ ${externals.join(',\n')}
 
 const save = async () => {
   const packages = genPackages()
-  const { default: JSZip } = await import('jszip')
   const zip = new JSZip()
 
   zip.file('index.html', genIndex())

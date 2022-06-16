@@ -1,5 +1,4 @@
 import type { PropType } from 'vue'
-
 export declare type DargStatus = 'drag' | 'none'
 declare const _default: import('vue').DefineComponent<
   {

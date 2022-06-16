@@ -1,12 +1,6 @@
 import Renderer from '../src/Renderer'
 import { createApp } from 'vue'
-import {
-  assetsManager,
-  schemaManager,
-  BuiltInSchemaNodeBindingTypes,
-  BuiltInSchemaNodeNames,
-} from '@varlet/lowcode-core'
-
+import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 ;
 
 (async () => {
@@ -16,7 +10,7 @@ import {
       resources: [
         'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
         'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-        './varlet-lowcode-profile.iife.js',
+        './varlet-lowcode-profile.umd.js',
       ],
     },
   ]

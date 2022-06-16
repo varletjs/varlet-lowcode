@@ -7,8 +7,8 @@ module.exports = {
       closeBundle() {
         if (process.env.COMMAND === 'compile') {
           require('fs').copyFileSync(
-            'lib/varlet-lowcode-renderer.iife.js',
-            '../varlet-lowcode-designer/public/varlet-lowcode-renderer.iife.js'
+            'lib/varlet-lowcode-renderer.umd.js',
+            '../varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js'
           )
         }
       },

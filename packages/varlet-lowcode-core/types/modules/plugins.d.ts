@@ -1,5 +1,4 @@
 import { DefineComponent } from 'vue'
-
 export declare enum SkeletonLayouts {
   HEADER_LEFT = 'header-left',
   HEADER_RIGHT = 'header-right',
