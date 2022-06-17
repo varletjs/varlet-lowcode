@@ -1,3 +1,9 @@
+@skeleton-sidebar-left: var(--icon-size);
+
+:root {
+  --skeleton-sidebar-left: @skeleton-sidebar-left;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -13,29 +19,29 @@
   display: flex;
   flex-direction: column;
 
-  .content {
+  &__content {
     flex: 1;
     display: flex;
     flex-direction: row;
   }
 
-  .sidebar {
+  &__sidebar {
     height: 100%;
     background: aqua;
     display: flex;
     position: relative;
+  }
 
-    .sidebarComponent {
-      min-width: 200px;
-      position: absolute;
-      left: 20px;
-      height: 100%;
-      background: aquamarine;
-    }
+  &__sidebar-component {
+    min-width: 200px;
+    position: absolute;
+    left: var(--skeleton-sidebar-left);
+    height: 100%;
+    background: aquamarine;
+  }
 
-    .sidebarComponent-pinned {
-      position: static;
-    }
+  &__sidebar-component--pinned {
+    position: static;
   }
 
   .drawing-board {

@@ -92,7 +92,9 @@ export default defineComponent({
         }
 
         return (
-          <div class={sidebarPinned.value ? 'sidebarComponent sidebarComponent-pinned' : 'sidebarComponent'}>
+          <div
+            class={`skeleton__sidebar-component ${sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''}`}
+          >
             <renderLabel />
             <renderPlugin />
           </div>
@@ -103,7 +105,7 @@ export default defineComponent({
         const Top = pickerComponents(SkeletonLayouts.SIDEBAR_TOP)
         const Bottom = pickerComponents(SkeletonLayouts.SIDEBAR_BOTTOM)
         return (
-          <div class="sidebar">
+          <div class="skeleton__sidebar">
             <Space direction="column" align="center" justify="space-between">
               {Top}
               {Bottom}
@@ -115,7 +117,7 @@ export default defineComponent({
 
       const renderContent = () => {
         return (
-          <div class="content">
+          <div class="skeleton__content">
             <renderSideBar />
             <div class="drawing-board">drawing-board</div>
           </div>
