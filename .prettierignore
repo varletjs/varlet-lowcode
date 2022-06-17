@@ -4,6 +4,7 @@
  packages/varlet-lowcode-renderer/lib/**,
  packages/varlet-lowcode-profile/lib/**,
  packages/varlet-lowcode-skeleton/lib/**,
+ packages/varlet-lowcode-selector/lib/**,
  packages/varlet-lowcode-codegen/lib/**,
  packages/varlet-lowcode-cli/l
  packages/varlet-lowcode-renderer/public/**,
@@ -11,6 +12,7 @@
  packages/varlet-lowcode-dnd/public/**,
  packages/varlet-lowcode-codegen/public/**,
  packages/varlet-lowcode-skeleton/public/**,
+ packages/varlet-lowcode-selector/public/**,
  packages/varlet-lowcode-core/public/**,
  packages/varlet-lowcode-profile/publ
  packages/varlet-lowcode-renderer/dist/**,
@@ -18,6 +20,7 @@
  packages/varlet-lowcode-dnd/dist/**,
  packages/varlet-lowcode-codegen/dist/**,
  packages/varlet-lowcode-skeleton/dist/**,
+ packages/varlet-lowcode-selector/dist/**,
  packages/varlet-lowcode-core/dist/**,
  packages/varlet-lowcode-profile/di
  packages/varlet-lowcode-core/types/**,
@@ -26,6 +29,7 @@
  packages/varlet-lowcode-renderer/types/**,
  packages/varlet-lowcode-profile/types/**,
  packages/varlet-lowcode-skeleton/types/**,
+ packages/varlet-lowcode-selector/types/**,
  packages/varlet-lowcode-codegen/types/**
 **/package.json
 *.md
