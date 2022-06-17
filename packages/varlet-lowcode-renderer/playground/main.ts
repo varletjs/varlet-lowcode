@@ -1,6 +1,7 @@
 import Renderer from '../src/Renderer'
 import { createApp } from 'vue'
 import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+
 ;
 
 (async () => {

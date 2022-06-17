@@ -1,7 +1,2 @@
-import Drag from './Drag'
-import Drop from './Drop'
-
-export default {
-  Drag,
-  Drop,
-}
+export * from './Drag'
+export * from './Drop'

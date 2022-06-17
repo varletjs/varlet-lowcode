@@ -1,9 +1,10 @@
 import { DirectiveBinding } from 'vue'
 import type { Directive, Plugin, App } from 'vue'
-import { mergeStyle } from './shared'
+import { mergeStyle, eventBroadcast } from './shared'
+import { SchemaNode } from '@varlet/lowcode-core'
 
-interface DropOptions {
-  dropStyle?: CSSStyleDeclaration
+export interface DropOptions {
+  dropStyle?: Partial<CSSStyleDeclaration>
   type?: DataTransfer['dropEffect']
 }
 
@@ -16,11 +17,16 @@ function onDropEnter(this: DropHTMLElement, e: DragEvent) {
   const _drop = this._drop as DropOptions
   const { dropStyle } = _drop
   dropStyle && mergeStyle(this, dropStyle)
+  eventBroadcast('drop-enter', this)
 }
 
-function onDragLeave(this: DropHTMLElement, e: DragEvent) {
+function onDropLeave(this: DropHTMLElement, e: DragEvent) {
   if (e.target !== e.currentTarget) return
   e.dataTransfer!.dropEffect = 'none'
+  const _drop = this._drop as DropOptions
+  const { dropStyle } = _drop
+  dropStyle && mergeStyle(this, dropStyle, true)
+  eventBroadcast('drop-leave', this)
 }
 
 function onDragOver(this: DropHTMLElement, e: DragEvent) {
@@ -28,23 +34,42 @@ function onDragOver(this: DropHTMLElement, e: DragEvent) {
   const { type = 'none' } = _drop
   e.preventDefault()
   e.dataTransfer!.dropEffect = type
+  // eventBroadcast('drop-over', this)
+}
+
+function onDropEnd(this: DropHTMLElement, e: DragEvent) {
+  const _data = e.dataTransfer!.getData('text/plain')
+  if (!_data) return
+  const _drop = this._drop as DropOptions
+  const { dropStyle } = _drop
+  dropStyle && mergeStyle(this, dropStyle, true)
+  const _dragData: SchemaNode = JSON.parse(_data)
+
+  eventBroadcast('drop-end', { el: this, data: _dragData })
 }
 
 function onDrop(this: DropHTMLElement, e: DragEvent) {
-  // const data = e.dataTransfer!.getData('text/plain')
+  const _data = e.dataTransfer!.getData('text/plain')
+  if (!_data) return
+  const _drop = this._drop as DropOptions
+  const { dropStyle } = _drop
+  dropStyle && mergeStyle(this, dropStyle, true)
+  const _dragData: SchemaNode = JSON.parse(_data)
+  eventBroadcast('drop', { el: this, data: _dragData })
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
   el._drop = { ...props.value }
-  el.addEventListener('dragenter', onDropEnter, { passive: true })
-  el.addEventListener('dragleave', onDragLeave, { passive: true })
-  el.addEventListener('dragover', onDragOver, { passive: true })
-  el.addEventListener('drop', onDrop, { passive: true })
+  el.addEventListener('dragenter', onDropEnter, { passive: false })
+  el.addEventListener('dragend', onDropEnd, { passive: false })
+  el.addEventListener('dragleave', onDropLeave, { passive: false })
+  el.addEventListener('dragover', onDragOver, { passive: false })
+  el.addEventListener('drop', onDrop, { passive: false })
 }
 
 function unmounted(el: HTMLElement) {
   el.removeEventListener('dragenter', onDropEnter)
-  el.removeEventListener('dragleave', onDragLeave)
+  el.removeEventListener('dragleave', onDropLeave)
   el.removeEventListener('dragover', onDragOver)
   el.removeEventListener('drop', onDrop)
 }
