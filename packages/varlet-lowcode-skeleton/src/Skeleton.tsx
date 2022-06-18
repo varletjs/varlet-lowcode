@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import { defineComponent, ref, computed } from 'vue'
 import { AppBar, Icon, Space } from '@varlet/ui'
 import { pluginsManager } from '@varlet/lowcode-core'
@@ -12,99 +12,98 @@ export default defineComponent({
   name: 'Skeleton',
   setup() {
     const plugins = pluginsManager.exportSkeletonPlugins()
+    const sidebarPinned = ref(false)
+    const sidebarComponentName: Ref<string | undefined> = ref()
 
-    return () => {
-      const pickerComponents = (layout: SkeletonLayouts) => {
-        const _plugins: SkeletonPlugin[] = plugins.filter((plugin) => plugin.layout === layout)
+    const toggleSidebarComponent = (name: string) => {
+      sidebarComponentName.value = name === sidebarComponentName.value ? undefined : name
+    }
 
-        if (!_plugins || _plugins.length === 0) {
-          throw new Error(`${layout} is not a valid layout`)
-        }
+    const sidebarComponent: ComputedRef<JSX.Element | null> = computed(() => {
+      if (!sidebarComponentName.value) return null
+      const _plugin = plugins.find((plugin) => plugin.name === sidebarComponentName.value)
+      const RenderPlugin = _plugin!.component
 
-        if (layout.includes('header')) {
-          return (
-            <Space>
-              {_plugins.map(({ component: Component }: SkeletonPlugin) => (
-                <Component />
-              ))}
-            </Space>
-          )
-        }
-
-        if (layout.includes('sidebar')) {
-          return (
-            <Space direction={'column'}>
-              {_plugins.map(({ icon, name }: SkeletonPlugin) =>
-                typeof icon === 'string' ? (
-                  <Icon name={icon} onClick={() => toggleSidebarComponent(name)} />
-                ) : (
-                  <icon onClick={() => toggleSidebarComponent(name)} />
-                )
-              )}
-            </Space>
-          )
-        }
-
-        return null
-      }
-
-      const renderHeader = () => {
-        const Left = pickerComponents(SkeletonLayouts.HEADER_LEFT)
-        const Center = pickerComponents(SkeletonLayouts.HEADER_CENTER)
-        const Right = pickerComponents(SkeletonLayouts.HEADER_RIGHT)
-
+      const RenderLabel:() => JSX.Element = () => {
         return (
-          <AppBar title-position={'center'}>
-            {{
-              left: () => Left,
-              default: () => Center,
-              right: () => Right,
-            }}
-          </AppBar>
+          <Space justify={'space-between'}>
+            {_plugin?.label ? <div>{_plugin?.label}</div> : ''}
+            <Icon
+              onClick={() => {
+                sidebarPinned.value = !sidebarPinned.value
+              }}
+              name={'pin-outline'}
+            ></Icon>
+          </Space>
         )
       }
 
-      const sidebarComponentName: Ref<string | undefined> = ref()
+      return (
+        <div
+          class={`skeleton__sidebar-component ${sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''}`}
+        >
+          <RenderLabel />
+          <RenderPlugin />
+        </div>
+      )
+    })
 
-      const toggleSidebarComponent = (name: string) => {
-        sidebarComponentName.value = name === sidebarComponentName.value ? undefined : name
+    const pickerComponents = (layout: SkeletonLayouts) => {
+      const _plugins: SkeletonPlugin[] = plugins.filter((plugin) => plugin.layout === layout)
+
+      if (!_plugins || _plugins.length === 0) {
+        throw new Error(`${layout} is not a valid layout`)
       }
 
-      const sidebarPinned = ref(false)
-
-      const sidebarComponent = computed(() => {
-        if (!sidebarComponentName.value) return null
-        const _plugin = plugins.find((plugin) => plugin.name === sidebarComponentName.value)
-        const renderPlugin = _plugin!.component
-
-        const renderLabel = () => {
-          return (
-            <Space justify={'space-between'}>
-              {_plugin?.label ? <div>{_plugin?.label}</div> : ''}
-              <Icon
-                onClick={() => {
-                  sidebarPinned.value = !sidebarPinned.value
-                }}
-                name={'pin-outline'}
-              ></Icon>
-            </Space>
-          )
-        }
-
+      if (layout.includes('header')) {
         return (
-          <div
-            class={`skeleton__sidebar-component ${sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''}`}
-          >
-            <renderLabel />
-            <renderPlugin />
-          </div>
+          <Space>
+            {_plugins.map(({ component: Component }: SkeletonPlugin) => (
+              <Component />
+            ))}
+          </Space>
         )
-      })
+      }
 
-      const renderSideBar = () => {
-        const Top = pickerComponents(SkeletonLayouts.SIDEBAR_TOP)
-        const Bottom = pickerComponents(SkeletonLayouts.SIDEBAR_BOTTOM)
+      if (layout.includes('sidebar')) {
         return (
+          <Space direction={'column'}>
+            {_plugins.map(({ icon: iconName, name }: SkeletonPlugin) =>
+              typeof iconName === 'string' ? (
+                <Icon name={iconName} onClick={() => toggleSidebarComponent(name)} />
+              ) : (
+                  <iconName onClick={() => toggleSidebarComponent(name)} />
+              )
+            )}
+          </Space>
+        )
+      }
+
+      return null
+    }
+
+    const RenderHeader: () => JSX.Element = () => {
+      const Left = pickerComponents(SkeletonLayouts.HEADER_LEFT)
+      const Center = pickerComponents(SkeletonLayouts.HEADER_CENTER)
+      const Right = pickerComponents(SkeletonLayouts.HEADER_RIGHT)
+
+      return (
+        <AppBar title-position={'center'}>
+          {{
+            left: () => Left,
+            default: () => Center,
+            right: () => Right,
+          }}
+        </AppBar>
+      )
+    }
+
+    const RenderContent: () => JSX.Element = () => {
+      const Top = pickerComponents(SkeletonLayouts.SIDEBAR_TOP)
+      const Bottom = pickerComponents(SkeletonLayouts.SIDEBAR_BOTTOM)
+
+      return (
+        <div class="skeleton__content">
           <div class="skeleton__sidebar">
             <Space direction="column" align="center" justify="space-between">
               {Top}
@@ -112,23 +111,17 @@ export default defineComponent({
             </Space>
             {sidebarComponent.value}
           </div>
-        )
-      }
+          <div class="drawing-board">drawing-board</div>
+        </div>
+      )
+    }
 
-      const renderContent = () => {
-        return (
-          <div class="skeleton__content">
-            <renderSideBar />
-            <div class="drawing-board">drawing-board</div>
-          </div>
-        )
-      }
-
+    return () => {
       return (
         <div class="main">
           <div class="skeleton">
-            <renderHeader />
-            <renderContent />
+            <RenderHeader />
+            <RenderContent />
           </div>
         </div>
       )
