@@ -24,15 +24,15 @@ export default defineComponent({
       const _plugin = plugins.find((plugin) => plugin.name === sidebarComponentName.value)
       const RenderPlugin = _plugin!.component
 
-      const RenderLabel:() => JSX.Element = () => {
+      const RenderLabel: () => JSX.Element = () => {
         return (
-          <Space justify={'space-between'}>
-            {_plugin?.label ? <div>{_plugin?.label}</div> : ''}
+          <Space justify='space-between'>
+            {_plugin?.label && <div>{_plugin?.label}</div>}
             <Icon
               onClick={() => {
                 sidebarPinned.value = !sidebarPinned.value
               }}
-              name={'pin-outline'}
+              name='pin-outline'
             ></Icon>
           </Space>
         )
@@ -40,7 +40,7 @@ export default defineComponent({
 
       return (
         <div
-          class={`skeleton__sidebar-component ${sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''}`}
+          class={`skeleton__sidebar-component ${sidebarPinned.value && 'skeleton__sidebar-component--pinned'}`}
         >
           <RenderLabel />
           <RenderPlugin />
@@ -67,12 +67,12 @@ export default defineComponent({
 
       if (layout.includes('sidebar')) {
         return (
-          <Space direction={'column'}>
+          <Space direction='column'>
             {_plugins.map(({ icon: iconName, name }: SkeletonPlugin) =>
               typeof iconName === 'string' ? (
                 <Icon name={iconName} onClick={() => toggleSidebarComponent(name)} />
               ) : (
-                  <iconName onClick={() => toggleSidebarComponent(name)} />
+                <iconName onClick={() => toggleSidebarComponent(name)} />
               )
             )}
           </Space>
@@ -88,7 +88,7 @@ export default defineComponent({
       const Right = pickerComponents(SkeletonLayouts.HEADER_RIGHT)
 
       return (
-        <AppBar title-position={'center'}>
+        <AppBar title-position='center'>
           {{
             left: () => Left,
             default: () => Center,
