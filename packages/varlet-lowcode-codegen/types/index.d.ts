@@ -1,2 +1,2 @@
-import Codegen from './Codegen.vue'
-export default Codegen
+import Codegen from './Codegen.vue';
+export default Codegen;

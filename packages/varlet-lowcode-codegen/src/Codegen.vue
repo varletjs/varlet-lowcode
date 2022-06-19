@@ -15,6 +15,30 @@ import { parse } from '@babel/parser'
 import { isArray, isPlainObject, isString, kebabCase } from './shared'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
 
+enum SetupReturnVariableTypes {
+  REF_VALUE = 'RefValue',
+  FUNCTION = 'Function',
+  OTHER = 'Other',
+}
+
+type SetupReturnVariableDeclarations = Record<string, SetupReturnVariableTypes>
+
+type Packages = Record<string, [string, string]>
+
+const refCreators = ['ref', 'computed']
+const vueApis = [
+  'ref',
+  'reactive',
+  'computed',
+  'watch',
+  'onBeforeMount',
+  'onMounted',
+  'onBeforeUpdate',
+  'onUpdated',
+  'onBeforeUnmount',
+  'onUnmounted',
+]
+
 const getRendererSchema = (): SchemaPageNode => {
   return (window[0] as any).VarletLowcodeRenderer.default.schema.value
 }
@@ -31,7 +55,7 @@ const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
 }
 
-const convertExpressionValue = (value: string) => {
+const convertExpressionValue = (value: string, setupReturnVariableDeclarations: SetupReturnVariableDeclarations) => {
   value = value
     .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
     .replace(/\$index\.(.+)(?![.\[])/g, '$index_$1')
@@ -49,7 +73,8 @@ const convertExpressionValue = (value: string) => {
       if (
         path.node.object.type === 'Identifier' &&
         path.node.property.type === 'Identifier' &&
-        path.node.property.name === 'value'
+        path.node.property.name === 'value' &&
+        setupReturnVariableDeclarations[path.node.object.name] === SetupReturnVariableTypes.REF_VALUE
       ) {
         path.replaceWith(t.identifier(path.node.object.name))
       }
@@ -71,7 +96,7 @@ const convertEventName = (key: string) => {
   return `@${eventName.at(0)!.toLowerCase()}${eventName.slice(1)}`
 }
 
-const genPackages = () => {
+const genPackages = (): Packages => {
   const packages: Record<string, [string, string]> = {}
 
   schemaManager.visitSchemaNode(getRendererSchema(), (schemaNode) => {
@@ -91,10 +116,13 @@ const genPackages = () => {
   return packages
 }
 
-const genProps = (schemaNode: SchemaNode): string => {
+const genProps = (schemaNode: SchemaNode, setupReturnVariableDeclarations: SetupReturnVariableDeclarations): string => {
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
     if (schemaManager.isExpressionBinding(value)) {
-      propsString += ` ${convertEventName(key)}="${convertExpressionValue(value.value)}"`
+      propsString += ` ${convertEventName(key)}="${convertExpressionValue(
+        value.value,
+        setupReturnVariableDeclarations
+      )}"`
 
       return propsString
     }
@@ -123,13 +151,16 @@ const genProps = (schemaNode: SchemaNode): string => {
   }, '')
 }
 
-const genCondition = (schemaNode: SchemaNode): string => {
+const genCondition = (
+  schemaNode: SchemaNode,
+  setupReturnVariableDeclarations: SetupReturnVariableDeclarations
+): string => {
   if (!Object.hasOwn(schemaNode, 'if')) {
     return ''
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.if)) {
-    return ` v-if="${convertExpressionValue(schemaNode.if.value)}"`
+    return ` v-if="${convertExpressionValue(schemaNode.if.value, setupReturnVariableDeclarations)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.if)) {
@@ -147,13 +178,16 @@ const genCondition = (schemaNode: SchemaNode): string => {
   return ` v-if="${schemaNode.if}"`
 }
 
-const genLoop = (schemaNode: SchemaNode): string => {
+const genLoop = (schemaNode: SchemaNode, setupReturnVariableDeclarations: SetupReturnVariableDeclarations): string => {
   if (!Object.hasOwn(schemaNode, 'for')) {
     return ''
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in ${convertExpressionValue(schemaNode.for.value)}"`
+    return ` v-for="$item_${schemaNode.id} in ${convertExpressionValue(
+      schemaNode.for.value,
+      setupReturnVariableDeclarations
+    )}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.for)) {
@@ -175,7 +209,8 @@ const genSlots = (
   schemaNodeSlots: Record<string, SchemaNodeSlot>,
   schemaNode: SchemaNode,
   material: AssetProfileMaterial,
-  depth: number
+  depth: number,
+  setupReturnVariableDeclarations: SetupReturnVariableDeclarations
 ) => {
   return Object.entries(schemaNodeSlots)
     .map(([slotName, slot]) => {
@@ -183,24 +218,34 @@ const genSlots = (
       const slotPropsVariable = hasSlotProps ? `="$slotProps_${schemaNode.id}"` : ''
 
       if (slotName === 'default' && !hasSlotProps) {
-        return slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 1)).join('\n')
+        return slot.children
+          .map((schemaNode) => genSchemaNode(schemaNode, depth + 1, setupReturnVariableDeclarations))
+          .join('\n')
       }
 
       const indent = ' '.repeat((depth + 1) * 2)
 
       return `\
 ${indent}<template #${slotName}${slotPropsVariable}>
-${slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 2)).join('\n')}
+${slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 2, setupReturnVariableDeclarations)).join('\n')}
 ${indent}</template>`
     })
     .join('\n')
 }
 
-const genSchemaNode = (schemaNode: SchemaNode, depth = 1): string => {
+const genSchemaNode = (
+  schemaNode: SchemaNode,
+  depth: number,
+  setupReturnVariableDeclarations: Record<string, SetupReturnVariableTypes>
+): string => {
   const indent = ' '.repeat(depth * 2)
 
   if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots?.default.children)) {
-    return schemaNode.slots!.default.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 1)).join('\n')
+    return schemaNode
+      .slots!.default.children.map((schemaNode) =>
+        genSchemaNode(schemaNode, depth + 1, setupReturnVariableDeclarations)
+      )
+      .join('\n')
   }
 
   if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots?.default.children)) {
@@ -209,7 +254,7 @@ const genSchemaNode = (schemaNode: SchemaNode, depth = 1): string => {
 
   if (schemaManager.isSchemaTextNode(schemaNode)) {
     if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `${indent}{{ ${convertExpressionValue(schemaNode.textContent.value)} }}`
+      return `${indent}{{ ${convertExpressionValue(schemaNode.textContent.value, setupReturnVariableDeclarations)} }}`
     }
     return `${indent}${schemaNode.textContent}`
   }
@@ -218,45 +263,53 @@ const genSchemaNode = (schemaNode: SchemaNode, depth = 1): string => {
   const { name } = material.codegen
 
   if (!isPlainObject(schemaNode.slots)) {
-    return `${indent}<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
+    return `${indent}<${name}${genProps(schemaNode, setupReturnVariableDeclarations)}${genCondition(
+      schemaNode,
+      setupReturnVariableDeclarations
+    )}${genLoop(schemaNode, setupReturnVariableDeclarations)} />`
   }
 
-  return `${indent}<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
+  return `${indent}<${name}${genProps(schemaNode, setupReturnVariableDeclarations)}${genCondition(
+    schemaNode,
+    setupReturnVariableDeclarations
+  )}${genLoop(schemaNode, setupReturnVariableDeclarations)}>\n${genSlots(
     schemaNode.slots,
     schemaNode,
     material,
-    depth
+    depth,
+    setupReturnVariableDeclarations
   )}\n${indent}</${name}>`
 }
 
-const genApp = (packages: Record<string, [string, string]>) => {
+const genVueApis = (setupCalledFunctions: string[]) => {
+  return vueApis
+    .filter((api) => setupCalledFunctions.includes(api))
+    .map((api) => `  ${api}`)
+    .join(',\n')
+}
+
+const genApp = (
+  packages: Packages,
+  setupReturnVariableDeclarations: SetupReturnVariableDeclarations,
+  setupCalledFunctions: string[],
+  setupUsedLibraries: string[]
+) => {
   const schema = getRendererSchema()
 
   return `\
 <template>
   <div class="varlet-low-code-page">
-${genSchemaNode(schema)}
+${genSchemaNode(schema, 1, setupReturnVariableDeclarations)}
   </div>
 </template>
 
 <script>
 import {
   defineComponent,
-  ref,
-  reactive,
-  computed,
-  watch,
-  onBeforeMount,
-  onMounted,
-  onBeforeUpdate,
-  onUpdated,
-  onBeforeUnmount,
-  onUnmounted,
+${genVueApis(setupCalledFunctions)}
 } from 'vue'
-${genPackageImports(packages)}
-
+${genPackageImports(packages, setupUsedLibraries)}
 ${schema.code}
-
 export default defineComponent({
   setup
 })
@@ -264,15 +317,19 @@ export default defineComponent({
 `
 }
 
-const genPackageImports = (packages: Record<string, [string, string]>) => {
+const genPackageImports = (packages: Packages, setupUsedLibraries?: string[]) => {
   return Object.entries(packages).map(([library, [packageName]]) => {
+    if (isArray(setupUsedLibraries) && !setupUsedLibraries.includes(library)) {
+      return ''
+    }
+
     return `\
 import ${library} from '${packageName}'
 `
   })
 }
 
-const genMain = (packages: Record<string, [string, string]>) => {
+const genMain = (packages: Packages) => {
   const packageUses = Object.entries(packages).map(([library]) => {
     return `\
 .use(${library})`
@@ -290,7 +347,7 @@ app.mount('#app')
 `
 }
 
-const genPkg = (packages: Record<string, [string, string]>) => {
+const genPkg = (packages: Packages) => {
   const packagesString = Object.entries(packages).map(([_, [packageName, packageVersion]]) => {
     return `    "${packageName}": "${packageVersion}"`
   })
@@ -316,7 +373,7 @@ ${scripts.join('\n')}
   )
 }
 
-const genConfig = (packages: Record<string, [string, string]>) => {
+const genConfig = (packages: Packages) => {
   const externals = Object.entries(packages).map(([library, [packageName]]) => {
     return `      '${packageName}': '${library}'`
   })
@@ -331,8 +388,162 @@ ${externals.join(',\n')}
   )
 }
 
+const traverseSetupFunction = (packages: Packages) => {
+  const schema = getRendererSchema()
+  const libraries = Object.keys(packages)
+  const errors: string[] = []
+  const setupReturnVariables: string[] = []
+  const setupUsedLibraries: string[] = []
+  const setupReturnVariableDeclarations: SetupReturnVariableDeclarations = {}
+  const setupCalledFunctions: string[] = []
+
+  const ast = parse(schema.code ?? '', {
+    sourceType: 'module',
+  })
+
+  let hasSetup = false
+
+  traverse(ast, {
+    FunctionDeclaration(path) {
+      if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
+        hasSetup = true
+
+        path.node.body.body.forEach((statement) => {
+          if (statement.type === 'ReturnStatement') {
+            if (statement.argument?.type === 'ObjectExpression') {
+              statement.argument.properties.forEach((objectProperty) => {
+                if (objectProperty.type === 'SpreadElement') {
+                  errors.push('Codegen not support spread element')
+                  return
+                }
+
+                if (objectProperty.key.type === 'Identifier') {
+                  setupReturnVariables.push(objectProperty.key.name)
+                }
+              })
+            }
+          }
+        })
+      }
+    },
+  })
+
+  if (!hasSetup) {
+    errors.push('Setup function not found')
+  }
+
+  if (errors.length) {
+    throw new Error(errors.join('\n'))
+  }
+
+  traverse(ast, {
+    FunctionDeclaration(path) {
+      if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
+        path.node.body.body.forEach((statement) => {
+          if (statement.type === 'VariableDeclaration') {
+            statement.declarations.forEach((declaration) => {
+              if (statement.kind !== 'const' && declaration.id.type === 'Identifier') {
+                errors.push(
+                  `For more accurate compile-time type inference, only const is allowed for variable definitions: ${declaration.id.name}`
+                )
+                return
+              }
+
+              if (declaration.id.type === 'Identifier') {
+                if (!setupReturnVariables.includes(declaration.id.name)) {
+                  return
+                }
+
+                if (
+                  declaration.init?.type === 'CallExpression' &&
+                  declaration.init?.callee.type === 'Identifier' &&
+                  refCreators.includes(declaration.init?.callee.name)
+                ) {
+                  setupReturnVariableDeclarations[declaration.id.name] = SetupReturnVariableTypes.REF_VALUE
+                } else if (declaration.init?.type === 'ArrowFunctionExpression') {
+                  setupReturnVariableDeclarations[declaration.id.name] = SetupReturnVariableTypes.FUNCTION
+                } else {
+                  setupReturnVariableDeclarations[declaration.id.name] = SetupReturnVariableTypes.OTHER
+                }
+              }
+            })
+          }
+
+          if (statement.type === 'FunctionDeclaration') {
+            if (statement.id && statement.id.type === 'Identifier') {
+              setupReturnVariableDeclarations[statement.id.name] = SetupReturnVariableTypes.FUNCTION
+            }
+          }
+        })
+      }
+    },
+
+    CallExpression(path) {
+      if (path.node.callee.type === 'Identifier') {
+        const functionName = path.node.callee.name
+
+        if (!setupCalledFunctions.includes(functionName)) {
+          setupCalledFunctions.push(functionName)
+        }
+      }
+    },
+
+    Identifier(path) {
+      if (
+        path.parent.type === 'MemberExpression' &&
+        path.parent.property === path.node &&
+        path.parent.object.type === 'Identifier' &&
+        path.parent.object.name !== 'window'
+      ) {
+        return
+      }
+
+      const { name } = path.node
+
+      if (libraries.includes(name) && !setupUsedLibraries.includes(name)) {
+        setupUsedLibraries.push(name)
+      }
+    },
+
+    MemberExpression(path) {
+      if (
+        path.node.object.type === 'Identifier' &&
+        path.node.property.type === 'Identifier' &&
+        path.node.object.name === 'window'
+      ) {
+        const propertyName = path.node.property.name
+        if (libraries.includes(propertyName) && !setupUsedLibraries.includes(propertyName)) {
+          setupUsedLibraries.push(propertyName)
+        }
+      }
+
+      if (
+        path.node.object.type === 'Identifier' &&
+        path.node.property.type === 'Identifier' &&
+        path.node.object.name === 'window'
+      ) {
+        const propertyName = path.node.property.name
+        if (libraries.includes(propertyName) && !setupUsedLibraries.includes(propertyName)) {
+          setupUsedLibraries.push(propertyName)
+        }
+      }
+    },
+  })
+
+  if (errors.length) {
+    throw new Error(errors.join('\n'))
+  }
+
+  return {
+    setupReturnVariableDeclarations,
+    setupCalledFunctions,
+    setupUsedLibraries,
+  }
+}
+
 const save = async () => {
   const packages = genPackages()
+  const { setupReturnVariableDeclarations, setupCalledFunctions, setupUsedLibraries } = traverseSetupFunction(packages)
   const zip = new JSZip()
 
   zip.file('index.html', genIndex())
@@ -342,7 +553,7 @@ const save = async () => {
 
   const src = zip.folder('src')!
 
-  src.file('App.vue', genApp(packages))
+  src.file('App.vue', genApp(packages, setupReturnVariableDeclarations, setupCalledFunctions, setupUsedLibraries))
   src.file('main.js', genMain(packages))
 
   const blob = await zip.generateAsync({ type: 'blob' })

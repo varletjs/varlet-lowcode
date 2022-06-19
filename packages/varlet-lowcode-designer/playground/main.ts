@@ -5,7 +5,21 @@ import { assetsManager, BuiltInSchemaNodeNames, schemaManager } from '@varlet/lo
 schemaManager.importSchema({
   id: schemaManager.generateId(),
   name: BuiltInSchemaNodeNames.PAGE,
-  code: 'function setup() { return { count: 1 } }',
+  code: `\
+function setup() {
+  const count = ref(1)
+  const doubleCount = computed(() => count.value * 2)
+  const num = 100
+  const item = reactive({ value: 200 })
+
+  return {
+    count,
+    doubleCount,
+    num,
+    item
+  }
+}
+`,
   slots: {
     default: {
       children: [
@@ -15,6 +29,7 @@ schemaManager.importSchema({
           library: 'Varlet',
           props: {
             type: 'primary',
+            onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
           },
           slots: {
             default: {
@@ -22,7 +37,7 @@ schemaManager.importSchema({
                 {
                   id: schemaManager.generateId(),
                   name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: schemaManager.createExpressionBinding('count'),
+                  textContent: schemaManager.createExpressionBinding('doubleCount.value + num + item.value'),
                 },
               ],
             },
