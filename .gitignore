@@ -29,7 +29,7 @@ packages/varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-profile.umd.js
 packages/varlet-lowcode-codegen/lib
 packages/varlet-lowcode-codegen/public/varlet-lowcode-profile.umd.js
-packages/varlet-lowcode-codegen/public/varlet-lowcode-profile.umd.js
+packages/varlet-lowcode-codegen/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-skeleton/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-selector/public/varlet-lowcode-core.umd.js
 
