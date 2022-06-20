@@ -66,10 +66,11 @@ export interface SchemaTextNode extends SchemaNode {
   textContent: SchemaNodeBinding
 }
 
+export type SchemaPageNodeSetupReturnDeclarations = Record<string, string[]>
+
 export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
-  functions?: string[]
-  variables?: string[]
+  setupReturnDeclarations?: SchemaPageNodeSetupReturnDeclarations
   code?: string
 }
 

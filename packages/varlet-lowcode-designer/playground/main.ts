@@ -12,6 +12,10 @@ function setup() {
   const num = 100
   const item = reactive({ value: 200 })
 
+  watchEffect(() => {
+    console.log(count.value)
+  })
+
   return {
     count,
     doubleCount,

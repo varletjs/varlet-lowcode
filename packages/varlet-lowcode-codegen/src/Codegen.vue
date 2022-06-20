@@ -13,16 +13,19 @@ import { AssetsManager, schemaManager } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { parse } from '@babel/parser'
 import { isArray, isPlainObject, isString, kebabCase } from './shared'
-import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
+import type {
+  AssetProfileMaterial,
+  Assets,
+  SchemaNode,
+  SchemaNodeSlot,
+  SchemaPageNode,
+  SchemaPageNodeSetupReturnDeclarations,
+} from '@varlet/lowcode-core'
 
-// TODO: group by computed ref other function and core
-enum SetupReturnVariableTypes {
-  REF_VALUE = 'RefValue',
-  FUNCTION = 'Function',
-  OTHER = 'Other',
+enum SetupReturnVariableDeclarationGroups {
+  FUNCTION = 'function',
+  VARIABLE = 'variable',
 }
-
-type SetupReturnVariableDeclarations = Record<string, SetupReturnVariableTypes>
 
 type Packages = Record<string, [string, string]>
 
@@ -68,7 +71,7 @@ const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
 }
 
-const convertExpressionValue = (value: string, setupReturnVariableDeclarations: SetupReturnVariableDeclarations) => {
+const convertExpressionValue = (value: string) => {
   value = value
     .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
     .replace(/\$index\.(.+)(?![.\[])/g, '$index_$1')
@@ -132,13 +135,10 @@ const genPackages = (): Packages => {
   return packages
 }
 
-const genProps = (schemaNode: SchemaNode, setupReturnVariableDeclarations: SetupReturnVariableDeclarations): string => {
+const genProps = (schemaNode: SchemaNode): string => {
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
     if (schemaManager.isExpressionBinding(value)) {
-      propsString += ` ${convertEventName(key)}="${convertExpressionValue(
-        value.value,
-        setupReturnVariableDeclarations
-      )}"`
+      propsString += ` ${convertEventName(key)}="${convertExpressionValue(value.value)}"`
 
       return propsString
     }
@@ -167,16 +167,13 @@ const genProps = (schemaNode: SchemaNode, setupReturnVariableDeclarations: Setup
   }, '')
 }
 
-const genCondition = (
-  schemaNode: SchemaNode,
-  setupReturnVariableDeclarations: SetupReturnVariableDeclarations
-): string => {
+const genCondition = (schemaNode: SchemaNode): string => {
   if (!Object.hasOwn(schemaNode, 'if')) {
     return ''
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.if)) {
-    return ` v-if="${convertExpressionValue(schemaNode.if.value, setupReturnVariableDeclarations)}"`
+    return ` v-if="${convertExpressionValue(schemaNode.if.value)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.if)) {
@@ -194,16 +191,13 @@ const genCondition = (
   return ` v-if="${schemaNode.if}"`
 }
 
-const genLoop = (schemaNode: SchemaNode, setupReturnVariableDeclarations: SetupReturnVariableDeclarations): string => {
+const genLoop = (schemaNode: SchemaNode): string => {
   if (!Object.hasOwn(schemaNode, 'for')) {
     return ''
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in ${convertExpressionValue(
-      schemaNode.for.value,
-      setupReturnVariableDeclarations
-    )}"`
+    return ` v-for="$item_${schemaNode.id} in ${convertExpressionValue(schemaNode.for.value)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.for)) {
@@ -225,8 +219,7 @@ const genSlots = (
   schemaNodeSlots: Record<string, SchemaNodeSlot>,
   schemaNode: SchemaNode,
   material: AssetProfileMaterial,
-  depth: number,
-  setupReturnVariableDeclarations: SetupReturnVariableDeclarations
+  depth: number
 ) => {
   return Object.entries(schemaNodeSlots)
     .map(([slotName, slot]) => {
@@ -234,34 +227,24 @@ const genSlots = (
       const slotPropsVariable = hasSlotProps ? `="$slotProps_${schemaNode.id}"` : ''
 
       if (slotName === 'default' && !hasSlotProps) {
-        return slot.children
-          .map((schemaNode) => genSchemaNode(schemaNode, depth + 1, setupReturnVariableDeclarations))
-          .join('\n')
+        return slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 1)).join('\n')
       }
 
       const indent = ' '.repeat((depth + 1) * 2)
 
       return `\
 ${indent}<template #${slotName}${slotPropsVariable}>
-${slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 2, setupReturnVariableDeclarations)).join('\n')}
+${slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 2)).join('\n')}
 ${indent}</template>`
     })
     .join('\n')
 }
 
-const genSchemaNode = (
-  schemaNode: SchemaNode,
-  depth: number,
-  setupReturnVariableDeclarations: Record<string, SetupReturnVariableTypes>
-): string => {
+const genSchemaNode = (schemaNode: SchemaNode, depth: number): string => {
   const indent = ' '.repeat(depth * 2)
 
   if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots?.default.children)) {
-    return schemaNode
-      .slots!.default.children.map((schemaNode) =>
-        genSchemaNode(schemaNode, depth + 1, setupReturnVariableDeclarations)
-      )
-      .join('\n')
+    return schemaNode.slots!.default.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 1)).join('\n')
   }
 
   if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots?.default.children)) {
@@ -270,7 +253,7 @@ const genSchemaNode = (
 
   if (schemaManager.isSchemaTextNode(schemaNode)) {
     if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `${indent}{{ ${convertExpressionValue(schemaNode.textContent.value, setupReturnVariableDeclarations)} }}`
+      return `${indent}{{ ${convertExpressionValue(schemaNode.textContent.value)} }}`
     }
     return `${indent}${schemaNode.textContent}`
   }
@@ -279,21 +262,14 @@ const genSchemaNode = (
   const { name } = material.codegen
 
   if (!isPlainObject(schemaNode.slots)) {
-    return `${indent}<${name}${genProps(schemaNode, setupReturnVariableDeclarations)}${genCondition(
-      schemaNode,
-      setupReturnVariableDeclarations
-    )}${genLoop(schemaNode, setupReturnVariableDeclarations)} />`
+    return `${indent}<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
   }
 
-  return `${indent}<${name}${genProps(schemaNode, setupReturnVariableDeclarations)}${genCondition(
-    schemaNode,
-    setupReturnVariableDeclarations
-  )}${genLoop(schemaNode, setupReturnVariableDeclarations)}>\n${genSlots(
+  return `${indent}<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
     schemaNode.slots,
     schemaNode,
     material,
-    depth,
-    setupReturnVariableDeclarations
+    depth
   )}\n${indent}</${name}>`
 }
 
@@ -304,18 +280,13 @@ const genVueApis = (setupCalledFunctions: string[]) => {
     .join(',\n')
 }
 
-const genApp = (
-  packages: Packages,
-  setupReturnVariableDeclarations: SetupReturnVariableDeclarations,
-  setupCalledFunctions: string[],
-  setupUsedLibraries: string[]
-) => {
+const genApp = (packages: Packages, setupCalledFunctions: string[], setupUsedLibraries: string[]) => {
   const schema = getRendererSchema()
 
   return `\
 <template>
   <div class="varlet-low-code-page">
-${genSchemaNode(schema, 1, setupReturnVariableDeclarations)}
+${genSchemaNode(schema, 1)}
   </div>
 </template>
 
@@ -410,7 +381,7 @@ const traverseSetupFunction = (packages: Packages) => {
   const errors: string[] = []
   const setupReturnVariables: string[] = []
   const setupUsedLibraries: string[] = []
-  const setupReturnVariableDeclarations: SetupReturnVariableDeclarations = {}
+  const setupReturnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
   const setupCalledFunctions: string[] = []
 
   const ast = parse(schema.code ?? '', {
@@ -470,16 +441,21 @@ const traverseSetupFunction = (packages: Packages) => {
                   return
                 }
 
-                if (
-                  declaration.init?.type === 'CallExpression' &&
-                  declaration.init?.callee.type === 'Identifier' &&
-                  refCreators.includes(declaration.init?.callee.name)
-                ) {
-                  setupReturnVariableDeclarations[declaration.id.name] = SetupReturnVariableTypes.REF_VALUE
+                if (declaration.init?.type === 'CallExpression' && declaration.init?.callee.type === 'Identifier') {
+                  setupReturnDeclarations[declaration.init?.callee.name] = [
+                    ...(setupReturnDeclarations[declaration.init?.callee.name] ?? []),
+                    declaration.id.name,
+                  ]
                 } else if (declaration.init?.type === 'ArrowFunctionExpression') {
-                  setupReturnVariableDeclarations[declaration.id.name] = SetupReturnVariableTypes.FUNCTION
+                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
+                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
+                    declaration.id.name,
+                  ]
                 } else {
-                  setupReturnVariableDeclarations[declaration.id.name] = SetupReturnVariableTypes.OTHER
+                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = [
+                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] ?? []),
+                    declaration.id.name,
+                  ]
                 }
               }
             })
@@ -487,7 +463,10 @@ const traverseSetupFunction = (packages: Packages) => {
 
           if (statement.type === 'FunctionDeclaration') {
             if (statement.id && statement.id.type === 'Identifier') {
-              setupReturnVariableDeclarations[statement.id.name] = SetupReturnVariableTypes.FUNCTION
+              setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
+                ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
+                statement.id.name,
+              ]
             }
           }
         })
@@ -551,7 +530,7 @@ const traverseSetupFunction = (packages: Packages) => {
   }
 
   return {
-    setupReturnVariableDeclarations,
+    setupReturnDeclarations,
     setupCalledFunctions,
     setupUsedLibraries,
   }
@@ -559,7 +538,7 @@ const traverseSetupFunction = (packages: Packages) => {
 
 const save = async () => {
   const packages = genPackages()
-  const { setupReturnVariableDeclarations, setupCalledFunctions, setupUsedLibraries } = traverseSetupFunction(packages)
+  const { setupCalledFunctions, setupUsedLibraries } = traverseSetupFunction(packages)
   const zip = new JSZip()
 
   zip.file('index.html', genIndex())
@@ -569,7 +548,7 @@ const save = async () => {
 
   const src = zip.folder('src')!
 
-  src.file('App.vue', genApp(packages, setupReturnVariableDeclarations, setupCalledFunctions, setupUsedLibraries))
+  src.file('App.vue', genApp(packages, setupCalledFunctions, setupUsedLibraries))
   src.file('main.js', genMain(packages))
 
   const blob = await zip.generateAsync({ type: 'blob' })
