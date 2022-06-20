@@ -1,8 +1,7 @@
 import { eventsManager } from '@varlet/lowcode-core'
 import type { CSSProperties, Ref } from 'vue'
-import { onMounted, defineComponent, ref } from 'vue'
-// import { pluginsManager } from '@varlet/lowcode-core'
-// import { SelectorPlugin } from '@varlet/lowcode-core/src/modules/plugins'
+import { onMounted, onUnmounted, defineComponent, ref } from 'vue'
+import PluginRender from './PluginRender'
 
 export default defineComponent({
   name: 'VarletLowCodeSelector',
@@ -13,10 +12,9 @@ export default defineComponent({
       position: 'absolute',
     }
 
-    // const plugins: SelectorPlugin[] = pluginsManager.exportSelectorPlugins()
     const selectorStyles: Ref<CSSProperties | undefined> = ref()
 
-    function computeRippleStyles(event: Event) {
+    function computedSelectorStyles(event: Event) {
       const element = event.target as HTMLElement
       const { top, left }: DOMRect = element.getBoundingClientRect()
       const { clientWidth, clientHeight } = element
@@ -32,11 +30,15 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      eventsManager.on('schema-click', computeRippleStyles)
+      eventsManager.on('schema-click', computedSelectorStyles)
+    })
+
+    onUnmounted(() => {
+      eventsManager.off('schema-click', computedSelectorStyles)
     })
 
     return () => {
-      return <div style={selectorStyles.value}></div>
+      return <div style={selectorStyles.value}>{selectorStyles.value && <PluginRender />}</div>
     }
   },
 })
