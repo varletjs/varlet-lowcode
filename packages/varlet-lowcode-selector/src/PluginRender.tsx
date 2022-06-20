@@ -7,7 +7,6 @@ export default defineComponent({
   name: 'VarletLowCodeSelectorPluginRender',
   setup() {
     const plugins: SelectorPlugin[] = pluginsManager.exportSelectorPlugins()
-    console.log('plugins', plugins)
 
     return () => {
       return (
