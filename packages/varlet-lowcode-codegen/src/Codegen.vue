@@ -15,6 +15,7 @@ import { parse } from '@babel/parser'
 import { isArray, isPlainObject, isString, kebabCase } from './shared'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
 
+// TODO: group by computed ref other function and core
 enum SetupReturnVariableTypes {
   REF_VALUE = 'RefValue',
   FUNCTION = 'Function',
@@ -30,7 +31,17 @@ const vueApis = [
   'ref',
   'reactive',
   'computed',
+  'readonly',
   'watch',
+  'watchEffect',
+  'watchSyncEffect',
+  'watchPostEffect',
+  'isRef',
+  'unref',
+  'toRefs',
+  'isProxy',
+  'isReactive',
+  'isReadonly',
   'onBeforeMount',
   'onMounted',
   'onBeforeUpdate',
@@ -39,16 +50,18 @@ const vueApis = [
   'onUnmounted',
 ]
 
+const getRendererWindow = () => window[0] as any
+
 const getRendererSchema = (): SchemaPageNode => {
-  return (window[0] as any).VarletLowcodeRenderer.default.schema.value
+  return getRendererWindow().VarletLowcodeRenderer.default.schema.value
 }
 
 const getRendererAssets = (): Assets => {
-  return (window[0] as any).VarletLowcodeRenderer.default.assets.value
+  return getRendererWindow().VarletLowcodeRenderer.default.assets.value
 }
 
 const getRendererAssetsManager = (): AssetsManager => {
-  return (window[0] as any).VarletLowcodeCore.assetsManager
+  return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
 const stringifyObject = (object: any[] | Record<string, any>): string => {
@@ -68,15 +81,18 @@ const convertExpressionValue = (value: string, setupReturnVariableDeclarations: 
     sourceType: 'module',
   })
 
+  const rendererWindow = getRendererWindow()
+
   traverse(ast, {
     MemberExpression(path) {
       if (
         path.node.object.type === 'Identifier' &&
         path.node.property.type === 'Identifier' &&
-        path.node.property.name === 'value' &&
-        setupReturnVariableDeclarations[path.node.object.name] === SetupReturnVariableTypes.REF_VALUE
+        path.node.property.name === 'value'
       ) {
-        path.replaceWith(t.identifier(path.node.object.name))
+        if (rendererWindow.isRef(rendererWindow.eval(`${path.node.object.name}`))) {
+          path.replaceWith(t.identifier(path.node.object.name))
+        }
       }
     },
   })

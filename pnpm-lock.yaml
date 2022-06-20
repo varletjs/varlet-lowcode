@@ -16,9 +16,9 @@ importers:
       stylelint: ^13.13.1
       typescript: ^4.4.4
     devDependencies:
-      '@varlet/cli': 1.27.12
-      '@varlet/eslint-config': 1.27.12_eslint@7.32.0+typescript@4.7.2
-      '@varlet/stylelint-config': 1.27.12_stylelint@13.13.1
+      '@varlet/cli': 1.27.15
+      '@varlet/eslint-config': 1.27.15_eslint@7.32.0+typescript@4.7.2
+      '@varlet/stylelint-config': 1.27.15_stylelint@13.13.1
       eslint: 7.32.0
       execa: 5.1.1
       lint-staged: 10.5.4
@@ -96,7 +96,7 @@ importers:
       '@babel/traverse': 7.18.5
       '@babel/types': 7.18.4
       '@varlet/lowcode-core': link:../varlet-lowcode-core
-      '@varlet/ui': 1.27.12_vue@3.2.25
+      '@varlet/ui': 1.27.15_vue@3.2.25
       buffer: 6.0.3
       file-saver: 2.0.5
       jszip: 3.10.0
@@ -230,6 +230,25 @@ importers:
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
 
+  packages/varlet-lowcode-selector:
+    specifiers:
+      '@varlet/lowcode-cli': 'workspace: *'
+      '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/ui': latest
+      live-server: ^1.2.1
+      typescript: ^4.4.4
+      vue: 3.2.25
+      vue-tsc: ^0.37.3
+    dependencies:
+      '@varlet/lowcode-core': link:../varlet-lowcode-core
+      '@varlet/ui': 1.27.15_vue@3.2.25
+    devDependencies:
+      '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      live-server: 1.2.2
+      typescript: 4.7.2
+      vue: 3.2.25
+      vue-tsc: 0.37.3_typescript@4.7.2
+
   packages/varlet-lowcode-skeleton:
     specifiers:
       '@varlet/lowcode-cli': 'workspace: *'
@@ -241,7 +260,7 @@ importers:
       vue-tsc: ^0.37.3
     dependencies:
       '@varlet/lowcode-core': link:../varlet-lowcode-core
-      '@varlet/ui': 1.27.12_vue@3.2.25
+      '@varlet/ui': 1.27.15_vue@3.2.25
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       live-server: 1.2.2
@@ -2131,8 +2150,8 @@ packages:
       eslint-visitor-keys: 2.1.0
     dev: true
 
-  /@varlet/cli/1.27.12:
-    resolution: {integrity: sha512-ul+kBiU8EZqP8uPbVHOHP0VwpQnGfWScmxoG/4HvBJyoUF8LmN77M11gN2ym0Zhh+8ulRcapZoZEu7dFDz9fCQ==}
+  /@varlet/cli/1.27.15:
+    resolution: {integrity: sha512-3mCei+YYugIgRFE+btZC/9JGSh24ayiT+IoMgjq/alrV1c8DawLZ5C+0Hmq6tbB+10g6zom2kTSiwwUiOh4XHA==}
     hasBin: true
     peerDependencies:
       '@vue/test-utils': ^2.0.0-rc.6
@@ -2144,9 +2163,10 @@ packages:
       '@babel/helper-plugin-utils': 7.17.12
       '@babel/preset-env': 7.18.2_@babel+core@7.18.5
       '@babel/preset-typescript': 7.17.12_@babel+core@7.18.5
-      '@varlet/icons': 1.27.12_chokidar@3.5.3
-      '@varlet/markdown-vite-plugin': 1.27.12
-      '@varlet/touch-emulator': 1.27.12
+      '@varlet/icons': 1.27.15_chokidar@3.5.3
+      '@varlet/markdown-vite-plugin': 1.27.15
+      '@varlet/shared': 1.27.15
+      '@varlet/touch-emulator': 1.27.15
       '@vitejs/plugin-vue': 2.2.0_vite@2.9.5+vue@3.2.25
       '@vitejs/plugin-vue-jsx': 1.3.5
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.18.5
@@ -2185,8 +2205,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@varlet/eslint-config/1.27.12_eslint@7.32.0+typescript@4.7.2:
-    resolution: {integrity: sha512-KeB28rtm/f/n4l/gbpsu8bgspOPaS51c0UFJi9zzzsb8vwdGxemKvvUszCjV0P0qaK2WQoNJMdfBexNgMKsEpg==}
+  /@varlet/eslint-config/1.27.15_eslint@7.32.0+typescript@4.7.2:
+    resolution: {integrity: sha512-ijJZBSdMfed30DZUMA5FS0FinNGiXnSeHyLeDmpANWIG/XH6TOORQ+t/pM1q/JDyLgnyZk3CM15QDRre17J+IA==}
     dependencies:
       '@typescript-eslint/eslint-plugin': 4.33.0_2b16db8efd93d95946a7f39d4a99f36e
       '@typescript-eslint/parser': 4.33.0_eslint@7.32.0+typescript@4.7.2
@@ -2200,8 +2220,8 @@ packages:
       - typescript
     dev: true
 
-  /@varlet/icons/1.27.12:
-    resolution: {integrity: sha512-5oFxyhGbQrqKhME+3NxrUB2D4gP0Sw6UxYzUF8gVygOQ3tNQOF0QPbAWCE0F8V4HPKgavmKg9FE+YLORumOxEg==}
+  /@varlet/icons/1.27.15:
+    resolution: {integrity: sha512-ME1CLPTSLE/L6TsfHWnqbZ4Nk2HMz1t6e1CRkFZAi76T21qyyKS1HGRpD4HnmQhEk7ux8foAmgpSEsuy/l6W/g==}
     hasBin: true
     dependencies:
       commander: 6.2.1
@@ -2211,8 +2231,8 @@ packages:
       - chokidar
     dev: false
 
-  /@varlet/icons/1.27.12_chokidar@3.5.3:
-    resolution: {integrity: sha512-5oFxyhGbQrqKhME+3NxrUB2D4gP0Sw6UxYzUF8gVygOQ3tNQOF0QPbAWCE0F8V4HPKgavmKg9FE+YLORumOxEg==}
+  /@varlet/icons/1.27.15_chokidar@3.5.3:
+    resolution: {integrity: sha512-ME1CLPTSLE/L6TsfHWnqbZ4Nk2HMz1t6e1CRkFZAi76T21qyyKS1HGRpD4HnmQhEk7ux8foAmgpSEsuy/l6W/g==}
     hasBin: true
     dependencies:
       commander: 6.2.1
@@ -2222,15 +2242,18 @@ packages:
       - chokidar
     dev: true
 
-  /@varlet/markdown-vite-plugin/1.27.12:
-    resolution: {integrity: sha512-BKJOlAis/ArXXneYEi/iITzfmxw9gRsjsuDXG6eE39L6We/8KE3RQi9vn6ud4bFdfnPf5h/OI50SWqodXYfPmA==}
+  /@varlet/markdown-vite-plugin/1.27.15:
+    resolution: {integrity: sha512-BjoAcFYDHI8LJroNxIqrYQI6k5w8U+t8P14xMaD0BFJGm6I0j501ySzo6CKSLdAXZ/aM5o+Q0Tz0Z19O+RatHQ==}
     dependencies:
       highlight.js: 10.7.3
       markdown-it: 12.3.2
     dev: true
 
-  /@varlet/stylelint-config/1.27.12_stylelint@13.13.1:
-    resolution: {integrity: sha512-ec4Ro9OqyeX31C6Pzrek/v7TZhEHPpAsNdKHXfz5Jg+YTAFKW5WO9LMoDh4YRNYLsZAFIe+Oj3AvcBvjq7UA0A==}
+  /@varlet/shared/1.27.15:
+    resolution: {integrity: sha512-4f8scSaqfZa1U9Po6VRCLDjZTCwNwETpEMDVO3bKduQaVaR85bV4FzIiuhSZifO/G5SQk5dfIkD/pf/OKp1nOQ==}
+
+  /@varlet/stylelint-config/1.27.15_stylelint@13.13.1:
+    resolution: {integrity: sha512-BEed9O5wHjfTHIydr4AmBMhNP+nuahrIJVI9m4eA5XvSfg8gPeFOtSNf3enI1/0Syjr4qgbtcPa6dzPQ0tFrhw==}
     dependencies:
       stylelint-config-prettier: 8.0.2_stylelint@13.13.1
       stylelint-config-standard: 20.0.0_stylelint@13.13.1
@@ -2238,16 +2261,17 @@ packages:
       - stylelint
     dev: true
 
-  /@varlet/touch-emulator/1.27.12:
-    resolution: {integrity: sha512-JGWjfGJgCz783xzzQc8VPeUosrz1+jkbD38oYEgK1tnX8/gIMaDON6N096G/HfFR1OU1uZkE1Hia9aEvplsu8Q==}
+  /@varlet/touch-emulator/1.27.15:
+    resolution: {integrity: sha512-1yvAKuOScVnYp7L0qxVRnlfmtF7+XrK6bZGDPeAMFzCKD3gCjsczCYIKqGpj9YJmG5QvYoAIfJrVrJkhpJQG2A==}
     dev: true
 
-  /@varlet/ui/1.27.12_vue@3.2.25:
-    resolution: {integrity: sha512-2LNhtQ5FuqpFv9tcQUKvNrg6d4VOK9ErU+dyR3XB+i9AKAB9ahnot+q4l7uR9Z83e25X3/snLRwN//Ato4FdSQ==}
+  /@varlet/ui/1.27.15_vue@3.2.25:
+    resolution: {integrity: sha512-R0YhNTTo96hXLRz0IJke+lvdjpqbmNURwiN6iOtGlBVmc/uBm//qfFOCWFncYQnqw3/uPTqfLoOrSOruF7rDfg==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
-      '@varlet/icons': 1.27.12
+      '@varlet/icons': 1.27.15
+      '@varlet/shared': 1.27.15
       dayjs: 1.11.3
       decimal.js: 10.3.1
       vue: 3.2.25

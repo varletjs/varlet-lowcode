@@ -15,6 +15,7 @@ export interface SkeletonPlugin {
 }
 export interface SelectorPlugin {
   readonly name: string
+  readonly icon?: string | DefineComponent
   readonly component: DefineComponent
 }
 export interface PluginsManager {
