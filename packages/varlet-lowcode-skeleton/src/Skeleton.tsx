@@ -52,15 +52,11 @@ export default defineComponent({
         throw new Error(`${layout} is not a valid layout`)
       }
 
-      if (layout.includes('header')) {
-        return (
-          <Space>
-            {_plugins.map(({ component: Component }: SkeletonPlugin) => (
-              <Component />
-            ))}
-          </Space>
-        )
-      }
+      // if (layout.includes('header')) {
+      //   return (
+      //
+      //   )
+      // }
 
       if (layout.includes('sidebar')) {
         return (
@@ -76,7 +72,13 @@ export default defineComponent({
         )
       }
 
-      return null
+      return (
+        <Space>
+          {_plugins.map(({ component: Component }: SkeletonPlugin) => (
+            <Component />
+          ))}
+        </Space>
+      )
     }
 
     const RenderHeader: () => JSX.Element = () => {
@@ -95,20 +97,39 @@ export default defineComponent({
       )
     }
 
-    const RenderContent: () => JSX.Element = () => {
+    const RenderSideBar: () => JSX.Element = () => {
       const Top = pickerComponents(SkeletonLayouts.SIDEBAR_TOP)
       const Bottom = pickerComponents(SkeletonLayouts.SIDEBAR_BOTTOM)
 
       return (
-        <div class="skeleton__content">
-          <div class="skeleton__sidebar">
-            <div class="skeleton__sidebar--tools">
-              {Top}
-              {Bottom}
-            </div>
-            {sidebarComponent.value}
+        <div class="skeleton__sidebar">
+          <div class="skeleton__sidebar--tools">
+            {Top}
+            {Bottom}
           </div>
-          <div class="drawing-board">drawing-board</div>
+          {sidebarComponent.value}
+        </div>
+      )
+    }
+
+    const RenderDesigner: () => JSX.Element = () => {
+      const Designer = pickerComponents(SkeletonLayouts.DESIGNER)
+
+      return <div class="skeleton__designer">{Designer}</div>
+    }
+
+    const RenderSetters: () => JSX.Element = () => {
+      const Setters = pickerComponents(SkeletonLayouts.DESIGNER)
+
+      return <div class="skeleton__setters">{Setters}</div>
+    }
+
+    const RenderContent: () => JSX.Element = () => {
+      return (
+        <div class="skeleton__content">
+          <RenderSideBar />
+          <RenderDesigner />
+          <RenderSetters />
         </div>
       )
     }

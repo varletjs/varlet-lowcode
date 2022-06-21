@@ -6,6 +6,8 @@ export enum SkeletonLayouts {
   HEADER_CENTER = 'header-center',
   SIDEBAR_TOP = 'sidebar-top',
   SIDEBAR_BOTTOM = 'sidebar-bottom',
+  DESIGNER = 'designer',
+  SETTERS = 'setters',
 }
 
 export interface SkeletonPlugin {

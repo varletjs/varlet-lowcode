@@ -39,6 +39,11 @@ pluginsManager
     component: Logo,
   })
   .useSkeletonPlugin({
+    layout: SkeletonLayouts.DESIGNER,
+    name: 'd',
+    component: Logo,
+  })
+  .useSkeletonPlugin({
     layout: SkeletonLayouts.SIDEBAR_TOP,
     icon: 'star',
     name: '4',
@@ -57,6 +62,11 @@ pluginsManager
     icon: Star,
     component: Side2,
     name: '5',
+  })
+  .useSkeletonPlugin({
+    layout: SkeletonLayouts.SETTERS,
+    name: 's',
+    component: Logo,
   })
 
 const app = createApp(App)
