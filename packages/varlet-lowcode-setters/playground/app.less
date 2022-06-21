@@ -1,0 +1,53 @@
+:root {
+  --right-varlet-width: 300px;
+  --color-line-normal: rgba(31, 56, 88, 0.1);
+  --color-text: rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 1860px) {
+  :root {
+    --right-varlet-width: 400px;
+  }
+}
+
+.hover:hover {
+  cursor: pointer;
+}
+
+.f-a-c {
+  display: flex;
+  align-items: center;
+}
+
+.varlet-lowcode-setters {
+  display: flex;
+  height: calc(100vh - 16px);
+  justify-content: end;
+
+  .varlet-lowcode-setters-content {
+    height: 100%;
+    background: rgb(239, 239, 239);
+    width: var(--right-varlet-width);
+
+    .varlet-lowcode-setters-header-path {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-line-normal);
+
+      .header-path-title {
+        font-size: 12px;
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        -webkit-transition: all 0.1s linear;
+        transition: all 0.1s linear;
+      }
+    }
+  }
+}
