@@ -64,10 +64,12 @@ function unmounted(el: HTMLElement) {
   el.removeEventListener('dragend', onDragEnd)
 }
 
+export type VarletDragProps = Directive<any, DragOptions> & Plugin
+
 export default {
   mounted,
   unmounted,
   install(app: App) {
     app.directive('drag', this)
   },
-} as Directive<any, DragOptions> & Plugin
+} as VarletDragProps

@@ -21,6 +21,7 @@ import {
   onUpdated,
   onBeforeUnmount,
   onUnmounted,
+  withDirectives,
 } from 'vue'
 import {
   assetsManager,
@@ -30,6 +31,7 @@ import {
   Assets,
 } from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from './shared'
+import { Drag, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode } from 'vue'
 import type { SchemaPageNode, SchemaNode, SchemaTextNode } from '@varlet/lowcode-core'
 
@@ -160,11 +162,14 @@ export default defineComponent({
 
     function withDesigner(schemaNode: SchemaNode) {
       if (props.mode === 'designer') {
-        // TODO: wrap designer component
-        return h(
-          getComponent(schemaNode.name, schemaNode.library!),
-          getPropsBinding(schemaNode),
-          renderSchemaNodeSlots(schemaNode)
+        // TODO: dnd props
+        return withDirectives(
+          h(
+            getComponent(schemaNode.name, schemaNode.library!),
+            getPropsBinding(schemaNode),
+            renderSchemaNodeSlots(schemaNode)
+          ),
+          [[Drag], [Drop]]
         )
       }
 
