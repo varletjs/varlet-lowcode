@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "strict": true,
     "downlevelIteration": true,
+    "moduleResolution": "node",
     "declarationDir": "./types",
     "declaration": true,
     "skipLibCheck": true,

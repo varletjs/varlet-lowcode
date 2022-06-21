@@ -74,12 +74,10 @@ function unmounted(el: HTMLElement) {
   el.removeEventListener('drop', onDrop)
 }
 
-const VarletLowCodeDrop: Directive & Plugin = {
+export default {
   mounted,
   unmounted,
   install(app: App) {
     app.directive('drop', this)
   },
-}
-
-export default VarletLowCodeDrop
+} as Directive<any, DropOptions> & Plugin

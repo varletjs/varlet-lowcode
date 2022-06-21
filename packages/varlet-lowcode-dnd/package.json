@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "lib/varlet-lowcode-dnd.es.js",
   "module": "lib/varlet-lowcode-dnd.es.js",
-  "types": "types/index.d.ts",
+  "types": "./types/index.d.ts",
   "files": [
     "lib",
     "types",
