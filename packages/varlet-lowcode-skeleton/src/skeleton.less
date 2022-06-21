@@ -1,7 +1,7 @@
-@skeleton-sidebar-left: var(--icon-size);
+@skeleton-sidebar-left-width: 48px;
 
 :root {
-  --skeleton-sidebar-left: @skeleton-sidebar-left;
+  --skeleton-sidebar-left-width: @skeleton-sidebar-left-width;
 }
 
 * {
@@ -32,10 +32,18 @@
     position: relative;
   }
 
+  &__sidebar--tools {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: var(--skeleton-sidebar-left-width);
+  }
+
   &__sidebar-component {
     min-width: 200px;
     position: absolute;
-    left: var(--skeleton-sidebar-left);
+    left: var(--skeleton-sidebar-left-width);
     height: 100%;
     background: aquamarine;
   }

@@ -1,12 +1,11 @@
 import App from './App.vue'
 import { createApp } from 'vue'
-import { pluginsManager } from '@varlet/lowcode-core'
+import { pluginsManager, SkeletonLayouts } from '@varlet/lowcode-core'
 
 import Logo from './Logo.vue'
 import Star from './Star.vue'
 import Side1 from './Side1.vue'
 import Side2 from './Side2.vue'
-import { SkeletonLayouts } from '@varlet/lowcode-core/src/modules/plugins'
 
 pluginsManager
   .useSkeletonPlugin({

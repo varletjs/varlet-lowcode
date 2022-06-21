@@ -32,3 +32,4 @@ export { schemaManager, assetsManager, eventsManager, pluginsManager }
 export * from './modules/schema'
 export * from './modules/assets'
 export * from './modules/events'
+export * from './modules/plugins'

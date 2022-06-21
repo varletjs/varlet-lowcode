@@ -1,8 +1,7 @@
 import type { ComputedRef, Ref } from 'vue'
 import { defineComponent, ref, computed } from 'vue'
 import { AppBar, Icon, Space } from '@varlet/ui'
-import { pluginsManager } from '@varlet/lowcode-core'
-import { SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core/src/modules/plugins'
+import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
 import '@varlet/ui/es/space/style/index.js'
@@ -26,22 +25,20 @@ export default defineComponent({
 
       const RenderLabel: () => JSX.Element = () => {
         return (
-          <Space justify='space-between'>
+          <Space justify="space-between">
             {_plugin?.label && <div>{_plugin?.label}</div>}
             <Icon
               onClick={() => {
                 sidebarPinned.value = !sidebarPinned.value
               }}
-              name='pin-outline'
+              name="pin-outline"
             ></Icon>
           </Space>
         )
       }
 
       return (
-        <div
-          class={`skeleton__sidebar-component ${sidebarPinned.value && 'skeleton__sidebar-component--pinned'}`}
-        >
+        <div class={`skeleton__sidebar-component ${sidebarPinned.value && 'skeleton__sidebar-component--pinned'}`}>
           <RenderLabel />
           <RenderPlugin />
         </div>
@@ -67,7 +64,7 @@ export default defineComponent({
 
       if (layout.includes('sidebar')) {
         return (
-          <Space direction='column'>
+          <Space direction="column">
             {_plugins.map(({ icon: iconName, name }: SkeletonPlugin) =>
               typeof iconName === 'string' ? (
                 <Icon name={iconName} onClick={() => toggleSidebarComponent(name)} />
@@ -88,7 +85,7 @@ export default defineComponent({
       const Right = pickerComponents(SkeletonLayouts.HEADER_RIGHT)
 
       return (
-        <AppBar title-position='center'>
+        <AppBar title-position="center">
           {{
             left: () => Left,
             default: () => Center,
@@ -105,10 +102,10 @@ export default defineComponent({
       return (
         <div class="skeleton__content">
           <div class="skeleton__sidebar">
-            <Space direction="column" align="center" justify="space-between">
+            <div class="skeleton__sidebar--tools">
               {Top}
               {Bottom}
-            </Space>
+            </div>
             {sidebarComponent.value}
           </div>
           <div class="drawing-board">drawing-board</div>
