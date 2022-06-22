@@ -52,22 +52,19 @@ export default defineComponent({
         throw new Error(`${layout} is not a valid layout`)
       }
 
-      // if (layout.includes('header')) {
-      //   return (
-      //
-      //   )
-      // }
-
       if (layout.includes('sidebar')) {
         return (
           <Space direction="column">
-            {_plugins.map(({ icon: iconName, name }: SkeletonPlugin) =>
-              typeof iconName === 'string' ? (
-                <Icon name={iconName} onClick={() => toggleSidebarComponent(name)} />
-              ) : (
-                <iconName onClick={() => toggleSidebarComponent(name)} />
-              )
-            )}
+            {_plugins.map(({ icon: iconName, name, label }: SkeletonPlugin) => (
+              <div class="skeleton__sidebar--icon">
+                {typeof iconName === 'string' ? (
+                  <Icon name={iconName} onClick={() => toggleSidebarComponent(name)} />
+                ) : (
+                  <iconName onClick={() => toggleSidebarComponent(name)} />
+                )}
+                <div class="skeleton__sidebar--label">{label}</div>
+              </div>
+            ))}
           </Space>
         )
       }
@@ -119,7 +116,7 @@ export default defineComponent({
     }
 
     const RenderSetters: () => JSX.Element = () => {
-      const Setters = pickerComponents(SkeletonLayouts.DESIGNER)
+      const Setters = pickerComponents(SkeletonLayouts.SETTERS)
 
       return <div class="skeleton__setters">{Setters}</div>
     }
