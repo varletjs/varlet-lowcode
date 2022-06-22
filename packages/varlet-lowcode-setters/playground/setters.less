@@ -1,0 +1,106 @@
+:root {
+  --right-varlet-width: 300px;
+  --color-line-normal: rgba(31, 56, 88, 0.1);
+  --color-text: rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 1860px) {
+  :root {
+    --right-varlet-width: 400px;
+  }
+}
+
+.hover:hover {
+  cursor: pointer;
+}
+
+.f-a-c {
+  display: flex;
+  align-items: center;
+}
+
+.varlet-lowcode-setters {
+  height: calc(100vh - 58px);
+  background: #fff;
+  .varlet-lowcode-setters-content {
+    height: 100%;
+    width: var(--right-varlet-width);
+    .setters-empty {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+      padding: 50px 15px 0;
+    }
+
+    .varlet-lowcode-setters-header-path {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-line-normal);
+
+      .header-path-title {
+        font-size: 12px;
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: all 0.1s linear;
+      }
+    }
+
+    .varlet-lowcode-setters-header-tabs {
+      border-bottom: 1px solid var(--color-line-normal);
+
+      .header-tabs-nav {
+        display: flex;
+        margin: 0;
+        position: relative;
+        list-style: none;
+        padding: 0;
+
+        .header-tabs-tab {
+          flex: 1;
+          transition: all 0.1s linear;
+          position: relative;
+
+          .header-tabs-tab-inner {
+            text-align: center;
+            padding: 12px 16px;
+            line-height: 12px;
+            box-sizing: border-box;
+            cursor: pointer;
+
+            .inner-title {
+              display: inline-flex;
+              word-break: break-all;
+              font-size: 12px;
+              line-height: inherit !important;
+            }
+          }
+        }
+
+        .header-tabs-tab.active {
+          color: #5584ff;
+        }
+
+        .header-tabs-tab.active::before {
+          width: 100%;
+          left: 0;
+          border-bottom: 2px solid #5584ff;
+        }
+
+        .header-tabs-tab::before {
+          content: '';
+          box-sizing: border-box;
+          border-radius: 0;
+          position: absolute;
+          bottom: 0;
+        }
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ import Logo from './Logo.vue'
 import Star from './Star.vue'
 import Side1 from './Side1.vue'
 import Side2 from './Side2.vue'
+import SETTERS from '../../varlet-lowcode-setters/playground/setters.vue'
 
 pluginsManager
   .useSkeletonPlugin({
@@ -66,7 +67,7 @@ pluginsManager
   .useSkeletonPlugin({
     layout: SkeletonLayouts.SETTERS,
     name: 's',
-    component: Logo,
+    component: SETTERS,
   })
 
 const app = createApp(App)

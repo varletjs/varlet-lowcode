@@ -1,7 +1,7 @@
-import App from './App.vue'
+import Setters from './setters.vue'
 import { createApp } from 'vue'
 import { pluginsManager } from '@varlet/lowcode-core'
 
-const app = createApp(App)
+const app = createApp(Setters)
 
 app.mount('#app')
