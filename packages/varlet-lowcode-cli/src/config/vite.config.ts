@@ -1,6 +1,5 @@
 import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
-import { viteExternalsPlugin } from 'vite-plugin-externals'
 import { injectHtml } from 'vite-plugin-html'
 import {
   PLAYGROUND_DIR,
@@ -50,11 +49,6 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       ...commonPlugins,
       injectHtml({
         data: get(varletLowCodeConfig, 'playground', {}),
-      }),
-      viteExternalsPlugin({
-        vue: 'Vue',
-        '@varlet/lowcode-core': 'VarletLowcodeCore',
-        '@varlet/ui': 'Varlet',
       }),
       ...plugins,
     ],
@@ -126,12 +120,13 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         entry: getEntry()!,
       },
       rollupOptions: {
-        external: ['vue', '@varlet/lowcode-core'],
+        external: ['vue', '@varlet/lowcode-core', '@varlet/lowcode-ast', '@varlet/ui'],
         output: {
           exports: 'named',
           globals: {
             vue: 'Vue',
             '@varlet/lowcode-core': 'VarletLowcodeCore',
+            '@varlet/lowcode-ast': 'VarletLowcodeAst',
             '@varlet/ui': 'Varlet',
           },
         },

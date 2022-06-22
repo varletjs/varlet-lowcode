@@ -3,33 +3,16 @@ import index from './template/index.html?raw'
 import pkg from './template/package.json?raw'
 import config from './template/vite.config.js?raw'
 import readme from './template/README.md?raw'
-import traverse from '@babel/traverse'
-import generate from '@babel/generator'
 import JSZip from 'jszip'
-import * as t from '@babel/types'
-import '@varlet/ui/es/button/style/index.js'
+import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
 import { AssetsManager, schemaManager } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
-import { parse } from '@babel/parser'
 import { isArray, isPlainObject, isString, kebabCase } from './shared'
-import type {
-  AssetProfileMaterial,
-  Assets,
-  SchemaNode,
-  SchemaNodeSlot,
-  SchemaPageNode,
-  SchemaPageNodeSetupReturnDeclarations,
-} from '@varlet/lowcode-core'
+import '@varlet/ui/es/button/style/index.js'
+import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
+import type { Packages } from '@varlet/lowcode-ast'
 
-enum SetupReturnVariableDeclarationGroups {
-  FUNCTION = 'function',
-  VARIABLE = 'variable',
-}
-
-type Packages = Record<string, [string, string]>
-
-const refCreators = ['ref', 'computed']
 const vueApis = [
   'ref',
   'reactive',
@@ -53,7 +36,7 @@ const vueApis = [
   'onUnmounted',
 ]
 
-const getRendererWindow = () => window[0] as any
+const getRendererWindow = () => Array.from(window).find((w) => w.name === 'rendererWindow') as any
 
 const getRendererSchema = (): SchemaPageNode => {
   return getRendererWindow().VarletLowcodeRenderer.default.schema.value
@@ -67,42 +50,10 @@ const getRendererAssetsManager = (): AssetsManager => {
   return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
+const { traverseSetupFunction, convertExpressionValue } = createAst(getRendererWindow)
+
 const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
-}
-
-const convertExpressionValue = (value: string) => {
-  value = value
-    .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
-    .replace(/\$index\.(.+)(?![.\[])/g, '$index_$1')
-    .replace(/\$item\[['"](.+)['"]\]/g, '$item_$1')
-    .replace(/\$item\.(.+)(?![.\[])/g, '$item_$1')
-    .replace(/\$slotProps\[['"](.+)['"]\]/g, '$slotProps_$1')
-    .replace(/\$slotProps\.(.+)(?![.\[])/g, '$slotProps_$1')
-
-  const ast = parse(value, {
-    sourceType: 'module',
-  })
-
-  const rendererWindow = getRendererWindow()
-
-  traverse(ast, {
-    MemberExpression(path) {
-      if (
-        path.node.object.type === 'Identifier' &&
-        path.node.property.type === 'Identifier' &&
-        path.node.property.name === 'value'
-      ) {
-        if (rendererWindow.isRef(rendererWindow.eval(`${path.node.object.name}`))) {
-          path.replaceWith(t.identifier(path.node.object.name))
-        }
-      }
-    },
-  })
-
-  const { code } = generate(ast)
-
-  return code.endsWith(';') ? code.slice(0, -1) : code
 }
 
 const convertEventName = (key: string) => {
@@ -375,170 +326,9 @@ ${externals.join(',\n')}
   )
 }
 
-const traverseSetupFunction = (packages: Packages) => {
-  const schema = getRendererSchema()
-  const libraries = Object.keys(packages)
-  const errors: string[] = []
-  const setupReturnVariables: string[] = []
-  const setupUsedLibraries: string[] = []
-  const setupReturnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
-  const setupCalledFunctions: string[] = []
-
-  const ast = parse(schema.code ?? '', {
-    sourceType: 'module',
-  })
-
-  let hasSetup = false
-
-  traverse(ast, {
-    FunctionDeclaration(path) {
-      if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
-        hasSetup = true
-
-        path.node.body.body.forEach((statement) => {
-          if (statement.type === 'ReturnStatement') {
-            if (statement.argument?.type === 'ObjectExpression') {
-              statement.argument.properties.forEach((objectProperty) => {
-                if (objectProperty.type === 'SpreadElement') {
-                  errors.push('Codegen not support spread element')
-                  return
-                }
-
-                if (objectProperty.key.type === 'Identifier') {
-                  setupReturnVariables.push(objectProperty.key.name)
-                }
-              })
-            }
-          }
-        })
-      }
-    },
-  })
-
-  if (!hasSetup) {
-    errors.push('Setup function not found')
-  }
-
-  if (errors.length) {
-    throw new Error(errors.join('\n'))
-  }
-
-  traverse(ast, {
-    FunctionDeclaration(path) {
-      if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
-        path.node.body.body.forEach((statement) => {
-          if (statement.type === 'VariableDeclaration') {
-            statement.declarations.forEach((declaration) => {
-              if (statement.kind !== 'const' && declaration.id.type === 'Identifier') {
-                errors.push(
-                  `For more accurate compile-time type inference, only const is allowed for variable definitions: ${declaration.id.name}`
-                )
-                return
-              }
-
-              if (declaration.id.type === 'Identifier') {
-                if (!setupReturnVariables.includes(declaration.id.name)) {
-                  return
-                }
-
-                if (declaration.init?.type === 'CallExpression' && declaration.init?.callee.type === 'Identifier') {
-                  setupReturnDeclarations[declaration.init?.callee.name] = [
-                    ...(setupReturnDeclarations[declaration.init?.callee.name] ?? []),
-                    declaration.id.name,
-                  ]
-                } else if (declaration.init?.type === 'ArrowFunctionExpression') {
-                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
-                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
-                    declaration.id.name,
-                  ]
-                } else {
-                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = [
-                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] ?? []),
-                    declaration.id.name,
-                  ]
-                }
-              }
-            })
-          }
-
-          if (statement.type === 'FunctionDeclaration') {
-            if (statement.id && statement.id.type === 'Identifier') {
-              setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
-                ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
-                statement.id.name,
-              ]
-            }
-          }
-        })
-      }
-    },
-
-    CallExpression(path) {
-      if (path.node.callee.type === 'Identifier') {
-        const functionName = path.node.callee.name
-
-        if (!setupCalledFunctions.includes(functionName)) {
-          setupCalledFunctions.push(functionName)
-        }
-      }
-    },
-
-    Identifier(path) {
-      if (
-        path.parent.type === 'MemberExpression' &&
-        path.parent.property === path.node &&
-        path.parent.object.type === 'Identifier' &&
-        path.parent.object.name !== 'window'
-      ) {
-        return
-      }
-
-      const { name } = path.node
-
-      if (libraries.includes(name) && !setupUsedLibraries.includes(name)) {
-        setupUsedLibraries.push(name)
-      }
-    },
-
-    MemberExpression(path) {
-      if (
-        path.node.object.type === 'Identifier' &&
-        path.node.property.type === 'Identifier' &&
-        path.node.object.name === 'window'
-      ) {
-        const propertyName = path.node.property.name
-        if (libraries.includes(propertyName) && !setupUsedLibraries.includes(propertyName)) {
-          setupUsedLibraries.push(propertyName)
-        }
-      }
-
-      if (
-        path.node.object.type === 'Identifier' &&
-        path.node.property.type === 'Identifier' &&
-        path.node.object.name === 'window'
-      ) {
-        const propertyName = path.node.property.name
-        if (libraries.includes(propertyName) && !setupUsedLibraries.includes(propertyName)) {
-          setupUsedLibraries.push(propertyName)
-        }
-      }
-    },
-  })
-
-  if (errors.length) {
-    throw new Error(errors.join('\n'))
-  }
-
-  return {
-    setupReturnDeclarations,
-    setupCalledFunctions,
-    setupUsedLibraries,
-  }
-}
-
 const save = async () => {
   const packages = genPackages()
-  const { setupCalledFunctions, setupUsedLibraries } = traverseSetupFunction(packages)
+  const { setupCalledFunctions, setupUsedLibraries } = traverseSetupFunction(getRendererSchema(), packages)
   const zip = new JSZip()
 
   zip.file('index.html', genIndex())

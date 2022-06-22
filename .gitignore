@@ -50,3 +50,6 @@ packages/varlet-lowcode-selector/types
 
 packages/varlet-lowcode-profile/lib
 packages/varlet-lowcode-profile/types
+
+packages/varlet-lowcode-ast/lib
+packages/varlet-lowcode-ast/types

@@ -1,6 +1,7 @@
 import App from './App.vue'
 import { createApp } from 'vue'
 import { assetsManager, BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
+import '@varlet/touch-emulator'
 
 schemaManager.importSchema({
   id: schemaManager.generateId(),

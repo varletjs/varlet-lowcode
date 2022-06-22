@@ -9,6 +9,7 @@ const PKG_DESIGNER = resolve(CWD, './packages/varlet-lowcode-designer')
 const PKG_DND = resolve(CWD, './packages/varlet-lowcode-dnd')
 const PKG_PROFILE = resolve(CWD, './packages/varlet-lowcode-profile')
 const PKG_RENDERER = resolve(CWD, './packages/varlet-lowcode-renderer')
+const PKG_AST = resolve(CWD, './packages/varlet-lowcode-ast')
 
 export const buildCli = () => execa('pnpm', ['build'], { cwd: PKG_CLI })
 
@@ -21,6 +22,8 @@ export const buildDesigner = () => execa('pnpm', ['compile'], { cwd: PKG_DESIGNE
 export const buildProfile = () => execa('pnpm', ['compile'], { cwd: PKG_PROFILE })
 
 export const buildRenderer = () => execa('pnpm', ['compile'], { cwd: PKG_RENDERER })
+
+export const buildAst = () => execa('pnpm', ['compile'], { cwd: PKG_AST })
 
 export async function runTask(taskName, task) {
   const s = ora().start(`Building ${taskName}`)

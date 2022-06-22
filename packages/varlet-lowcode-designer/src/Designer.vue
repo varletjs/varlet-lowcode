@@ -52,6 +52,7 @@ function mountIframe() {
   iframeElement = document.createElement('iframe')
   iframeElement.frameBorder = 'none'
   container.value!.appendChild(iframeElement)
+  iframeElement.contentWindow!.name = 'rendererWindow'
 }
 
 async function mountRenderer() {

@@ -1,12 +1,6 @@
 const { ensureDirSync, copySync } = require('fs-extra')
 
-const destPaths = [
-  '../varlet-lowcode-designer/public',
-  '../varlet-lowcode-renderer/public',
-  '../varlet-lowcode-dnd/public',
-  '../varlet-lowcode-codegen/public',
-  '../varlet-lowcode-skeleton/public',
-]
+const destPaths = ['../varlet-lowcode-designer/public', '../varlet-lowcode-skeleton/public']
 
 module.exports = {
   name: 'varlet-lowcode-core',

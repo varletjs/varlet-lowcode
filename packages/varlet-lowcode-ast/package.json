@@ -1,8 +1,8 @@
 {
-  "name": "@varlet/lowcode-codegen",
+  "name": "@varlet/lowcode-ast",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-codegen.es.js",
-  "module": "lib/varlet-lowcode-codegen.es.js",
+  "main": "lib/varlet-lowcode-ast.es.js",
+  "module": "lib/varlet-lowcode-ast.es.js",
   "types": "types/index.d.ts",
   "files": [
     "lib",
@@ -14,26 +14,21 @@
     "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "dependencies": {
-    "file-saver": "^2.0.5",
-    "jszip": "^3.6.0"
+    "@babel/core": "^7.18.5",
+    "@babel/generator": "^7.18.2",
+    "@babel/parser": "^7.18.5",
+    "@babel/traverse": "^7.18.5",
+    "@babel/types": "^7.18.4",
+    "buffer": "^6.0.3"
   },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/ui": "latest",
-    "@types/file-saver": "^2.0.5",
     "@types/node": "*",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vite": "^2.9.12",
     "vue": "3.2.25",
     "vue-tsc": "^0.37.3"
-  },
-  "peerDependencies": {
-    "@varlet/lowcode-core": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/ui": "latest",
-    "@varlet/touch-emulator": "latest"
   }
 }
