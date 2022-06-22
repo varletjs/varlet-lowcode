@@ -1,7 +1,9 @@
 @skeleton-sidebar-left-width: 48px;
+@skeleton-tooltip-background: #000000ba;
 
 :root {
   --skeleton-sidebar-left-width: @skeleton-sidebar-left-width;
+  --skeleton-tooltip-background: @skeleton-tooltip-background;
 }
 
 * {
@@ -32,11 +34,32 @@
     position: relative;
   }
 
-  &__sidebar--label {
+  &__sidebar--icon {
+    position: relative;
+  }
+
+  &__sidebar--tooltip {
+    background-color: var(--skeleton-tooltip-background);
+    color: #fff;
+    display: block;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 8px;
     position: absolute;
-    top: 0;
-    z-index: 99;
-    left: var(--skeleton-sidebar-left-width);
+    z-index: 1;
+    top: -5px;
+    left: calc(var(--skeleton-sidebar-left-width) - 8px);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      margin-top: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent var(--skeleton-tooltip-background) transparent transparent;
+    }
   }
 
   &__sidebar--tools {
