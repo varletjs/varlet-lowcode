@@ -18,17 +18,21 @@ interface DragHTMLElement extends HTMLElement {
 function onDragStart(this: DragHTMLElement, e: DragEvent) {
   const _drag = this._drag as DragOptions
   const { dragStyle, dragData, dragImg, type = 'all' } = _drag
+
   dragStyle && mergeStyle(this, dragStyle)
   dragImg && e.dataTransfer!.setDragImage(dragImg, 0, 0)
   dragData && e.dataTransfer!.setData('text/plain', JSON.stringify(dragData))
   e.dataTransfer!.effectAllowed = type
+
   eventBroadcast('drag-start', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
 }
 
 function onDragEnter(this: DragHTMLElement, e: DragEvent) {
   e.stopPropagation()
   e.preventDefault()
+
   const _drag = this._drag as DragOptions
+
   if (this._drag?.id) {
     eventBroadcast('drag-enter', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
   }
@@ -42,15 +46,19 @@ function onDragOver(this: DragHTMLElement, e: DragEvent) {
 
 function onDragEnd(this: DragHTMLElement, e: DragEvent) {
   e.preventDefault()
+
   const _drag = this._drag as DragOptions
   const { dragStyle } = _drag
+
   dragStyle && mergeStyle(this, dragStyle, true)
+
   eventBroadcast('drag-end', this)
 }
 
 function mounted(el: DragHTMLElement, props: DirectiveBinding<DragOptions>) {
   el._drag = { ...props.value }
   el.draggable = true
+  
   el.addEventListener('dragstart', onDragStart, { passive: false })
   el.addEventListener('dragenter', onDragEnter, { passive: false })
   el.addEventListener('dragover', onDragOver, { passive: false })

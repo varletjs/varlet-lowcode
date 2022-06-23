@@ -14,52 +14,68 @@ interface DropHTMLElement extends HTMLElement {
 
 function onDropEnter(this: DropHTMLElement, e: DragEvent) {
   if (e.target !== e.currentTarget) return
+
   const _drop = this._drop as DropOptions
   const { dropStyle } = _drop
+
   dropStyle && mergeStyle(this, dropStyle)
+  
   eventBroadcast('drop-enter', this)
 }
 
 function onDropLeave(this: DropHTMLElement, e: DragEvent) {
   if (e.target !== e.currentTarget) return
+
   e.dataTransfer!.dropEffect = 'none'
   const _drop = this._drop as DropOptions
   const { dropStyle } = _drop
+
   dropStyle && mergeStyle(this, dropStyle, true)
+
   eventBroadcast('drop-leave', this)
 }
 
 function onDragOver(this: DropHTMLElement, e: DragEvent) {
+  e.preventDefault()
+
   const _drop = this._drop as DropOptions
   const { type = 'none' } = _drop
-  e.preventDefault()
+  
   e.dataTransfer!.dropEffect = type
   // eventBroadcast('drop-over', this)
 }
 
 function onDropEnd(this: DropHTMLElement, e: DragEvent) {
   const _data = e.dataTransfer!.getData('text/plain')
+
   if (!_data) return
+
+  const _dragData: SchemaNode = JSON.parse(_data)
   const _drop = this._drop as DropOptions
   const { dropStyle } = _drop
+
   dropStyle && mergeStyle(this, dropStyle, true)
-  const _dragData: SchemaNode = JSON.parse(_data)
 
   eventBroadcast('drop-end', { el: this, data: _dragData })
 }
 
 function onDrop(this: DropHTMLElement, e: DragEvent) {
   const _data = e.dataTransfer!.getData('text/plain')
+
   if (!_data) return
+
+  const _dragData: SchemaNode = JSON.parse(_data)
   const _drop = this._drop as DropOptions
   const { dropStyle } = _drop
+
   dropStyle && mergeStyle(this, dropStyle, true)
-  const _dragData: SchemaNode = JSON.parse(_data)
+  
   eventBroadcast('drop', { el: this, data: _dragData })
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
   el._drop = { ...props.value }
+
   el.addEventListener('dragenter', onDropEnter, { passive: false })
   el.addEventListener('dragend', onDropEnd, { passive: false })
   el.addEventListener('dragleave', onDropLeave, { passive: false })
