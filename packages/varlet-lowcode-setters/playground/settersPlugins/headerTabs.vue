@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { ref, defineEmits, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { Snackbar, Button, Icon } from '@varlet/ui'
+import SettersContent from '../../src/settersContent'
 
 const tabIndex = ref(0)
-const emit = defineEmits(['changeTabIndex'])
 const tabClick = (value) => {
   tabIndex.value = value
 }
-watch(tabIndex, (newValue, oldValue) => {
-  emit('changeTabIndex', newValue)
-})
 </script>
 <template>
   <div class="varlet-lowcode-setters-header-tabs">
@@ -24,11 +21,17 @@ watch(tabIndex, (newValue, oldValue) => {
           <span class="inner-title">样式</span>
         </div>
       </li>
-      <li class="header-tabs-tab" :class="tabIndex === 2 ? 'active' : null" @click="tabClick(2)">
+      <li class="header-tabs-tab" :class="tabIndex === 2 ? 'active' : null" tabIndex="2" @click="tabClick(2)">
+        <div class="header-tabs-tab-inner">
+          <span class="inner-title">事件</span>
+        </div>
+      </li>
+      <li class="header-tabs-tab" :class="tabIndex === 3 ? 'active' : null" @click="tabClick(3)">
         <div class="header-tabs-tab-inner">
           <span class="inner-title">高级</span>
         </div>
       </li>
     </ul>
   </div>
+  <SettersContent :tab-index="tabIndex" />
 </template>

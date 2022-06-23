@@ -1,0 +1,50 @@
+:root {
+  --switch-width: 40px;
+  --switch-height: 20px;
+  --switch-radio-margin: 2px;
+  --switch-action-width: calc(var(--switch-width) / 20);
+}
+
+// switch开关
+.switch {
+  background-color: #ff00047a;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  border-radius: var(--switch-height);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: inset 0 0 9px -4px #00000030;
+  transition: background-color 0.15s linear;
+
+  &[checked='checked'] {
+    background-color: #14ba717a;
+
+    div {
+      box-shadow: -2px 0 8px -3px #00000052 !important;
+      margin-left: calc(var(--switch-width) - var(--switch-height) + var(--switch-radio-margin)) !important;
+    }
+  }
+
+  div {
+    background-color: white;
+    width: calc(var(--switch-height) - calc(var(--switch-radio-margin) * 2));
+    height: calc(var(--switch-height) - calc(var(--switch-radio-margin) * 2));
+    border-radius: calc(var(--switch-height) - calc(var(--switch-radio-margin) * 2));
+    margin: var(--switch-radio-margin);
+    transition: all 0.15s linear;
+    box-shadow: 2px 0 8px -3px #00000052;
+  }
+
+  &:active {
+    div {
+      width: calc(var(--switch-height) + var(--switch-action-width));
+    }
+
+    &[checked='checked'] div {
+      margin-left: calc(
+        var(--switch-width) - var(--switch-height) - var(--switch-radio-margin) - var(--switch-action-width)
+      ) !important;
+      width: calc(var(--switch-height) + var(--switch-action-width));
+    }
+  }
+}
