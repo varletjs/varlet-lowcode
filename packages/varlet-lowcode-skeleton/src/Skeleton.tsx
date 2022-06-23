@@ -56,25 +56,14 @@ export default defineComponent({
         return (
           <Space direction="column">
             {_plugins.map(({ icon: iconName, name, label }: SkeletonPlugin) => {
-              const hover = ref(false)
-
               return (
                 <div
                   class="skeleton__sidebar--icon"
-                  onMouseover={() => {
-                    hover.value = true
-                  }}
-                  onMouseleave={() => {
-                    hover.value = false
-                  }}
+                  style={`background: ${name === sidebarComponentName.value ? 'red' : null}`}
+                  onClick={() => toggleSidebarComponent(name)}
                 >
-                  {typeof iconName === 'string' ? (
-                    <Icon name={iconName} onClick={() => toggleSidebarComponent(name)} />
-                  ) : (
-                    <iconName onClick={() => toggleSidebarComponent(name)} />
-                  )}
-
-                  <div class="skeleton__sidebar--tooltip">{label}</div>
+                  {typeof iconName === 'string' ? <Icon name={iconName} /> : <iconName />}
+                  {label ? <div class="skeleton__sidebar--tooltip">{label}</div> : null}
                 </div>
               )
             })}

@@ -45,6 +45,9 @@ packages/varlet-lowcode-codegen/types
 packages/varlet-lowcode-skeleton/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-skeleton/types
 
+packages/varlet-lowcode-materials-panel/public/varlet-lowcode-core.umd.js
+packages/varlet-lowcode-materials-panel/types
+
 packages/varlet-lowcode-selector/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-selector/types
 
