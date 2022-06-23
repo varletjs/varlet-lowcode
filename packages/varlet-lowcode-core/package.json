@@ -22,6 +22,7 @@
     "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "dependencies": {
+    "@varlet/shared": "latest",
     "lodash-es": "^4.17.21",
     "uuid": "^8.3.2"
   },

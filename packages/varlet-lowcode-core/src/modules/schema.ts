@@ -1,4 +1,5 @@
-import { isArray, isPlainObject, removeHyphen, removeItem, removePrivateProperty } from '../shared'
+import { isArray, isPlainObject, removeItem } from '@varlet/shared'
+import { removeHyphen, removePrivateProperty } from '../shared'
 import { v4 as uuid } from 'uuid'
 
 export interface SchemaManager {

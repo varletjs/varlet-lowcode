@@ -1,9 +1,9 @@
 {
-  "name": "@varlet/lowcode-renderer",
+  "name": "@varlet/lowcode-code-editor",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-renderer.es.js",
-  "module": "lib/varlet-lowcode-renderer.es.js",
-  "types": "./types/index.d.ts",
+  "main": "lib/varlet-lowcode-code-editor.es.js",
+  "module": "lib/varlet-lowcode-code-editor.es.js",
+  "types": "types/index.d.ts",
   "files": [
     "lib",
     "types",
@@ -16,24 +16,19 @@
     "compile:watch": "varlet-lowcode-cli compile -w",
     "preview": "varlet-lowcode-cli preview"
   },
-  "dependencies": {
-    "@varlet/shared": "latest",
-    "lodash-es": "^4.17.21",
-    "uuid": "^8.3.2"
-  },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
-    "@varlet/lowcode-dnd": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
-    "vite-plugin-externals": "^0.5.0",
-    "@types/lodash-es": "^4.17.6",
-    "@types/uuid": "^8.3.4",
+    "@varlet/lowcode-ast": "workspace: *",
+    "@types/node": "*",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
+    "vite": "^2.9.12",
     "vue": "3.2.25",
     "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
-    "@varlet/lowcode-core": "workspace: *"
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-ast": "workspace: *"
   }
 }

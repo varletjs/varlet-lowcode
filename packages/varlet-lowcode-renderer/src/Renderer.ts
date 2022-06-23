@@ -23,18 +23,18 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import {
-  assetsManager,
-  BuiltInSchemaNodeNames,
-  BuiltInSchemaNodeBindingTypes,
-  SchemaNodeSlot,
-  Assets,
-  EventsManager,
-} from '@varlet/lowcode-core'
-import { isArray, isPlainObject } from './shared'
+import { assetsManager, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
+import { isArray, isPlainObject } from '@varlet/shared'
 import { Drag, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode } from 'vue'
-import type { SchemaPageNode, SchemaNode, SchemaTextNode } from '@varlet/lowcode-core'
+import type {
+  SchemaPageNode,
+  SchemaNode,
+  SchemaTextNode,
+  EventsManager,
+  SchemaNodeSlot,
+  Assets,
+} from '@varlet/lowcode-core'
 
 declare const window: Window & {
   $slotProps?: Record<string, any>

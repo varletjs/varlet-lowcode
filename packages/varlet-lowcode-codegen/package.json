@@ -14,6 +14,7 @@
     "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "dependencies": {
+    "@varlet/shared": "latest",
     "file-saver": "^2.0.5",
     "jszip": "^3.6.0"
   },

@@ -12,7 +12,7 @@ import {
   VITE_RESOLVE_EXTENSIONS,
 } from '../shared/constant'
 import { InlineConfig, PluginOption } from 'vite'
-import { get } from 'lodash'
+import { get, merge } from 'lodash'
 import { resolve } from 'path'
 import { pathExistsSync, readFileSync, removeSync, writeFileSync } from 'fs-extra'
 import { bigCamelize } from '../shared/utils'
@@ -29,10 +29,8 @@ export function getEntry() {
 
 const commonPlugins = [vue(), jsx()]
 
-export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
+export function getBaseConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const host = get(varletLowCodeConfig, 'host')
-  const plugins = get(varletLowCodeConfig, 'plugins', [])
-  const define = get(varletLowCodeConfig, 'define', {})
 
   return {
     root: PLAYGROUND_DIR,
@@ -44,22 +42,28 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
       host: host === 'localhost' ? '0.0.0.0' : host,
     },
     publicDir: PLAYGROUND_PUBLIC_PATH,
-    define,
     plugins: [
       ...commonPlugins,
       injectHtml({
         data: get(varletLowCodeConfig, 'playground', {}),
       }),
-      ...plugins,
     ],
   }
 }
 
-export function getBuildConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
-  const devConfig = getDevConfig(varletLowCodeConfig)
+export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
+  const configureVite = get(varletLowCodeConfig, 'configureVite', () => ({}))
+  const baseConfig = getBaseConfig(varletLowCodeConfig)
 
-  return {
-    ...devConfig,
+  return merge(getBaseConfig(varletLowCodeConfig), configureVite('dev', baseConfig) ?? {})
+}
+
+export function getBuildConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
+  const configureVite = get(varletLowCodeConfig, 'configureVite', () => ({}))
+  const baseConfig = getBaseConfig(varletLowCodeConfig)
+
+  const buildConfig = {
+    ...baseConfig,
     base: './',
     build: {
       outDir: PLAYGROUND_OUTPUT_PATH,
@@ -73,6 +77,8 @@ export function getBuildConfig(varletLowCodeConfig: Record<string, any>): Inline
       },
     },
   }
+
+  return merge(buildConfig, configureVite('build', buildConfig) ?? {})
 }
 
 function inlineCSS(name: string): PluginOption {
@@ -103,20 +109,18 @@ var head=document.querySelector('head');head.appendChild(style)})();`
 }
 
 export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
+  const configureVite = get(varletLowCodeConfig, 'configureVite', () => ({}))
   const name = get(varletLowCodeConfig, 'name')
-  const plugins = get(varletLowCodeConfig, 'plugins', [])
-  const define = get(varletLowCodeConfig, 'define', {})
 
-  return {
+  const libConfig = {
     publicDir: false,
-    define,
     build: {
       emptyOutDir: true,
       outDir: PLUGIN_OUTPUT_PATH,
       lib: {
         name: bigCamelize(name),
         formats: PLUGIN_OUTPUT_FORMATS,
-        fileName: (format) => `${name}.${format}.js`,
+        fileName: (format: string) => `${name}.${format}.js`,
         entry: getEntry()!,
       },
       rollupOptions: {
@@ -132,6 +136,8 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         },
       },
     },
-    plugins: [...commonPlugins, inlineCSS(name), ...plugins],
+    plugins: [...commonPlugins, inlineCSS(name)],
   }
+
+  return merge(libConfig, configureVite('compile', libConfig) ?? {})
 }
