@@ -57,6 +57,7 @@ export default defineComponent({
           <Space direction="column">
             {_plugins.map(({ icon: iconName, name, label }: SkeletonPlugin) => {
               const hover = ref(false)
+
               return (
                 <div
                   class="skeleton__sidebar--icon"
