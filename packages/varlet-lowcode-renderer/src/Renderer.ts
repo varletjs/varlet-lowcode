@@ -29,6 +29,7 @@ import {
   BuiltInSchemaNodeBindingTypes,
   SchemaNodeSlot,
   Assets,
+  EventsManager,
 } from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from './shared'
 import { Drag, Drop } from '@varlet/lowcode-dnd'
@@ -89,6 +90,10 @@ export default defineComponent({
       type: Array as PropType<Assets>,
       required: true,
       default: () => [],
+    },
+
+    designerEventsManager: {
+      type: Object as PropType<EventsManager>,
     },
   },
 

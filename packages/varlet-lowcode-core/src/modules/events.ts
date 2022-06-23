@@ -6,7 +6,7 @@ export interface ListenerDescriptor {
   once: boolean
 }
 
-export interface EventManager {
+export interface EventsManager {
   on(event: string, listener: Listener): void
 
   once(event: string, listener: Listener): void
@@ -16,7 +16,7 @@ export interface EventManager {
   emit(event: string, ...args: any[]): void
 }
 
-export function createEventManager(): EventManager {
+export function createEventsManager(): EventsManager {
   const listenerDescriptors: ListenerDescriptor[] = []
 
   function on(event: string, listener: Listener) {
@@ -76,4 +76,4 @@ export function createEventManager(): EventManager {
   }
 }
 
-export default createEventManager()
+export default createEventsManager()

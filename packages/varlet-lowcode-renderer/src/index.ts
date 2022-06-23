@@ -2,7 +2,7 @@ import RendererComponent from './Renderer'
 import { createApp, h, ShallowRef, shallowRef } from 'vue'
 import { BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
 import type { App } from 'vue'
-import type { Assets, SchemaPageNode } from '@varlet/lowcode-core'
+import type { Assets, SchemaPageNode, EventsManager } from '@varlet/lowcode-core'
 
 type Renderer = typeof RendererComponent & {
   app: App
@@ -18,7 +18,7 @@ const schema = shallowRef<SchemaPageNode>({
 
 const assets = shallowRef<Assets>([])
 
-function init(this: Renderer, selector: string) {
+function init(this: Renderer, selector: string, designerEventsManager: EventsManager) {
   this.app = createApp({
     setup() {
       return () => {
@@ -26,6 +26,7 @@ function init(this: Renderer, selector: string) {
           schema: schema.value,
           assets: assets.value,
           mode: 'designer',
+          designerEventsManager,
         })
       }
     },

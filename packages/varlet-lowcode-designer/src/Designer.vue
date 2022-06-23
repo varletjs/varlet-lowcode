@@ -70,7 +70,7 @@ async function mountRenderer() {
 
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
-  renderer.init('#app')
+  renderer.init('#app', eventsManager)
 }
 
 onMounted(async () => {
