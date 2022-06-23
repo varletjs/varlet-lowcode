@@ -48,7 +48,8 @@ const onDragEnter = (args: any) => {
   dropSchema.value = args.dragOptions
 }
 
-const onDrop = () => {
+const onDrop = (event: any) => {
+  console.log('eee',event)
   const dragOptions = toRaw(dragSchema.value)
   const dropOptions = toRaw(dropSchema.value)
 
@@ -81,19 +82,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
-    <div class="drag-list">
-      <button class="drag-item" v-for="(item, index) in dragList" :key="item.id" v-drag="item">
-        drag me {{ index }}
-      </button>
-    </div>
-    <iframe width="500" src="./demo.html" />
-    <!-- <transition-group v-drop="dropProps" name="drag" tag="div" class="drop-place">
-      <button v-drop="slotsDropProps" v-drag="item" class="drop-item" v-for="item in renderList" :key="item.id">
-        {{ item.dragData?.name }}
-      </button>
-    </transition-group> -->
-  </div>
+  <transition-group v-drop="dropProps" name="drag" tag="div" class="drop-place">
+    <button v-drop="slotsDropProps" v-drag="item" class="drop-item" v-for="item in renderList" :key="item.id">
+      {{ item.dragData?.name }}
+    </button>
+  </transition-group>
 </template>
 
 <style scoped>
