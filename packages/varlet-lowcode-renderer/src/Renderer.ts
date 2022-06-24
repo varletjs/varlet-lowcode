@@ -26,6 +26,7 @@ import {
 import { assetsManager, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from '@varlet/shared'
 import { Drag, Drop } from '@varlet/lowcode-dnd'
+import type { DragOptions, DropOptions } from '@varlet/lowcode-dnd'
 import type { PropType, VNode } from 'vue'
 import type {
   SchemaPageNode,
@@ -101,6 +102,24 @@ export default defineComponent({
     const setup = eval(`(${props.schema.code ?? 'function setup() { return {} }'})`)
     const ctx = setup()
 
+    function setDndDisabledStyle() {
+      const styles = document.createElement('style')
+      const styleSheet = `
+      .varlet-low-code--disable-events > * { 
+        pointer-events: none;
+      }
+      
+      .varlet-low-code--disable-events {
+        pointer-events: all;
+      }
+      `
+      
+      styles.id = `varlet-low-code-events`
+      styles.innerHTML = styleSheet
+
+      document.head.appendChild(styles)
+    }
+
     function cloneSchemaNode(schemaNode: SchemaNode) {
       return JSON.parse(JSON.stringify(schemaNode))
     }
@@ -167,14 +186,30 @@ export default defineComponent({
 
     function withDesigner(schemaNode: SchemaNode) {
       if (props.mode === 'designer') {
+        const varletDragProps: DragOptions = {
+          dragStyle: {
+            opacity: '.5',
+          },
+          type: 'move',
+          dragData: schemaNode,
+        }
+
+
+        const varletDropProps: DropOptions = {
+          dropStyle: {
+            border: '1px solid red',
+          },
+          type: 'move',
+        }
+
         // TODO: dnd props
         return withDirectives(
           h(
             getComponent(schemaNode.name, schemaNode.library!),
-            getPropsBinding(schemaNode),
+            { ...getPropsBinding(schemaNode), class: 'varlet-low-code--disable-events' },
             renderSchemaNodeSlots(schemaNode)
           ),
-          [[Drag], [Drop]]
+          [[Drag, varletDragProps], [Drop, varletDropProps]]
         )
       }
 
@@ -223,7 +258,7 @@ export default defineComponent({
           items = Array.from({ length: Number(items) || 0 })
         }
 
-        ;(items as any[]).forEach((item, index) => {
+        ; (items as any[]).forEach((item, index) => {
           const newSchemaNode = cloneSchemaNode(schemaNode)
 
           if (!newSchemaNode._item) {
@@ -279,6 +314,7 @@ export default defineComponent({
     }
 
     hoistWindow()
+    setDndDisabledStyle()
 
     return () => h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },

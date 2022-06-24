@@ -12,9 +12,7 @@ interface DropHTMLElement extends HTMLElement {
   _drop?: DropOptions
 }
 
-function onDropEnter(this: DropHTMLElement, e: DragEvent) {
-  if (e.target !== e.currentTarget) return
-
+function onDropEnter(this: DropHTMLElement) {
   const _drop = this._drop as DropOptions
   const { dropStyle } = _drop
 

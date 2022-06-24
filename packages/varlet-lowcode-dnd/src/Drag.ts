@@ -16,6 +16,8 @@ interface DragHTMLElement extends HTMLElement {
 }
 
 function onDragStart(this: DragHTMLElement, e: DragEvent) {
+  if (e.target !== e.currentTarget) return
+
   const _drag = this._drag as DragOptions
   const { dragStyle, dragData, dragImg, type = 'all' } = _drag
 
@@ -58,7 +60,7 @@ function onDragEnd(this: DragHTMLElement, e: DragEvent) {
 function mounted(el: DragHTMLElement, props: DirectiveBinding<DragOptions>) {
   el._drag = { ...props.value }
   el.draggable = true
-  
+
   el.addEventListener('dragstart', onDragStart, { passive: false })
   el.addEventListener('dragenter', onDragEnter, { passive: false })
   el.addEventListener('dragover', onDragOver, { passive: false })

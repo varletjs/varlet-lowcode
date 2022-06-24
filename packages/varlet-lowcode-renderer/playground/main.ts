@@ -142,46 +142,6 @@ import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lo
                       },
                     },
                   },
-                  {
-                    id: countdownId,
-                    name: 'Countdown',
-                    library: 'Varlet',
-                    for: 3,
-                    props: {
-                      time: 99999,
-                    },
-                    slots: {
-                      default: {
-                        children: [
-                          {
-                            id: schemaManager.generateId(),
-                            name: BuiltInSchemaNodeNames.TEXT,
-                            textContent: schemaManager.createExpressionBinding(`$slotProps['${countdownId}']`),
-                          },
-                          {
-                            id: countdown2Id,
-                            name: 'Countdown',
-                            library: 'Varlet',
-                            for: 3,
-                            props: {
-                              time: 9999999999,
-                            },
-                            slots: {
-                              default: {
-                                children: [
-                                  {
-                                    id: schemaManager.generateId(),
-                                    name: BuiltInSchemaNodeNames.TEXT,
-                                    textContent: schemaManager.createExpressionBinding(`$slotProps['${countdown2Id}']`),
-                                  },
-                                ],
-                              },
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
                 ],
               },
             },
@@ -194,6 +154,7 @@ import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lo
   await assetsManager.loadResources(assets, document)
 
   createApp(Renderer, {
+    mode:"designer",
     schema,
     assets,
   }).mount('#app')
