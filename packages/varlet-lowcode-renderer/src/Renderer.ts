@@ -23,7 +23,12 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import { assetsManager, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes, schemaManager } from '@varlet/lowcode-core'
+import {
+  assetsManager,
+  BuiltInSchemaNodeNames,
+  BuiltInSchemaNodeBindingTypes,
+  schemaManager,
+} from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { Drag, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode, DirectiveArguments } from 'vue'
@@ -106,10 +111,10 @@ export default defineComponent({
     function setDndDisabledStyle() {
       const styles = document.createElement('style')
       const styleSheet = `
-      .varlet-low-code--disable-events > * { 
+      .varlet-low-code--disable-events > * {
         pointer-events: none;
       }
-      
+
       .varlet-low-code--disable-events {
         pointer-events: all;
       }
@@ -193,27 +198,32 @@ export default defineComponent({
 
     function withDesigner(schemaNode: SchemaNode) {
       if (props.mode === 'designer') {
-
-        const directives: DirectiveArguments = [[Drag, { dragData: schemaNode }], [Drop, { dragData: schemaNode }]]
-        const props = getPropsBinding(schemaNode);
+        const directives: DirectiveArguments = [
+          [Drag, { dragData: schemaNode }],
+          [Drop, { dragData: schemaNode }],
+        ]
 
         if (schemaManager.isSchemaPageNode(schemaNode)) {
           directives.shift()
         }
 
-        let { class:cssName = [] } = props
-        if (isString(cssName)) {
-          cssName = cssName.split(' ')
-        } 
-        cssName.push('varlet-low-code--disable-events')
-        props.class = cssName
+        const propsBinding = getPropsBinding(schemaNode)
+
+        const classes = isArray(propsBinding.class)
+          ? propsBinding.class
+          : isString(propsBinding.class)
+          ? propsBinding.class.split(' ')
+          : []
+
+        classes.push('varlet-low-code--disable-events')
 
         return withDirectives(
           h(
             getComponent(schemaNode.name, schemaNode.library!),
-            { ...getPropsBinding(schemaNode), class: 'varlet-low-code--disable-events' },
+            { ...propsBinding, class: classes },
             renderSchemaNodeSlots(schemaNode)
-          ), directives
+          ),
+          directives
         )
       }
 
@@ -262,7 +272,7 @@ export default defineComponent({
           items = Array.from({ length: Number(items) || 0 })
         }
 
-        ; (items as any[]).forEach((item, index) => {
+        ;(items as any[]).forEach((item, index) => {
           const newSchemaNode = cloneSchemaNode(schemaNode)
 
           if (!newSchemaNode._item) {
