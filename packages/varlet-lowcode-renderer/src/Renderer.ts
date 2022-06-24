@@ -201,11 +201,12 @@ export default defineComponent({
           directives.shift()
         }
 
-        if (isArray(props.class)) {
-          props.class.push('varlet-low-code--disable-events')
-        } else {
-          props.class = (props.class || '') + ' varlet-low-code--disable-events'
-        }
+        let { class:cssName = [] } = props
+        if (isString(cssName)) {
+          cssName = cssName.split(' ')
+        } 
+        cssName.push('varlet-low-code--disable-events')
+        props.class = cssName
 
         return withDirectives(
           h(
