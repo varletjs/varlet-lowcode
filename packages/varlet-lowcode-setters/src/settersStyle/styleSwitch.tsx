@@ -2,12 +2,15 @@ import type { CSSProperties, Ref } from 'vue'
 import { onMounted, onUnmounted, defineComponent, ref, PropType } from 'vue'
 import './styleSwitch.less'
 
+interface HTMLElementPlus extends HTMLElement {
+  checked?: boolean
+}
 export default defineComponent({
   name: 'StyleInput',
   props: {
     modelValue: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -16,7 +19,7 @@ export default defineComponent({
     }
     return () => {
       return (
-        <div class="switch" checked={props.modelValue} onClick={updateModelValue}>
+        <div class="switch" onClick={updateModelValue} data-checked={props.modelValue}>
           <div></div>
         </div>
       )

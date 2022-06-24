@@ -7,7 +7,7 @@
 
 // switch开关
 .switch {
-  background-color: #ff00047a;
+  background-color: #e4e4e47a;
   width: var(--switch-width);
   height: var(--switch-height);
   border-radius: var(--switch-height);
@@ -16,7 +16,7 @@
   box-shadow: inset 0 0 9px -4px #00000030;
   transition: background-color 0.15s linear;
 
-  &[checked='checked'] {
+  &[data-checked='true'] {
     background-color: #14ba717a;
 
     div {
@@ -40,7 +40,7 @@
       width: calc(var(--switch-height) + var(--switch-action-width));
     }
 
-    &[checked='checked'] div {
+    &[data-checked='true'] div {
       margin-left: calc(
         var(--switch-width) - var(--switch-height) - var(--switch-radio-margin) - var(--switch-action-width)
       ) !important;
