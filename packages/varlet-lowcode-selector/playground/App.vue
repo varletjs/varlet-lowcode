@@ -4,7 +4,9 @@ import Button from './Button.vue';
 import { eventsManager } from '@varlet/lowcode-core'
 
 const onClick = (e: Event) => {
-  eventsManager.emit('schema-click', e)
+  console.log("123123", e);
+  
+  eventsManager.emit('schema-click', e?.target?.id || '')
 }
 
 </script>
@@ -12,13 +14,13 @@ const onClick = (e: Event) => {
 <template>
   <Selector />
   <div class="button-groups">
-    <Button @click="onClick" />
-    <Button @click="onClick">12312313</Button>
-    <Button @click="onClick">34534534</Button>
-    <Button @click="onClick">565687878</Button>
-    <Button @click="onClick">80980989098</Button>
-    <Button @click="onClick">qwerqwer</Button>
-    <Button @click="onClick">asdfasdfsdf</Button>
+    <Button id="asd" @click="onClick" />
+    <Button id="asd" @click="onClick">12312313</Button>
+    <Button id="asd" @click="onClick">34534534</Button>
+    <Button id="asd" @click="onClick">565687878</Button>
+    <Button id="asd" @click="onClick">80980989098</Button>
+    <Button id="asd" @click="onClick">qwerqwer</Button>
+    <Button id="asd" @click="onClick">asdfasdfsdf</Button>
   </div>
 </template>
 <style scoped>

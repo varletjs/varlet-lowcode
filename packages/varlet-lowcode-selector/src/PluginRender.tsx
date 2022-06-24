@@ -10,7 +10,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class="varlet-lowcode-selector_plugins">
+        <div class="varlet-low-code--selector-plugins">
           {plugins.map((SelectorPlugin) => {
             return <SelectorPlugin.component />
           })}

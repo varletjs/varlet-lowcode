@@ -11,22 +11,24 @@ export default defineComponent({
       boxSizing: 'border-box',
       position: 'absolute',
     }
+    const selectorStyles: Ref<CSSProperties[] | undefined> = ref([])
 
-    const selectorStyles: Ref<CSSProperties | undefined> = ref()
+    function computedSelectorStyles(id: string) {
+      const nodes = document.querySelectorAll(`#${id}`)
 
-    function computedSelectorStyles(event: Event) {
-      const element = event.target as HTMLElement
-      const { top, left }: DOMRect = element.getBoundingClientRect()
-      const { clientWidth, clientHeight } = element
-
-      const _style: CSSProperties = {
-        top: `${top}px`,
-        left: `${left}px`,
-        width: `${clientWidth}px`,
-        height: `${clientHeight}px`,
+      if (nodes && nodes.length > 0) {
+        const _nodes = Array.from(nodes)
+        selectorStyles.value = _nodes.map((node: Element) => {
+          const { top, left, width, height } = node.getBoundingClientRect()
+          const _style: CSSProperties = {
+            top: `${top}px`,
+            left: `${left}px`,
+            width: `${width}px`,
+            height: `${height}px`,
+          }
+          return { ..._style, ...initStyle }
+        })
       }
-
-      selectorStyles.value = Object.assign(_style, initStyle)
     }
 
     onMounted(() => {
@@ -38,7 +40,13 @@ export default defineComponent({
     })
 
     return () => {
-      return <div style={selectorStyles.value}>{selectorStyles.value && <PluginRender />}</div>
+       return (
+         selectorStyles.value && selectorStyles.value.map((style: CSSProperties, i: number) => {
+          return <div key={Symbol(style.toString())} style={style}>
+            {(style && i === (selectorStyles.value!.length - 1)) && <PluginRender />}
+          </div>
+        })
+      )
     }
   },
 })
