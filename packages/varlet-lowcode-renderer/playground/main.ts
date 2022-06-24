@@ -2,7 +2,7 @@ import Renderer from '../src/Renderer'
 import { createApp } from 'vue'
 import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
 
-;
+  ;
 
 (async () => {
   const assets = [
@@ -142,6 +142,26 @@ import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lo
                       },
                     },
                   },
+                  {
+                    id: schemaManager.generateId(),
+                    name: 'Button',
+                    library: 'Varlet',
+                    props: {
+                      type: 'primary',
+                      onClick: toggleDisabled,
+                    },
+                    slots: {
+                      default: {
+                        children: [
+                          {
+                            id: schemaManager.generateId(),
+                            name: BuiltInSchemaNodeNames.TEXT,
+                            textContent: 'Disabled',
+                          },
+                        ],
+                      },
+                    },
+                  },
                 ],
               },
             },
@@ -151,10 +171,34 @@ import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lo
     },
   }
 
+  function toggleDisabled() {
+    let styles = document.querySelector('#varlet-low-code-events')
+
+    if (styles) {
+      document.body.removeChild(styles)
+    } else {
+      styles = document.createElement('style')
+      const styleSheet = `
+      .varlet-low-code--disable-events > * { 
+        pointer-events: none;
+      }
+      
+      .varlet-low-code--disable-events {
+        pointer-events: all;
+      }
+      `
+
+      styles.id = `varlet-low-code-events`
+      styles.innerHTML = styleSheet
+
+      document.body.appendChild(styles)
+    }
+  }
+
   await assetsManager.loadResources(assets, document)
 
   createApp(Renderer, {
-    mode:"designer",
+    mode: "designer",
     schema,
     assets,
   }).mount('#app')

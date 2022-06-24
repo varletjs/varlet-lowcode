@@ -23,11 +23,10 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import { assetsManager, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes } from '@varlet/lowcode-core'
+import { assetsManager, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes, schemaManager } from '@varlet/lowcode-core'
 import { isArray, isPlainObject } from '@varlet/shared'
 import { Drag, Drop } from '@varlet/lowcode-dnd'
-import type { DragOptions, DropOptions } from '@varlet/lowcode-dnd'
-import type { PropType, VNode } from 'vue'
+import type { PropType, VNode, DirectiveArguments } from 'vue'
 import type {
   SchemaPageNode,
   SchemaNode,
@@ -102,6 +101,8 @@ export default defineComponent({
     const setup = eval(`(${props.schema.code ?? 'function setup() { return {} }'})`)
     const ctx = setup()
 
+    onUnmounted(uninstallDndDisabledStyle)
+
     function setDndDisabledStyle() {
       const styles = document.createElement('style')
       const styleSheet = `
@@ -113,11 +114,17 @@ export default defineComponent({
         pointer-events: all;
       }
       `
-      
+
       styles.id = `varlet-low-code-events`
       styles.innerHTML = styleSheet
 
-      document.head.appendChild(styles)
+      document.body.appendChild(styles)
+    }
+
+    function uninstallDndDisabledStyle() {
+      const styles = document.querySelector('#varlet-low-code-events')
+
+      styles && document.body.removeChild(styles)
     }
 
     function cloneSchemaNode(schemaNode: SchemaNode) {
@@ -186,30 +193,19 @@ export default defineComponent({
 
     function withDesigner(schemaNode: SchemaNode) {
       if (props.mode === 'designer') {
-        const varletDragProps: DragOptions = {
-          dragStyle: {
-            opacity: '.5',
-          },
-          type: 'move',
-          dragData: schemaNode,
+
+        const directives: DirectiveArguments = [[Drag, { dragData: schemaNode }], [Drop, { dragData: schemaNode }]]
+        
+        if (schemaManager.isSchemaPageNode(schemaNode)) {
+          directives.shift()
         }
 
-
-        const varletDropProps: DropOptions = {
-          dropStyle: {
-            border: '1px solid red',
-          },
-          type: 'move',
-        }
-
-        // TODO: dnd props
         return withDirectives(
           h(
             getComponent(schemaNode.name, schemaNode.library!),
             { ...getPropsBinding(schemaNode), class: 'varlet-low-code--disable-events' },
             renderSchemaNodeSlots(schemaNode)
-          ),
-          [[Drag, varletDragProps], [Drop, varletDropProps]]
+          ), directives
         )
       }
 

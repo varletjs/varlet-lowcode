@@ -72,7 +72,13 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
-  el._drop = { ...props.value }
+  const defalutProps: DropOptions = {
+    dropStyle: {
+      border: '1px solid red',
+    },
+    type: 'move',
+  }
+  el._drop = { ...defalutProps, ...props.value }
 
   el.addEventListener('dragenter', onDropEnter, { passive: false })
   el.addEventListener('dragend', onDropEnd, { passive: false })

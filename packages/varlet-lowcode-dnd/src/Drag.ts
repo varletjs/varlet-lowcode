@@ -58,7 +58,13 @@ function onDragEnd(this: DragHTMLElement, e: DragEvent) {
 }
 
 function mounted(el: DragHTMLElement, props: DirectiveBinding<DragOptions>) {
-  el._drag = { ...props.value }
+  const defaultsProps = {
+    dragStyle: {
+      opacity: '.5',
+    },
+    type: 'move',
+  } as DragOptions
+  el._drag = { ...defaultsProps, ...props.value }
   el.draggable = true
 
   el.addEventListener('dragstart', onDragStart, { passive: false })
