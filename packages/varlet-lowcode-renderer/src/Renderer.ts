@@ -24,7 +24,7 @@ import {
   withDirectives,
 } from 'vue'
 import { assetsManager, BuiltInSchemaNodeNames, BuiltInSchemaNodeBindingTypes, schemaManager } from '@varlet/lowcode-core'
-import { isArray, isPlainObject } from '@varlet/shared'
+import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { Drag, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode, DirectiveArguments } from 'vue'
 import type {
@@ -195,9 +195,16 @@ export default defineComponent({
       if (props.mode === 'designer') {
 
         const directives: DirectiveArguments = [[Drag, { dragData: schemaNode }], [Drop, { dragData: schemaNode }]]
-        
+        const props = getPropsBinding(schemaNode);
+
         if (schemaManager.isSchemaPageNode(schemaNode)) {
           directives.shift()
+        }
+
+        if (isArray(props.class)) {
+          props.class.push('varlet-low-code--disable-events')
+        } else {
+          props.class = (props.class || '') + ' varlet-low-code--disable-events'
         }
 
         return withDirectives(
