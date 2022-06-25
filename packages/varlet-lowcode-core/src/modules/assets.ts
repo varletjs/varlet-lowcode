@@ -1,5 +1,5 @@
 import { get } from 'lodash-es'
-import type { DefineComponent } from 'vue'
+import type { Component } from 'vue'
 
 export interface Asset {
   profile?: string
@@ -22,11 +22,24 @@ export interface AssetProfileMaterialSlot {
   hasSlotProps: boolean
 }
 
+export type AssetProfileMaterialSetter =
+  | string
+  | {
+      setter: string | Component
+      block?: boolean
+      props?: Record<string, any>
+    }
+
+export interface AssetProfileMaterialProp {
+  name: string
+  setters: AssetProfileMaterialSetter[]
+}
+
 export interface AssetProfileMaterial {
   name: string
   description?: string
   image?: string
-  props?: any[]
+  props?: AssetProfileMaterialProp[]
   slots?: AssetProfileMaterialSlot[]
   codegen: AssetProfileMaterialCodegen
 }
@@ -34,7 +47,7 @@ export interface AssetProfileMaterial {
 export type Assets = Asset[]
 
 export interface AssetsManager {
-  findComponent(assets: Assets, name: string, library: string): DefineComponent
+  findComponent(assets: Assets, name: string, library: string): Component
 
   findMaterial(assets: Assets, name: string, library: string): AssetProfileMaterial
 
@@ -54,7 +67,7 @@ export interface AssetsManager {
 export function createAssetsManager(): AssetsManager {
   let _assets: Assets = []
 
-  function findComponent(assets: Assets, name: string, library?: string): DefineComponent {
+  function findComponent(assets: Assets, name: string, library?: string): Component {
     const asset = assets.find((asset) => {
       if (!asset.profile) {
         return false
