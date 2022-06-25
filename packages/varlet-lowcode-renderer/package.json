@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-profile": "workspace: *",
     "@varlet/lowcode-dnd": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
     "vite-plugin-externals": "^0.5.0",

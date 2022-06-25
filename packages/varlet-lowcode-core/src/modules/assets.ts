@@ -40,6 +40,8 @@ export interface AssetsManager {
 
   findProfile(assets: Assets, name: string, library: string): AssetProfile
 
+  getProfiles(assets: Assets): AssetProfile[]
+
   getResources(assets: Assets): string[]
 
   loadResources(assets: Assets, document: Document): Promise<void>
@@ -122,6 +124,22 @@ export function createAssetsManager(): AssetsManager {
     }, [] as string[])
   }
 
+  function getProfiles(assets: Assets): AssetProfile[] {
+    const profiles: AssetProfile[] = []
+
+    for (const asset of assets) {
+      if (!asset.profile) {
+        continue
+      }
+
+      const assetProfile = get(window, asset.profile) as AssetProfile
+
+      assetProfile && profiles.push(assetProfile)
+    }
+
+    return profiles
+  }
+
   async function loadResources(assets: Assets, document: Document): Promise<void> {
     const asyncTasks = []
 
@@ -179,6 +197,8 @@ export function createAssetsManager(): AssetsManager {
     findProfile,
 
     getResources,
+
+    getProfiles,
 
     loadResources,
 

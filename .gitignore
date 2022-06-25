@@ -56,3 +56,5 @@ packages/varlet-lowcode-profile/types
 
 packages/varlet-lowcode-ast/lib
 packages/varlet-lowcode-ast/types
+/packages/varlet-lowcode-skeleton/public/varlet-lowcode-profile.umd.js
+/packages/varlet-lowcode-skeleton/public/varlet-lowcode-renderer.umd.js

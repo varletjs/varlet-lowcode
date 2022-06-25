@@ -1,4 +1,4 @@
-import { DefineComponent } from 'vue'
+import type { Component } from 'vue'
 
 export enum SkeletonLayouts {
   HEADER_LEFT = 'header-left',
@@ -13,14 +13,14 @@ export enum SkeletonLayouts {
 export interface SkeletonPlugin {
   readonly name: string
   readonly layout: SkeletonLayouts
-  readonly component: DefineComponent
-  readonly icon?: string | DefineComponent
+  readonly component: Component
+  readonly icon?: string | Component
   readonly label?: string
 }
 
 export interface SelectorPlugin {
   readonly name: string
-  readonly component: DefineComponent
+  readonly component: Component
 }
 
 export interface PluginsManager {

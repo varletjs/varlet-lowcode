@@ -24,6 +24,10 @@ module.exports = {
               'lib/varlet-lowcode-renderer.umd.js',
               '../varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js'
             )
+            require('fs').copyFileSync(
+              'lib/varlet-lowcode-renderer.umd.js',
+              '../varlet-lowcode-skeleton/public/varlet-lowcode-renderer.umd.js'
+            )
           },
         },
       ],
