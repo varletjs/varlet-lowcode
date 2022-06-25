@@ -27,7 +27,7 @@ export function getEntry() {
   }
 }
 
-const commonPlugins = [vue(), jsx()]
+const commonPlugins = [vue(), jsx() as PluginOption]
 
 export function getBaseConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const host = get(varletLowCodeConfig, 'host')

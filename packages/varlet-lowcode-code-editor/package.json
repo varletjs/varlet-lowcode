@@ -16,6 +16,9 @@
     "compile:watch": "varlet-lowcode-cli compile -w",
     "preview": "varlet-lowcode-cli preview"
   },
+  "dependencies": {
+    "monaco-editor": "^0.33.0"
+  },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
