@@ -1,5 +1,5 @@
 import { get } from 'lodash-es'
-import type { DefineComponent } from 'vue'
+import type { DefineComponent, Component } from 'vue'
 
 export interface Asset {
   profile?: string
@@ -22,11 +22,24 @@ export interface AssetProfileMaterialSlot {
   hasSlotProps: boolean
 }
 
+export type AssetProfileMaterialSetter =
+  | string
+  | {
+      setter: string | Component
+      block?: boolean
+      props?: Record<string, any>
+    }
+
+export interface AssetProfileMaterialProp {
+  name: string
+  setters: AssetProfileMaterialSetter[]
+}
+
 export interface AssetProfileMaterial {
   name: string
   description?: string
   image?: string
-  props?: any[]
+  props?: AssetProfileMaterialProp[]
   slots?: AssetProfileMaterialSlot[]
   codegen: AssetProfileMaterialCodegen
 }
