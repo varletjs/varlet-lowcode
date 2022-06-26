@@ -54,12 +54,12 @@ export default defineComponent({
 
       if (layout.includes('sidebar')) {
         return (
-          <Space direction="column">
+          <div class="skeleton__sidebar--container">
             {_plugins.map(({ icon: iconName, name, label }: SkeletonPlugin) => {
               return (
                 <div
-                  class="skeleton__sidebar--icon"
-                  style={`background: ${name === sidebarComponentName.value ? 'red' : null}`}
+                  class={`skeleton__sidebar--icon
+                  ${name === sidebarComponentName.value ? 'skeleton__sidebar--icon-selected' : ''}`}
                   onClick={() => toggleSidebarComponent(name)}
                 >
                   {typeof iconName === 'string' ? <Icon name={iconName} /> : <iconName />}
@@ -67,7 +67,7 @@ export default defineComponent({
                 </div>
               )
             })}
-          </Space>
+          </div>
         )
       }
 
