@@ -50,6 +50,12 @@ packages/varlet-lowcode-ast/types/**
 
 packages/varlet-lowcode-cli/lib/**
 
+packages/varlet-lowcode-code-editor/lib/**
+packages/varlet-lowcode-code-editor/types/**
+
+packages/varlet-lowcode-monaco/lib/**
+packages/varlet-lowcode-monaco/types/**
+
 **/package.json
 *.md
 

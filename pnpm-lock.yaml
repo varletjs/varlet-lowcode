@@ -38,6 +38,7 @@ importers:
       '@types/node': '*'
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/shared': latest
       buffer: ^6.0.3
       live-server: ^1.2.1
       typescript: ^4.4.4
@@ -50,6 +51,7 @@ importers:
       '@babel/parser': 7.18.5
       '@babel/traverse': 7.18.5
       '@babel/types': 7.18.4
+      '@varlet/shared': 1.27.15
       buffer: 6.0.3
     devDependencies:
       '@types/node': 17.0.36
@@ -102,20 +104,21 @@ importers:
       '@varlet/lowcode-ast': 'workspace: *'
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/lowcode-monaco': 'workspace: *'
       live-server: ^1.2.1
       monaco-editor: ^0.33.0
       typescript: ^4.4.4
       vite: ^2.9.12
       vue: 3.2.25
       vue-tsc: ^0.37.3
-    dependencies:
-      monaco-editor: 0.33.0
     devDependencies:
       '@types/node': 17.0.36
       '@varlet/lowcode-ast': link:../varlet-lowcode-ast
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
+      '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
       live-server: 1.2.2
+      monaco-editor: 0.33.0
       typescript: 4.7.2
       vite: 2.9.12
       vue: 3.2.25
@@ -186,8 +189,10 @@ importers:
   packages/varlet-lowcode-designer:
     specifiers:
       '@varlet/lowcode-cli': 'workspace: *'
+      '@varlet/lowcode-code-editor': 'workspace: *'
       '@varlet/lowcode-codegen': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/lowcode-monaco': 'workspace: *'
       '@varlet/touch-emulator': latest
       '@varlet/ui': latest
       live-server: ^1.2.1
@@ -196,8 +201,10 @@ importers:
       vue-tsc: ^0.37.3
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      '@varlet/lowcode-code-editor': link:../varlet-lowcode-code-editor
       '@varlet/lowcode-codegen': link:../varlet-lowcode-codegen
       '@varlet/lowcode-core': link:../varlet-lowcode-core
+      '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
       '@varlet/touch-emulator': 1.27.15
       '@varlet/ui': 1.27.15_vue@3.2.25
       live-server: 1.2.2
@@ -240,6 +247,27 @@ importers:
       '@varlet/ui': 1.27.15_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
+      vue: 3.2.25
+      vue-tsc: 0.37.3_typescript@4.7.2
+
+  packages/varlet-lowcode-monaco:
+    specifiers:
+      '@types/node': '*'
+      '@varlet/lowcode-cli': 'workspace: *'
+      live-server: ^1.2.1
+      monaco-editor: ^0.33.0
+      typescript: ^4.4.4
+      vite: ^2.9.12
+      vue: 3.2.25
+      vue-tsc: ^0.37.3
+    dependencies:
+      monaco-editor: 0.33.0
+    devDependencies:
+      '@types/node': 17.0.36
+      '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      live-server: 1.2.2
+      typescript: 4.7.2
+      vite: 2.9.12
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
 
@@ -6939,7 +6967,6 @@ packages:
 
   /monaco-editor/0.33.0:
     resolution: {integrity: sha512-VcRWPSLIUEgQJQIE0pVT8FcGBIgFoxz7jtqctE+IiCxWugD0DwgyQBcZBhdSrdMC84eumoqMZsGl2GTreOzwqw==}
-    dev: false
 
   /morgan/1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}

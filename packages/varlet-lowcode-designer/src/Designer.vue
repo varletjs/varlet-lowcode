@@ -20,14 +20,14 @@ const container = ref<HTMLIFrameElement>()
 let renderer: any
 let iframeElement: HTMLIFrameElement | null
 
-eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, (newSchema) => {
+eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
   const oldSchema = schema
 
   schema = newSchema
 
   if (renderer) {
     if (oldSchema?.code !== schema.code) {
-      mountRenderer()
+      await mountRenderer()
     } else {
       renderer.schema.value = schema
     }
@@ -56,6 +56,8 @@ function mountIframe() {
 }
 
 async function mountRenderer() {
+  eventsManager.emit(BuiltInEvents.LOADING)
+
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
@@ -71,6 +73,8 @@ async function mountRenderer() {
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
+
+  eventsManager.emit(BuiltInEvents.LOADED)
 }
 
 onMounted(async () => {

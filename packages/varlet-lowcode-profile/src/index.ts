@@ -11,4 +11,6 @@ export const packageName = '@varlet/ui'
 
 export const packageVersion = 'latest'
 
+export const isVuePlugin = true
+
 export const materials = [button, card, countdown, dialog, input, space]

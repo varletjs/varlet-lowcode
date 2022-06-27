@@ -1,17 +1,17 @@
 import './shim/buffer'
 import './shim/process'
+import { uniq } from '@varlet/shared'
+import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import generate from '@babel/generator'
 import * as t from '@babel/types'
-import { parse } from '@babel/parser'
-import type { SchemaPageNode, SchemaPageNodeSetupReturnDeclarations } from '@varlet/lowcode-core'
+import type { VariableDeclarator } from '@babel/types'
+import type { SchemaPageNodeSetupReturnDeclarations } from '@varlet/lowcode-core'
 
 export enum SetupReturnVariableDeclarationGroups {
   FUNCTION = 'function',
   VARIABLE = 'variable',
 }
-
-export type Packages = Record<string, [string, string]>
 
 export function createAst(rendererWindowGetter?: () => any) {
   function convertExpressionValue(value: string) {
@@ -46,15 +46,13 @@ export function createAst(rendererWindowGetter?: () => any) {
     return code.endsWith(';') ? code.slice(0, -1) : code
   }
 
-  function traverseSetupFunction(schema: SchemaPageNode, packages: Packages) {
-    const libraries = Object.keys(packages)
+  function traverseSetupFunction(code: string) {
     const errors: string[] = []
     const setupReturnVariables: string[] = []
-    const setupUsedLibraries: string[] = []
+    const setupTopLevelIdentifiers: string[] = []
     const setupReturnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
-    const setupCalledFunctions: string[] = []
 
-    const ast = parse(schema.code ?? '', {
+    const ast = parse(code, {
       sourceType: 'module',
     })
 
@@ -93,6 +91,53 @@ export function createAst(rendererWindowGetter?: () => any) {
       throw new Error(errors.join('\n'))
     }
 
+    function resolveDeclarationNames(declaration: VariableDeclarator) {
+      // e.g. const count = ?
+      if (declaration.id.type === 'Identifier') {
+        return [declaration.id.name]
+      }
+
+      // e.g. const {} = ?
+      if (declaration.id.type === 'ObjectPattern') {
+        return declaration.id.properties
+          .map((property) => {
+            // e.g. const { count } = ?
+            if (property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
+              return property.value.name
+            }
+
+            // e.g. const { count, ...rest } = ?
+            if (property.type === 'RestElement' && property.argument.type === 'Identifier') {
+              return property.argument.name
+            }
+
+            return ''
+          })
+          .filter(Boolean) as string[]
+      }
+
+      // e.g. const [] = ?
+      if (declaration.id.type === 'ArrayPattern') {
+        return declaration.id.elements
+          .map((element) => {
+            // e.g const [count] = ?
+            if (element && element.type === 'Identifier') {
+              return element.name
+            }
+
+            // e.g const [count, ...rest] = ?
+            if (element && element.type === 'RestElement' && element.argument.type === 'Identifier') {
+              return element.argument.name
+            }
+
+            return ''
+          })
+          .filter(Boolean) as string[]
+      }
+
+      return []
+    }
+
     traverse(ast, {
       FunctionDeclaration(path) {
         if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
@@ -106,31 +151,55 @@ export function createAst(rendererWindowGetter?: () => any) {
                   return
                 }
 
-                if (declaration.id.type === 'Identifier') {
-                  if (!setupReturnVariables.includes(declaration.id.name)) {
-                    return
-                  }
-
-                  if (declaration.init?.type === 'CallExpression' && declaration.init?.callee.type === 'Identifier') {
-                    setupReturnDeclarations[declaration.init?.callee.name] = [
+                // e.g. ()
+                // e.g. ?.()
+                if (
+                  declaration.init?.type === 'CallExpression' ||
+                  declaration.init?.type === 'OptionalCallExpression'
+                ) {
+                  // e.g. ref()
+                  if (declaration.init?.callee.type === 'Identifier') {
+                    setupReturnDeclarations[declaration.init?.callee.name] = uniq([
                       ...(setupReturnDeclarations[declaration.init?.callee.name] ?? []),
-                      declaration.id.name,
-                    ]
-                  } else if (declaration.init?.type === 'ArrowFunctionExpression') {
-                    setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
-                      ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
-                      declaration.id.name,
-                    ]
-                  } else {
-                    setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = [
-                      ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] ?? []),
-                      declaration.id.name,
-                    ]
+                      ...resolveDeclarationNames(declaration),
+                    ])
                   }
+                  // e.g. a.ref?.()
+                  // e.g. a?.ref?.()
+                  else if (
+                    declaration.init?.callee.type === 'MemberExpression' ||
+                    declaration.init?.callee.type === 'OptionalMemberExpression'
+                  ) {
+                    if (declaration.init?.callee.property.type === 'Identifier') {
+                      setupReturnDeclarations[declaration.init?.callee.property.name] = uniq([
+                        ...(setupReturnDeclarations[declaration.init?.callee.property.name] ?? []),
+                        ...resolveDeclarationNames(declaration),
+                      ])
+                    }
+                  }
+                }
+                // e.g. () => {},
+                // e.g. function() {}
+                else if (
+                  declaration.init?.type === 'ArrowFunctionExpression' ||
+                  declaration.init?.type === 'FunctionExpression'
+                ) {
+                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = uniq([
+                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
+                    ...resolveDeclarationNames(declaration),
+                  ])
+                }
+                // e.g. Literal, [], {}
+                else {
+                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = uniq([
+                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] ?? []),
+                    ...resolveDeclarationNames(declaration),
+                  ])
                 }
               })
             }
 
+            // e.g. function a() {}
             if (statement.type === 'FunctionDeclaration') {
               if (statement.id && statement.id.type === 'Identifier') {
                 setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
@@ -143,53 +212,37 @@ export function createAst(rendererWindowGetter?: () => any) {
         }
       },
 
-      CallExpression(path) {
-        if (path.node.callee.type === 'Identifier') {
-          const functionName = path.node.callee.name
-
-          if (!setupCalledFunctions.includes(functionName)) {
-            setupCalledFunctions.push(functionName)
-          }
-        }
-      },
-
       Identifier(path) {
-        if (
-          path.parent.type === 'MemberExpression' &&
-          path.parent.property === path.node &&
-          path.parent.object.type === 'Identifier' &&
-          path.parent.object.name !== 'window'
-        ) {
-          return
-        }
+        // e.g. Varlet
+        if (path.parent.type !== 'MemberExpression' && path.parent.type !== 'OptionalMemberExpression') {
+          const { name } = path.node
 
-        const { name } = path.node
-
-        if (libraries.includes(name) && !setupUsedLibraries.includes(name)) {
-          setupUsedLibraries.push(name)
+          if (!setupTopLevelIdentifiers.includes(name)) {
+            setupTopLevelIdentifiers.push(name)
+          }
         }
       },
 
       MemberExpression(path) {
-        if (
-          path.node.object.type === 'Identifier' &&
-          path.node.property.type === 'Identifier' &&
-          path.node.object.name === 'window'
-        ) {
-          const propertyName = path.node.property.name
-          if (libraries.includes(propertyName) && !setupUsedLibraries.includes(propertyName)) {
-            setupUsedLibraries.push(propertyName)
+        // e.g. window.Varlet.xxx
+        // e.g. Varlet.xxx
+        if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
+          const name = path.node.object.name === 'window' ? path.node.property.name : path.node.object.name
+
+          if (!setupTopLevelIdentifiers.includes(name)) {
+            setupTopLevelIdentifiers.push(name)
           }
         }
+      },
 
-        if (
-          path.node.object.type === 'Identifier' &&
-          path.node.property.type === 'Identifier' &&
-          path.node.object.name === 'window'
-        ) {
-          const propertyName = path.node.property.name
-          if (libraries.includes(propertyName) && !setupUsedLibraries.includes(propertyName)) {
-            setupUsedLibraries.push(propertyName)
+      OptionalMemberExpression(path) {
+        // e.g. window.Varlet?.???
+        // e.g. Varlet?.???
+        if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
+          const name = path.node.object.name === 'window' ? path.node.property.name : path.node.object.name
+
+          if (!setupTopLevelIdentifiers.includes(name)) {
+            setupTopLevelIdentifiers.push(name)
           }
         }
       },
@@ -201,8 +254,7 @@ export function createAst(rendererWindowGetter?: () => any) {
 
     return {
       setupReturnDeclarations,
-      setupCalledFunctions,
-      setupUsedLibraries,
+      setupTopLevelIdentifiers,
     }
   }
 

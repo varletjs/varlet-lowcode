@@ -6,6 +6,9 @@ import pluginsManager from './modules/plugins'
 export enum BuiltInEvents {
   SCHEMA_CHANGE = 'schema-change',
   ASSETS_CHANGE = 'assets-change',
+  LOADING = 'loading',
+  LOADED = 'loaded',
+  READY = 'ready',
 }
 
 const originImportSchema = schemaManager.importSchema

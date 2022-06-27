@@ -99,6 +99,11 @@ var head=document.querySelector('head');head.appendChild(style)})();`
       PLUGIN_OUTPUT_FORMATS.forEach((format) => {
         const fileName = `${name}.${format}.js`
         const jsFile = resolve(PLUGIN_OUTPUT_PATH, fileName)
+
+        if (!pathExistsSync(jsFile)) {
+          return
+        }
+
         const jsCode = readFileSync(jsFile, 'utf-8')
         writeFileSync(jsFile, `${injectCode}${jsCode}`)
       })
@@ -124,13 +129,14 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         entry: getEntry()!,
       },
       rollupOptions: {
-        external: ['vue', '@varlet/lowcode-core', '@varlet/lowcode-ast', '@varlet/ui'],
+        external: ['vue', '@varlet/lowcode-core', '@varlet/lowcode-ast', '@varlet/lowcode-monaco', '@varlet/ui'],
         output: {
           exports: 'named',
           globals: {
             vue: 'Vue',
             '@varlet/lowcode-core': 'VarletLowcodeCore',
             '@varlet/lowcode-ast': 'VarletLowcodeAst',
+            '@varlet/lowcode-monaco': 'VarletLowcodeMonaco',
             '@varlet/ui': 'Varlet',
           },
         },

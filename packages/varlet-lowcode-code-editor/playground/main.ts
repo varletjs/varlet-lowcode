@@ -1,6 +1,6 @@
 import App from './App.vue'
 import { createApp } from 'vue'
-import { BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
+import { BuiltInSchemaNodeNames, pluginsManager, schemaManager, SkeletonLayouts } from '@varlet/lowcode-core'
 
 schemaManager.importSchema({
   id: schemaManager.generateId(),

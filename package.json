@@ -67,7 +67,13 @@
       "packages/varlet-lowcode-setters/dist/**",
       "packages/varlet-lowcode-setters/types/**",
 
-      "packages/varlet-lowcode-cli/lib/**"
+      "packages/varlet-lowcode-cli/lib/**",
+
+      "packages/varlet-lowcode-code-editor/lib/**",
+      "packages/varlet-lowcode-code-editor/types/**",
+
+      "packages/varlet-lowcode-monaco/lib/**",
+      "packages/varlet-lowcode-monaco/types/**"
     ],
     "rules": {
       "no-new-func": "off",
@@ -76,7 +82,8 @@
       "no-continue": "off",
       "no-restricted-syntax": "off",
       "vue/no-setup-props-destructure": "off",
-      "@typescript-eslint/ban-types": "off"
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/ban-ts-comment": "off"
     }
   },
   "stylelint": {
@@ -129,7 +136,13 @@
       "packages/varlet-lowcode-setters/dist/**",
       "packages/varlet-lowcode-setters/types/**",
 
-      "packages/varlet-lowcode-cli/lib/**"
+      "packages/varlet-lowcode-cli/lib/**",
+
+      "packages/varlet-lowcode-code-editor/lib/**",
+      "packages/varlet-lowcode-code-editor/types/**",
+
+      "packages/varlet-lowcode-monaco/lib/**",
+      "packages/varlet-lowcode-monaco/types/**"
     ]
   },
   "devDependencies": {

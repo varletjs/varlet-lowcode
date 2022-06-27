@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'varlet-lowcode-code-editor',
+  name: 'varlet-lowcode-monaco',
 
   configureVite(command, config) {
     if (command === 'compile') {

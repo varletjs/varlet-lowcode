@@ -11,6 +11,7 @@ export interface AssetProfile {
   packageName: string
   packageVersion: string
   materials: AssetProfileMaterial[]
+  isVuePlugin: boolean
 }
 
 export interface AssetProfileMaterialCodegen {

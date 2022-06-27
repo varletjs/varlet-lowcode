@@ -6,12 +6,13 @@ import readme from './template/README.md?raw'
 import JSZip from 'jszip'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { AssetsManager, schemaManager } from '@varlet/lowcode-core'
+import { AssetProfile, AssetsManager, schemaManager } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { isArray, isPlainObject, isString, kebabCase } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
-import type { Packages } from '@varlet/lowcode-ast'
+
+type Packages = Record<string, AssetProfile>
 
 const vueApis = [
   'ref',
@@ -66,24 +67,26 @@ const convertEventName = (key: string) => {
   return `@${eventName.at(0)!.toLowerCase()}${eventName.slice(1)}`
 }
 
-const genPackages = (): Packages => {
-  const packages: Record<string, [string, string]> = {}
+const genPackages = (setupTopLevelIdentifiers: string[]): Packages => {
+  const profiles = getRendererAssetsManager().getProfiles(getRendererAssets())
+  const packages = profiles.reduce((packages, profile) => {
+    packages[profile.library] = profile
+    return packages
+  }, {} as Packages)
+
+  const used: string[] = [...setupTopLevelIdentifiers]
 
   schemaManager.visitSchemaNode(getRendererSchema(), (schemaNode) => {
     if (schemaManager.isSchemaPageNode(schemaNode) || schemaManager.isSchemaTextNode(schemaNode)) {
       return
     }
 
-    const { packageName, packageVersion } = getRendererAssetsManager().findProfile(
-      getRendererAssets(),
-      schemaNode.name,
-      schemaNode.library!
-    )
-
-    packages[schemaNode.library!] = [packageName, packageVersion]
+    if (!used.includes(schemaNode.library!)) {
+      used.push(schemaNode.library!)
+    }
   })
 
-  return packages
+  return Object.fromEntries(Object.entries(packages).filter(([library]) => used.includes(library)))
 }
 
 const genProps = (schemaNode: SchemaNode): string => {
@@ -224,14 +227,21 @@ const genSchemaNode = (schemaNode: SchemaNode, depth: number): string => {
   )}\n${indent}</${name}>`
 }
 
-const genVueApis = (setupCalledFunctions: string[]) => {
+const genVueApis = (setupTopLevelIdentifiers: string[]) => {
   return vueApis
-    .filter((api) => setupCalledFunctions.includes(api))
+    .filter((api) => setupTopLevelIdentifiers.includes(api))
     .map((api) => `  ${api}`)
     .join(',\n')
 }
 
-const genApp = (packages: Packages, setupCalledFunctions: string[], setupUsedLibraries: string[]) => {
+const genAppImports = (packages: Packages, setupTopLevelIdentifiers: string[]) => {
+  return Object.entries(packages)
+    .filter(([library]) => setupTopLevelIdentifiers.includes(library))
+    .map(([library, { packageName }]) => `import ${library} from '${packageName}'`)
+    .join('\n')
+}
+
+const genApp = (packages: Packages, setupTopLevelIdentifiers: string[]) => {
   const schema = getRendererSchema()
 
   return `\
@@ -244,9 +254,10 @@ ${genSchemaNode(schema, 1)}
 <script>
 import {
   defineComponent,
-${genVueApis(setupCalledFunctions)}
+${genVueApis(setupTopLevelIdentifiers)}
 } from 'vue'
-${genPackageImports(packages, setupUsedLibraries)}
+${genAppImports(packages, setupTopLevelIdentifiers)}
+
 ${schema.code}
 export default defineComponent({
   setup
@@ -255,38 +266,27 @@ export default defineComponent({
 `
 }
 
-const genPackageImports = (packages: Packages, setupUsedLibraries?: string[]) => {
-  return Object.entries(packages).map(([library, [packageName]]) => {
-    if (isArray(setupUsedLibraries) && !setupUsedLibraries.includes(library)) {
-      return ''
-    }
-
-    return `\
-import ${library} from '${packageName}'
-`
-  })
-}
-
 const genMain = (packages: Packages) => {
-  const packageUses = Object.entries(packages).map(([library]) => {
-    return `\
-.use(${library})`
-  })
+  const vuePlugins = Object.entries(packages).filter(([_, { isVuePlugin }]) => isVuePlugin)
+
+  const imports = vuePlugins.map(([library, { packageName }]) => `import ${library} from '${packageName}'\n`)
+
+  const uses = vuePlugins.map(([library]) => `.use(${library})\n  `)
 
   return `\
 import App from './App.vue'
-${genPackageImports(packages)}
+${imports}
 import { createApp } from 'vue'
 
 const app = createApp(App)
 
-app${packageUses.join('')}
+${uses.length ? 'app' : ''}${uses.join('')}
 app.mount('#app')
 `
 }
 
 const genPkg = (packages: Packages) => {
-  const packagesString = Object.entries(packages).map(([_, [packageName, packageVersion]]) => {
+  const packagesString = Object.entries(packages).map(([_, { packageName, packageVersion }]) => {
     return `    "${packageName}": "${packageVersion}"`
   })
   return pkg.replace(
@@ -312,7 +312,7 @@ ${scripts.join('\n')}
 }
 
 const genConfig = (packages: Packages) => {
-  const externals = Object.entries(packages).map(([library, [packageName]]) => {
+  const externals = Object.entries(packages).map(([library, { packageName }]) => {
     return `      '${packageName}': '${library}'`
   })
 
@@ -327,8 +327,8 @@ ${externals.join(',\n')}
 }
 
 const save = async () => {
-  const packages = genPackages()
-  const { setupCalledFunctions, setupUsedLibraries } = traverseSetupFunction(getRendererSchema(), packages)
+  const { setupTopLevelIdentifiers } = traverseSetupFunction(getRendererSchema().code ?? '')
+  const packages = genPackages(setupTopLevelIdentifiers)
   const zip = new JSZip()
 
   zip.file('index.html', genIndex())
@@ -338,7 +338,7 @@ const save = async () => {
 
   const src = zip.folder('src')!
 
-  src.file('App.vue', genApp(packages, setupCalledFunctions, setupUsedLibraries))
+  src.file('App.vue', genApp(packages, setupTopLevelIdentifiers))
   src.file('main.js', genMain(packages))
 
   const blob = await zip.generateAsync({ type: 'blob' })

@@ -62,6 +62,10 @@ assetsManager.importAssets([
       './varlet-lowcode-profile.umd.js',
     ],
   },
+  {
+    profile: 'VueUseLowcodeProfile',
+    resources: ['https://unpkg.com/@vueuse/shared', 'https://unpkg.com/@vueuse/core', './vue-use-lowcode-profile.js'],
+  },
 ])
 
 createApp(App).mount('#app')
