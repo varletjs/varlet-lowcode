@@ -43,12 +43,18 @@ packages/varlet-lowcode-codegen/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-codegen/types
 
 packages/varlet-lowcode-skeleton/public/varlet-lowcode-core.umd.js
+packages/varlet-lowcode-skeleton/public/varlet-lowcode-profile.umd.js
+packages/varlet-lowcode-skeleton/public/varlet-lowcode-renderer.umd.js
+packages/varlet-lowcode-skeleton/lib/varlet-lowcode-skeleton.es.js
+packages/varlet-lowcode-skeleton/lib/varlet-lowcode-skeleton.umd.js
 packages/varlet-lowcode-skeleton/types
 
 packages/varlet-lowcode-materials-panel/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-materials-panel/types
 
 packages/varlet-lowcode-selector/public/varlet-lowcode-core.umd.js
+packages/varlet-lowcode-selector/lib/varlet-lowcode-selector.es.js
+packages/varlet-lowcode-selector/lib/varlet-lowcode-selector.umd.js
 packages/varlet-lowcode-selector/types
 
 packages/varlet-lowcode-profile/lib
@@ -56,9 +62,3 @@ packages/varlet-lowcode-profile/types
 
 packages/varlet-lowcode-ast/lib
 packages/varlet-lowcode-ast/types
-/packages/varlet-lowcode-skeleton/public/varlet-lowcode-profile.umd.js
-/packages/varlet-lowcode-skeleton/public/varlet-lowcode-renderer.umd.js
-/packages/varlet-lowcode-skeleton/lib/varlet-lowcode-skeleton.es.js
-/packages/varlet-lowcode-skeleton/lib/varlet-lowcode-skeleton.umd.js
-/packages/varlet-lowcode-skeleton/lib/varlet-lowcode-selector.es.js
-/packages/varlet-lowcode-skeleton/lib/varlet-lowcode-selector.umd.js
