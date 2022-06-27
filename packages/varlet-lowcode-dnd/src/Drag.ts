@@ -15,6 +15,25 @@ interface DragHTMLElement extends HTMLElement {
   _drag?: DragOptions
 }
 
+function dragCanvasImg(name: string): HTMLImageElement {
+  const oGrayImg = new Image();
+  const newCanvas = document.createElement('canvas')
+  newCanvas.setAttribute('width', `500px`)
+  newCanvas.setAttribute('height', `200px`)
+  const ctx = newCanvas.getContext("2d")
+  ctx!.fillStyle = 'red'
+  ctx!.fillRect(0, 0, 100, 30)
+
+  ctx!.font = "12px Arial"
+  ctx!.fillStyle = 'green'
+  ctx!.textAlign = 'center'
+  ctx!.fillText(name, 50, 20)
+
+  oGrayImg.src = newCanvas.toDataURL("image/png")
+
+  return oGrayImg
+}
+
 function onDragStart(this: DragHTMLElement, e: DragEvent) {
   if (e.target !== e.currentTarget) return
 
@@ -22,9 +41,15 @@ function onDragStart(this: DragHTMLElement, e: DragEvent) {
   const { dragStyle, dragData, dragImg, type = 'all' } = _drag
 
   dragStyle && mergeStyle(this, dragStyle)
-  dragImg && e.dataTransfer!.setDragImage(dragImg, 0, 0)
   dragData && e.dataTransfer!.setData('text/plain', JSON.stringify(dragData))
   e.dataTransfer!.effectAllowed = type
+
+  if (dragImg) {
+    e.dataTransfer!.setDragImage(dragImg, 0, 0)
+  } else {
+    const _dragImg = dragCanvasImg(dragData.name)
+    e.dataTransfer!.setDragImage(_dragImg, 50, 15)
+  }
 
   eventBroadcast('drag-start', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
 }
