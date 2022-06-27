@@ -11,8 +11,9 @@ export default defineComponent({
     return () => {
       return (
         <div class="varlet-low-code--selector-plugins">
-          {plugins.map((SelectorPlugin) => {
-            return <SelectorPlugin.component />
+          {plugins.map((plugin) => {
+            const PluginComponent = () => plugin.component as JSX.Element
+            return <PluginComponent />
           })}
         </div>
       )
