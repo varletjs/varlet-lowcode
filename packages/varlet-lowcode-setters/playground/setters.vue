@@ -4,7 +4,6 @@ import headerPath from './settersPlugins/headerPath.vue'
 import headerTabs from './settersPlugins/headerTabs.vue'
 import Empty from '../src/empty'
 // import { eventsManager } from '@varlet/lowcode-core'
-
 const isDom = ref(false)
 isDom.value = true
 </script>
