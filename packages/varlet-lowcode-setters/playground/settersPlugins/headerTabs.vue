@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { Snackbar, Button, Icon } from '@varlet/ui'
+import { ref } from 'vue'
 import SettersContent from '../../src/settersContent'
 
 const tabIndex = ref(0)
@@ -33,5 +32,6 @@ const tabClick = (value) => {
       </li>
     </ul>
   </div>
+
   <SettersContent :tab-index="tabIndex" />
 </template>

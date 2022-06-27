@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from 'vue'
+import type { ComputedRef, DefineComponent, Ref } from 'vue'
 import { defineComponent, ref, computed } from 'vue'
 import { AppBar, Icon, Space } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
@@ -20,8 +20,9 @@ export default defineComponent({
 
     const sidebarComponent: ComputedRef<JSX.Element | null> = computed(() => {
       if (!sidebarComponentName.value) return null
+
       const _plugin = plugins.find((plugin) => plugin.name === sidebarComponentName.value)
-      const RenderPlugin = _plugin!.component
+      const RenderPlugin = _plugin!.component as DefineComponent
 
       const RenderLabel: () => JSX.Element = () => {
         return (
@@ -39,7 +40,7 @@ export default defineComponent({
 
       return (
         <div class={`skeleton__sidebar-component ${sidebarPinned.value && 'skeleton__sidebar-component--pinned'}`}>
-          <RenderLabel />
+          {RenderLabel()}
           <RenderPlugin />
         </div>
       )
@@ -73,9 +74,10 @@ export default defineComponent({
 
       return (
         <Space>
-          {_plugins.map(({ component: Component }: SkeletonPlugin) => (
-            <Component />
-          ))}
+          {_plugins.map((_plugin) => {
+            const Component = _plugin!.component as DefineComponent
+            return <Component />
+          })}
         </Space>
       )
     }
@@ -126,9 +128,9 @@ export default defineComponent({
     const RenderContent: () => JSX.Element = () => {
       return (
         <div class="skeleton__content">
-          <RenderSideBar />
-          <RenderDesigner />
-          <RenderSetters />
+          {RenderSideBar()}
+          {RenderDesigner()}
+          {RenderSetters()}
         </div>
       )
     }
@@ -137,8 +139,8 @@ export default defineComponent({
       return (
         <div class="main">
           <div class="skeleton">
-            <RenderHeader />
-            <RenderContent />
+            {RenderHeader()}
+            {RenderContent()}
           </div>
         </div>
       )

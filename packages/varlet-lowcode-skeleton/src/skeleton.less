@@ -1,9 +1,21 @@
 @skeleton-sidebar-left-width: 48px;
+@skeleton-sidebar-left-height: 48px;
 @skeleton-tooltip-background: #000000ba;
+@skeleton-white-color: #fff;
+@skeleton-black-color: #000;
+@skeleton-sidebar-selected-color: #fd8c73;
+@skeleton-sidebar-active-color: #5885dc;
 
 :root {
   --skeleton-sidebar-left-width: @skeleton-sidebar-left-width;
+  --skeleton-sidebar-left-height: @skeleton-sidebar-left-height;
   --skeleton-tooltip-background: @skeleton-tooltip-background;
+  --skeleton-white-color: @skeleton-white-color;
+  --skeleton-black-color: @skeleton-black-color;
+  --app-bar-text-color: var(--skeleton-black-color);
+  --app-bar-color: var(--skeleton-white-color);
+  --skeleton-sidebar-selected-color: @skeleton-sidebar-selected-color;
+  --skeleton-sidebar-active-color: @skeleton-sidebar-active-color;
 }
 
 * {
@@ -29,7 +41,7 @@
 
   &__sidebar {
     height: 100%;
-    background: aqua;
+    background: var(--skeleton-white-color);
     display: flex;
   }
 
@@ -42,12 +54,13 @@
 
   &__sidebar--icon {
     position: relative;
-    width: 100%;
+    width: var(--skeleton-sidebar-left-width);
+    height: var(--skeleton-sidebar-left-height);
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    margin: 4px 0;
+    box-sizing: border-box;
   }
 
   &__sidebar--icon-selected {
@@ -55,10 +68,14 @@
       content: '';
       display: block;
       width: 2px;
-      background: red;
+      background: var(--skeleton-sidebar-selected-color);
       height: 100%;
       position: absolute;
       left: 0;
+    }
+
+    &:active::before {
+      background: var(--skeleton-sidebar-active-color);
     }
   }
 
@@ -75,7 +92,6 @@
     padding: 5px 8px;
     position: absolute;
     z-index: 1;
-    top: -5px;
     left: var(--skeleton-sidebar-left-width);
 
     &::after {

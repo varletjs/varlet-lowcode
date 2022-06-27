@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Snackbar, Button, Icon } from '@varlet/ui'
+import { Snackbar, Icon } from '@varlet/ui'
 
 const copyClick = () => {
   Snackbar.success('修改当前节点')

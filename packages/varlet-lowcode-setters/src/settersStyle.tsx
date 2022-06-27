@@ -1,62 +1,31 @@
-import { eventsManager } from '@varlet/lowcode-core'
-import { CSSProperties, reactive, Ref , onMounted, onUnmounted, defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import { Icon } from '@varlet/ui'
-import StyleInput from './settersStyle/styleInput'
-import StyleSwitch from './settersStyle/styleSwitch'
-import StyleRadio from './settersStyle/styleRadio'
+import Component from './settersComponent'
 
 export default defineComponent({
   name: 'SettersStyle',
   setup() {
-    const testSettersObject = reactive({
-      options: {},
-    })
-    testSettersObject.options = {
-      attr: [
+    const testSettersObject = {
+      name: 'Card',
+      description: 'A varlet button component',
+      props: [
         {
-          name: '绑定的值',
-          type: 'settersInput',
-          value: '',
-          parameter: 'v-model',
+          name: 'title',
+          description: '卡片标题',
+          setter: ['SetterInput'],
         },
         {
-          name: '占位符',
-          type: 'settersInput',
-          value: '',
-          parameter: 'placeholder',
+          name: 'ripple',
+          description: '是否开启水波',
+          setter: ['SetterSwitch'],
         },
         {
-          name: '绑定的值',
-          type: 'settersInput',
-          value: '',
-          parameter: 'type',
-        },
-        {
-          name: '输入框类型',
-          type: 'settersRadio',
-          options: [
-            {
-              value: 'text',
-            },
-            {
-              value: 'password',
-            },
-            {
-              value: 'number',
-            },
-          ],
-          value: '',
+          name: 'widthType',
+          description: '宽度类型',
+          setter: ['SetterRadio'],
         },
       ],
-      // on: {
-      //   click: () => {
-      //     console.log(123546)
-      //   },
-      // }
     }
-    const testText = ref('123456')
-    const testBol = ref(false)
-    const testRadio = ref('adaptive')
     return () => {
       return (
         <div class="setters-style-field">
@@ -64,17 +33,33 @@ export default defineComponent({
             <span>样式</span>
             <Icon name="chevron-down" />
           </div>
-          <div class="style-field-body">
-            <div class="style-field-body-title">区块模式</div>
-            <div class="style-field-body-content">
-              <StyleInput v-model={testText.value} />
-              <Icon name="dots-vertical" />
-            </div>
-          </div>
-          <div class="style-field-body">
+          {testSettersObject.props.map((item) => {
+            return (
+              <div class="style-field-body">
+                <div class="style-field-body-title">{item.description}</div>
+                <div class="style-field-body-content">
+                  {/* {item.setter.map((item) => {
+                  if (Object.prototype.toString.call(item) === '[object String]') {
+                    let setterComponent
+                    Component.map((itemComponent) => {
+                      console.log(itemComponent,'itemComponent')
+                      itemComponent.name === item ? setterComponent = itemComponent.component : null
+                    })
+                    return <setterComponent />
+                  } else {
+                    return 132456
+                  }
+                })} */}
+                  {/* <SetterInput /> */}
+                  <Icon name="dots-vertical" />
+                </div>
+              </div>
+            )
+          })}
+          {/* <div class="style-field-body">
             <div class="style-field-body-title">头部分割线</div>
             <div class="style-field-body-content">
-              <StyleSwitch v-model={testBol.value} />
+              <StyleSwitch v-model={testSwitch.value} />
               <Icon name="dots-vertical" />
             </div>
           </div>
@@ -84,7 +69,7 @@ export default defineComponent({
               <StyleRadio v-model={testRadio.value} />
               <Icon name="dots-vertical" />
             </div>
-          </div>
+          </div> */}
         </div>
       )
     }

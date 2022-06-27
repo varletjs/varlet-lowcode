@@ -1,5 +1,4 @@
-import { eventsManager } from '@varlet/lowcode-core'
-import { CSSProperties, Ref, watch, onMounted, onUnmounted, defineComponent, ref, toRefs } from 'vue'
+import { watch, defineComponent, ref } from 'vue'
 import SettersStyle from './settersStyle'
 
 interface Data {
@@ -13,11 +12,11 @@ export default defineComponent({
   setup(props: Data) {
     const tabIndex = ref(0)
 
-    watch(props, (newValue, oldValue) => {
+    watch(props, (newValue) => {
       tabIndex.value = newValue.tabIndex as number
     })
 
-    const RenderContent: () => JSX.Element = () => {
+    const RenderContent = () => {
       if (tabIndex.value === 0) {
         return (
           <div>
@@ -40,7 +39,7 @@ export default defineComponent({
       return <></>
     }
     return () => {
-      return <RenderContent />
+      return RenderContent()
     }
   },
 })
