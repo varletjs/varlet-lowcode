@@ -13,7 +13,7 @@ export enum SetupReturnVariableDeclarationGroups {
 
 export type Packages = Record<string, [string, string]>
 
-export function createAst(rendererWindowGetter: () => any) {
+export function createAst(rendererWindowGetter?: () => any) {
   function convertExpressionValue(value: string) {
     value = value
       .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
@@ -34,7 +34,7 @@ export function createAst(rendererWindowGetter: () => any) {
           path.node.property.type === 'Identifier' &&
           path.node.property.name === 'value'
         ) {
-          if (rendererWindowGetter().isRef(rendererWindowGetter().eval(`${path.node.object.name}`))) {
+          if (rendererWindowGetter?.().isRef(rendererWindowGetter().eval(`${path.node.object.name}`))) {
             path.replaceWith(t.identifier(path.node.object.name))
           }
         }

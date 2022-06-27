@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import * as monaco from 'monaco-editor'
 import './worker'
-import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 import { ref, Ref, onMounted, onUnmounted } from 'vue'
+import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
+import { createAst } from '@varlet/lowcode-ast'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
-import type { CancellationToken, editor, IRange , languages, Position } from 'monaco-editor'
+import type { CancellationToken, editor, IRange, languages, Position } from 'monaco-editor'
 
-let { code } = schemaManager.exportSchema()
+const { traverseSetupFunction } = createAst()
+
+let schema = schemaManager.exportSchema()
 
 const editorContainer: Ref<null | HTMLElement> = ref(null)
 
 let editorInstance: editor.IStandaloneCodeEditor
 
-function handleSchemaChange(schema: SchemaPageNode) {
-  ;({ code } = schema)
+function handleSchemaChange(newSchema: SchemaPageNode) {
+  schema = newSchema
 
   if (editorInstance) {
-    editorInstance.setValue(code!)
+    editorInstance.setValue(schema.code!)
   }
 }
 
@@ -59,7 +62,7 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 onMounted(() => {
   editorInstance = monaco.editor.create(editorContainer.value!, {
     value:
-      code ??
+      schema.code ??
       `\
 function setup() {
 
