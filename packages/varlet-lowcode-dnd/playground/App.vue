@@ -88,7 +88,7 @@ onUnmounted(() => {
         class="drag-item"
         v-for="(item, index) in dragList"
         :key="item.dragData.id"
-        :id="item.dragData.id"
+        :id="'dragItem' + index"
         v-drag="item"
       >
         drag me {{ index }}
