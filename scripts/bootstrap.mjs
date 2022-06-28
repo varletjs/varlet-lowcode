@@ -6,7 +6,9 @@ import {
   buildProfile,
   buildRenderer,
   runTask,
-  buildAst
+  buildAst,
+  buildCodegen,
+  buildCodeEditor
 } from './build.mjs'
 
 await runTask('cli', buildCli)
@@ -16,3 +18,5 @@ await runTask('designer', buildDesigner)
 await runTask('profile', buildProfile)
 await runTask('renderer', buildRenderer)
 await runTask('ast', buildAst)
+await runTask('codegen', buildCodegen)
+await runTask('code-editor', buildCodeEditor)
