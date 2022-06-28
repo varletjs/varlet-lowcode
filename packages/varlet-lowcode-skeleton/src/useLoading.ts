@@ -2,7 +2,7 @@ import { onUnmounted, ref } from 'vue'
 import { BuiltInEvents, eventsManager } from '@varlet/lowcode-core'
 
 export function useLoading() {
-  const loading = ref(1)
+  const loading = ref(0)
 
   const handleLoading = () => {
     loading.value++
