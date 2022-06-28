@@ -121,6 +121,11 @@
       "packages/varlet-lowcode-skeleton/dist/**",
       "packages/varlet-lowcode-skeleton/types/**",
 
+      "packages/varlet-lowcode-selector/lib/**",
+      "packages/varlet-lowcode-selector/public/**",
+      "packages/varlet-lowcode-selector/dist/**",
+      "packages/varlet-lowcode-selector/types/**",
+
       "packages/varlet-lowcode-codegen/lib/**",
       "packages/varlet-lowcode-codegen/public/**",
       "packages/varlet-lowcode-codegen/dist/**",

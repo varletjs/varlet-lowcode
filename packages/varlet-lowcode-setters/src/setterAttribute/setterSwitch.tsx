@@ -1,19 +1,18 @@
-import { defineComponent, computed } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { Switch } from '@varlet/ui'
 import '@varlet/ui/es/switch/style/index.js'
 
 export default defineComponent({
   name: 'StyleInput',
   props: {
-    modelValue: Boolean, // 父组件传过来的值
+    modelValue: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
-    const switchValue = computed({
-      get: () => props.modelValue,
-      set: (val) => {
-        console.log(val)
-      },
-    })
+    const switchValue = ref(false)
+    switchValue.value = props.modelValue
     const updateModelValue = (val: boolean) => {
       emit('update:modelValue', val)
     }

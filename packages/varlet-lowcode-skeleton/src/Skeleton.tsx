@@ -1,11 +1,13 @@
 import type { ComputedRef, DefineComponent, Ref } from 'vue'
-import { defineComponent, ref, computed } from 'vue'
-import { AppBar, Icon, Space } from '@varlet/ui'
+import { computed, defineComponent, ref, watch } from 'vue'
+import { AppBar, Icon, Space, Skeleton } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
 import '@varlet/ui/es/space/style/index.js'
+import '@varlet/ui/es/skeleton/style/index.js'
 import './skeleton.less'
+import { useLoading } from './useLoading'
 
 export default defineComponent({
   name: 'Skeleton',
@@ -13,6 +15,16 @@ export default defineComponent({
     const plugins = pluginsManager.exportSkeletonPlugins()
     const sidebarPinned = ref(false)
     const sidebarComponentName: Ref<string | undefined> = ref()
+    const { loading } = useLoading()
+
+    watch(
+      () => loading.value,
+      (newVal) => {
+        if (newVal) {
+          sidebarComponentName.value = undefined
+        }
+      }
+    )
 
     const toggleSidebarComponent = (name: string) => {
       sidebarComponentName.value = name === sidebarComponentName.value ? undefined : name
@@ -88,11 +100,23 @@ export default defineComponent({
       const Right = pickerComponents(SkeletonLayouts.HEADER_RIGHT)
 
       return (
-        <AppBar title-position="center">
+        <AppBar class="skeleton__header" title-position="center">
           {{
-            left: () => Left,
-            default: () => Center,
-            right: () => Right,
+            left: () => (
+              <Skeleton loading={Boolean(loading.value)} rows="1" rowsWidth={['100px']}>
+                {Left}
+              </Skeleton>
+            ),
+            default: () => (
+              <Skeleton loading={Boolean(loading.value)} style="width:100px" rows="1" rowsWidth={['100px']}>
+                {Center}
+              </Skeleton>
+            ),
+            right: () => (
+              <Skeleton loading={Boolean(loading.value)} rows="1" rowsWidth={['100px']}>
+                {Right}
+              </Skeleton>
+            ),
           }}
         </AppBar>
       )
@@ -105,8 +129,13 @@ export default defineComponent({
       return (
         <div class="skeleton__sidebar">
           <div class="skeleton__sidebar--tools">
-            {Top}
-            {Bottom}
+            <Skeleton loading={Boolean(loading.value)} rows="3">
+              {Top}
+            </Skeleton>
+
+            <Skeleton loading={Boolean(loading.value)} rows="3">
+              {Bottom}
+            </Skeleton>
           </div>
           {sidebarComponent.value}
         </div>
@@ -122,7 +151,13 @@ export default defineComponent({
     const RenderSetters: () => JSX.Element = () => {
       const Setters = pickerComponents(SkeletonLayouts.SETTERS)
 
-      return <div class="skeleton__setters">{Setters}</div>
+      return (
+        <div class="skeleton__setters">
+          <Skeleton loading={Boolean(loading.value)} rows="14" rowsWidth={Array.from({ length: 14 }, () => '300px')}>
+            {Setters}
+          </Skeleton>
+        </div>
+      )
     }
 
     const RenderContent: () => JSX.Element = () => {
