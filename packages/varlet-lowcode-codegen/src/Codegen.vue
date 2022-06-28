@@ -51,8 +51,7 @@ const getRendererAssetsManager = (): AssetsManager => {
   return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
-const { traverseSetupFunction, transformExpressionValue, transformNamedExportIdentifiers } =
-  createAst(getRendererWindow)
+const { traverseSetupFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
 
 const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
@@ -206,40 +205,38 @@ const genSchemaNode = (schemaNode: SchemaNode, depth: number): string => {
   )}\n${indent}</${name}>`
 }
 
-const genVueApis = (setupTopLevelIdentifiers: string[]) => {
+const genVueApis = (seenApis: string[]) => {
   return vueApis
-    .filter((api) => setupTopLevelIdentifiers.includes(api))
+    .filter((api) => seenApis.includes(api))
     .map((api) => `  ${api}`)
     .join(',\n')
 }
 
-const genExports = (library: string, identifierNamedExports: Record<string, string[]>) => {
-  return `{ ${identifierNamedExports[library]
-    .map((namedExport) => {
-      return namedExport === 'default' ? `default as ${library}Default` : namedExport
+const genNamedImportNames = (library: string, namedImports: Record<string, string[]>) => {
+  return `{ ${namedImports[library]
+    .map((namedImport) => {
+      return namedImport === 'default' ? `default as ${library}Default` : namedImport
     })
     .join(', ')} }`
 }
 
 const genApp = (
   profiles: AssetProfile[],
-  setupTopLevelIdentifiers: string[],
-  setupTopLevelNonMemberIdentifiers: string[],
+  seenApis: string[],
+  allImportedApis: string[],
   code: string,
-  identifierNamedExports: Record<string, string[]>
+  namedImports: Record<string, string[]>
 ) => {
   const schema = getRendererSchema()
-  const imports = getSetupUsedProfiles(profiles, setupTopLevelIdentifiers)
+  const imports = getSetupUsedProfiles(profiles, seenApis)
     .map(({ library, packageName }) => {
-      const allExport = setupTopLevelNonMemberIdentifiers.includes(library)
-        ? `import * as ${library} from '${packageName}'\n`
+      const allImport = allImportedApis.includes(library) ? `import * as ${library} from '${packageName}'\n` : ''
+
+      const namedImport = namedImports[library]
+        ? `import ${genNamedImportNames(library, namedImports)} from '${packageName}'`
         : ''
 
-      const namedExport = identifierNamedExports[library]
-        ? `import ${genExports(library, identifierNamedExports)} from '${packageName}'`
-        : ''
-
-      return `${allExport}${namedExport}`
+      return `${allImport}${namedImport}`
     })
     .join('\n')
 
@@ -253,7 +250,7 @@ ${genSchemaNode(schema, 1)}
 <script>
 import {
   defineComponent,
-${genVueApis(setupTopLevelNonMemberIdentifiers)}
+${genVueApis(seenApis)}
 } from 'vue'
 ${imports}
 
@@ -342,18 +339,16 @@ ${externals}
   )
 }
 
-const getSetupUsedProfiles = (profiles: AssetProfile[], setupTopLevelIdentifiers: string[]): AssetProfile[] => {
-  return profiles.filter(({ library }) => setupTopLevelIdentifiers.includes(library))
+const getSetupUsedProfiles = (profiles: AssetProfile[], seenApis: string[]): AssetProfile[] => {
+  return profiles.filter(({ library }) => seenApis.includes(library))
 }
 
 const save = async () => {
-  const { setupTopLevelIdentifiers, setupTopLevelNonMemberIdentifiers } = traverseSetupFunction(
-    getRendererSchema().code ?? ''
-  )
+  const { seenApis, allImportedApis } = traverseSetupFunction(getRendererSchema().code ?? '')
   const profiles = getRendererAssetsManager().getProfiles(getRendererAssets())
-  const setupUsedProfiles = getSetupUsedProfiles(profiles, setupTopLevelIdentifiers)
+  const setupUsedProfiles = getSetupUsedProfiles(profiles, seenApis)
   const libraries = setupUsedProfiles.map((profile) => profile.library)
-  const { code, identifierNamedExports } = transformNamedExportIdentifiers(getRendererSchema().code!, libraries)
+  const { code, namedImports } = transformNamedImports(getRendererSchema().code!, libraries)
 
   const zip = new JSZip()
 
@@ -364,10 +359,7 @@ const save = async () => {
 
   const src = zip.folder('src')!
 
-  src.file(
-    'App.vue',
-    genApp(profiles, setupTopLevelIdentifiers, setupTopLevelNonMemberIdentifiers, code, identifierNamedExports)
-  )
+  src.file('App.vue', genApp(profiles, seenApis, allImportedApis, code, namedImports))
   src.file('main.js', genMain(profiles))
 
   const blob = await zip.generateAsync({ type: 'blob' })

@@ -58,11 +58,11 @@ function createVueApiSuggestions(range: IRange) {
 }
 
 function genSetupReturnDeclarations() {
-  const { setupReturnDeclarations } = traverseSetupFunction(code.value)
+  const { returnDeclarations } = traverseSetupFunction(code.value)
 
   schemaManager.importSchema({
     ...schema,
-    setupReturnDeclarations,
+    setupReturnDeclarations: returnDeclarations,
     code: code.value,
   })
 }

@@ -8,6 +8,10 @@ import * as t from '@babel/types'
 import type { MemberExpression, OptionalMemberExpression, VariableDeclarator } from '@babel/types'
 import type { SchemaPageNodeSetupReturnDeclarations } from '@varlet/lowcode-core'
 
+function uniqConcat(arr: any[], ...items: any) {
+  return arr ? uniq([...arr, ...items]) : [...items]
+}
+
 export enum SetupReturnVariableDeclarationGroups {
   FUNCTION = 'function',
   VARIABLE = 'variable',
@@ -30,8 +34,8 @@ export function createAst(rendererWindowGetter?: () => any) {
     traverse(ast, {
       MemberExpression(path) {
         if (
-          path.node.object.type === 'Identifier' &&
-          path.node.property.type === 'Identifier' &&
+          t.isIdentifier(path.node.object) &&
+          t.isIdentifier(path.node.property) &&
           path.node.property.name === 'value'
         ) {
           if (rendererWindowGetter?.().isRef(rendererWindowGetter().eval(`${path.node.object.name}`))) {
@@ -48,11 +52,10 @@ export function createAst(rendererWindowGetter?: () => any) {
 
   function traverseSetupFunction(code: string) {
     const errors: string[] = []
-    const setupReturnVariables: string[] = []
-    const setupTopLevelIdentifiers: string[] = []
-    const setupTopLevelNonMemberIdentifiers: string[] = []
-    const setupReturnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
-    const setupTopLevelMemberProperties: Record<string, string[]> = {}
+    const returnVariables: string[] = []
+    const seenApis: string[] = []
+    const allImportedApis: string[] = []
+    const returnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
 
     const ast = parse(code, {
       sourceType: 'module',
@@ -62,20 +65,20 @@ export function createAst(rendererWindowGetter?: () => any) {
 
     traverse(ast, {
       FunctionDeclaration(path) {
-        if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
+        if (t.isIdentifier(path.node.id) && path.node.id.name === 'setup') {
           hasSetup = true
 
           path.node.body.body.forEach((statement) => {
-            if (statement.type === 'ReturnStatement') {
-              if (statement.argument?.type === 'ObjectExpression') {
+            if (t.isReturnStatement(statement)) {
+              if (t.isObjectExpression(statement.argument)) {
                 statement.argument.properties.forEach((objectProperty) => {
-                  if (objectProperty.type === 'SpreadElement') {
+                  if (t.isSpreadElement(objectProperty)) {
                     errors.push('Codegen not support spread element')
                     return
                   }
 
-                  if (objectProperty.key.type === 'Identifier') {
-                    setupReturnVariables.push(objectProperty.key.name)
+                  if (t.isIdentifier(objectProperty.key)) {
+                    returnVariables.push(objectProperty.key.name)
                   }
                 })
               }
@@ -95,92 +98,81 @@ export function createAst(rendererWindowGetter?: () => any) {
 
     function resolveDeclarationNames(declaration: VariableDeclarator) {
       // e.g. const count = ?
-      if (declaration.id.type === 'Identifier') {
-        return setupReturnVariables.includes(declaration.id.name) ? [declaration.id.name] : []
+      if (t.isIdentifier(declaration.id)) {
+        return returnVariables.includes(declaration.id.name) ? [declaration.id.name] : []
       }
 
       // e.g. const {} = ?
-      if (declaration.id.type === 'ObjectPattern') {
+      if (t.isObjectPattern(declaration.id)) {
         return declaration.id.properties
           .map((property) => {
             // e.g. const { count } = ?
-            if (property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
+            if (t.isObjectProperty(property) && t.isIdentifier(property.value)) {
               return property.value.name
             }
 
             // e.g. const { count, ...rest } = ?
-            if (property.type === 'RestElement' && property.argument.type === 'Identifier') {
+            if (t.isRestElement(property) && t.isIdentifier(property.argument)) {
               return property.argument.name
             }
 
             return ''
           })
-          .filter((property) => setupReturnVariables.includes(property)) as string[]
+          .filter((property) => returnVariables.includes(property)) as string[]
       }
 
       // e.g. const [] = ?
-      if (declaration.id.type === 'ArrayPattern') {
+      if (t.isArrayPattern(declaration.id)) {
         return declaration.id.elements
           .map((element) => {
             // e.g const [count] = ?
-            if (element && element.type === 'Identifier') {
+            if (t.isIdentifier(element)) {
               return element.name
             }
 
             // e.g const [count, ...rest] = ?
-            if (element && element.type === 'RestElement' && element.argument.type === 'Identifier') {
+            if (t.isRestElement(element) && t.isIdentifier(element.argument)) {
               return element.argument.name
             }
 
             return ''
           })
-          .filter((property) => setupReturnVariables.includes(property)) as string[]
+          .filter((property) => returnVariables.includes(property)) as string[]
       }
 
       return []
     }
 
-    function resolveTopLevel(path: NodePath<MemberExpression | OptionalMemberExpression>) {
-      if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
+    function resolveApis(path: NodePath<MemberExpression | OptionalMemberExpression>) {
+      if (t.isIdentifier(path.node.object) && t.isIdentifier(path.node.property)) {
         let identifier
-        let property
 
         if (path.node.object.name === 'window') {
           identifier = path.node.property.name
-          // e.g. window.Varlet.Snackbar() property -> Snackbar
-          // e.g. window.Varlet?.Snackbar?.() property -> Snackbar
-          if (path.parent.type === 'MemberExpression' || path.parent.type === 'OptionalMemberExpression') {
-            if (path.parent.property.type === 'Identifier') {
-              property = path.parent.property.name
-            }
-          } else if (!setupTopLevelNonMemberIdentifiers.includes(identifier)) {
-              setupTopLevelNonMemberIdentifiers.push(identifier)
-            }
+          if (
+            !t.isMemberExpression(path.parent) &&
+            !t.isOptionalMemberExpression(path.parent) &&
+            !allImportedApis.includes(identifier)
+          ) {
+            allImportedApis.push(identifier)
+          }
         } else {
           identifier = path.node.object.name
-          // e.g. Varlet.Snackbar() property -> Snackbar
-          property = path.node.property.name
         }
 
-        if (!setupTopLevelIdentifiers.includes(identifier)) {
-          setupTopLevelIdentifiers.push(identifier)
-        }
-
-        if (property) {
-          setupTopLevelMemberProperties[identifier] = setupTopLevelMemberProperties[identifier]
-            ? uniq([...setupTopLevelMemberProperties[identifier], property])
-            : [property]
+        if (!seenApis.includes(identifier)) {
+          seenApis.push(identifier)
         }
       }
     }
 
     traverse(ast, {
       FunctionDeclaration(path) {
-        if (path.node.id && path.node.id.type === 'Identifier' && path.node.id.name === 'setup') {
+        if (t.isIdentifier(path.node.id) && path.node.id.name === 'setup') {
           path.node.body.body.forEach((statement) => {
-            if (statement.type === 'VariableDeclaration') {
+            if (t.isVariableDeclaration(statement)) {
               statement.declarations.forEach((declaration) => {
-                if (statement.kind !== 'const' && declaration.id.type === 'Identifier') {
+                if (statement.kind !== 'const' && t.isIdentifier(declaration.id)) {
                   errors.push(
                     `For more accurate compile-time type inference, only const is allowed for variable definitions: ${declaration.id.name}`
                   )
@@ -189,59 +181,53 @@ export function createAst(rendererWindowGetter?: () => any) {
 
                 // e.g. ()
                 // e.g. ?.()
-                if (
-                  declaration.init?.type === 'CallExpression' ||
-                  declaration.init?.type === 'OptionalCallExpression'
-                ) {
+                if (t.isCallExpression(declaration.init) || t.isOptionalCallExpression(declaration.init)) {
                   // e.g. ref()
-                  if (declaration.init?.callee.type === 'Identifier') {
-                    setupReturnDeclarations[declaration.init?.callee.name] = uniq([
-                      ...(setupReturnDeclarations[declaration.init?.callee.name] ?? []),
-                      ...resolveDeclarationNames(declaration),
-                    ])
+                  if (t.isIdentifier(declaration.init?.callee)) {
+                    returnDeclarations[declaration.init?.callee.name] = uniqConcat(
+                      returnDeclarations[declaration.init?.callee.name],
+                      ...resolveDeclarationNames(declaration)
+                    )
                   }
                   // e.g. a.ref?.()
                   // e.g. a?.ref?.()
                   else if (
-                    declaration.init?.callee.type === 'MemberExpression' ||
-                    declaration.init?.callee.type === 'OptionalMemberExpression'
+                    t.isMemberExpression(declaration.init?.callee) ||
+                    t.isOptionalMemberExpression(declaration.init?.callee)
                   ) {
-                    if (declaration.init?.callee.property.type === 'Identifier') {
-                      setupReturnDeclarations[declaration.init?.callee.property.name] = uniq([
-                        ...(setupReturnDeclarations[declaration.init?.callee.property.name] ?? []),
-                        ...resolveDeclarationNames(declaration),
-                      ])
+                    if (t.isIdentifier(declaration.init?.callee.property)) {
+                      returnDeclarations[declaration.init?.callee.property.name] = uniqConcat(
+                        returnDeclarations[declaration.init?.callee.property.name],
+                        ...resolveDeclarationNames(declaration)
+                      )
                     }
                   }
                 }
                 // e.g. () => {},
                 // e.g. function() {}
-                else if (
-                  declaration.init?.type === 'ArrowFunctionExpression' ||
-                  declaration.init?.type === 'FunctionExpression'
-                ) {
-                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = uniq([
-                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
-                    ...resolveDeclarationNames(declaration),
-                  ])
+                else if (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init)) {
+                  returnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = uniqConcat(
+                    returnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION],
+                    ...resolveDeclarationNames(declaration)
+                  )
                 }
                 // e.g. Literal, [], {}
                 else {
-                  setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = uniq([
-                    ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] ?? []),
-                    ...resolveDeclarationNames(declaration),
-                  ])
+                  returnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = uniqConcat(
+                    returnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE],
+                    ...resolveDeclarationNames(declaration)
+                  )
                 }
               })
             }
 
             // e.g. function a() {}
-            if (statement.type === 'FunctionDeclaration') {
-              if (statement.id && statement.id.type === 'Identifier') {
-                setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = [
-                  ...(setupReturnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] ?? []),
-                  statement.id.name,
-                ]
+            if (t.isFunctionDeclaration(statement)) {
+              if (t.isIdentifier(statement.id)) {
+                returnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = uniqConcat(
+                  returnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION],
+                  statement.id.name
+                )
               }
             }
           })
@@ -250,15 +236,15 @@ export function createAst(rendererWindowGetter?: () => any) {
 
       Identifier(path) {
         // e.g. Varlet
-        if (path.parent.type !== 'MemberExpression' && path.parent.type !== 'OptionalMemberExpression') {
+        if (!t.isMemberExpression(path.parent) && !t.isOptionalMemberExpression(path.parent)) {
           const { name } = path.node
 
-          if (!setupTopLevelIdentifiers.includes(name)) {
-            setupTopLevelIdentifiers.push(name)
+          if (!seenApis.includes(name)) {
+            seenApis.push(name)
           }
 
-          if (!setupTopLevelNonMemberIdentifiers.includes(name)) {
-            setupTopLevelNonMemberIdentifiers.push(name)
+          if (!allImportedApis.includes(name)) {
+            allImportedApis.push(name)
           }
         }
       },
@@ -266,13 +252,13 @@ export function createAst(rendererWindowGetter?: () => any) {
       MemberExpression(path) {
         // e.g. window.Varlet.xxx
         // e.g. Varlet.xxx
-        resolveTopLevel(path)
+        resolveApis(path)
       },
 
       OptionalMemberExpression(path) {
         // e.g. window.Varlet?.???
         // e.g. Varlet?.???
-        resolveTopLevel(path)
+        resolveApis(path)
       },
     })
 
@@ -281,47 +267,46 @@ export function createAst(rendererWindowGetter?: () => any) {
     }
 
     return {
-      setupReturnDeclarations,
-      setupTopLevelIdentifiers,
-      setupTopLevelNonMemberIdentifiers,
-      setupTopLevelMemberProperties,
+      returnDeclarations,
+      seenApis,
+      allImportedApis,
     }
   }
 
-  function transformNamedExportIdentifiers(code: string, identifiers: string[]) {
-    const identifierNamedExports: Record<string, string[]> = {}
+  function transformNamedImports(code: string, identifiers: string[]) {
+    const namedImports: Record<string, string[]> = {}
 
     const ast = parse(code, {
       sourceType: 'module',
     })
 
-    function transformNamedExportIdentifier(path: NodePath<MemberExpression | OptionalMemberExpression>) {
-      if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
+    function transformNamedExport(path: NodePath<MemberExpression | OptionalMemberExpression>) {
+      if (t.isIdentifier(path.node.object) && t.isIdentifier(path.node.property)) {
         if (path.node.object.name === 'window') {
-          if (path.parent.type === 'MemberExpression' || path.parent.type === 'OptionalMemberExpression') {
-            const identifier = path.node.property.name
+          const identifier = path.node.property.name
 
-            if (path.parent.property.type === 'Identifier' && identifiers.includes(identifier)) {
-              const namedExport = path.parent.property.name
+          if (t.isMemberExpression(path.parent) || t.isOptionalMemberExpression(path.parent)) {
+            if (t.isIdentifier(path.parent.property) && identifiers.includes(identifier)) {
+              const namedImport = path.parent.property.name
+
               path.parentPath.replaceWith(
-                t.identifier(namedExport === 'default' ? `${identifier}Default` : namedExport)
+                t.identifier(namedImport === 'default' ? `${identifier}Default` : namedImport)
               )
 
-              identifierNamedExports[identifier] = identifierNamedExports[identifier]
-                ? uniq([...identifierNamedExports[identifier], namedExport])
-                : [namedExport]
+              namedImports[identifier] = uniqConcat(namedImports[identifier], namedImport)
             }
+          } else {
+            // e.g. window.Varlet
+            path.replaceWith(t.identifier(identifier))
           }
         } else {
           const identifier = path.node.object.name
 
           if (identifiers.includes(identifier)) {
-            const namedExport = path.node.property.name
-            path.replaceWith(t.identifier(namedExport === 'default' ? `${identifier}Default` : namedExport))
+            const namedImport = path.node.property.name
+            path.replaceWith(t.identifier(namedImport === 'default' ? `${identifier}Default` : namedImport))
 
-            identifierNamedExports[identifier] = identifierNamedExports[identifier]
-              ? uniq([...identifierNamedExports[identifier], namedExport])
-              : [namedExport]
+            namedImports[identifier] = uniqConcat(namedImports[identifier], namedImport)
           }
         }
       }
@@ -331,25 +316,25 @@ export function createAst(rendererWindowGetter?: () => any) {
       MemberExpression(path) {
         // e.g. window.Varlet.xxx() -> xxx()
         // e.g. Varlet.xxx -> xxx()
-        transformNamedExportIdentifier(path)
+        transformNamedExport(path)
       },
 
       OptionalMemberExpression(path) {
         // e.g. window.Varlet?.xxx?.() -> xxx?.()
         // e.g. Varlet?.xxx?.() -> xxx?.()
-        transformNamedExportIdentifier(path)
+        transformNamedExport(path)
       },
     })
 
     return {
       code: generate(ast, { retainLines: true }).code,
-      identifierNamedExports,
+      namedImports,
     }
   }
 
   return {
     transformExpressionValue,
-    transformNamedExportIdentifiers,
+    transformNamedImports,
     traverseSetupFunction,
   }
 }
