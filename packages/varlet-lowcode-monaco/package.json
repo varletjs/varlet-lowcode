@@ -30,5 +30,9 @@
   },
   "peerDependencies": {
     "vue": "3.2.25"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 51",
+    "iOS >= 10"
+  ]
 }

@@ -261,7 +261,7 @@ export default defineComponent({
       const flatSchemaNodes: SchemaNode[] = []
 
       schemaNodes.forEach((schemaNode) => {
-        if (!Object.hasOwn(schemaNode, 'for')) {
+        if (!schemaNode.hasOwnProperty('for')) {
           flatSchemaNodes.push(schemaNode)
           return
         }

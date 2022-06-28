@@ -64,7 +64,7 @@ const convertEventName = (key: string) => {
 
   const eventName = kebabCase(key.slice(2))
 
-  return `@${eventName.at(0)!.toLowerCase()}${eventName.slice(1)}`
+  return `@${eventName[0]!.toLowerCase()}${eventName.slice(1)}`
 }
 
 const genProps = (schemaNode: SchemaNode): string => {
@@ -100,7 +100,7 @@ const genProps = (schemaNode: SchemaNode): string => {
 }
 
 const genCondition = (schemaNode: SchemaNode): string => {
-  if (!Object.hasOwn(schemaNode, 'if')) {
+  if (!schemaNode.hasOwnProperty('if')) {
     return ''
   }
 
@@ -124,7 +124,7 @@ const genCondition = (schemaNode: SchemaNode): string => {
 }
 
 const genLoop = (schemaNode: SchemaNode): string => {
-  if (!Object.hasOwn(schemaNode, 'for')) {
+  if (!schemaNode.hasOwnProperty('for')) {
     return ''
   }
 

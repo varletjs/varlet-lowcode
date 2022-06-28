@@ -36,5 +36,9 @@
     "@varlet/lowcode-ast": "workspace: *",
     "@varlet/ui": "latest",
     "@varlet/touch-emulator": "latest"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 51",
+    "iOS >= 10"
+  ]
 }

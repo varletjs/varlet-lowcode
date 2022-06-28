@@ -119,6 +119,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
 
   const libConfig = {
     publicDir: false,
+    base: './',
     build: {
       emptyOutDir: true,
       outDir: PLUGIN_OUTPUT_PATH,

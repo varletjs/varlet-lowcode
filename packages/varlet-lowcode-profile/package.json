@@ -20,5 +20,9 @@
     "typescript": "^4.4.4",
     "vue": "3.2.25",
     "vue-tsc": "^0.37.3"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 51",
+    "iOS >= 10"
+  ]
 }

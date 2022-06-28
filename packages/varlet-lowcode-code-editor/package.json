@@ -34,5 +34,9 @@
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 51",
+    "iOS >= 10"
+  ]
 }

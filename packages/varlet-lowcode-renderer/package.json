@@ -36,5 +36,9 @@
   },
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 51",
+    "iOS >= 10"
+  ]
 }
