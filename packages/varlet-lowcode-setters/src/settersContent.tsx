@@ -1,4 +1,5 @@
 import { watch, defineComponent, ref } from 'vue'
+import SettersAttribute from './settersAttribute'
 import SettersStyle from './settersStyle'
 
 interface Data {
@@ -10,7 +11,7 @@ export default defineComponent({
     tabIndex: Number,
   },
   setup(props: Data) {
-    const tabIndex = ref(0)
+    const tabIndex = ref(1)
 
     watch(props, (newValue) => {
       tabIndex.value = newValue.tabIndex as number
@@ -20,13 +21,17 @@ export default defineComponent({
       if (tabIndex.value === 0) {
         return (
           <div>
-            <SettersStyle />
+            <SettersAttribute />
           </div>
         )
       }
 
       if (tabIndex.value === 1) {
-        return <div>样式内容</div>
+        return (
+          <div>
+            <SettersStyle />
+          </div>
+        )
       }
 
       if (tabIndex.value === 2) {
