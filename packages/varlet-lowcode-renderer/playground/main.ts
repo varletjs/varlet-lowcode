@@ -1,17 +1,18 @@
 import Renderer from '../src/Renderer'
 import { createApp } from 'vue'
 import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import type { Assets } from '@varlet/lowcode-core'
 
-  ;
+;
 
 (async () => {
-  const assets = [
+  const assets: Assets = [
     {
-      profile: 'VarletLowcodeProfile',
-      resources: [
+      profileLibrary: 'VarletLowcodeProfile',
+      profileResource: './varlet-lowcode-profile.umd.js',
+      additionResources: [
         'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
         'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-        './varlet-lowcode-profile.umd.js',
       ],
     },
   ]
@@ -179,10 +180,10 @@ import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lo
     } else {
       styles = document.createElement('style')
       const styleSheet = `
-      .varlet-low-code--disable-events > * { 
+      .varlet-low-code--disable-events > * {
         pointer-events: none;
       }
-      
+
       .varlet-low-code--disable-events {
         pointer-events: all;
       }
@@ -198,7 +199,7 @@ import { assetsManager, schemaManager, BuiltInSchemaNodeNames } from '@varlet/lo
   await assetsManager.loadResources(assets, document)
 
   createApp(Renderer, {
-    mode: "designer",
+    mode: 'designer',
     schema,
     assets,
   }).mount('#app')

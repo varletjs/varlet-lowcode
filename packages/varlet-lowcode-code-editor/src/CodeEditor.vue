@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Monaco from '@varlet/lowcode-monaco'
-import { ref, Ref, onUnmounted } from 'vue'
+import { ref, Ref, onUnmounted, onMounted } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
@@ -15,8 +15,12 @@ const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
 const code: Ref<string> = ref(schema.code ?? NOOP_SETUP)
 
 function handleSchemaChange(newSchema: SchemaPageNode) {
+  if (newSchema.code !== code.value) {
+    code.value = newSchema.code ?? NOOP_SETUP
+    genSetupReturnDeclarations()
+  }
+
   schema = newSchema
-  code.value = newSchema.code ?? NOOP_SETUP
 }
 
 function createVueApiSuggestions(range: IRange) {
@@ -53,7 +57,7 @@ function createVueApiSuggestions(range: IRange) {
   })
 }
 
-function handleSave() {
+function genSetupReturnDeclarations() {
   const { setupReturnDeclarations } = traverseSetupFunction(code.value)
 
   schemaManager.importSchema({
@@ -65,11 +69,18 @@ function handleSave() {
 
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
+onMounted(genSetupReturnDeclarations)
+
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 })
 </script>
 
 <template>
-  <monaco v-model:code="code" :create-suggestions="createVueApiSuggestions" :height="'400px'" @save="handleSave" />
+  <monaco
+    v-model:code="code"
+    :create-suggestions="createVueApiSuggestions"
+    :height="'400px'"
+    @save="genSetupReturnDeclarations"
+  />
 </template>

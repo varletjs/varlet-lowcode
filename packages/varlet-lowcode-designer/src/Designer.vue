@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { BuiltInEvents, schemaManager, assetsManager, eventsManager } from '@varlet/lowcode-core'
+import {
+  BuiltInEvents,
+  schemaManager,
+  assetsManager,
+  eventsManager,
+  Assets,
+  SchemaPageNode,
+  Asset,
+} from '@varlet/lowcode-core'
 import { onMounted, ref } from 'vue'
 
-const presetAssets = [
+const presetAssets: Assets = [
   {
-    resources: [
+    additionResources: [
       'https://cdn.jsdelivr.net/npm/vue',
       // TODO: env config
       './varlet-lowcode-core.umd.js',
@@ -13,8 +21,8 @@ const presetAssets = [
   },
 ]
 
-let schema = schemaManager.exportSchema()
-let assets = assetsManager.exportAssets()
+let schema: SchemaPageNode = schemaManager.exportSchema()
+let assets: Assets = assetsManager.exportAssets()
 
 const container = ref<HTMLIFrameElement>()
 let renderer: any
@@ -56,8 +64,6 @@ function mountIframe() {
 }
 
 async function mountRenderer() {
-  eventsManager.emit(BuiltInEvents.LOADING)
-
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
@@ -73,8 +79,6 @@ async function mountRenderer() {
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
-
-  eventsManager.emit(BuiltInEvents.LOADED)
 }
 
 onMounted(async () => {

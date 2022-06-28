@@ -15,8 +15,12 @@ async function runTask() {
   const varletLowCodeConfig = getVarletLowCodeConfig()
   const buildConfig = getLibConfig(varletLowCodeConfig)
 
-  await execa('vue-tsc', ['--declaration', '--emitDeclarationOnly'])
-  await buildVite(buildConfig)
+  try {
+    await execa('vue-tsc', ['--declaration', '--emitDeclarationOnly'])
+    await buildVite(buildConfig)
+  } catch (e: any) {
+    logger.error(e.toString())
+  }
 }
 
 export async function compile({ watch = false }: { watch: boolean }) {

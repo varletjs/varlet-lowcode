@@ -12,8 +12,6 @@ import { isArray, isPlainObject, isString, kebabCase } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
 
-type Packages = Record<string, AssetProfile>
-
 const vueApis = [
   'ref',
   'reactive',
@@ -37,6 +35,8 @@ const vueApis = [
   'onUnmounted',
 ]
 
+const internalResourcesKeywords = ['varlet-lowcode-core', 'varlet-lowcode-renderer']
+
 const getRendererWindow = () => Array.from(window).find((w) => w.name === 'rendererWindow') as any
 
 const getRendererSchema = (): SchemaPageNode => {
@@ -51,7 +51,8 @@ const getRendererAssetsManager = (): AssetsManager => {
   return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
-const { traverseSetupFunction, convertExpressionValue } = createAst(getRendererWindow)
+const { traverseSetupFunction, transformExpressionValue, transformNamedExportIdentifiers } =
+  createAst(getRendererWindow)
 
 const stringifyObject = (object: any[] | Record<string, any>): string => {
   return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
@@ -67,32 +68,10 @@ const convertEventName = (key: string) => {
   return `@${eventName.at(0)!.toLowerCase()}${eventName.slice(1)}`
 }
 
-const genPackages = (setupTopLevelIdentifiers: string[]): Packages => {
-  const profiles = getRendererAssetsManager().getProfiles(getRendererAssets())
-  const packages = profiles.reduce((packages, profile) => {
-    packages[profile.library] = profile
-    return packages
-  }, {} as Packages)
-
-  const used: string[] = [...setupTopLevelIdentifiers]
-
-  schemaManager.visitSchemaNode(getRendererSchema(), (schemaNode) => {
-    if (schemaManager.isSchemaPageNode(schemaNode) || schemaManager.isSchemaTextNode(schemaNode)) {
-      return
-    }
-
-    if (!used.includes(schemaNode.library!)) {
-      used.push(schemaNode.library!)
-    }
-  })
-
-  return Object.fromEntries(Object.entries(packages).filter(([library]) => used.includes(library)))
-}
-
 const genProps = (schemaNode: SchemaNode): string => {
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
     if (schemaManager.isExpressionBinding(value)) {
-      propsString += ` ${convertEventName(key)}="${convertExpressionValue(value.value)}"`
+      propsString += ` ${convertEventName(key)}="${transformExpressionValue(value.value)}"`
 
       return propsString
     }
@@ -127,7 +106,7 @@ const genCondition = (schemaNode: SchemaNode): string => {
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.if)) {
-    return ` v-if="${convertExpressionValue(schemaNode.if.value)}"`
+    return ` v-if="${transformExpressionValue(schemaNode.if.value)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.if)) {
@@ -151,7 +130,7 @@ const genLoop = (schemaNode: SchemaNode): string => {
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in ${convertExpressionValue(schemaNode.for.value)}"`
+    return ` v-for="$item_${schemaNode.id} in ${transformExpressionValue(schemaNode.for.value)}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.for)) {
@@ -207,7 +186,7 @@ const genSchemaNode = (schemaNode: SchemaNode, depth: number): string => {
 
   if (schemaManager.isSchemaTextNode(schemaNode)) {
     if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `${indent}{{ ${convertExpressionValue(schemaNode.textContent.value)} }}`
+      return `${indent}{{ ${transformExpressionValue(schemaNode.textContent.value)} }}`
     }
     return `${indent}${schemaNode.textContent}`
   }
@@ -234,15 +213,35 @@ const genVueApis = (setupTopLevelIdentifiers: string[]) => {
     .join(',\n')
 }
 
-const genAppImports = (packages: Packages, setupTopLevelIdentifiers: string[]) => {
-  return Object.entries(packages)
-    .filter(([library]) => setupTopLevelIdentifiers.includes(library))
-    .map(([library, { packageName }]) => `import ${library} from '${packageName}'`)
-    .join('\n')
+const genExports = (library: string, identifierNamedExports: Record<string, string[]>) => {
+  return `{ ${identifierNamedExports[library]
+    .map((namedExport) => {
+      return namedExport === 'default' ? `default as ${library}Default` : namedExport
+    })
+    .join(', ')} }`
 }
 
-const genApp = (packages: Packages, setupTopLevelIdentifiers: string[]) => {
+const genApp = (
+  profiles: AssetProfile[],
+  setupTopLevelIdentifiers: string[],
+  setupTopLevelNonMemberIdentifiers: string[],
+  code: string,
+  identifierNamedExports: Record<string, string[]>
+) => {
   const schema = getRendererSchema()
+  const imports = getSetupUsedProfiles(profiles, setupTopLevelIdentifiers)
+    .map(({ library, packageName }) => {
+      const allExport = setupTopLevelNonMemberIdentifiers.includes(library)
+        ? `import * as ${library} from '${packageName}'\n`
+        : ''
+
+      const namedExport = identifierNamedExports[library]
+        ? `import ${genExports(library, identifierNamedExports)} from '${packageName}'`
+        : ''
+
+      return `${allExport}${namedExport}`
+    })
+    .join('\n')
 
   return `\
 <template>
@@ -254,11 +253,11 @@ ${genSchemaNode(schema, 1)}
 <script>
 import {
   defineComponent,
-${genVueApis(setupTopLevelIdentifiers)}
+${genVueApis(setupTopLevelNonMemberIdentifiers)}
 } from 'vue'
-${genAppImports(packages, setupTopLevelIdentifiers)}
+${imports}
 
-${schema.code}
+${code}
 export default defineComponent({
   setup
 })
@@ -266,12 +265,12 @@ export default defineComponent({
 `
 }
 
-const genMain = (packages: Packages) => {
-  const vuePlugins = Object.entries(packages).filter(([_, { isVuePlugin }]) => isVuePlugin)
+const genMain = (profiles: AssetProfile[]) => {
+  const vuePlugins = profiles.filter(({ isVuePlugin }) => isVuePlugin)
 
-  const imports = vuePlugins.map(([library, { packageName }]) => `import ${library} from '${packageName}'\n`)
+  const imports = vuePlugins.map(({ library, packageName }) => `import ${library} from '${packageName}'\n`)
 
-  const uses = vuePlugins.map(([library]) => `.use(${library})\n  `)
+  const uses = vuePlugins.map(({ library }) => `.use(${library})\n  `)
 
   return `\
 import App from './App.vue'
@@ -285,61 +284,91 @@ app.mount('#app')
 `
 }
 
-const genPkg = (packages: Packages) => {
-  const packagesString = Object.entries(packages).map(([_, { packageName, packageVersion }]) => {
-    return `    "${packageName}": "${packageVersion}"`
-  })
+const genPkg = (profiles: AssetProfile[]) => {
+  const dependencies = profiles
+    .map(({ packageName, packageVersion }) => `    "${packageName}": "${packageVersion}"`)
+    .join(',\n')
+
   return pkg.replace(
     '"vite": "latest"',
     `\
 "vite": "latest",
-${packagesString.join(',\n')}\
+${dependencies}\
 `
   )
 }
 
 const genIndex = () => {
-  const resources = getRendererAssetsManager().getResources(getRendererAssets())
-  const scripts = resources.map((resource) => `    <script src="${resource}"><${'/'}script>`)
+  const resources = getRendererAssetsManager()
+    .getResources(getRendererAssets(), true)
+    .filter((resource) => !internalResourcesKeywords.some((keyword) => resource.includes(keyword)))
 
-  return index.replace(
+  const scripts = resources
+    .filter((resource) => !resource.endsWith('.css'))
+    .map((resource) => `    <script src="${resource}"><${'/'}script>`)
+    .join('\n')
+
+  const styles = resources
+    .filter((resource) => resource.endsWith('css'))
+    .map((resource) => `    <link ref="stylesheet" href="${resource}" />`)
+    .join('\n')
+
+  const indexTemplate = index.replace(
+    '    <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
+    `\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+${styles}`
+  )
+
+  return indexTemplate.replace(
     `    <script type="module" src="/src/main.js"><${'/'}script>`,
     `\
-${scripts.join('\n')}
+${scripts}
     <script type="module" src="/src/main.js"><${'/'}script>\
 `
   )
 }
 
-const genConfig = (packages: Packages) => {
-  const externals = Object.entries(packages).map(([library, { packageName }]) => {
-    return `      '${packageName}': '${library}'`
-  })
+const genConfig = (profiles: AssetProfile[]) => {
+  const externals = profiles.map(({ library, packageName }) => `      '${packageName}': '${library}'`).join(',\n')
 
   return config.replace(
     '    viteExternalsPlugin()',
     `\
     viteExternalsPlugin({
       vue: 'Vue',
-${externals.join(',\n')}
+${externals}
     })`
   )
 }
 
+const getSetupUsedProfiles = (profiles: AssetProfile[], setupTopLevelIdentifiers: string[]): AssetProfile[] => {
+  return profiles.filter(({ library }) => setupTopLevelIdentifiers.includes(library))
+}
+
 const save = async () => {
-  const { setupTopLevelIdentifiers } = traverseSetupFunction(getRendererSchema().code ?? '')
-  const packages = genPackages(setupTopLevelIdentifiers)
+  const { setupTopLevelIdentifiers, setupTopLevelNonMemberIdentifiers } = traverseSetupFunction(
+    getRendererSchema().code ?? ''
+  )
+  const profiles = getRendererAssetsManager().getProfiles(getRendererAssets())
+  const setupUsedProfiles = getSetupUsedProfiles(profiles, setupTopLevelIdentifiers)
+  const libraries = setupUsedProfiles.map((profile) => profile.library)
+  const { code, identifierNamedExports } = transformNamedExportIdentifiers(getRendererSchema().code!, libraries)
+
   const zip = new JSZip()
 
   zip.file('index.html', genIndex())
-  zip.file('package.json', genPkg(packages))
-  zip.file('vite.config.js', genConfig(packages))
+  zip.file('package.json', genPkg(profiles))
+  zip.file('vite.config.js', genConfig(profiles))
   zip.file('README.md', readme)
 
   const src = zip.folder('src')!
 
-  src.file('App.vue', genApp(packages, setupTopLevelIdentifiers))
-  src.file('main.js', genMain(packages))
+  src.file(
+    'App.vue',
+    genApp(profiles, setupTopLevelIdentifiers, setupTopLevelNonMemberIdentifiers, code, identifierNamedExports)
+  )
+  src.file('main.js', genMain(profiles))
 
   const blob = await zip.generateAsync({ type: 'blob' })
   saveAs(blob, 'vite-varlet-low-code-starter.zip')

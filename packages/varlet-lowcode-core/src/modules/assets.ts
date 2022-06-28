@@ -2,8 +2,9 @@ import { get } from 'lodash-es'
 import type { Component, DefineComponent } from 'vue'
 
 export interface Asset {
-  profile?: string
-  resources: string[]
+  profileLibrary?: string
+  profileResource?: string
+  additionResources?: string[]
 }
 
 export interface AssetProfile {
@@ -56,9 +57,9 @@ export interface AssetsManager {
 
   getProfiles(assets: Assets): AssetProfile[]
 
-  getResources(assets: Assets): string[]
+  getResources(assets: Assets, excludeProfileResource?: boolean): string[]
 
-  loadResources(assets: Assets, document: Document): Promise<void>
+  loadResources(assets: Assets, document: Document, excludeProfileResource?: boolean): Promise<void>
 
   importAssets(assets: Assets): Assets
 
@@ -70,11 +71,11 @@ export function createAssetsManager(): AssetsManager {
 
   function findComponent(assets: Assets, name: string, library?: string): DefineComponent {
     const asset = assets.find((asset) => {
-      if (!asset.profile) {
+      if (!asset.profileLibrary) {
         return false
       }
 
-      const assetProfile = get(window, asset.profile) as AssetProfile
+      const assetProfile = get(window, asset.profileLibrary) as AssetProfile
       const matchedName = assetProfile.materials.some((material) => material.name === name)
       const matchedLibrary = library === assetProfile.library
 
@@ -85,18 +86,18 @@ export function createAssetsManager(): AssetsManager {
       throw new Error(`Component not found by name: ${name} and library: ${library}`)
     }
 
-    const profileLibrary = get(window, `${asset.profile}.library`)
+    const profileLibrary = get(window, `${asset.profileLibrary}.library`)
 
     return get(window, `${profileLibrary}.${name}`)
   }
 
   function findMaterial(assets: Assets, name: string, library: string): AssetProfileMaterial {
     for (const asset of assets) {
-      if (!asset.profile) {
+      if (!asset.profileLibrary) {
         continue
       }
 
-      const assetProfile = get(window, asset.profile) as AssetProfile
+      const assetProfile = get(window, asset.profileLibrary) as AssetProfile
 
       if (assetProfile.library === library) {
         for (const material of assetProfile.materials) {
@@ -112,11 +113,11 @@ export function createAssetsManager(): AssetsManager {
 
   function findProfile(assets: Assets, name: string, library: string): AssetProfile {
     for (const asset of assets) {
-      if (!asset.profile) {
+      if (!asset.profileLibrary) {
         continue
       }
 
-      const assetProfile = get(window, asset.profile) as AssetProfile
+      const assetProfile = get(window, asset.profileLibrary) as AssetProfile
 
       if (assetProfile.library === library) {
         for (const material of assetProfile.materials) {
@@ -130,9 +131,13 @@ export function createAssetsManager(): AssetsManager {
     throw new Error(`Profile not found by name: ${name} and library: ${library}`)
   }
 
-  function getResources(assets: Assets): string[] {
+  function getResources(assets: Assets, excludeProfileResource = false): string[] {
     return assets.reduce((resources, asset) => {
-      resources.push(...asset.resources)
+      resources.push(...(asset.additionResources ?? []))
+
+      if (asset.profileResource && !excludeProfileResource) {
+        resources.push(asset.profileResource)
+      }
 
       return resources
     }, [] as string[])
@@ -142,11 +147,11 @@ export function createAssetsManager(): AssetsManager {
     const profiles: AssetProfile[] = []
 
     for (const asset of assets) {
-      if (!asset.profile) {
+      if (!asset.profileLibrary) {
         continue
       }
 
-      const assetProfile = get(window, asset.profile) as AssetProfile
+      const assetProfile = get(window, asset.profileLibrary) as AssetProfile
 
       assetProfile && profiles.push(assetProfile)
     }
@@ -154,10 +159,10 @@ export function createAssetsManager(): AssetsManager {
     return profiles
   }
 
-  async function loadResources(assets: Assets, document: Document): Promise<void> {
-    const asyncTasks = []
+  async function loadResources(assets: Assets, document: Document, excludeProfileResource = false): Promise<void> {
+    const asyncTasks: Promise<void>[] = []
 
-    function getTask(element: HTMLLinkElement | HTMLScriptElement) {
+    function getTask(element: HTMLLinkElement | HTMLScriptElement): Promise<void> {
       return new Promise((resolve, reject) => {
         element.addEventListener('load', () => {
           resolve(undefined)
@@ -169,24 +174,33 @@ export function createAssetsManager(): AssetsManager {
       })
     }
 
+    async function loadResource(resource: string) {
+      let element: HTMLLinkElement | HTMLScriptElement
+
+      if (resource.endsWith('.css')) {
+        element = document.createElement('link')
+        element.rel = 'stylesheet'
+        element.href = resource
+        document.head.append(element)
+        asyncTasks.push(getTask(element))
+      } else {
+        element = document.createElement('script')
+        element.src = resource
+        document.body.append(element)
+
+        await getTask(element)
+      }
+    }
+
     for (const asset of assets) {
-      if (asset.resources) {
-        for (const resource of asset.resources) {
-          let element: HTMLLinkElement | HTMLScriptElement
-
-          if (resource.endsWith('.css')) {
-            element = document.createElement('link')
-            element.rel = resource
-            document.head.append(element)
-            asyncTasks.push(getTask(element))
-          } else {
-            element = document.createElement('script')
-            element.src = resource
-            document.body.append(element)
-
-            await getTask(element)
-          }
+      if (asset.additionResources) {
+        for (const resource of asset.additionResources) {
+          await loadResource(resource)
         }
+      }
+
+      if (asset.profileResource && !excludeProfileResource) {
+        await loadResource(asset.profileResource)
       }
     }
 

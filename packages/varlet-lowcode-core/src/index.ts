@@ -2,13 +2,11 @@ import schemaManager, { SchemaPageNode } from './modules/schema'
 import assetsManager, { Assets } from './modules/assets'
 import eventsManager from './modules/events'
 import pluginsManager from './modules/plugins'
+import store from './modules/store'
 
 export enum BuiltInEvents {
   SCHEMA_CHANGE = 'schema-change',
   ASSETS_CHANGE = 'assets-change',
-  LOADING = 'loading',
-  LOADED = 'loaded',
-  READY = 'ready',
 }
 
 const originImportSchema = schemaManager.importSchema
@@ -30,7 +28,7 @@ assetsManager.importAssets = function (assets: Assets) {
   return newAssets
 }
 
-export { schemaManager, assetsManager, eventsManager, pluginsManager }
+export { schemaManager, assetsManager, eventsManager, pluginsManager, store }
 
 export * from './modules/schema'
 export * from './modules/assets'

@@ -55,16 +55,20 @@ function setup() {
 
 assetsManager.importAssets([
   {
-    profile: 'VarletLowcodeProfile',
-    resources: [
+    profileLibrary: 'VarletLowcodeProfile',
+    profileResource: './varlet-lowcode-profile.umd.js',
+    additionResources: [
       'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
       'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-      './varlet-lowcode-profile.umd.js',
     ],
   },
   {
-    profile: 'VueUseLowcodeProfile',
-    resources: ['https://unpkg.com/@vueuse/shared', 'https://unpkg.com/@vueuse/core', './vue-use-lowcode-profile.js'],
+    additionResources: ['https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.css'],
+  },
+  {
+    profileLibrary: 'VueUseLowcodeProfile',
+    profileResource: './vue-use-lowcode-profile.js',
+    additionResources: ['https://unpkg.com/@vueuse/shared', 'https://unpkg.com/@vueuse/core'],
   },
 ])
 

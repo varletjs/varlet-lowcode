@@ -73,11 +73,11 @@ pluginsManager
 
 assetsManager.importAssets([
   {
-    profile: 'VarletLowcodeProfile',
-    resources: [
+    profileLibrary: 'VarletLowcodeProfile',
+    profileResource: './varlet-lowcode-profile.umd.js',
+    additionResources: [
       'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
       'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
-      './varlet-lowcode-profile.umd.js',
     ],
   },
 ])

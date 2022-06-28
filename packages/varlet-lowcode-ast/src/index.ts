@@ -2,10 +2,10 @@ import './shim/buffer'
 import './shim/process'
 import { uniq } from '@varlet/shared'
 import { parse } from '@babel/parser'
-import traverse from '@babel/traverse'
+import traverse, { NodePath } from '@babel/traverse'
 import generate from '@babel/generator'
 import * as t from '@babel/types'
-import type { VariableDeclarator } from '@babel/types'
+import type { MemberExpression, OptionalMemberExpression, VariableDeclarator } from '@babel/types'
 import type { SchemaPageNodeSetupReturnDeclarations } from '@varlet/lowcode-core'
 
 export enum SetupReturnVariableDeclarationGroups {
@@ -14,7 +14,7 @@ export enum SetupReturnVariableDeclarationGroups {
 }
 
 export function createAst(rendererWindowGetter?: () => any) {
-  function convertExpressionValue(value: string) {
+  function transformExpressionValue(value: string) {
     value = value
       .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
       .replace(/\$index\.(.+)(?![.\[])/g, '$index_$1')
@@ -50,7 +50,9 @@ export function createAst(rendererWindowGetter?: () => any) {
     const errors: string[] = []
     const setupReturnVariables: string[] = []
     const setupTopLevelIdentifiers: string[] = []
+    const setupTopLevelNonMemberIdentifiers: string[] = []
     const setupReturnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
+    const setupTopLevelMemberProperties: Record<string, string[]> = {}
 
     const ast = parse(code, {
       sourceType: 'module',
@@ -94,7 +96,7 @@ export function createAst(rendererWindowGetter?: () => any) {
     function resolveDeclarationNames(declaration: VariableDeclarator) {
       // e.g. const count = ?
       if (declaration.id.type === 'Identifier') {
-        return [declaration.id.name]
+        return setupReturnVariables.includes(declaration.id.name) ? [declaration.id.name] : []
       }
 
       // e.g. const {} = ?
@@ -113,7 +115,7 @@ export function createAst(rendererWindowGetter?: () => any) {
 
             return ''
           })
-          .filter(Boolean) as string[]
+          .filter((property) => setupReturnVariables.includes(property)) as string[]
       }
 
       // e.g. const [] = ?
@@ -132,10 +134,44 @@ export function createAst(rendererWindowGetter?: () => any) {
 
             return ''
           })
-          .filter(Boolean) as string[]
+          .filter((property) => setupReturnVariables.includes(property)) as string[]
       }
 
       return []
+    }
+
+    function resolveTopLevel(path: NodePath<MemberExpression | OptionalMemberExpression>) {
+      if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
+        let identifier
+        let property
+
+        if (path.node.object.name === 'window') {
+          identifier = path.node.property.name
+          // e.g. window.Varlet.Snackbar() property -> Snackbar
+          // e.g. window.Varlet?.Snackbar?.() property -> Snackbar
+          if (path.parent.type === 'MemberExpression' || path.parent.type === 'OptionalMemberExpression') {
+            if (path.parent.property.type === 'Identifier') {
+              property = path.parent.property.name
+            }
+          } else if (!setupTopLevelNonMemberIdentifiers.includes(identifier)) {
+              setupTopLevelNonMemberIdentifiers.push(identifier)
+            }
+        } else {
+          identifier = path.node.object.name
+          // e.g. Varlet.Snackbar() property -> Snackbar
+          property = path.node.property.name
+        }
+
+        if (!setupTopLevelIdentifiers.includes(identifier)) {
+          setupTopLevelIdentifiers.push(identifier)
+        }
+
+        if (property) {
+          setupTopLevelMemberProperties[identifier] = setupTopLevelMemberProperties[identifier]
+            ? uniq([...setupTopLevelMemberProperties[identifier], property])
+            : [property]
+        }
+      }
     }
 
     traverse(ast, {
@@ -220,31 +256,23 @@ export function createAst(rendererWindowGetter?: () => any) {
           if (!setupTopLevelIdentifiers.includes(name)) {
             setupTopLevelIdentifiers.push(name)
           }
+
+          if (!setupTopLevelNonMemberIdentifiers.includes(name)) {
+            setupTopLevelNonMemberIdentifiers.push(name)
+          }
         }
       },
 
       MemberExpression(path) {
         // e.g. window.Varlet.xxx
         // e.g. Varlet.xxx
-        if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
-          const name = path.node.object.name === 'window' ? path.node.property.name : path.node.object.name
-
-          if (!setupTopLevelIdentifiers.includes(name)) {
-            setupTopLevelIdentifiers.push(name)
-          }
-        }
+        resolveTopLevel(path)
       },
 
       OptionalMemberExpression(path) {
         // e.g. window.Varlet?.???
         // e.g. Varlet?.???
-        if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
-          const name = path.node.object.name === 'window' ? path.node.property.name : path.node.object.name
-
-          if (!setupTopLevelIdentifiers.includes(name)) {
-            setupTopLevelIdentifiers.push(name)
-          }
-        }
+        resolveTopLevel(path)
       },
     })
 
@@ -255,11 +283,73 @@ export function createAst(rendererWindowGetter?: () => any) {
     return {
       setupReturnDeclarations,
       setupTopLevelIdentifiers,
+      setupTopLevelNonMemberIdentifiers,
+      setupTopLevelMemberProperties,
+    }
+  }
+
+  function transformNamedExportIdentifiers(code: string, identifiers: string[]) {
+    const identifierNamedExports: Record<string, string[]> = {}
+
+    const ast = parse(code, {
+      sourceType: 'module',
+    })
+
+    function transformNamedExportIdentifier(path: NodePath<MemberExpression | OptionalMemberExpression>) {
+      if (path.node.object.type === 'Identifier' && path.node.property.type === 'Identifier') {
+        if (path.node.object.name === 'window') {
+          if (path.parent.type === 'MemberExpression' || path.parent.type === 'OptionalMemberExpression') {
+            const identifier = path.node.property.name
+
+            if (path.parent.property.type === 'Identifier' && identifiers.includes(identifier)) {
+              const namedExport = path.parent.property.name
+              path.parentPath.replaceWith(
+                t.identifier(namedExport === 'default' ? `${identifier}Default` : namedExport)
+              )
+
+              identifierNamedExports[identifier] = identifierNamedExports[identifier]
+                ? uniq([...identifierNamedExports[identifier], namedExport])
+                : [namedExport]
+            }
+          }
+        } else {
+          const identifier = path.node.object.name
+
+          if (identifiers.includes(identifier)) {
+            const namedExport = path.node.property.name
+            path.replaceWith(t.identifier(namedExport === 'default' ? `${identifier}Default` : namedExport))
+
+            identifierNamedExports[identifier] = identifierNamedExports[identifier]
+              ? uniq([...identifierNamedExports[identifier], namedExport])
+              : [namedExport]
+          }
+        }
+      }
+    }
+
+    traverse(ast, {
+      MemberExpression(path) {
+        // e.g. window.Varlet.xxx() -> xxx()
+        // e.g. Varlet.xxx -> xxx()
+        transformNamedExportIdentifier(path)
+      },
+
+      OptionalMemberExpression(path) {
+        // e.g. window.Varlet?.xxx?.() -> xxx?.()
+        // e.g. Varlet?.xxx?.() -> xxx?.()
+        transformNamedExportIdentifier(path)
+      },
+    })
+
+    return {
+      code: generate(ast, { retainLines: true }).code,
+      identifierNamedExports,
     }
   }
 
   return {
-    convertExpressionValue,
+    transformExpressionValue,
+    transformNamedExportIdentifiers,
     traverseSetupFunction,
   }
 }
