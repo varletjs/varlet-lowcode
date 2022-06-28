@@ -84,16 +84,17 @@ onUnmounted(() => {
 <template>
   <div v-drag-over="">
     <div class="drag-list">
-      <button class="drag-item" v-for="(item, index) in dragList" :key="item.id" v-drag="item">
+      <button class="drag-item" v-for="(item, index) in dragList" :key="item.dragData.id" :id="item.dragData.id"
+        v-drag="item">
         drag me {{ index }}
       </button>
     </div>
     <!-- <iframe width="500" src="./demo.html" /> -->
-    <transition-group v-drop="dropProps" name="drag" tag="div" class="drop-place">
+    <!-- <transition-group v-drop="dropProps" name="drag" tag="div" class="drop-place">
       <button v-drop="slotsDropProps" v-drag="item" class="drop-item" v-for="item in renderList" :key="item.id">
         {{ item.dragData?.name }}
       </button>
-    </transition-group>
+    </transition-group> -->
   </div>
 </template>
 
