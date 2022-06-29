@@ -72,7 +72,7 @@ function getDistance(
   left: number,
   right: number,
   direction: NearestDirection,
-  id: string,
+  type: 'outside' | 'inside',
   between?: boolean
 ): number {
   const minX = Math.min(Math.abs(pageX - left), Math.abs(pageX - right))
@@ -80,11 +80,10 @@ function getDistance(
 
   if (between) {
     if (direction === 'left' || direction === 'right') {
-      console.log('id', id, minX)
-      return minX
+      return type === 'inside' ? minX : minY
     }
     if (direction === 'top' || direction === 'bottom') {
-      return minY
+      return type === 'inside' ? minY : minX
     }
   }
 
@@ -107,17 +106,18 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
       id,
       direction,
       type: 'outside',
-      distance: getDistance(pageY, pageX, top, bottom, left, right, direction, id, true),
+      distance: getDistance(pageY, pageX, top, bottom, left, right, direction, 'outside', true),
     }
 
     // if the mouse is in the range of the node, it's must inside in the inside node
     if (pageX > left && pageX < right && pageY > top && pageY < bottom) {
       thisTheNearest.type = 'inside'
+      thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, 'inside', true)
     }
 
     // if the mouse is not in the range of the node, it's must outside in the nearest node
     if ((pageX < left || pageX > right) && (pageY < top || pageY > bottom)) {
-      thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, id, false)
+      thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, 'outside', false)
     }
 
     return thisTheNearest
