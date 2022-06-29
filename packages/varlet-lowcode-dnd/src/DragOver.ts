@@ -130,21 +130,28 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
   return null
 }
 
+function renderBorder(nearestNodeInfo: NearestOptions) {
+  const { id, direction, type } = nearestNodeInfo
+  const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLElement
+  const nearestDom = document.querySelector(`#${id}`)
+  const nearestStyle = nearestDom?.getBoundingClientRect()
+  const distance: Partial<CSSStyleDeclaration> = {
+    left: direction === 'right' ? `${nearestStyle?.right || 0}px` : `${nearestStyle?.left || 0}px`,
+    top: direction === 'bottom' ? `${nearestStyle?.bottom || 0}px` : `${nearestStyle?.top || 0}px`,
+  }
+
+  borderDiv &&
+    mergeStyle(borderDiv, {
+      width: (direction === 'left' || direction === 'right') ? '4px' : `${nearestStyle?.width}px`,
+      height: (direction === 'top' || direction === 'bottom') ? '4px' : `${nearestStyle?.height}px`,
+      ...distance
+    })
+}
+
 function onDragOver(event: DragEvent) {
   const nearestNodeInfo = calculateStyle(event)
 
-  if (nearestNodeInfo) {
-    const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLElement
-    const nearestDom = document.querySelector(`#${nearestNodeInfo.id}`)
-
-    const nearestStyle = nearestDom?.getBoundingClientRect()
-
-    borderDiv &&
-      mergeStyle(borderDiv, {
-        top: `${nearestStyle?.top || 0}px`,
-        left: `${nearestStyle?.left || 0}px`,
-      })
-  }
+  nearestNodeInfo && renderBorder(nearestNodeInfo)
 }
 
 function mounted(el: HTMLElement, props: DragOverOption) {
@@ -154,9 +161,7 @@ function mounted(el: HTMLElement, props: DragOverOption) {
 
   borderDiv.id = 'varlet-lowcode-dnd-border'
   borderDiv.style.position = 'fixed'
-  borderDiv.style.width = '200px'
-  borderDiv.style.height = '2px'
-  borderDiv.style.backgroundColor = '#000'
+  borderDiv.style.backgroundColor = 'blue'
 
   document.body.appendChild(borderDiv)
 
