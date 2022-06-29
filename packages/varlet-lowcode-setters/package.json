@@ -19,7 +19,9 @@
   "devDependencies": {
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/touch-emulator": "latest",
     "@varlet/ui": "latest",
+    "vue3-colorpicker": "^2.0.4",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",
@@ -31,5 +33,8 @@
   "browserslist": [
     "Chrome >= 51",
     "iOS >= 10"
-  ]
+  ],
+  "dependencies": {
+    "vcolorpicker": "^1.1.0"
+  }
 }

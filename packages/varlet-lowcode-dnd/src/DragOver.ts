@@ -1,4 +1,5 @@
 import type { Directive } from 'vue'
+import { mergeStyle } from './shared'
 
 type NearestDirection = 'left' | 'top' | 'right' | 'bottom'
 
@@ -23,70 +24,75 @@ export interface DragOverOption {
 let nodeComputedStyles: DomRectInfo[] | undefined
 
 function getDomRectInfo(): DomRectInfo[] {
-  const list = Array.from(document.querySelectorAll('.drag-item'))
+  const list = Array.from(document.querySelectorAll('.drop-item'))
 
   if (!list || list.length === 0) return []
 
-  return list.map((node: Element) => {
-    const rect = node.getBoundingClientRect()
+  // filter the nodes that draped
+  return (
+    list
+      // .filter((item) => item.id !== 'dragItem0')
+      .map((node: Element) => {
+        const rect = node.getBoundingClientRect()
 
-    return {
-      id: node.id,
-      xAxis: [rect.left, rect.right],
-      yAxis: [rect.top, rect.bottom],
-    }
-  })
+        return {
+          id: node.id,
+          xAxis: [rect.left, rect.right],
+          yAxis: [rect.top, rect.bottom],
+        }
+      })
+  )
 }
 
 // get the nearest direction of the mouse on the node
 function getDirection(
-  screenY: number,
-  screenX: number,
+  pageY: number,
+  pageX: number,
   top: number,
   bottom: number,
   left: number,
   right: number
 ): NearestDirection {
-  const minX = Math.min(Math.abs(screenX - left), Math.abs(screenX - right))
-  const minY = Math.min(Math.abs(screenY - top), Math.abs(screenY - bottom))
+  const minX = Math.min(Math.abs(pageX - left), Math.abs(pageX - right))
+  const minY = Math.min(Math.abs(pageY - top), Math.abs(pageY - bottom))
 
   if (minX <= minY) {
-    return minX === Math.abs(screenX - left) ? 'left' : 'right'
+    return minX === Math.abs(pageX - left) ? 'left' : 'right'
   }
 
-  return minY === Math.abs(screenY - top) ? 'top' : 'bottom'
+  return minY === Math.abs(pageY - top) ? 'top' : 'bottom'
 }
 
 // get the nearest distance of the mouse on the node
 function getDistance(
-  screenY: number,
-  screenX: number,
+  pageY: number,
+  pageX: number,
   top: number,
   bottom: number,
   left: number,
   right: number,
   direction: NearestDirection,
+  id: string,
   between?: boolean
 ): number {
-  const minX = Math.min(Math.abs(screenX - left), Math.abs(screenX - right))
-  const minY = Math.min(Math.abs(screenY - top), Math.abs(screenY - bottom))
+  const minX = Math.min(Math.abs(pageX - left), Math.abs(pageX - right))
+  const minY = Math.min(Math.abs(pageY - top), Math.abs(pageY - bottom))
 
   if (between) {
     if (direction === 'left' || direction === 'right') {
+      console.log('id', id, minX)
       return minX
     }
     if (direction === 'top' || direction === 'bottom') {
       return minY
     }
-  } else {
-    return Math.sqrt(minX * minX + minY * minY)
   }
 
-  return 0
+  return Math.sqrt(minX * minX + minY * minY)
 }
 
 function calculateStyle(event: DragEvent): NearestOptions | null {
-  const { screenY, screenX } = event
+  const { pageY, pageX } = event
 
   if (!nodeComputedStyles || nodeComputedStyles.length === 0) return null
 
@@ -94,45 +100,86 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
   const nearestList: NearestOptions[] = nodeComputedStyles.map(({ id, xAxis, yAxis }) => {
     const [left, right] = xAxis
     const [top, bottom] = yAxis
-    const direction = getDirection(screenY, screenX, top, bottom, left, right)
+
+    const direction = getDirection(pageY, pageX, top, bottom, left, right)
 
     const thisTheNearest: NearestOptions = {
       id,
       direction,
       type: 'outside',
-      distance: getDistance(screenY, screenX, top, bottom, left, right, direction, true),
+      distance: getDistance(pageY, pageX, top, bottom, left, right, direction, id, true),
     }
 
     // if the mouse is in the range of the node, it's must inside in the inside node
-    if (screenX > left && screenX < right && screenY > top && screenY < bottom) {
+    if (pageX > left && pageX < right && pageY > top && pageY < bottom) {
       thisTheNearest.type = 'inside'
     }
 
     // if the mouse is not in the range of the node, it's must outside in the nearest node
-    if ((screenX < left || screenX > right) && screenY < top && screenY > bottom) {
-      thisTheNearest.distance = getDistance(screenY, screenX, top, bottom, left, right, direction, false)
+    if ((pageX < left || pageX > right) && (pageY < top || pageY > bottom)) {
+      thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, id, false)
     }
 
     return thisTheNearest
   })
 
   nearestList.sort((a, b) => a.distance - b.distance)
-  console.log('nearest', nearestList)
 
-  // TODO: calculate something
+  if (nearestList && nearestList.length > 0) {
+    return nearestList[0]
+  }
+
   return null
+}
+
+function renderBorder(nearestNodeInfo: NearestOptions) {
+  const { id, direction } = nearestNodeInfo
+
+  const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLElement
+  const nearestDom = document.querySelector(`#${id}`)
+  const nearestStyle = nearestDom?.getBoundingClientRect()
+
+  const distance: Partial<CSSStyleDeclaration> = {
+    left: direction === 'right' ? `${nearestStyle?.right || 0}px` : `${nearestStyle?.left || 0}px`,
+    top: direction === 'bottom' ? `${nearestStyle?.bottom || 0}px` : `${nearestStyle?.top || 0}px`,
+  }
+
+  borderDiv &&
+    mergeStyle(borderDiv, {
+      width: direction === 'left' || direction === 'right' ? '4px' : `${nearestStyle?.width}px`,
+      height: direction === 'top' || direction === 'bottom' ? '4px' : `${nearestStyle?.height}px`,
+      ...distance,
+    })
 }
 
 function onDragOver(event: DragEvent) {
   const nearestNodeInfo = calculateStyle(event)
+
+  nearestNodeInfo && renderBorder(nearestNodeInfo)
 }
 
-function mounted(el: HTMLElement, props: DragOverOption) {
+function mounted() {
+  console.log('init finished 666')
+
   nodeComputedStyles = getDomRectInfo()
+
+  const borderDiv = document.createElement('div')
+
+  borderDiv.id = 'varlet-lowcode-dnd-border'
+  borderDiv.style.position = 'fixed'
+  borderDiv.style.backgroundColor = 'blue'
+
+  document.body.appendChild(borderDiv)
+
   document.addEventListener('dragover', onDragOver, { passive: false })
 }
 
 function unmounted() {
+  const borderDiv = document.querySelector('#varlet-lowcode-dnd-border')
+  if (borderDiv) {
+    document.body.removeChild(borderDiv)
+  }
+
   // remove the nodeComputedStyles that this directive unmounted
   nodeComputedStyles = undefined
   document.removeEventListener('dragover', onDragOver)

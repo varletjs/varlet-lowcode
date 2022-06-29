@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import {
   Collapse as VarCollapse,
   CollapseItem as VarCollapseItem,
@@ -6,18 +6,24 @@ import {
   Select as VarSelect,
   Option as VarOption,
   Input as VarInput,
+  Slider as VarSlider,
 } from '@varlet/ui'
+import SetterRadio from './setterAttribute/setterRadio'
+import { ColorPicker } from 'vue3-colorpicker'
+import 'vue3-colorpicker/style.css'
+import '@varlet/touch-emulator'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 import '@varlet/ui/es/counter/style/index.js'
 import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
 import '@varlet/ui/es/input/style/index.js'
-import SetterRadio from './setterAttribute/setterRadio'
+import '@varlet/ui/es/slider/style/index.js'
 import './settersStyle.less'
 
 export default defineComponent({
   name: 'SettersStyle',
+  components: { ColorPicker },
   setup() {
     const values = ref(['2'])
     const options = [
@@ -42,7 +48,12 @@ export default defineComponent({
         label: 'none',
       },
     ]
+    const formData = reactive({
+      opacity: 50,
+      textAlign: 'center',
+    })
     const asfas = ref('inline')
+    const pureColor = ref('red')
     const RenderContent = () => {
       return (
         <div class="setters-style-field">
@@ -125,21 +136,31 @@ export default defineComponent({
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">字重</div>
+                <div class="style-field-body-title style-field-body-title-transform">字重</div>
                 <div class="style-field-body-content">
                   <VarInput placeholder="请输入字重" />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">对齐</div>
+                <div class="style-field-body-title style-field-body-title-transform">对齐</div>
                 <div class="style-field-body-content">
-                  <VarSelect placeholder="请选择一个选项">
-                    <VarOption label="左对齐 left" />
-                    <VarOption label="居中 center" />
-                    <VarOption label="右对齐 right" />
-                    <VarOption label="两端对齐 justify" />
+                  <VarSelect v-model={formData.textAlign} placeholder="请选择一个选项">
+                    <VarOption label="left">左对齐 left</VarOption>
+                    <VarOption label="center">居中 center</VarOption>
+                    <VarOption label="right">右对齐 right</VarOption>
+                    <VarOption label="justify">两端对齐 justify</VarOption>
                   </VarSelect>
                 </div>
+              </div>
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title">透明度</div>
+                <div class="style-field-body-content">
+                  <VarSlider v-model={formData.opacity} />
+                </div>
+              </div>
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title">文字颜色</div>
+                <div class="style-field-body-content">{/* <ColorPicker /> */}</div>
               </div>
             </VarCollapseItem>
           </VarCollapse>
