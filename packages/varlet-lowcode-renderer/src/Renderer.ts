@@ -103,7 +103,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const setup = eval(`(${props.schema.code ?? 'function setup() { return {} }'})`)
+    const setup = eval(`(${props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'})`)
     const ctx = setup()
 
     onUnmounted(uninstallDndDisabledStyle)
@@ -168,10 +168,10 @@ export default defineComponent({
 
     function getBindingValue(value: any, schemaNode: SchemaNode) {
       if (isPlainObject(value)) {
-        const { value: bindingValue, type: bindingType } = value
+        const { value: bindingValue, type: bindingType, compatibleValue } = value
 
         if (bindingType === BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING) {
-          return getExpressionBindingValue(bindingValue, schemaNode)
+          return getExpressionBindingValue(compatibleValue ?? bindingValue, schemaNode)
         }
 
         if (bindingType === BuiltInSchemaNodeBindingTypes.OBJECT_BINDING) {

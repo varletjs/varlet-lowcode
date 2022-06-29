@@ -73,6 +73,7 @@ export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
   setupReturnDeclarations?: SchemaPageNodeSetupReturnDeclarations
   code?: string
+  compatibleCode?: string
 }
 
 export type SchemaNodeVisitor = (schemaNode: SchemaNode, schemaNodeSiblings: SchemaNode[] | null) => boolean | void

@@ -3,10 +3,12 @@ import Monaco from '@varlet/lowcode-monaco'
 import { ref, Ref, onUnmounted, onMounted } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
+import { Snackbar } from '@varlet/ui'
+import '@varlet/ui/es/snackbar/style/index.js'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
 import type { IRange } from 'monaco-editor'
 
-const { traverseSetupFunction } = createAst()
+const { traverseSetupFunction, transformCompatibleCode } = createAst()
 
 let schema = schemaManager.exportSchema()
 
@@ -17,7 +19,7 @@ const code: Ref<string> = ref(schema.code ?? NOOP_SETUP)
 function handleSchemaChange(newSchema: SchemaPageNode) {
   if (newSchema.code !== code.value) {
     code.value = newSchema.code ?? NOOP_SETUP
-    genSetupReturnDeclarations()
+    parseCode()
   }
 
   schema = newSchema
@@ -57,19 +59,25 @@ function createVueApiSuggestions(range: IRange) {
   })
 }
 
-function genSetupReturnDeclarations() {
-  const { returnDeclarations } = traverseSetupFunction(code.value)
+function parseCode() {
+  try {
+    const compatibleCode = transformCompatibleCode(code.value)
+    const { returnDeclarations } = traverseSetupFunction(code.value)
 
-  schemaManager.importSchema({
-    ...schema,
-    setupReturnDeclarations: returnDeclarations,
-    code: code.value,
-  })
+    schemaManager.importSchema({
+      ...schema,
+      setupReturnDeclarations: returnDeclarations,
+      code: code.value,
+      compatibleCode,
+    })
+  } catch (e: any) {
+    Snackbar.error(e.toString())
+  }
 }
 
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
-onMounted(genSetupReturnDeclarations)
+onMounted(parseCode)
 
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
@@ -77,10 +85,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <monaco
-    v-model:code="code"
-    :create-suggestions="createVueApiSuggestions"
-    :height="'400px'"
-    @save="genSetupReturnDeclarations"
-  />
+  <monaco v-model:code="code" :create-suggestions="createVueApiSuggestions" :height="'400px'" @save="parseCode" />
 </template>

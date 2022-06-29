@@ -2,6 +2,7 @@ import './shim/buffer'
 import './shim/process'
 import { uniq } from '@varlet/shared'
 import { parse } from '@babel/parser'
+import babel from '@babel/standalone'
 import traverse, { NodePath } from '@babel/traverse'
 import generate from '@babel/generator'
 import * as t from '@babel/types'
@@ -73,7 +74,7 @@ export function createAst(rendererWindowGetter?: () => any) {
               if (t.isObjectExpression(statement.argument)) {
                 statement.argument.properties.forEach((objectProperty) => {
                   if (t.isSpreadElement(objectProperty)) {
-                    errors.push('Codegen not support spread element')
+                    errors.push('SyntaxError: cannot support spread element')
                     return
                   }
 
@@ -89,7 +90,7 @@ export function createAst(rendererWindowGetter?: () => any) {
     })
 
     if (!hasSetup) {
-      errors.push('Setup function not found')
+      errors.push('SyntaxError: setup function not found')
     }
 
     if (errors.length) {
@@ -172,13 +173,6 @@ export function createAst(rendererWindowGetter?: () => any) {
           path.node.body.body.forEach((statement) => {
             if (t.isVariableDeclaration(statement)) {
               statement.declarations.forEach((declaration) => {
-                if (statement.kind !== 'const' && t.isIdentifier(declaration.id)) {
-                  errors.push(
-                    `For more accurate compile-time type inference, only const is allowed for variable definitions: ${declaration.id.name}`
-                  )
-                  return
-                }
-
                 // e.g. ()
                 // e.g. ?.()
                 if (t.isCallExpression(declaration.init) || t.isOptionalCallExpression(declaration.init)) {
@@ -262,10 +256,6 @@ export function createAst(rendererWindowGetter?: () => any) {
       },
     })
 
-    if (errors.length) {
-      throw new Error(errors.join('\n'))
-    }
-
     return {
       returnDeclarations,
       seenApis,
@@ -332,9 +322,21 @@ export function createAst(rendererWindowGetter?: () => any) {
     }
   }
 
+  function transformCompatibleCode(code: string) {
+    return babel.transform(code, {
+      targets: {
+        chrome: '51',
+        ios: '10',
+      },
+      sourceType: 'unambiguous',
+      presets: ['env'],
+    }).code
+  }
+
   return {
+    traverseSetupFunction,
+    transformCompatibleCode,
     transformExpressionValue,
     transformNamedImports,
-    traverseSetupFunction,
   }
 }
