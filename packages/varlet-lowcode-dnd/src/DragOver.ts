@@ -24,11 +24,11 @@ export interface DragOverOption {
 let nodeComputedStyles: DomRectInfo[] | undefined
 
 function getDomRectInfo(): DomRectInfo[] {
-  const list = Array.from(document.querySelectorAll('.drag-item'))
+  const list = Array.from(document.querySelectorAll('.drop-item'))
 
   if (!list || list.length === 0) return []
 
-  // TODO: 过滤抓取到的DOM
+  // filter the nodes that draped
   return list
     .filter((item) => item.id !== 'dragItem0')
     .map((node: Element) => {
@@ -69,20 +69,9 @@ function getDistance(
   bottom: number,
   left: number,
   right: number,
-  direction: NearestDirection,
-  between?: boolean
 ): number {
   const minX = Math.min(Math.abs(pageX - left), Math.abs(pageX - right))
   const minY = Math.min(Math.abs(pageY - top), Math.abs(pageY - bottom))
-
-  if (between) {
-    if (direction === 'left' || direction === 'right') {
-      return minX
-    }
-    if (direction === 'top' || direction === 'bottom') {
-      return minY
-    }
-  }
 
   return Math.sqrt(minX * minX + minY * minY)
 }
@@ -103,17 +92,12 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
       id,
       direction,
       type: 'outside',
-      distance: getDistance(pageY, pageX, top, bottom, left, right, direction, true),
+      distance: getDistance(pageY, pageX, top, bottom, left, right),
     }
 
     // if the mouse is in the range of the node, it's must inside in the inside node
     if (pageX > left && pageX < right && pageY > top && pageY < bottom) {
       thisTheNearest.type = 'inside'
-    }
-
-    // if the mouse is not in the range of the node, it's must outside in the nearest node
-    if ((pageX < left || pageX > right) && (pageY < top || pageY > bottom)) {
-      thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, false)
     }
 
     return thisTheNearest
@@ -122,8 +106,6 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
   nearestList.sort((a, b) => a.distance - b.distance)
 
   if (nearestList && nearestList.length > 0) {
-    console.log(' nearestList[0]', nearestList[0])
-
     return nearestList[0]
   }
 
@@ -131,10 +113,12 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
 }
 
 function renderBorder(nearestNodeInfo: NearestOptions) {
-  const { id, direction, type } = nearestNodeInfo
+  const { id, direction } = nearestNodeInfo
+  
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLElement
   const nearestDom = document.querySelector(`#${id}`)
   const nearestStyle = nearestDom?.getBoundingClientRect()
+
   const distance: Partial<CSSStyleDeclaration> = {
     left: direction === 'right' ? `${nearestStyle?.right || 0}px` : `${nearestStyle?.left || 0}px`,
     top: direction === 'bottom' ? `${nearestStyle?.bottom || 0}px` : `${nearestStyle?.top || 0}px`,
@@ -154,7 +138,7 @@ function onDragOver(event: DragEvent) {
   nearestNodeInfo && renderBorder(nearestNodeInfo)
 }
 
-function mounted(el: HTMLElement, props: DragOverOption) {
+function mounted() {
   nodeComputedStyles = getDomRectInfo()
 
   const borderDiv = document.createElement('div')
