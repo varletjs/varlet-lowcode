@@ -1,11 +1,12 @@
 {
-  "name": "@varlet/lowcode-designer",
+  "name": "@varlet/lowcode-schema-editor",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-designer.es.js",
-  "module": "lib/varlet-lowcode-designer.es.js",
+  "main": "lib/varlet-lowcode-schema-editor.es.js",
+  "module": "lib/varlet-lowcode-schema-editor.es.js",
   "types": "types/index.d.ts",
   "files": [
     "lib",
+    "lib/assets",
     "types",
     "tsconfig.json"
   ],
@@ -19,19 +20,19 @@
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
-    "@varlet/lowcode-codegen": "workspace: *",
-    "@varlet/lowcode-code-editor": "workspace: *",
-    "@varlet/lowcode-schema-editor": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/ui": "latest",
-    "@varlet/touch-emulator": "latest",
+    "@types/node": "*",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
+    "vite": "^2.9.12",
     "vue": "3.2.25",
     "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
-    "@varlet/lowcode-core": "workspace: *"
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-monaco": "workspace: *",
+    "@varlet/ui": "latest"
   },
   "browserslist": [
     "Chrome >= 51",

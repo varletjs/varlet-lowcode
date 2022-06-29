@@ -56,6 +56,9 @@ packages/varlet-lowcode-code-editor/types/**
 packages/varlet-lowcode-monaco/lib/**
 packages/varlet-lowcode-monaco/types/**
 
+packages/varlet-lowcode-schema-editor/lib/**
+packages/varlet-lowcode-schema-editor/types/**
+
 **/package.json
 *.md
 

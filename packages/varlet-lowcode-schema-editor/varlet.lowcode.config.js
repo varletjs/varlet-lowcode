@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'varlet-lowcode-ast',
+  name: 'varlet-lowcode-schema-editor',
 
   configureVite(command, config) {
     if (command === 'compile') {

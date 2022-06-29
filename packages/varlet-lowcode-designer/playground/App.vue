@@ -2,10 +2,12 @@
 import Designer from '../src/Designer'
 import Codegen from '@varlet/lowcode-codegen'
 import CodeEditor from '@varlet/lowcode-code-editor'
+import SchemaEditor from '@varlet/lowcode-schema-editor'
 </script>
 
 <template>
   <designer />
   <code-editor />
+  <schema-editor />
   <codegen />
 </template>

@@ -10,6 +10,10 @@ const props = defineProps({
   height: {
     type: String,
   },
+  language: {
+    type: String as PropType<'javascript' | 'json'>,
+    default: 'javascript',
+  },
   createSuggestions: {
     type: Function as PropType<(range: IRange) => languages.CompletionItem[]>,
     default: () => [],
@@ -37,7 +41,7 @@ const editorContainer: Ref<null | HTMLElement> = ref(null)
 onMounted(() => {
   editorInstance = monaco.editor.create(editorContainer.value!, {
     value: props.code,
-    language: 'javascript',
+    language: props.language,
     minimap: {
       enabled: false,
     },
@@ -48,12 +52,14 @@ onMounted(() => {
     },
   })
 
-  editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-    emit('save', editorInstance.getValue())
-  })
+  editorInstance.onDidFocusEditorText(() => {
+    editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      emit('save', editorInstance.getValue())
+    })
 
-  editorInstance.addCommand(monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyS, () => {
-    emit('save', editorInstance.getValue())
+    editorInstance.addCommand(monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyS, () => {
+      emit('save', editorInstance.getValue())
+    })
   })
 
   editorInstance.onDidChangeModelContent(() => {
@@ -84,5 +90,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="editorContainer" class="varlet-low-code-code-editor" :style="{ height }"></div>
+  <div ref="editorContainer" class="varlet-low-code-monaco" :style="{ height }"></div>
 </template>

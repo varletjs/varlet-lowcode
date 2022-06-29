@@ -195,6 +195,7 @@ importers:
       '@varlet/lowcode-codegen': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/lowcode-monaco': 'workspace: *'
+      '@varlet/lowcode-schema-editor': 'workspace: *'
       '@varlet/touch-emulator': latest
       '@varlet/ui': latest
       live-server: ^1.2.1
@@ -207,6 +208,7 @@ importers:
       '@varlet/lowcode-codegen': link:../varlet-lowcode-codegen
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
+      '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
       '@varlet/touch-emulator': 1.27.15
       '@varlet/ui': 1.27.15_vue@3.2.25
       live-server: 1.2.2
@@ -323,6 +325,30 @@ importers:
       live-server: 1.2.2
       typescript: 4.7.2
       vite-plugin-externals: 0.5.0
+      vue: 3.2.25
+      vue-tsc: 0.37.3_typescript@4.7.2
+
+  packages/varlet-lowcode-schema-editor:
+    specifiers:
+      '@types/node': '*'
+      '@varlet/lowcode-cli': 'workspace: *'
+      '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/lowcode-monaco': 'workspace: *'
+      '@varlet/ui': latest
+      live-server: ^1.2.1
+      typescript: ^4.4.4
+      vite: ^2.9.12
+      vue: 3.2.25
+      vue-tsc: ^0.37.3
+    devDependencies:
+      '@types/node': 17.0.36
+      '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      '@varlet/lowcode-core': link:../varlet-lowcode-core
+      '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
+      '@varlet/ui': 1.27.15_vue@3.2.25
+      live-server: 1.2.2
+      typescript: 4.7.2
+      vite: 2.9.12
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
 
@@ -2744,7 +2770,7 @@ packages:
   /@vue/compiler-core/3.2.25:
     resolution: {integrity: sha512-FlffKezIqztTCTyG0klkYRwhdyL6b1PTTCIerPb4p2R9qQaczccTX5g9ysi9w6tpLQ48a1WiXnFDJhWD7XoqwA==}
     dependencies:
-      '@babel/parser': 7.18.5
+      '@babel/parser': 7.18.6
       '@vue/shared': 3.2.25
       estree-walker: 2.0.2
       source-map: 0.6.1
@@ -2774,7 +2800,7 @@ packages:
   /@vue/compiler-sfc/3.2.25:
     resolution: {integrity: sha512-PminuOYIcFI7UZn+mdy2OPbogyAb0IHkVuqwmLDJiSRFhc/QAXQnO9KdS4nez3bQ9XlQmoAveQzcZuekHzdb5w==}
     dependencies:
-      '@babel/parser': 7.18.5
+      '@babel/parser': 7.18.6
       '@vue/compiler-core': 3.2.25
       '@vue/compiler-dom': 3.2.25
       '@vue/compiler-ssr': 3.2.25
@@ -2816,7 +2842,7 @@ packages:
   /@vue/reactivity-transform/3.2.25:
     resolution: {integrity: sha512-fOiW67PUalicMfMr4Sc9l8mUtkN7ZD+G1/zJV8blzQ8GEZSeRcJm11gqve6Ps623ju5YORu7V/Q1gZoOJ9WO4g==}
     dependencies:
-      '@babel/parser': 7.18.5
+      '@babel/parser': 7.18.6
       '@vue/compiler-core': 3.2.25
       '@vue/shared': 3.2.25
       estree-walker: 2.0.2
