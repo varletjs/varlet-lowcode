@@ -1,10 +1,15 @@
 @skeleton-sidebar-left-width: 48px;
 @skeleton-sidebar-left-height: 48px;
+@skeleton-appbar-height: 48px;
+@skeleton-sidebar-icon-size: 30px;
+@skeleton-sidebar-icon-color: #57606a;
+@skeleton-sidebar-icon-selected-color: #24292f;
 @skeleton-tooltip-background: #000000ba;
 @skeleton-white-color: #fff;
 @skeleton-black-color: #000;
-@skeleton-sidebar-selected-color: #fd8c73;
-@skeleton-sidebar-active-color: #5885dc;
+@skeleton-sidebar-item-selected-color: #fd8c73;
+@skeleton-sidebar-item-active-color: #5885dc;
+@skeleton-border-color: #eee;
 
 :root {
   --skeleton-sidebar-left-width: @skeleton-sidebar-left-width;
@@ -13,9 +18,14 @@
   --skeleton-white-color: @skeleton-white-color;
   --skeleton-black-color: @skeleton-black-color;
   --app-bar-text-color: var(--skeleton-black-color);
+  --app-bar-height: @skeleton-appbar-height;
   --app-bar-color: var(--skeleton-white-color);
-  --skeleton-sidebar-selected-color: @skeleton-sidebar-selected-color;
-  --skeleton-sidebar-active-color: @skeleton-sidebar-active-color;
+  --skeleton-sidebar-item-selected-color: @skeleton-sidebar-item-selected-color;
+  --skeleton-sidebar-item-active-color: @skeleton-sidebar-item-active-color;
+  --skeleton-border-color: @skeleton-border-color;
+  --skeleton-sidebar-icon-size: @skeleton-sidebar-icon-size;
+  --skeleton-sidebar-icon-color: @skeleton-sidebar-icon-color;
+  --skeleton-sidebar-icon-selected-color: @skeleton-sidebar-icon-selected-color;
 }
 
 * {
@@ -35,8 +45,12 @@
 
   &__header {
     box-shadow: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--skeleton-border-color);
     box-sizing: border-box;
+
+    .var-skeleton__section {
+      padding-top: 0 !important;
+    }
   }
 
   &__content {
@@ -49,6 +63,16 @@
     height: 100%;
     background: var(--skeleton-white-color);
     display: flex;
+
+    .var-skeleton__content {
+      padding: 10px 0;
+
+      .var-skeleton__avatar {
+        width: var(--skeleton-sidebar-icon-size);
+        height: var(--skeleton-sidebar-icon-size);
+        margin: 0 auto;
+      }
+    }
   }
 
   &__sidebar--container {
@@ -58,8 +82,10 @@
     width: 100%;
   }
 
-  &__sidebar--icon {
+  &__sidebar--item {
     position: relative;
+    overflow: unset !important;
+    cursor: pointer;
     width: var(--skeleton-sidebar-left-width);
     height: var(--skeleton-sidebar-left-height);
     display: flex;
@@ -67,37 +93,45 @@
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    color: var(--skeleton-sidebar-icon-color);
   }
 
-  &__sidebar--icon-selected {
+  &__sidebar--item-selected {
+    color: var(--skeleton-sidebar-icon-selected-color);
+
     &::before {
       content: '';
       display: block;
       width: 2px;
-      background: var(--skeleton-sidebar-selected-color);
+      background: var(--skeleton-sidebar-item-selected-color);
       height: 100%;
       position: absolute;
       left: 0;
     }
 
     &:active::before {
-      background: var(--skeleton-sidebar-active-color);
+      background: var(--skeleton-sidebar-item-active-color);
     }
   }
 
-  &__sidebar--icon:hover &__sidebar--tooltip {
+  &__sidebar--item:hover &__sidebar--tooltip {
     display: block;
+  }
+
+  &__sidebar--icon {
+    font-size: var(--skeleton-sidebar-icon-size);
   }
 
   &__sidebar--tooltip {
     background-color: var(--skeleton-tooltip-background);
     color: #fff;
     display: none;
+    flex-shrink: 1;
     text-align: center;
     border-radius: 6px;
     padding: 5px 8px;
     position: absolute;
-    z-index: 1;
+    z-index: 99;
     left: var(--skeleton-sidebar-left-width);
 
     &::after {
@@ -118,22 +152,31 @@
     justify-content: space-between;
     align-items: center;
     width: var(--skeleton-sidebar-left-width);
+    border-right: 1px solid var(--skeleton-border-color);
+    box-sizing: border-box;
   }
 
   &__sidebar-component {
     min-width: 200px;
     position: absolute;
     left: var(--skeleton-sidebar-left-width);
-    height: 100%;
-    background: aquamarine;
+    height: calc(100% - var(--app-bar-height));
+    border-right: 1px solid var(--skeleton-border-color);
+    box-sizing: border-box;
   }
 
   &__sidebar-component--pinned {
     position: static;
+    height: 100%;
   }
 
   &__designer {
     flex: 1;
-    background: yellow;
+    //background: yellow;
+  }
+
+  &__setters {
+    border-left: 1px solid var(--skeleton-border-color);
+    box-sizing: border-box;
   }
 }

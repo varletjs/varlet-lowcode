@@ -1,16 +1,18 @@
 import type { ComputedRef, DefineComponent, Ref } from 'vue'
 import { computed, defineComponent, ref, watch } from 'vue'
-import { AppBar, Icon, Space, Skeleton } from '@varlet/ui'
+import { AppBar, Icon, Space, Skeleton, Ripple } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
 import '@varlet/ui/es/space/style/index.js'
 import '@varlet/ui/es/skeleton/style/index.js'
+import '@varlet/ui/es/ripple/style/index'
 import './skeleton.less'
 import { useLoading } from './useLoading'
 
 export default defineComponent({
   name: 'Skeleton',
+  directives: { ripple: Ripple },
   setup() {
     const plugins = pluginsManager.exportSkeletonPlugins()
     const sidebarPinned = ref(false)
@@ -51,7 +53,7 @@ export default defineComponent({
       }
 
       return (
-        <div class={`skeleton__sidebar-component ${sidebarPinned.value && 'skeleton__sidebar-component--pinned'}`}>
+        <div class={`skeleton__sidebar-component ${sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''}`}>
           {RenderLabel()}
           <RenderPlugin />
         </div>
@@ -60,6 +62,9 @@ export default defineComponent({
 
     const pickerComponents = (layout: SkeletonLayouts) => {
       const _plugins: SkeletonPlugin[] = plugins.filter((plugin) => plugin.layout === layout)
+
+      let rows = 10
+      let rowsWidth = ['100%']
 
       if (!_plugins || _plugins.length === 0) {
         throw new Error(`${layout} is not a valid layout`)
@@ -70,13 +75,23 @@ export default defineComponent({
           <div class="skeleton__sidebar--container">
             {_plugins.map(({ icon: iconName, name, label }: SkeletonPlugin) => {
               return (
-                <div
-                  class={`skeleton__sidebar--icon
-                  ${name === sidebarComponentName.value ? 'skeleton__sidebar--icon-selected' : ''}`}
-                  onClick={() => toggleSidebarComponent(name)}
-                >
-                  {typeof iconName === 'string' ? <Icon name={iconName} /> : <iconName />}
-                  {label ? <div class="skeleton__sidebar--tooltip">{label}</div> : null}
+                <div>
+                  <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} avatar rows="0" />
+                  <div
+                    v-ripple
+                    v-show={Boolean(!loading.value)}
+                    class={`skeleton__sidebar--item ${
+                      name === sidebarComponentName.value ? 'skeleton__sidebar--item-selected' : ''
+                    }`}
+                    onClick={() => toggleSidebarComponent(name)}
+                  >
+                    {typeof iconName === 'string' ? (
+                      <Icon name={iconName} class="skeleton__sidebar--icon" />
+                    ) : (
+                      <iconName />
+                    )}
+                    {label ? <div class="skeleton__sidebar--tooltip">{label}</div> : null}
+                  </div>
                 </div>
               )
             })}
@@ -84,13 +99,27 @@ export default defineComponent({
         )
       }
 
+      if (layout.includes('header')) {
+        rows = 1
+        rowsWidth = ['30vw']
+      }
+
+      if (layout.includes('setters')) {
+        rows = 20
+        rowsWidth = ['200px']
+      }
+
       return (
-        <Space>
-          {_plugins.map((_plugin) => {
-            const Component = _plugin!.component as DefineComponent
-            return <Component />
-          })}
-        </Space>
+        <div>
+          <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} {...{ rows, rowsWidth }} />
+
+          <Space v-show={Boolean(!loading.value)}>
+            {_plugins.map((_plugin) => {
+              const Component = _plugin!.component as DefineComponent
+              return <Component />
+            })}
+          </Space>
+        </div>
       )
     }
 
@@ -102,21 +131,9 @@ export default defineComponent({
       return (
         <AppBar class="skeleton__header" title-position="center">
           {{
-            left: () => (
-              <Skeleton loading={Boolean(loading.value)} rows="1" rowsWidth={['100px']}>
-                {Left}
-              </Skeleton>
-            ),
-            default: () => (
-              <Skeleton loading={Boolean(loading.value)} style="width:100px" rows="1" rowsWidth={['100px']}>
-                {Center}
-              </Skeleton>
-            ),
-            right: () => (
-              <Skeleton loading={Boolean(loading.value)} rows="1" rowsWidth={['100px']}>
-                {Right}
-              </Skeleton>
-            ),
+            left: () => Left,
+            default: () => Center,
+            right: () => Right,
           }}
         </AppBar>
       )
@@ -129,13 +146,8 @@ export default defineComponent({
       return (
         <div class="skeleton__sidebar">
           <div class="skeleton__sidebar--tools">
-            <Skeleton loading={Boolean(loading.value)} rows="3">
-              {Top}
-            </Skeleton>
-
-            <Skeleton loading={Boolean(loading.value)} rows="3">
-              {Bottom}
-            </Skeleton>
+            {Top}
+            {Bottom}
           </div>
           {sidebarComponent.value}
         </div>
@@ -151,13 +163,7 @@ export default defineComponent({
     const RenderSetters: () => JSX.Element = () => {
       const Setters = pickerComponents(SkeletonLayouts.SETTERS)
 
-      return (
-        <div class="skeleton__setters">
-          <Skeleton loading={Boolean(loading.value)} rows="14" rowsWidth={Array.from({ length: 14 }, () => '300px')}>
-            {Setters}
-          </Skeleton>
-        </div>
-      )
+      return <div class="skeleton__setters">{Setters}</div>
     }
 
     const RenderContent: () => JSX.Element = () => {
