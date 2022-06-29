@@ -30,7 +30,7 @@ import {
   schemaManager,
 } from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
-import { Drag, Drop } from '@varlet/lowcode-dnd'
+import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode, DirectiveArguments } from 'vue'
 import type {
   SchemaPageNode,
@@ -205,6 +205,7 @@ export default defineComponent({
 
         if (schemaManager.isSchemaPageNode(schemaNode)) {
           directives.shift()
+          directives.push([DragOver, []])
         }
 
         const propsBinding = getPropsBinding(schemaNode)

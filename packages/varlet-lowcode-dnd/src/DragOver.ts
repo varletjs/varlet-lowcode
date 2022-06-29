@@ -30,7 +30,7 @@ function getDomRectInfo(): DomRectInfo[] {
 
   // filter the nodes that draped
   return list
-    .filter((item) => item.id !== 'dragItem0')
+    // .filter((item) => item.id !== 'dragItem0')
     .map((node: Element) => {
       const rect = node.getBoundingClientRect()
 
@@ -69,9 +69,22 @@ function getDistance(
   bottom: number,
   left: number,
   right: number,
+  direction: NearestDirection,
+  id:string,
+  between?: boolean,
 ): number {
   const minX = Math.min(Math.abs(pageX - left), Math.abs(pageX - right))
   const minY = Math.min(Math.abs(pageY - top), Math.abs(pageY - bottom))
+
+  if (between) {
+    if (direction === 'left' || direction === 'right') {
+      console.log("id", id, minX);
+      return minX
+    }
+    if (direction === 'top' || direction === 'bottom') {
+      return minY
+    }
+  }
 
   return Math.sqrt(minX * minX + minY * minY)
 }
@@ -92,12 +105,17 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
       id,
       direction,
       type: 'outside',
-      distance: getDistance(pageY, pageX, top, bottom, left, right),
+      distance: getDistance(pageY, pageX, top, bottom, left, right, direction, id, true),
     }
 
     // if the mouse is in the range of the node, it's must inside in the inside node
     if (pageX > left && pageX < right && pageY > top && pageY < bottom) {
       thisTheNearest.type = 'inside'
+    }
+
+    // if the mouse is not in the range of the node, it's must outside in the nearest node
+    if ((pageX < left || pageX > right) && (pageY < top || pageY > bottom)) {
+      thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, id, false)
     }
 
     return thisTheNearest
@@ -114,7 +132,7 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
 
 function renderBorder(nearestNodeInfo: NearestOptions) {
   const { id, direction } = nearestNodeInfo
-  
+
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLElement
   const nearestDom = document.querySelector(`#${id}`)
   const nearestStyle = nearestDom?.getBoundingClientRect()
@@ -139,6 +157,8 @@ function onDragOver(event: DragEvent) {
 }
 
 function mounted() {
+  console.log("init finished 666");
+  
   nodeComputedStyles = getDomRectInfo()
 
   const borderDiv = document.createElement('div')

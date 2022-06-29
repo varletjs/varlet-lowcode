@@ -91,8 +91,9 @@ onUnmounted(() => {
     <!-- <iframe width="500" src="./demo.html" /> -->
     <transition-group :key="renderList.length" v-drag-over="" v-drop="dropProps" name="drag" tag="div"
       class="drop-place">
-      <button v-drop="slotsDropProps" v-drag="item" class="drop-item" v-for="(item) in renderList" :key="item.id"
-        :id="'dragItem' + item.dragData?.id">
+
+      <button v-drop="slotsDropProps" v-drag="item" class="drop-item"
+        v-for="(item, index) in renderList" :key="item.id" :id="'dragItem' + index">
         {{ item.dragData?.name }}
       </button>
     </transition-group>
@@ -100,6 +101,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+
 .drag-move {
   transition: transform 0.5s;
 }
@@ -137,5 +139,9 @@ onUnmounted(() => {
   border: 1px solid #ccc;
   padding: 20px;
   margin: 20px;
+}
+
+.point-event{
+  pointer-events: none;
 }
 </style>
