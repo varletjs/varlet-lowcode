@@ -33,8 +33,5 @@
   "browserslist": [
     "Chrome >= 51",
     "iOS >= 10"
-  ],
-  "dependencies": {
-    "vcolorpicker": "^1.1.0"
-  }
+  ]
 }

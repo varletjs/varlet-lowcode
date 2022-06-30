@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, onMounted } from 'vue'
 import {
   Collapse as VarCollapse,
   CollapseItem as VarCollapseItem,
@@ -23,8 +23,8 @@ import './settersStyle.less'
 
 export default defineComponent({
   name: 'SettersStyle',
-  components: { ColorPicker },
   setup() {
+    const pureColor = ref('#71afe5')
     const values = ref(['2'])
     const options = [
       {
@@ -51,9 +51,15 @@ export default defineComponent({
     const formData = reactive({
       opacity: 50,
       textAlign: 'center',
+      disable: '',
+      fontWeight: '200',
     })
-    const asfas = ref('inline')
-    const pureColor = ref('red')
+    const isReady = ref(false)
+    onMounted(() => {
+      setTimeout(() => {
+        isReady.value = true
+      }, 10)
+    })
     const RenderContent = () => {
       return (
         <div class="setters-style-field">
@@ -62,7 +68,7 @@ export default defineComponent({
               <div class="style-field-body">
                 <div class="style-field-body-title">布局模式</div>
                 <div class="style-field-body-content">
-                  <SetterRadio v-model={asfas.value} options={options} />
+                  <SetterRadio v-model={formData.disable} options={options} />
                 </div>
                 <div class="layout-box-container">
                   <div class="margin-top-div">
@@ -124,25 +130,25 @@ export default defineComponent({
             </VarCollapseItem>
             <VarCollapseItem title="文字" name="2">
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">字号</div>
+                <div class="style-field-body-title">字号:</div>
                 <div class="style-field-body-content">
                   <VarCounter />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">行高</div>
+                <div class="style-field-body-title">行高:</div>
                 <div class="style-field-body-content">
                   <VarCounter />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title style-field-body-title-transform">字重</div>
+                <div class="style-field-body-title style-field-body-title-transform">字重:</div>
                 <div class="style-field-body-content">
-                  <VarInput placeholder="请输入字重" />
+                  <VarInput placeholder="请输入字重" v-model={formData.fontWeight} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title style-field-body-title-transform">对齐</div>
+                <div class="style-field-body-title style-field-body-title-transform">对齐:</div>
                 <div class="style-field-body-content">
                   <VarSelect v-model={formData.textAlign} placeholder="请选择一个选项">
                     <VarOption label="left">左对齐 left</VarOption>
@@ -153,14 +159,16 @@ export default defineComponent({
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">透明度</div>
+                <div class="style-field-body-title">透明度:</div>
                 <div class="style-field-body-content">
                   <VarSlider v-model={formData.opacity} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">文字颜色</div>
-                <div class="style-field-body-content">{/* <ColorPicker /> */}</div>
+                <div class="style-field-body-title">文字颜色:</div>
+                <div class="style-field-body-content">
+                  {isReady.value ? <ColorPicker v-model:pureColor={pureColor.value} /> : null}
+                </div>
               </div>
             </VarCollapseItem>
           </VarCollapse>

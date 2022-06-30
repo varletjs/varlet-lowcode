@@ -5,7 +5,7 @@ import { pluginsManager, SkeletonLayouts, assetsManager } from '@varlet/lowcode-
 import Logo from './Logo.vue'
 import Star from './Star.vue'
 import Side2 from './Side2.vue'
-import SETTERS from '../../varlet-lowcode-setters/playground/setters.vue'
+import SETTERS from '../../varlet-lowcode-setters/src/index'
 import Designer from '../../varlet-lowcode-designer/src'
 import MaterialsPanel from '../../varlet-lowcode-materials-panel/src'
 

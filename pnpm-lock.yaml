@@ -378,12 +378,9 @@ importers:
       '@varlet/ui': latest
       live-server: ^1.2.1
       typescript: ^4.4.4
-      vcolorpicker: ^1.1.0
       vue: 3.2.25
       vue-tsc: ^0.37.3
       vue3-colorpicker: ^2.0.4
-    dependencies:
-      vcolorpicker: 1.1.0
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
@@ -5220,7 +5217,7 @@ packages:
     dev: true
 
   /fresh/0.5.2:
-    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
+    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -5616,12 +5613,6 @@ packages:
   /highlight.js/10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
     dev: true
-
-  /highlight.js/9.18.5:
-    resolution: {integrity: sha512-a5bFyofd/BHCX52/8i8uJkjr9DYwXIPnM/plwI6W7ezItLGqzt7X2G2nXuYSfsIJdkwwj/g9DG1LkcGJI/dDoA==}
-    deprecated: Support has ended for 9.x series. Upgrade to @latest
-    requiresBuild: true
-    dev: false
 
   /hosted-git-info/2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -9559,13 +9550,6 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vcolorpicker/1.1.0:
-    resolution: {integrity: sha512-FbI7rq0EliwaPU8Qh/QVv9MFdZnG3dHjZEvODIcpPS774TTvilg6tq6cWDRbtCITBNDdpgVWnNlJ0aKnecgrJg==}
-    dependencies:
-      highlight.js: 9.18.5
-      vue: 2.6.14
-    dev: false
-
   /vfile-message/2.0.4:
     resolution: {integrity: sha512-DjssxRGkMvifUOJre00juHoP9DPWuzjxKuMDrhNbk2TdaYYBNMStsNhEOt3idrtI12VQYM/1+iM0KOzXi4pxwQ==}
     dependencies:
@@ -9772,10 +9756,6 @@ packages:
       is-plain-object: 5.0.0
       vue: 3.2.37
     dev: true
-
-  /vue/2.6.14:
-    resolution: {integrity: sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==}
-    dev: false
 
   /vue/3.2.25:
     resolution: {integrity: sha512-jU3t7fyQDHoCWCqhmRrnSmYZvHC35tOJTP704di7HGfq5EcFA1cU/1ZPjUV1eCxJev65Khjyfni+vk9oa+eTtw==}
