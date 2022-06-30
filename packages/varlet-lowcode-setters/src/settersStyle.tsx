@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, onMounted } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import {
   Collapse as VarCollapse,
   CollapseItem as VarCollapseItem,
@@ -55,11 +55,7 @@ export default defineComponent({
       fontWeight: '200',
     })
     const isReady = ref(false)
-    onMounted(() => {
-      setTimeout(() => {
-        isReady.value = true
-      }, 10)
-    })
+
     const RenderContent = () => {
       return (
         <div class="setters-style-field">
@@ -167,7 +163,9 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">文字颜色:</div>
                 <div class="style-field-body-content">
-                  {isReady.value ? <ColorPicker v-model:pureColor={pureColor.value} /> : null}
+                  {/* <div class={'current-color'} onClick={()=>isReady.value = true}></div> */}
+                  {/* {isReady.value ? <ColorPicker v-model:pureColor={pureColor.value} /> : null} */}
+                  <ColorPicker v-model:pureColor={pureColor.value} />
                 </div>
               </div>
             </VarCollapseItem>

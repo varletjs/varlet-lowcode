@@ -7,9 +7,9 @@
   background: rgba(31, 56, 88, 0.06);
 }
 
-.var-radio__wrap {
-  min-width: 33%;
-  flex: 1;
+.setters-style-field {
+  height: calc(100vh - var(--tabs-item-horizontal-height) - var(--app-bar-height));
+  overflow-y: auto;
 }
 
 .style-field-body {
@@ -26,11 +26,15 @@
     flex: 1;
     display: flex;
     justify-content: end;
-    margin-right: 20px;
     position: relative;
     width: 100%;
+
+    .vc-color-wrap {
+      margin-right: 0;
+    }
   }
 }
+
 .style-field-body-flex {
   display: flex;
   align-items: center;
@@ -296,6 +300,13 @@
 .style-field-body-title-transform {
   margin-top: var(--input-placeholder-size);
 }
+
 .var-slider__block {
   margin: 0;
+}
+
+.current-color {
+  width: 50px;
+  height: 24px;
+  background: rgb(113, 175, 229);
 }
