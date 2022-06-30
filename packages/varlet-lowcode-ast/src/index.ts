@@ -53,7 +53,6 @@ export function createAst(rendererWindowGetter?: () => any) {
 
   function traverseSetupFunction(code: string) {
     const errors: string[] = []
-    const returnVariables: string[] = []
     const seenApis: string[] = []
     const allImportedApis: string[] = []
     const returnDeclarations: SchemaPageNodeSetupReturnDeclarations = {}
@@ -63,6 +62,7 @@ export function createAst(rendererWindowGetter?: () => any) {
     })
 
     let hasSetup = false
+    const waitConfirmVariableValueToKeys: Record<string, string[]> = {}
 
     traverse(ast, {
       FunctionDeclaration(path) {
@@ -72,14 +72,31 @@ export function createAst(rendererWindowGetter?: () => any) {
           path.node.body.body.forEach((statement) => {
             if (t.isReturnStatement(statement)) {
               if (t.isObjectExpression(statement.argument)) {
-                statement.argument.properties.forEach((objectProperty) => {
-                  if (t.isSpreadElement(objectProperty)) {
+                statement.argument.properties.forEach((property) => {
+                  if (t.isSpreadElement(property)) {
                     errors.push('SyntaxError: cannot support spread element')
                     return
                   }
 
-                  if (t.isIdentifier(objectProperty.key)) {
-                    returnVariables.push(objectProperty.key.name)
+                  if (t.isObjectProperty(property) && t.isIdentifier(property.key) && t.isIdentifier(property.value)) {
+                    waitConfirmVariableValueToKeys[property.value.name] = uniqConcat(
+                      waitConfirmVariableValueToKeys[property.value.name],
+                      property.key.name
+                    )
+                  }
+
+                  if (t.isObjectProperty(property) && t.isIdentifier(property.key) && !t.isIdentifier(property.value)) {
+                    returnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE] = uniqConcat(
+                      returnDeclarations[SetupReturnVariableDeclarationGroups.VARIABLE],
+                      property.key.name
+                    )
+                  }
+
+                  if (t.isObjectMethod(property) && t.isIdentifier(property.key)) {
+                    returnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION] = uniqConcat(
+                      returnDeclarations[SetupReturnVariableDeclarationGroups.FUNCTION],
+                      property.key.name
+                    )
                   }
                 })
               }
@@ -88,6 +105,8 @@ export function createAst(rendererWindowGetter?: () => any) {
         }
       },
     })
+
+    console.log(waitConfirmVariableValueToKeys)
 
     if (!hasSetup) {
       errors.push('SyntaxError: setup function not found')
@@ -98,14 +117,16 @@ export function createAst(rendererWindowGetter?: () => any) {
     }
 
     function resolveDeclarationNames(declaration: VariableDeclarator) {
+      let names: string[] = []
+
       // e.g. const count = ?
       if (t.isIdentifier(declaration.id)) {
-        return returnVariables.includes(declaration.id.name) ? [declaration.id.name] : []
+        names = [declaration.id.name]
       }
 
       // e.g. const {} = ?
       if (t.isObjectPattern(declaration.id)) {
-        return declaration.id.properties
+        names = declaration.id.properties
           .map((property) => {
             // e.g. const { count } = ?
             if (t.isObjectProperty(property) && t.isIdentifier(property.value)) {
@@ -119,12 +140,12 @@ export function createAst(rendererWindowGetter?: () => any) {
 
             return ''
           })
-          .filter((property) => returnVariables.includes(property)) as string[]
+          .filter(Boolean) as string[]
       }
 
       // e.g. const [] = ?
       if (t.isArrayPattern(declaration.id)) {
-        return declaration.id.elements
+        names = declaration.id.elements
           .map((element) => {
             // e.g const [count] = ?
             if (t.isIdentifier(element)) {
@@ -138,10 +159,15 @@ export function createAst(rendererWindowGetter?: () => any) {
 
             return ''
           })
-          .filter((property) => returnVariables.includes(property)) as string[]
+          .filter(Boolean) as string[]
       }
 
-      return []
+      names = names
+        .filter((name) => waitConfirmVariableValueToKeys[name])
+        .map((name) => waitConfirmVariableValueToKeys[name])
+        .flat()
+
+      return names
     }
 
     function resolveApis(path: NodePath<MemberExpression | OptionalMemberExpression>) {

@@ -26,6 +26,7 @@ export interface SchemaManager {
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
   importSchema(schemaPageNode: SchemaPageNode): SchemaPageNode
+  importSchema(schemaPageNode: SchemaPageNode, payload?: any): SchemaPageNode
 
   exportSchema(): SchemaPageNode
 }

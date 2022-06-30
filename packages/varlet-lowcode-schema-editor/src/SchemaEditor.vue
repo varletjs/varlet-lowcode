@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Monaco from '@varlet/lowcode-monaco'
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, nextTick } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 import { Dialog, Snackbar } from '@varlet/ui'
 import '@varlet/ui/es/dialog/style/index.js'
@@ -28,7 +28,7 @@ async function changeSchema() {
     })
 
     if (action === 'confirm') {
-      schemaManager.importSchema(newSchema)
+      schemaManager.importSchema(newSchema, { emitter: 'schema-editor' })
     }
   } catch (e: any) {
     Snackbar.error(e.toString())

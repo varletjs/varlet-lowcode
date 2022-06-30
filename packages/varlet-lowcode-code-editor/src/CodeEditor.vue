@@ -16,16 +16,21 @@ const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
 
 const code: Ref<string> = ref(schema.code ?? NOOP_SETUP)
 
-function handleSchemaChange(newSchema: SchemaPageNode) {
+function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
   if (newSchema.code !== code.value) {
     code.value = newSchema.code ?? NOOP_SETUP
+
+    if (payload?.emitter === 'schema-editor') {
+      return
+    }
+
     parseCode()
   }
 
   schema = newSchema
 }
 
-function createVueApiSuggestions(range: IRange) {
+function createApiSuggestions(range: IRange) {
   return [
     'ref',
     'reactive',
@@ -47,11 +52,12 @@ function createVueApiSuggestions(range: IRange) {
     'onUpdated',
     'onBeforeUnmount',
     'onUnmounted',
+    'useDataSources',
   ].map((name) => {
     return {
       label: name,
       kind: 17,
-      documentation: `https://vuejs.org/api/`,
+      documentation: `https://github.com/varletjs/varlet-lowcode`,
       insertText: `${name}()`,
       range,
       detail: `vue: ${name}`,
@@ -85,5 +91,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <monaco v-model:code="code" :create-suggestions="createVueApiSuggestions" :height="'400px'" @save="parseCode" />
+  <monaco v-model:code="code" :create-suggestions="createApiSuggestions" :height="'400px'" @save="parseCode" />
 </template>

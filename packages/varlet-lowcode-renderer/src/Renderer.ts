@@ -44,6 +44,7 @@ import type {
 import { createAxle } from '@varlet/axle'
 
 declare const window: Window & {
+  setup(): any
   $slotProps?: Record<string, any>
   $item?: Record<string, any>
   $index?: Record<string, any>
@@ -71,8 +72,6 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
         rendererDataSources,
         { name, url, method, headers: schemaDataSourceHeaders, timeout, successHandler, errorHandler }
       ) => {
-        const value = undefined
-
         const load = async (params?: Record<string, any>, headers?: Record<string, any>) => {
           try {
             // @ts-ignore
@@ -84,16 +83,22 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
               timeout,
             })
 
-            return successHandler?.(response) ?? response
+            const value = successHandler?.(response) ?? response
+
+            rendererDataSources[name].value = value
+
+            return value
           } catch (e: any) {
             return errorHandler?.(e) ?? e
           }
         }
 
-        rendererDataSources[name] = reactive({
-          value,
+        const rendererDataSource = {
+          value: undefined,
           load,
-        })
+        }
+
+        rendererDataSources[name] = reactive(rendererDataSource)
 
         return rendererDataSources
       },
@@ -156,7 +161,11 @@ export default defineComponent({
       useDataSources: createDataSources(props.schema.dataSources ?? []),
     })
 
-    const setup = eval(`(${props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'})`)
+    const code = `(() => { ${
+      props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
+    } })()`.replace(/function\s+setup\s*\(\)\s*\{/, 'return function setup() {')
+    console.log(code)
+    const setup = eval(code)
     const ctx = setup()
 
     function setDndDisabledStyle() {
@@ -348,7 +357,8 @@ export default defineComponent({
     function renderSchemaNode(schemaNode: SchemaNode): VNode | string {
       if (schemaNode.name === BuiltInSchemaNodeNames.TEXT) {
         const textContent = getBindingValue((schemaNode as SchemaTextNode).textContent, schemaNode)
-        return isPlainObject(textContent) ? JSON.stringify(textContent) : textContent.toString()
+
+        return isPlainObject(textContent) ? JSON.stringify(textContent) : (textContent ?? '').toString()
       }
 
       return withDesigner(schemaNode)

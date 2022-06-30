@@ -6,7 +6,6 @@ import {
   eventsManager,
   Assets,
   SchemaPageNode,
-  Asset,
 } from '@varlet/lowcode-core'
 import { onMounted, ref } from 'vue'
 
@@ -34,7 +33,10 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
   schema = newSchema
 
   if (renderer) {
-    if (oldSchema?.code !== schema.code) {
+    if (
+      oldSchema?.code !== schema.code ||
+      JSON.stringify(oldSchema.dataSources ?? []) !== JSON.stringify(schema.dataSources ?? [])
+    ) {
       await mountRenderer()
     } else {
       renderer.schema.value = schema

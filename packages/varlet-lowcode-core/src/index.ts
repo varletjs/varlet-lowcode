@@ -12,18 +12,18 @@ export enum BuiltInEvents {
 const originImportSchema = schemaManager.importSchema
 const originImportAssets = assetsManager.importAssets
 
-schemaManager.importSchema = function (schemaPageNode: SchemaPageNode) {
+schemaManager.importSchema = function (schemaPageNode: SchemaPageNode, payload?: any) {
   const newSchema = originImportSchema.call(this, schemaPageNode)
 
-  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema, payload)
 
   return newSchema
 }
 
-assetsManager.importAssets = function (assets: Assets) {
+assetsManager.importAssets = function (assets: Assets, payload?: any) {
   const newAssets = originImportAssets.call(this, assets)
 
-  eventsManager.emit(BuiltInEvents.ASSETS_CHANGE, newAssets)
+  eventsManager.emit(BuiltInEvents.ASSETS_CHANGE, newAssets, payload)
 
   return newAssets
 }

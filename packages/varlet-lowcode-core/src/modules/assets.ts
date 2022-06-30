@@ -62,6 +62,7 @@ export interface AssetsManager {
   loadResources(assets: Assets, document: Document, excludeProfileResource?: boolean): Promise<void>
 
   importAssets(assets: Assets): Assets
+  importAssets(assets: Assets, payload?: any): Assets
 
   exportAssets(): Assets
 }
