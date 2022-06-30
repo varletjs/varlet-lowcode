@@ -31,6 +31,7 @@ import {
   SchemaPageNodeDataSource,
 } from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
+import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode, DirectiveArguments } from 'vue'
 import type {
@@ -56,14 +57,14 @@ type RawSlots = {
 
 type RawProps = Record<string, any>
 
-const axle = createAxle({})
-
 interface RendererDataSource {
   value: any
   load(params?: Record<string, any>, headers?: Record<string, any>): Promise<any>
 }
 
 type RendererDataSources = Record<string, RendererDataSource>
+
+const axle = createAxle({})
 
 function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
   function useDataSources() {
@@ -135,7 +136,7 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
+  setup (props) {
     Object.assign(window, {
       ref,
       reactive,
@@ -164,8 +165,7 @@ export default defineComponent({
     const code = `(() => { ${
       props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
     } })()`.replace(/function\s+setup\s*\(\)\s*\{/, 'return function setup() {')
-    console.log(code)
-    const setup = eval(code)
+    const setup = exec(code)
     const ctx = setup()
 
     function setDndDisabledStyle() {
@@ -209,7 +209,7 @@ export default defineComponent({
       window.$index = schemaNode._index
       window.$slotProps = schemaNode._slotProps
 
-      const resolved = eval(expression)
+      const resolved = exec(expression)
 
       delete window.$item
       delete window.$index
@@ -220,7 +220,7 @@ export default defineComponent({
 
     function getExpressionBindingValue(expression: string, schemaNode: SchemaNode) {
       if (!hasScopedVariables(expression)) {
-        return eval(expression)
+        return exec(expression)
       }
 
       return resolveScopedExpression(expression, schemaNode)
