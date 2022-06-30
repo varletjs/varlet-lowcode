@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@varlet/shared": "latest",
+    "@varlet/axle": "latest",
     "lodash-es": "^4.17.21",
     "uuid": "^8.3.2"
   },

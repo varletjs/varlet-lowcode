@@ -28,6 +28,7 @@ import {
   BuiltInSchemaNodeNames,
   BuiltInSchemaNodeBindingTypes,
   schemaManager,
+  SchemaPageNodeDataSource,
 } from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
@@ -40,6 +41,7 @@ import type {
   SchemaNodeSlot,
   Assets,
 } from '@varlet/lowcode-core'
+import { createAxle } from '@varlet/axle'
 
 declare const window: Window & {
   $slotProps?: Record<string, any>
@@ -53,28 +55,54 @@ type RawSlots = {
 
 type RawProps = Record<string, any>
 
-Object.assign(window, {
-  ref,
-  reactive,
-  computed,
-  readonly,
-  watch,
-  watchEffect,
-  watchSyncEffect,
-  watchPostEffect,
-  isRef,
-  unref,
-  toRefs,
-  isProxy,
-  isReactive,
-  isReadonly,
-  onBeforeMount,
-  onMounted,
-  onBeforeUpdate,
-  onUpdated,
-  onBeforeUnmount,
-  onUnmounted,
-})
+const axle = createAxle({})
+
+interface RendererDataSource {
+  value: any
+  load(params?: Record<string, any>, headers?: Record<string, any>): Promise<any>
+}
+
+type RendererDataSources = Record<string, RendererDataSource>
+
+function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
+  function useDataSources() {
+    return schemaDataSources.reduce(
+      (
+        rendererDataSources,
+        { name, url, method, headers: schemaDataSourceHeaders, timeout, successHandler, errorHandler }
+      ) => {
+        const value = undefined
+
+        const load = async (params?: Record<string, any>, headers?: Record<string, any>) => {
+          try {
+            // @ts-ignore
+            const response = await axle.helpers[method](url, params, {
+              headers: {
+                ...schemaDataSourceHeaders,
+                ...headers,
+              },
+              timeout,
+            })
+
+            return successHandler?.(response) ?? response
+          } catch (e: any) {
+            return errorHandler?.(e) ?? e
+          }
+        }
+
+        rendererDataSources[name] = reactive({
+          value,
+          load,
+        })
+
+        return rendererDataSources
+      },
+      {} as RendererDataSources
+    )
+  }
+
+  return useDataSources
+}
 
 export default defineComponent({
   name: 'VarletLowCodeRenderer',
@@ -103,10 +131,33 @@ export default defineComponent({
   },
 
   setup(props) {
+    Object.assign(window, {
+      ref,
+      reactive,
+      computed,
+      readonly,
+      watch,
+      watchEffect,
+      watchSyncEffect,
+      watchPostEffect,
+      isRef,
+      unref,
+      toRefs,
+      isProxy,
+      isReactive,
+      isReadonly,
+      onBeforeMount,
+      onMounted,
+      onBeforeUpdate,
+      onUpdated,
+      onBeforeUnmount,
+      onUnmounted,
+      axle,
+      useDataSources: createDataSources(props.schema.dataSources ?? []),
+    })
+
     const setup = eval(`(${props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'})`)
     const ctx = setup()
-
-    onUnmounted(uninstallDndDisabledStyle)
 
     function setDndDisabledStyle() {
       const styles = document.createElement('style')
@@ -330,6 +381,8 @@ export default defineComponent({
 
     hoistWindow()
     setDndDisabledStyle()
+
+    onUnmounted(uninstallDndDisabledStyle)
 
     return () => h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },

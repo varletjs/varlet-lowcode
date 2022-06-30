@@ -69,11 +69,58 @@ export interface SchemaTextNode extends SchemaNode {
 
 export type SchemaPageNodeSetupReturnDeclarations = Record<string, string[]>
 
+export type SchemaPageNodeDataSourceMethod =
+  | 'get'
+  | 'getBlob'
+  | 'getDocument'
+  | 'getText'
+  | 'getArrayBuffer'
+  | 'getStream'
+  | 'head'
+  | 'headBlob'
+  | 'headDocument'
+  | 'headText'
+  | 'headArrayBuffer'
+  | 'headStream'
+  | 'options'
+  | 'optionsBlob'
+  | 'optionsDocument'
+  | 'optionsText'
+  | 'optionsArrayBuffer'
+  | 'optionsStream'
+  | 'delete'
+  | 'deleteBlob'
+  | 'deleteDocument'
+  | 'deleteText'
+  | 'deleteArrayBuffer'
+  | 'deleteStream'
+  | 'post'
+  | 'postJSON'
+  | 'postMultipart'
+  | 'put'
+  | 'putJSON'
+  | 'putMultipart'
+  | 'path'
+  | 'patchJSON'
+  | 'patchMultipart'
+
+export interface SchemaPageNodeDataSource {
+  name: string
+  url: string
+  method: SchemaPageNodeDataSourceMethod
+  description?: string
+  headers?: Record<string, string>
+  timeout?: number
+  successHandler?(response: any): any
+  errorHandler?(error: Error): any
+}
+
 export interface SchemaPageNode extends SchemaNode {
   name: BuiltInSchemaNodeNames.PAGE
   setupReturnDeclarations?: SchemaPageNodeSetupReturnDeclarations
   code?: string
   compatibleCode?: string
+  dataSources?: SchemaPageNodeDataSource[]
 }
 
 export type SchemaNodeVisitor = (schemaNode: SchemaNode, schemaNodeSiblings: SchemaNode[] | null) => boolean | void
