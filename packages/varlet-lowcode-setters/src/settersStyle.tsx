@@ -9,6 +9,7 @@ import {
   Slider as VarSlider,
 } from '@varlet/ui'
 import SetterRadio from './setterAttribute/setterRadio'
+import Popover from './popover.vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import '@varlet/touch-emulator'
@@ -55,6 +56,7 @@ export default defineComponent({
       fontWeight: '200',
     })
     const isReady = ref(false)
+    const showPopper = ref(false)
 
     const RenderContent = () => {
       return (
@@ -163,9 +165,15 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">文字颜色:</div>
                 <div class="style-field-body-content">
-                  {/* <div class={'current-color'} onClick={()=>isReady.value = true}></div> */}
                   {/* {isReady.value ? <ColorPicker v-model:pureColor={pureColor.value} /> : null} */}
-                  <ColorPicker v-model:pureColor={pureColor.value} />
+                  {/* <ColorPicker v-model:pureColor={pureColor.value} /> */}
+                  <Popover />
+                  {/* <Popper arrow show={showPopper.value}>
+                    <template v-slot:content>
+                      <button>Close</button>
+                    </template>
+                    <div class={'current-color'} onClick={() => showPopper.value = !showPopper.value}></div>
+                  </Popper> */}
                 </div>
               </div>
             </VarCollapseItem>

@@ -22,6 +22,7 @@
     "@varlet/touch-emulator": "latest",
     "@varlet/ui": "latest",
     "vue3-colorpicker": "^2.0.4",
+    "vue3-popper":"1.5.0",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",
