@@ -1,3 +1,4 @@
+import { eventsManager } from '@varlet/lowcode-core'
 import type { Directive } from 'vue'
 import { mergeStyle } from './shared'
 
@@ -95,7 +96,6 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
 
   if (!nodeComputedStyles || nodeComputedStyles.length === 0) return null
 
-  // get the nodes that these nearest to the mouse
   const nearestList: NearestOptions[] = nodeComputedStyles.map(({ id, xAxis, yAxis }) => {
     const [left, right] = xAxis
     const [top, bottom] = yAxis
@@ -158,31 +158,41 @@ function onDragOver(event: DragEvent) {
   nearestNodeInfo && renderBorder(nearestNodeInfo)
 }
 
-function mounted() {
-  console.log('init finished 666')
+function onDragEnd() {
+  const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLDivElement
 
+  if (borderDiv) {
+    borderDiv.style.width = `0px`
+    borderDiv.style.height = `0px`
+  }
+}
+
+function mounted() {
   nodeComputedStyles = getDomRectInfo()
 
   const borderDiv = document.createElement('div')
 
   borderDiv.id = 'varlet-lowcode-dnd-border'
-  borderDiv.style.position = 'fixed'
+  borderDiv.style.position = 'absolute'
   borderDiv.style.backgroundColor = 'blue'
 
   document.body.appendChild(borderDiv)
 
   document.addEventListener('dragover', onDragOver, { passive: false })
+  eventsManager.on('drag-end', onDragEnd)
 }
 
 function unmounted() {
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border')
+
   if (borderDiv) {
     document.body.removeChild(borderDiv)
   }
 
-  // remove the nodeComputedStyles that this directive unmounted
   nodeComputedStyles = undefined
+
   document.removeEventListener('dragover', onDragOver)
+  eventsManager.off('drag-end', onDragEnd)
 }
 
 export type VarletMouseMoveProps = Directive<any, DragOverOption>
