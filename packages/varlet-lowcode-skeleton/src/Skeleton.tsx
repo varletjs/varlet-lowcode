@@ -1,7 +1,8 @@
 import type { ComputedRef, DefineComponent, Ref } from 'vue'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch, Teleport } from 'vue'
 import { AppBar, Icon, Space, Skeleton, Ripple } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
+import { getTop } from './shared'
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
 import '@varlet/ui/es/space/style/index.js'
@@ -16,26 +17,48 @@ export default defineComponent({
   setup() {
     const plugins = pluginsManager.exportSkeletonPlugins()
     const sidebarPinned = ref(false)
-    const sidebarComponentName: Ref<string | undefined> = ref()
+    const sidebarActiveComponent: Ref<string | undefined> = ref()
+    const sidebarFocusComponent: Ref<SkeletonPlugin | undefined> = ref()
     const { loading } = useLoading()
+    const sidebarRefs: Ref<Record<string, HTMLElement>> = ref({})
+
+    const sidebarRef = (el: any, pluginName: string) => {
+      if (!sidebarRefs.value[pluginName]) {
+        sidebarRefs.value[pluginName] = el
+      }
+    }
+
+    const transitionStyle = computed(() => {
+      if (!sidebarFocusComponent.value) return {}
+
+      const top = getTop(sidebarRefs.value[sidebarFocusComponent.value?.name] as HTMLElement)
+
+      return {
+        top: `calc(${top}px + 8px)`,
+      }
+    })
 
     watch(
       () => loading.value,
       (newVal) => {
         if (newVal) {
-          sidebarComponentName.value = undefined
+          sidebarActiveComponent.value = undefined
         }
       }
     )
 
-    const toggleSidebarComponent = (name: string) => {
-      sidebarComponentName.value = name === sidebarComponentName.value ? undefined : name
+    const toggleSidebarActive = (name: string) => {
+      sidebarActiveComponent.value = name === sidebarActiveComponent.value ? undefined : name
+    }
+
+    const toggleSidebarFocus = (plugin?: SkeletonPlugin) => {
+      sidebarFocusComponent.value = plugin || undefined
     }
 
     const sidebarComponent: ComputedRef<JSX.Element | null> = computed(() => {
-      if (!sidebarComponentName.value) return null
+      if (!sidebarActiveComponent.value) return null
 
-      const _plugin = plugins.find((plugin) => plugin.name === sidebarComponentName.value)
+      const _plugin = plugins.find((plugin) => plugin.name === sidebarActiveComponent.value)
       const RenderPlugin = _plugin!.component as DefineComponent
 
       const RenderLabel: () => JSX.Element = () => {
@@ -73,24 +96,27 @@ export default defineComponent({
       if (layout.includes('sidebar')) {
         return (
           <div class="skeleton__sidebar--container">
-            {_plugins.map(({ icon: iconName, name, label }: SkeletonPlugin) => {
+            {_plugins.map((plugin: SkeletonPlugin) => {
+              const { icon: iconName, name } = plugin
               return (
                 <div>
                   <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} avatar rows="0" />
                   <div
                     v-ripple
+                    ref={(el) => sidebarRef(el, name)}
                     v-show={Boolean(!loading.value)}
                     class={`skeleton__sidebar--item ${
-                      name === sidebarComponentName.value ? 'skeleton__sidebar--item-selected' : ''
+                      name === sidebarActiveComponent.value ? 'skeleton__sidebar--item-selected' : ''
                     }`}
-                    onClick={() => toggleSidebarComponent(name)}
+                    onClick={() => toggleSidebarActive(name)}
+                    onMouseenter={() => toggleSidebarFocus(plugin)}
+                    onMouseleave={() => toggleSidebarFocus()}
                   >
                     {typeof iconName === 'string' ? (
                       <Icon name={iconName} class="skeleton__sidebar--icon" />
                     ) : (
                       <iconName />
                     )}
-                    {label ? <div class="skeleton__sidebar--tooltip">{label}</div> : null}
                   </div>
                 </div>
               )
@@ -148,6 +174,13 @@ export default defineComponent({
           <div class="skeleton__sidebar--tools">
             {Top}
             {Bottom}
+            <Teleport to="body">
+              {sidebarFocusComponent.value?.label ? (
+                <div style={transitionStyle.value} class="skeleton__sidebar--tooltip">
+                  {sidebarFocusComponent.value.label}
+                </div>
+              ) : null}
+            </Teleport>
           </div>
           {sidebarComponent.value}
         </div>

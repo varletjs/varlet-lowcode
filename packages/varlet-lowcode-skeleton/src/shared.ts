@@ -1,4 +1,11 @@
-export const isPlainObject = (val: unknown): val is Record<string, any> =>
-  Object.prototype.toString.call(val) === '[object Object]'
+export function getLeft(element: HTMLElement): number {
+  const { left } = element.getBoundingClientRect()
 
-export const isArray = (val: unknown): val is Array<any> => Array.isArray(val)
+  return left + (document.body.scrollLeft || document.documentElement.scrollLeft)
+}
+
+export function getTop(element: HTMLElement): number {
+  const { top } = element.getBoundingClientRect()
+
+  return top + (document.body.scrollTop || document.documentElement.scrollTop)
+}
