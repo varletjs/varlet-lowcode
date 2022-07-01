@@ -106,8 +106,6 @@ export function createAst(rendererWindowGetter?: () => any) {
       },
     })
 
-    console.log(waitConfirmVariableValueToKeys)
-
     if (!hasSetup) {
       errors.push('SyntaxError: setup function not found')
     }

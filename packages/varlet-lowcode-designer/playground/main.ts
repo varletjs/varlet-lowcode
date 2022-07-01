@@ -13,11 +13,18 @@ function setup() {
   const num = 100
   const item = reactive({ value: 200 })
 
+  const { record } = useDataSources()
+
   watchEffect(() => {
     console.log(count.value)
   })
 
+  onMounted(() => {
+    record.load()
+  })
+
   return {
+    record,
     count,
     doubleCount,
     num,
@@ -42,7 +49,7 @@ function setup() {
                 {
                   id: schemaManager.generateId(),
                   name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: schemaManager.createExpressionBinding('doubleCount.value + num + item.value'),
+                  textContent: schemaManager.createExpressionBinding('record.value'),
                 },
               ],
             },
@@ -51,6 +58,20 @@ function setup() {
       ],
     },
   },
+
+  dataSources: [
+    {
+      name: 'record',
+      url: '/mock.json',
+      method: 'get',
+      headers: {
+        token: 'token!!!',
+      },
+      timeout: 3000,
+      successHandler: schemaManager.createExpressionBinding('response => response.data.data'),
+      errorHandler: schemaManager.createExpressionBinding('(error) => { console.log(error) }'),
+    },
+  ],
 })
 
 assetsManager.importAssets([

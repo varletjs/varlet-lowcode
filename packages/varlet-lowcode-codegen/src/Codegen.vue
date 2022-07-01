@@ -6,7 +6,7 @@ import readme from './template/README.md?raw'
 import JSZip from 'jszip'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { AssetProfile, AssetsManager, schemaManager } from '@varlet/lowcode-core'
+import { AssetProfile, AssetsManager, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { isArray, isPlainObject, isString, kebabCase } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
@@ -53,8 +53,8 @@ const getRendererAssetsManager = (): AssetsManager => {
 
 const { traverseSetupFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
 
-const stringifyObject = (object: any[] | Record<string, any>): string => {
-  return JSON.stringify(object).replace(/"(.+)":/g, '$1:')
+const stringifyObject = (object: any[] | Record<string, any>, space = 2): string => {
+  return JSON.stringify(object, null, space).replace(/"(.+)":/g, '$1:')
 }
 
 const convertEventName = (key: string) => {
@@ -221,13 +221,13 @@ const genNamedImportNames = (library: string, namedImports: Record<string, strin
 }
 
 const genApp = (
+  schema: SchemaPageNode,
   profiles: AssetProfile[],
   seenApis: string[],
   allImportedApis: string[],
   code: string,
   namedImports: Record<string, string[]>
 ) => {
-  const schema = getRendererSchema()
   const imports = getSetupUsedProfiles(profiles, seenApis)
     .map(({ library, packageName }) => {
       const allImport = allImportedApis.includes(library) ? `import * as ${library} from '${packageName}'\n` : ''
@@ -239,6 +239,10 @@ const genApp = (
       return `${allImport}${namedImport}`
     })
     .join('\n')
+
+  const dataSourcesImport = `${
+    seenApis.includes('useDataSources') ? "import { useDataSources } from './dataSources'" : ''
+  }`
 
   return `\
 <template>
@@ -253,6 +257,7 @@ import {
 ${genVueApis(seenApis)}
 } from 'vue'
 ${imports}
+${dataSourcesImport}
 
 ${code}
 export default defineComponent({
@@ -339,16 +344,92 @@ ${externals}
   )
 }
 
+const genDataSources = (dataSources: SchemaPageNodeDataSource[]) => {
+  const apis = dataSources
+    .map(({ name, url, method, headers, timeout, withCredentials, successHandler, errorHandler }) => {
+      const shouldMergeOptions = timeout || headers
+      const mergedOptions = `{
+    ...options,\
+${timeout ? `\n    timeout: ${timeout},` : ''}\
+${withCredentials ? `\n    withCredentials: ${withCredentials},` : ''}\
+${headers ? `\n    headers: ${stringifyObject(headers, 6).replace(/\}$/, '    }')}` : ''}
+  }
+`
+      const successHandlerTemplate = `${
+        schemaManager.isExpressionBinding(successHandler) ? `response = (${successHandler.value})(response)\n` : ''
+      }`
+      const errorHandlerTemplate = `${
+        schemaManager.isExpressionBinding(errorHandler) ? `return (${errorHandler.value})(e)` : ''
+      }`
+
+      const withErrorHandlerTemplate = `\
+  try {
+    let response = await axle.helpers.${method}('${url}', params, options)
+
+    ${successHandlerTemplate}\
+
+    return response
+  } catch(e) {
+    return ${errorHandlerTemplate}
+  }`
+
+      const withoutErrorHandlerTemplate = `\
+  let response = await axle.helpers.${method}('${url}', params, options)
+
+  ${successHandlerTemplate}\
+
+  return response`
+
+      return `\
+export async function ${name}Api(params, options) {
+${shouldMergeOptions ? `  options = ${mergedOptions}\n` : ''}\
+${schemaManager.isExpressionBinding(errorHandler) ? withErrorHandlerTemplate : withoutErrorHandlerTemplate}
+}`
+    })
+    .join('\n')
+
+  const apiNames = dataSources.map(({ name }) => `    ['${name}', ${name}Api]`).join(',\n')
+
+  return `\
+import { reactive } from 'vue'
+import { createAxle } from '@varlet/axle'
+
+const axle = createAxle({})
+
+${apis}
+
+export function useDataSources() {
+  return [\n${apiNames}\n  ].reduce((dataSources, [name, api]) => {
+    const dataSource = reactive({
+      value: undefined,
+      async load(params, options) {
+        const value = await api(params, options)
+
+        dataSource.value = value
+
+        return value
+      }
+    })
+
+    dataSources[name] = dataSource
+
+    return dataSources
+  }, {})
+}
+`
+}
+
 const getSetupUsedProfiles = (profiles: AssetProfile[], seenApis: string[]): AssetProfile[] => {
   return profiles.filter(({ library }) => seenApis.includes(library))
 }
 
 const save = async () => {
-  const { seenApis, allImportedApis } = traverseSetupFunction(getRendererSchema().code ?? '')
+  const rendererSchema = getRendererSchema()
+  const { seenApis, allImportedApis } = traverseSetupFunction(rendererSchema.code ?? '')
   const profiles = getRendererAssetsManager().getProfiles(getRendererAssets())
   const setupUsedProfiles = getSetupUsedProfiles(profiles, seenApis)
   const libraries = setupUsedProfiles.map((profile) => profile.library)
-  const { code, namedImports } = transformNamedImports(getRendererSchema().code!, libraries)
+  const { code, namedImports } = transformNamedImports(rendererSchema.code!, libraries)
 
   const zip = new JSZip()
 
@@ -359,7 +440,11 @@ const save = async () => {
 
   const src = zip.folder('src')!
 
-  src.file('App.vue', genApp(profiles, seenApis, allImportedApis, code, namedImports))
+  if (isArray(rendererSchema.dataSources) && rendererSchema.dataSources.length > 0) {
+    src.file('dataSources.js', genDataSources(rendererSchema.dataSources))
+  }
+
+  src.file('App.vue', genApp(rendererSchema, profiles, seenApis, allImportedApis, code, namedImports))
   src.file('main.js', genMain(profiles))
 
   const blob = await zip.generateAsync({ type: 'blob' })

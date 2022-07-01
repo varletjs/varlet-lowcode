@@ -69,37 +69,41 @@ const axle = createAxle({})
 function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
   function useDataSources() {
     return schemaDataSources.reduce(
-      (
-        rendererDataSources,
-        { name, url, method, headers: schemaDataSourceHeaders, timeout, successHandler, errorHandler }
-      ) => {
-        const load = async (params?: Record<string, any>, headers?: Record<string, any>) => {
+      (rendererDataSources, { name, url, method, headers, timeout, withCredentials, successHandler, errorHandler }) => {
+        const load = async (params?: Record<string, any>, options?: Record<string, any>) => {
           try {
             // @ts-ignore
             const response = await axle.helpers[method](url, params, {
-              headers: {
-                ...schemaDataSourceHeaders,
-                ...headers,
-              },
+              ...options,
+              headers,
               timeout,
+              withCredentials,
             })
 
-            const value = successHandler?.(response) ?? response
+            const successHandlerFunction = schemaManager.isExpressionBinding(successHandler)
+              ? exec(`(${successHandler.compatibleValue ?? successHandler.value})`)
+              : undefined
 
-            rendererDataSources[name].value = value
+            const value = successHandlerFunction?.(response) ?? response
+
+            rendererDataSource.value = value
 
             return value
           } catch (e: any) {
-            return errorHandler?.(e) ?? e
+            const errorHandlerFunction = schemaManager.isExpressionBinding(errorHandler)
+              ? exec(`(${errorHandler.compatibleValue ?? errorHandler.value})`)
+              : undefined
+
+            return errorHandlerFunction?.(e) ?? e
           }
         }
 
-        const rendererDataSource = {
+        const rendererDataSource = reactive({
           value: undefined,
           load,
-        }
+        })
 
-        rendererDataSources[name] = reactive(rendererDataSource)
+        rendererDataSources[name] = rendererDataSource
 
         return rendererDataSources
       },
@@ -136,7 +140,7 @@ export default defineComponent({
     },
   },
 
-  setup (props) {
+  setup(props) {
     Object.assign(window, {
       ref,
       reactive,
@@ -209,7 +213,7 @@ export default defineComponent({
       window.$index = schemaNode._index
       window.$slotProps = schemaNode._slotProps
 
-      const resolved = exec(expression)
+      const resolved = exec(`(${expression})`)
 
       delete window.$item
       delete window.$index
@@ -220,23 +224,19 @@ export default defineComponent({
 
     function getExpressionBindingValue(expression: string, schemaNode: SchemaNode) {
       if (!hasScopedVariables(expression)) {
-        return exec(expression)
+        return exec(`(${expression})`)
       }
 
       return resolveScopedExpression(expression, schemaNode)
     }
 
     function getBindingValue(value: any, schemaNode: SchemaNode) {
-      if (isPlainObject(value)) {
-        const { value: bindingValue, type: bindingType, compatibleValue } = value
+      if (schemaManager.isExpressionBinding(value)) {
+        return getExpressionBindingValue(value.compatibleValue ?? value.value, schemaNode)
+      }
 
-        if (bindingType === BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING) {
-          return getExpressionBindingValue(compatibleValue ?? bindingValue, schemaNode)
-        }
-
-        if (bindingType === BuiltInSchemaNodeBindingTypes.OBJECT_BINDING) {
-          return bindingValue
-        }
+      if (schemaManager.isObjectBinding(value)) {
+        return value.value
       }
 
       return value

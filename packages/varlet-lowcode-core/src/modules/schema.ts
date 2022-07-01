@@ -112,8 +112,9 @@ export interface SchemaPageNodeDataSource {
   description?: string
   headers?: Record<string, string>
   timeout?: number
-  successHandler?(response: any): any
-  errorHandler?(error: Error): any
+  withCredentials?: boolean
+  successHandler?: SchemaNodeBinding
+  errorHandler?: SchemaNodeBinding
 }
 
 export interface SchemaPageNode extends SchemaNode {
