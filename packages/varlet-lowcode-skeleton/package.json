@@ -18,16 +18,16 @@
   },
   "devDependencies": {
     "@varlet/lowcode-cli": "workspace: *",
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/ui": "^1.27.16",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",
-    "vue-tsc": "^0.37.3",
-    "@varlet/ui": "latest",
-    "@varlet/lowcode-core": "workspace: *"
+    "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
-    "@varlet/ui": "latest"
+    "@varlet/ui": "^1.27.16"
   },
   "browserslist": [
     "Chrome >= 51",

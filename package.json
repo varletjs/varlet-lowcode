@@ -26,55 +26,43 @@
       "packages/varlet-lowcode-renderer/lib/**",
       "packages/varlet-lowcode-renderer/dist/**",
       "packages/varlet-lowcode-renderer/types/**",
-
       "packages/varlet-lowcode-designer/lib/**",
       "packages/varlet-lowcode-designer/public/**",
       "packages/varlet-lowcode-designer/dist/**",
       "packages/varlet-lowcode-designer/types/**",
-
       "packages/varlet-lowcode-core/lib/**",
       "packages/varlet-lowcode-core/public/**",
       "packages/varlet-lowcode-core/dist/**",
       "packages/varlet-lowcode-core/types/**",
-
       "packages/varlet-lowcode-dnd/lib/**",
       "packages/varlet-lowcode-dnd/public/**",
       "packages/varlet-lowcode-dnd/dist/**",
       "packages/varlet-lowcode-dnd/types/**",
-
       "packages/varlet-lowcode-profile/lib/**",
       "packages/varlet-lowcode-profile/public/**",
       "packages/varlet-lowcode-profile/dist/**",
       "packages/varlet-lowcode-profile/types/**",
-
       "packages/varlet-lowcode-skeleton/lib/**",
       "packages/varlet-lowcode-skeleton/public/**",
       "packages/varlet-lowcode-skeleton/dist/**",
       "packages/varlet-lowcode-skeleton/types/**",
-
       "packages/varlet-lowcode-codegen/lib/**",
       "packages/varlet-lowcode-codegen/public/**",
       "packages/varlet-lowcode-codegen/dist/**",
       "packages/varlet-lowcode-codegen/types/**",
-
       "packages/varlet-lowcode-ast/lib/**",
       "packages/varlet-lowcode-ast/public/**",
       "packages/varlet-lowcode-ast/dist/**",
       "packages/varlet-lowcode-ast/types/**",
-
       "packages/varlet-lowcode-setters/lib/**",
       "packages/varlet-lowcode-setters/public/**",
       "packages/varlet-lowcode-setters/dist/**",
       "packages/varlet-lowcode-setters/types/**",
-
       "packages/varlet-lowcode-cli/lib/**",
-
       "packages/varlet-lowcode-code-editor/lib/**",
       "packages/varlet-lowcode-code-editor/types/**",
-
       "packages/varlet-lowcode-monaco/lib/**",
       "packages/varlet-lowcode-monaco/types/**",
-
       "packages/varlet-lowcode-schema-editor/lib/**",
       "packages/varlet-lowcode-schema-editor/types/**"
     ],
@@ -99,60 +87,47 @@
       "packages/varlet-lowcode-renderer/lib/**",
       "packages/varlet-lowcode-renderer/dist/**",
       "packages/varlet-lowcode-renderer/types/**",
-
       "packages/varlet-lowcode-designer/lib/**",
       "packages/varlet-lowcode-designer/public/**",
       "packages/varlet-lowcode-designer/dist/**",
       "packages/varlet-lowcode-designer/types/**",
-
       "packages/varlet-lowcode-core/lib/**",
       "packages/varlet-lowcode-core/public/**",
       "packages/varlet-lowcode-core/dist/**",
       "packages/varlet-lowcode-core/types/**",
-
       "packages/varlet-lowcode-dnd/lib/**",
       "packages/varlet-lowcode-dnd/public/**",
       "packages/varlet-lowcode-dnd/dist/**",
       "packages/varlet-lowcode-dnd/types/**",
-
       "packages/varlet-lowcode-profile/lib/**",
       "packages/varlet-lowcode-profile/public/**",
       "packages/varlet-lowcode-profile/dist/**",
       "packages/varlet-lowcode-profile/types/**",
-
       "packages/varlet-lowcode-skeleton/lib/**",
       "packages/varlet-lowcode-skeleton/public/**",
       "packages/varlet-lowcode-skeleton/dist/**",
       "packages/varlet-lowcode-skeleton/types/**",
-
       "packages/varlet-lowcode-selector/lib/**",
       "packages/varlet-lowcode-selector/public/**",
       "packages/varlet-lowcode-selector/dist/**",
       "packages/varlet-lowcode-selector/types/**",
-
       "packages/varlet-lowcode-codegen/lib/**",
       "packages/varlet-lowcode-codegen/public/**",
       "packages/varlet-lowcode-codegen/dist/**",
       "packages/varlet-lowcode-codegen/types/**",
-
       "packages/varlet-lowcode-ast/lib/**",
       "packages/varlet-lowcode-ast/public/**",
       "packages/varlet-lowcode-ast/dist/**",
       "packages/varlet-lowcode-ast/types/**",
-
       "packages/varlet-lowcode-setters/lib/**",
       "packages/varlet-lowcode-setters/public/**",
       "packages/varlet-lowcode-setters/dist/**",
       "packages/varlet-lowcode-setters/types/**",
-
       "packages/varlet-lowcode-cli/lib/**",
-
       "packages/varlet-lowcode-code-editor/lib/**",
       "packages/varlet-lowcode-code-editor/types/**",
-
       "packages/varlet-lowcode-monaco/lib/**",
       "packages/varlet-lowcode-monaco/types/**",
-
       "packages/varlet-lowcode-schema-editor/lib/**",
       "packages/varlet-lowcode-schema-editor/types/**"
     ]
@@ -161,14 +136,14 @@
     "@varlet/cli": "latest",
     "@varlet/eslint-config": "latest",
     "@varlet/stylelint-config": "latest",
-    "eslint": "^7.30.0",
-    "execa": "^5.0.0",
-    "lint-staged": "^10.5.0",
-    "ora": "^5.4.0",
-    "prettier": "^2.3.2",
-    "simple-git-hooks": "^2.7.0",
+    "eslint": "^7.32.0",
+    "execa": "^5.1.1",
+    "lint-staged": "^10.5.4",
+    "ora": "^5.4.1",
+    "prettier": "^2.6.2",
+    "simple-git-hooks": "^2.8.0",
     "stylelint": "^13.13.1",
-    "typescript": "^4.4.4"
+    "typescript": "^4.7.2"
   },
   "packageManager": "pnpm@6.24.3"
 }
