@@ -55,43 +55,15 @@ export default defineComponent({
       sidebarFocusComponent.value = plugin || undefined
     }
 
-    const sidebarComponent: ComputedRef<JSX.Element | null> = computed(() => {
-      if (!sidebarActiveComponent.value) return null
-
-      const _plugin = plugins.find((plugin) => plugin.name === sidebarActiveComponent.value)
-      const RenderPlugin = _plugin!.component as DefineComponent
-
-      const RenderLabel: () => JSX.Element = () => {
-        return (
-          <Space justify="space-between">
-            {_plugin?.label && <div>{_plugin?.label}</div>}
-            <Icon
-              onClick={() => {
-                sidebarPinned.value = !sidebarPinned.value
-              }}
-              name="pin-outline"
-            ></Icon>
-          </Space>
-        )
-      }
-
-      return (
-        <div class={`skeleton__sidebar-component ${sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''}`}>
-          {RenderLabel()}
-          <RenderPlugin />
-        </div>
-      )
-    })
-
     const pickerComponents = (layout: SkeletonLayouts) => {
       const _plugins: SkeletonPlugin[] = plugins.filter((plugin) => plugin.layout === layout)
-
-      let rows = 10
-      let rowsWidth = ['100%']
 
       if (!_plugins || _plugins.length === 0) {
         throw new Error(`${layout} is not a valid layout`)
       }
+
+      let rows = 10
+      let rowsWidth = ['100%']
 
       if (layout.includes('sidebar')) {
         return (
@@ -169,6 +141,44 @@ export default defineComponent({
       const Top = pickerComponents(SkeletonLayouts.SIDEBAR_TOP)
       const Bottom = pickerComponents(SkeletonLayouts.SIDEBAR_BOTTOM)
 
+      const RenderSidebarPlugin: () => JSX.Element = () => {
+        return (
+          <div>
+            {plugins
+              .filter((plugin) => plugin.layout.includes('sidebar'))
+              .map((plugin) => {
+                const RenderPlugin = plugin.component as DefineComponent
+
+                const RenderLabel: () => JSX.Element = () => {
+                  return (
+                    <Space justify="space-between">
+                      {plugin?.label && <div>{plugin?.label}</div>}
+                      <Icon
+                        onClick={() => {
+                          sidebarPinned.value = !sidebarPinned.value
+                        }}
+                        name="pin-outline"
+                      ></Icon>
+                    </Space>
+                  )
+                }
+
+                return (
+                  <div
+                    v-Show={sidebarActiveComponent.value === plugin.name}
+                    class={`skeleton__sidebar-component ${
+                      sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''
+                    }`}
+                  >
+                    {RenderLabel()}
+                    <RenderPlugin />
+                  </div>
+                )
+              })}
+          </div>
+        )
+      }
+
       return (
         <div class="skeleton__sidebar">
           <div class="skeleton__sidebar--tools">
@@ -182,7 +192,7 @@ export default defineComponent({
               ) : null}
             </Teleport>
           </div>
-          {sidebarComponent.value}
+          {RenderSidebarPlugin()}
         </div>
       )
     }

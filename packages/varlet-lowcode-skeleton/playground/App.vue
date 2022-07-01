@@ -9,7 +9,7 @@ import Skeleton from '../src/Skeleton'
 </template>
 <style scoped>
 .main {
-  width: 800px;
-  height: 400px;
+  width: 100%;
+  height: 100vh;
 }
 </style>
