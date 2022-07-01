@@ -211,11 +211,9 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class="main">
-          <div class="skeleton">
-            {RenderHeader()}
-            {RenderContent()}
-          </div>
+        <div class="skeleton">
+          {RenderHeader()}
+          {RenderContent()}
         </div>
       )
     }

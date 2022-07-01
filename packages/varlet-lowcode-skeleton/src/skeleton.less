@@ -33,14 +33,9 @@
   padding: 0;
 }
 
-.main {
-  width: 100%;
-  height: 100vh;
-}
-
 .skeleton {
   height: 100%;
-  display: flex;
+  width: 100%;
   flex-direction: column;
 
   &__header {
@@ -54,8 +49,8 @@
   }
 
   &__content {
-    flex: 1;
     display: flex;
+    height: calc(100% - var(--app-bar-height));
     flex-direction: row;
   }
 
@@ -170,10 +165,10 @@
 
   &__designer {
     flex: 1;
-    //background: yellow;
   }
 
   &__setters {
+    overflow: auto;
     border-left: 1px solid var(--skeleton-border-color);
     box-sizing: border-box;
   }
