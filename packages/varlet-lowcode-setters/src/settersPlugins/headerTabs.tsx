@@ -15,13 +15,7 @@ export default defineComponent({
     return () => {
       return (
         <div class="setters-tabs-content">
-          <VarTabs
-            elevation
-            color="#2979ff"
-            active-color="#fff"
-            inactive-color="hsla(0, 0%, 100%, .6)"
-            v-model:active={active.value}
-          >
+          <VarTabs elevation v-model:active={active.value}>
             <VarTab>属性</VarTab>
             <VarTab>样式</VarTab>
             <VarTab>事件</VarTab>
@@ -29,10 +23,11 @@ export default defineComponent({
           </VarTabs>
           <VarTabsItems v-model:active={active.value}>
             <VarTabItems>
-              <SettersAttribute tab-index={active.value} />
+              {/* <SettersStyle /> */}
+              <SettersAttribute />
             </VarTabItems>
             <VarTabItems>
-              <SettersStyle tab-index={active.value} />
+              <SettersStyle />
             </VarTabItems>
             <VarTabItems>
               <div>事件绑定</div>

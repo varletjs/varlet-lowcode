@@ -383,7 +383,6 @@ importers:
       vue: 3.2.25
       vue-tsc: ^0.37.3
       vue3-colorpicker: ^2.0.4
-      vue3-popper: 1.5.0
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
@@ -394,7 +393,6 @@ importers:
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
       vue3-colorpicker: 2.0.4_vue@3.2.25
-      vue3-popper: 1.5.0_vue@3.2.25
 
   packages/varlet-lowcode-skeleton:
     specifiers:
@@ -9857,16 +9855,6 @@ packages:
       vue-types: 4.1.1_vue@3.2.37
     dev: true
 
-  /vue3-popper/1.5.0_vue@3.2.25:
-    resolution: {integrity: sha512-xaEnx90YBnlSg5G2yWqm2DHWHg+DB99UVRp4VsyTF0QLXyHrqSuE1Xo5+sG0AQq/lBcrGMlk5NU5xE2MDLKViw==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      vue: ^3.2.20
-    dependencies:
-      '@popperjs/core': 2.11.5
-      debounce: 1.2.1
-      vue: 3.2.25
-    dev: true
 
   /w3c-hr-time/1.0.2:
     resolution: {integrity: sha512-z8P5DvDNjKDoFIHK7q8r8lackT6l+jo/Ye3HOle7l9nICP9lf1Ci25fy9vHd0JOWewkIFzXIEig3TdKT7JQ5fQ==}
