@@ -1,5 +1,5 @@
-import type { ComputedRef, DefineComponent, Ref } from 'vue'
-import { computed, defineComponent, ref, watch, Teleport } from 'vue'
+import type { DefineComponent, Ref } from 'vue'
+import { computed, defineComponent, ref, watch, Teleport, reactive } from 'vue'
 import { AppBar, Icon, Space, Skeleton, Ripple } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import { getTop } from './shared'
@@ -108,7 +108,7 @@ export default defineComponent({
       }
 
       return (
-        <div>
+        <>
           <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} {...{ rows, rowsWidth }} />
 
           <Space v-show={Boolean(!loading.value)}>
@@ -117,7 +117,7 @@ export default defineComponent({
               return <Component />
             })}
           </Space>
-        </div>
+        </>
       )
     }
 
