@@ -73,10 +73,6 @@ export function createAst(rendererWindowGetter?: () => any) {
             if (t.isReturnStatement(statement)) {
               if (t.isObjectExpression(statement.argument)) {
                 statement.argument.properties.forEach((property) => {
-                  if (t.isSpreadElement(property)) {
-                    return
-                  }
-
                   if (t.isObjectProperty(property) && t.isIdentifier(property.key) && t.isIdentifier(property.value)) {
                     waitConfirmVariableValueToKeys[property.value.name] = uniqConcat(
                       waitConfirmVariableValueToKeys[property.value.name],
