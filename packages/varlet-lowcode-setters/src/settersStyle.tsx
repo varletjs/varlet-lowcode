@@ -58,12 +58,14 @@ export default defineComponent({
     const isReady = ref(false)
     const childrenSlot = reactive({
       default: () => {
-        ;<div
-          class={'current-color'}
-          onClick={() => {
-            isReady.value = !isReady.value
-          }}
-        />
+        return (
+          <div
+            class={'current-color'}
+            onClick={() => {
+              isReady.value = !isReady.value
+            }}
+          />
+        )
       },
       chaoren: () => <ColorPicker v-model:pureColor={pureColor.value} isWidget />,
     })

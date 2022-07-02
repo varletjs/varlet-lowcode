@@ -1,4 +1,5 @@
-import { defineComponent, reactive, Teleport, ref } from 'vue'
+import { defineComponent, reactive, Teleport, ref, nextTick } from 'vue'
+import { eventsManager } from '@varlet/lowcode-core'
 import './popover.less'
 
 export default defineComponent({
@@ -7,10 +8,9 @@ export default defineComponent({
     const popoverStyle = reactive({
       position: 'absolute',
       zIndex: '9999',
-      top: '200px',
-      left: '200px',
+      top: '0',
+      left: '0',
       padding: '0',
-      transformOrigin: 'right bottom',
       maxWidth: '400px',
       maxHeight: '400px',
       minWidth: '50px',
@@ -18,9 +18,11 @@ export default defineComponent({
       opacity: 0,
     })
 
-    const getDomLocation = (e: any) => {
+    const getDomLocation = async (e: any) => {
+      e.stopPropagation()
       isShow.value = !isShow.value
-      setTimeout(() => {
+      await nextTick()
+      if (isShow.value) {
         const { clientX } = e
         const { clientY } = e
         // const { top, bottom, left, right } = document.getElementById('lowCode-popover')?.getBoundingClientRect() || { top: 0, bottom: 0, left: 0, right: 0 }
@@ -29,9 +31,20 @@ export default defineComponent({
         popoverStyle.left = clientX - domWidth + 'px'
         popoverStyle.top = clientY - domHeight + 'px'
         popoverStyle.opacity = 100
-        console.log(document.getElementById('lowCode-popover')?.getBoundingClientRect(), '213456')
+        // console.log(document.getElementById('lowCode-popover')?.getBoundingClientRect(), '213456')
         // if (top > 0)
-      }, 100)
+        document.body?.addEventListener('click', clickFn)
+        eventsManager.on('designer-iframe-click', clickFn)
+      } else {
+        document.body?.removeEventListener('click', clickFn)
+        eventsManager.off('designer-iframe-click', clickFn)
+      }
+    }
+    const clickFn = () => {
+      isShow.value = false
+      document.body?.removeEventListener('click', clickFn)
+      eventsManager.off('designer-iframe-click', clickFn)
+      console.log(1132465)
     }
 
     return () => {
