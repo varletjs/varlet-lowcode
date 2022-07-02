@@ -77,6 +77,9 @@ async function mountRenderer() {
   const app = iframeElement!.contentDocument!.createElement('div')
   app.id = 'app'
   iframeElement!.contentDocument!.body.appendChild(app)
+  iframeElement!.contentDocument!.addEventListener('click', (event) => {
+    eventsManager.emit('designer-iframe-click', event)
+  })
 
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
