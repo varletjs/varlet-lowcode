@@ -200,16 +200,7 @@ export default defineComponent({
     const RenderDesigner: () => JSX.Element = () => {
       const Designer = pickerComponents(SkeletonLayouts.DESIGNER)
 
-      return (
-        <div
-          class="skeleton__designer"
-          onClick={() => {
-            console.log(123)
-          }}
-        >
-          {Designer}
-        </div>
-      )
+      return <div class="skeleton__designer">{Designer}</div>
     }
 
     const RenderSetters: () => JSX.Element = () => {
