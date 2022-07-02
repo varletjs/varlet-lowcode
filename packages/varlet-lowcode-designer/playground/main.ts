@@ -68,8 +68,10 @@ function setup() {
         token: 'token!!!',
       },
       timeout: 3000,
-      successHandler: schemaManager.createExpressionBinding('response => response.data.data'),
-      errorHandler: schemaManager.createExpressionBinding('(error) => { console.log(error) }'),
+      successHandler: schemaManager.createExpressionBinding(
+        'function successHandler(response) { Varlet.Snackbar(response.data.data); return response.data.data }'
+      ),
+      errorHandler: schemaManager.createExpressionBinding('function errorHandler(error) { console.log(error) }'),
     },
   ],
 })

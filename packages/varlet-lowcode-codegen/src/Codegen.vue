@@ -8,7 +8,7 @@ import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
 import { AssetProfile, AssetsManager, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
-import { isArray, isPlainObject, isString, kebabCase } from '@varlet/shared'
+import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
 
@@ -51,7 +51,7 @@ const getRendererAssetsManager = (): AssetsManager => {
   return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
-const { traverseSetupFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
+const { traverseFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
 
 const stringifyObject = (object: any[] | Record<string, any>, space = 2): string => {
   return JSON.stringify(object, null, space).replace(/"(.+)":/g, '$1:')
@@ -220,15 +220,8 @@ const genNamedImportNames = (library: string, namedImports: Record<string, strin
     .join(', ')} }`
 }
 
-const genApp = (
-  schema: SchemaPageNode,
-  profiles: AssetProfile[],
-  seenApis: string[],
-  allImportedApis: string[],
-  code: string,
-  namedImports: Record<string, string[]>
-) => {
-  const imports = getSetupUsedProfiles(profiles, seenApis)
+const genImports = (profiles: AssetProfile[], namedImports: Record<string, string[]>, allImportedApis: string[]) => {
+  return profiles
     .map(({ library, packageName }) => {
       const allImport = allImportedApis.includes(library) ? `import * as ${library} from '${packageName}'\n` : ''
 
@@ -239,6 +232,16 @@ const genApp = (
       return `${allImport}${namedImport}`
     })
     .join('\n')
+}
+
+const genApp = (schema: SchemaPageNode, profiles: AssetProfile[]) => {
+  const { seenApis, allImportedApis } = traverseFunction(schema.code ?? '')
+  const { code, namedImports } = transformNamedImports(
+    schema.code ?? '',
+    profiles.map((profile) => profile.library)
+  )
+
+  const imports = genImports(profiles, namedImports, allImportedApis)
 
   const dataSourcesImport = `${
     seenApis.includes('useDataSources') ? "import { useDataSources } from './dataSources'" : ''
@@ -344,7 +347,55 @@ ${externals}
   )
 }
 
-const genDataSources = (dataSources: SchemaPageNodeDataSource[]) => {
+const getDataSourcesDeps = (dataSources: SchemaPageNodeDataSource[], profiles: AssetProfile[]) => {
+  const seenApis: string[] = []
+  const allImportedApis: string[] = []
+
+  dataSources.forEach(({ successHandler, errorHandler }) => {
+    if (schemaManager.isExpressionBinding(successHandler)) {
+      const { seenApis: successHandlerSeenApis, allImportedApis: successHandlerAllImportedApis } = traverseFunction(
+        successHandler.value,
+        'successHandler'
+      )
+
+      seenApis.push(...successHandlerSeenApis)
+      allImportedApis.push(...successHandlerAllImportedApis)
+    }
+
+    if (schemaManager.isExpressionBinding(errorHandler)) {
+      const { seenApis: errorHandlerSeenApis, allImportedApis: errorHandlerAllImportedApis } = traverseFunction(
+        errorHandler.value,
+        'errorHandler'
+      )
+
+      seenApis.push(...errorHandlerSeenApis)
+      allImportedApis.push(...errorHandlerAllImportedApis)
+    }
+  })
+
+  return {
+    profiles: profiles.filter(({ library }) => seenApis.includes(library)),
+    allImportedApis,
+  }
+}
+
+const mergeNamedImports = (target: Record<string, string[]>, source: Record<string, string[]>) => {
+  const keys = [...Object.keys(target), ...Object.keys(source)]
+
+  return keys.reduce((ret, key) => {
+    ret[key] = uniq([...(target[key] ?? []), ...(source[key] ?? [])])
+
+    return ret
+  }, {} as Record<string, string[]>)
+}
+
+const genDataSources = (dataSources: SchemaPageNodeDataSource[], profiles: AssetProfile[]) => {
+  const { profiles: usedProfiles, allImportedApis } = getDataSourcesDeps(dataSources, profiles)
+  const usedLibraries = usedProfiles.map((profile) => profile.library)
+  const apiNames = dataSources.map(({ name }) => `    ['${name}', ${name}Api]`).join(',\n')
+
+  let namedImports: Record<string, string[]> = {}
+
   const apis = dataSources
     .map(({ name, url, method, headers, timeout, withCredentials, successHandler, errorHandler }) => {
       const shouldMergeOptions = timeout || headers
@@ -355,12 +406,28 @@ ${withCredentials ? `\n    withCredentials: ${withCredentials},` : ''}\
 ${headers ? `\n    headers: ${stringifyObject(headers, 6).replace(/\}$/, '    }')}` : ''}
   }
 `
-      const successHandlerTemplate = `${
-        schemaManager.isExpressionBinding(successHandler) ? `response = (${successHandler.value})(response)\n` : ''
-      }`
-      const errorHandlerTemplate = `${
-        schemaManager.isExpressionBinding(errorHandler) ? `return (${errorHandler.value})(e)` : ''
-      }`
+      let successHandlerTemplate = ''
+      let errorHandlerTemplate = ''
+
+      if (schemaManager.isExpressionBinding(successHandler)) {
+        const { code, namedImports: successHandlerNamedImports } = transformNamedImports(
+          successHandler.value,
+          usedLibraries
+        )
+
+        successHandlerTemplate = `response = (${code})(response)\n`
+        namedImports = mergeNamedImports(namedImports, successHandlerNamedImports)
+      }
+
+      if (schemaManager.isExpressionBinding(errorHandler)) {
+        const { code, namedImports: errorHandlerNamedImports } = transformNamedImports(
+          errorHandler.value,
+          usedLibraries
+        )
+
+        errorHandlerTemplate = `return (${code})(e)`
+        namedImports = mergeNamedImports(namedImports, errorHandlerNamedImports)
+      }
 
       const withErrorHandlerTemplate = `\
   try {
@@ -370,7 +437,7 @@ ${headers ? `\n    headers: ${stringifyObject(headers, 6).replace(/\}$/, '    }'
 
     return response
   } catch(e) {
-    return ${errorHandlerTemplate}
+    ${errorHandlerTemplate}
   }`
 
       const withoutErrorHandlerTemplate = `\
@@ -388,11 +455,12 @@ ${schemaManager.isExpressionBinding(errorHandler) ? withErrorHandlerTemplate : w
     })
     .join('\n')
 
-  const apiNames = dataSources.map(({ name }) => `    ['${name}', ${name}Api]`).join(',\n')
+  const imports = genImports(usedProfiles, namedImports, allImportedApis)
 
   return `\
 import { reactive } from 'vue'
 import { createAxle } from '@varlet/axle'
+${imports}
 
 const axle = createAxle({})
 
@@ -419,17 +487,9 @@ export function useDataSources() {
 `
 }
 
-const getSetupUsedProfiles = (profiles: AssetProfile[], seenApis: string[]): AssetProfile[] => {
-  return profiles.filter(({ library }) => seenApis.includes(library))
-}
-
 const save = async () => {
   const rendererSchema = getRendererSchema()
-  const { seenApis, allImportedApis } = traverseSetupFunction(rendererSchema.code ?? '')
   const profiles = getRendererAssetsManager().getProfiles(getRendererAssets())
-  const setupUsedProfiles = getSetupUsedProfiles(profiles, seenApis)
-  const libraries = setupUsedProfiles.map((profile) => profile.library)
-  const { code, namedImports } = transformNamedImports(rendererSchema.code!, libraries)
 
   const zip = new JSZip()
 
@@ -441,10 +501,10 @@ const save = async () => {
   const src = zip.folder('src')!
 
   if (isArray(rendererSchema.dataSources) && rendererSchema.dataSources.length > 0) {
-    src.file('dataSources.js', genDataSources(rendererSchema.dataSources))
+    src.file('dataSources.js', genDataSources(rendererSchema.dataSources, profiles))
   }
 
-  src.file('App.vue', genApp(rendererSchema, profiles, seenApis, allImportedApis, code, namedImports))
+  src.file('App.vue', genApp(rendererSchema, profiles))
   src.file('main.js', genMain(profiles))
 
   const blob = await zip.generateAsync({ type: 'blob' })

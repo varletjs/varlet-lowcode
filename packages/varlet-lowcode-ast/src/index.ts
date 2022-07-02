@@ -51,7 +51,7 @@ export function createAst(rendererWindowGetter?: () => any) {
     return code.endsWith(';') ? code.slice(0, -1) : code
   }
 
-  function traverseSetupFunction(code: string) {
+  function traverseFunction(code: string, name = 'setup') {
     const errors: string[] = []
     const seenApis: string[] = []
     const allImportedApis: string[] = []
@@ -61,20 +61,19 @@ export function createAst(rendererWindowGetter?: () => any) {
       sourceType: 'module',
     })
 
-    let hasSetup = false
+    let foundFunctionName = false
     const waitConfirmVariableValueToKeys: Record<string, string[]> = {}
 
     traverse(ast, {
       FunctionDeclaration(path) {
-        if (t.isIdentifier(path.node.id) && path.node.id.name === 'setup') {
-          hasSetup = true
+        if (t.isIdentifier(path.node.id) && path.node.id.name === name) {
+          foundFunctionName = true
 
           path.node.body.body.forEach((statement) => {
             if (t.isReturnStatement(statement)) {
               if (t.isObjectExpression(statement.argument)) {
                 statement.argument.properties.forEach((property) => {
                   if (t.isSpreadElement(property)) {
-                    errors.push('SyntaxError: cannot support spread element')
                     return
                   }
 
@@ -106,8 +105,8 @@ export function createAst(rendererWindowGetter?: () => any) {
       },
     })
 
-    if (!hasSetup) {
-      errors.push('SyntaxError: setup function not found')
+    if (!foundFunctionName) {
+      errors.push(`SyntaxError: ${name} function not found`)
     }
 
     if (errors.length) {
@@ -193,7 +192,7 @@ export function createAst(rendererWindowGetter?: () => any) {
 
     traverse(ast, {
       FunctionDeclaration(path) {
-        if (t.isIdentifier(path.node.id) && path.node.id.name === 'setup') {
+        if (t.isIdentifier(path.node.id) && path.node.id.name === name) {
           path.node.body.body.forEach((statement) => {
             if (t.isVariableDeclaration(statement)) {
               statement.declarations.forEach((declaration) => {
@@ -254,7 +253,11 @@ export function createAst(rendererWindowGetter?: () => any) {
 
       Identifier(path) {
         // e.g. Varlet
-        if (!t.isMemberExpression(path.parent) && !t.isOptionalMemberExpression(path.parent)) {
+        if (
+          !t.isMemberExpression(path.parent) &&
+          !t.isOptionalMemberExpression(path.parent) &&
+          !t.isFunctionDeclaration(path.parent)
+        ) {
           const { name } = path.node
 
           if (!seenApis.includes(name)) {
@@ -358,7 +361,7 @@ export function createAst(rendererWindowGetter?: () => any) {
   }
 
   return {
-    traverseSetupFunction,
+    traverseFunction,
     transformCompatibleCode,
     transformExpressionValue,
     transformNamedImports,

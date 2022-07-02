@@ -8,7 +8,7 @@ import '@varlet/ui/es/snackbar/style/index.js'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
 import type { IRange } from 'monaco-editor'
 
-const { traverseSetupFunction, transformCompatibleCode } = createAst()
+const { traverseFunction, transformCompatibleCode } = createAst()
 
 let schema = schemaManager.exportSchema()
 
@@ -68,7 +68,7 @@ function createApiSuggestions(range: IRange) {
 function parseCode() {
   try {
     const compatibleCode = transformCompatibleCode(code.value)
-    const { returnDeclarations } = traverseSetupFunction(code.value)
+    const { returnDeclarations } = traverseFunction(code.value)
 
     schemaManager.importSchema({
       ...schema,
