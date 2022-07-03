@@ -272,6 +272,8 @@ export default defineComponent({
     }
 
     function withDesigner(schemaNode: SchemaNode) {
+      const keyBinding = getBindingValue(schemaNode.key, schemaNode)
+
       if (props.mode === 'designer') {
         const directives: DirectiveArguments = [
           [Drag, { dragData: schemaNode }],
@@ -296,16 +298,18 @@ export default defineComponent({
         return withDirectives(
           h(
             getComponent(schemaNode.name, schemaNode.library!),
-            { ...propsBinding, class: classes },
+            { ...propsBinding, class: classes, key: keyBinding },
             renderSchemaNodeSlots(schemaNode)
           ),
           directives
         )
       }
 
+      console.log(keyBinding)
+
       return h(
         getComponent(schemaNode.name, schemaNode.library!),
-        getPropsBinding(schemaNode),
+        { ...getPropsBinding(schemaNode), key: keyBinding },
         renderSchemaNodeSlots(schemaNode)
       )
     }

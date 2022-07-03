@@ -57,7 +57,6 @@ import type { Assets } from '@varlet/lowcode-core'
       todoItems,
       handleInsert,
       handleConfirm,
-      age: '88888888'
     }
   }
 `
@@ -117,6 +116,7 @@ import type { Assets } from '@varlet/lowcode-core'
                     name: 'Card',
                     library: 'Varlet',
                     for: schemaManager.createExpressionBinding('todoItems'),
+                    key: schemaManager.createExpressionBinding(`$item['${cardId}'].id`),
                     props: {
                       ripple: true,
                       description: schemaManager.createExpressionBinding(`$item['${cardId}'].content`),
