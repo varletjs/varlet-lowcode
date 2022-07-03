@@ -148,7 +148,7 @@ import type { Assets } from '@varlet/lowcode-core'
                     library: 'Varlet',
                     props: {
                       type: 'primary',
-                      onClick: schemaManager.createExpressionBinding(`function toggleDisabled() {
+                      onClick: schemaManager.createExpressionBinding(`() => {
     let styles = document.querySelector('#varlet-low-code-events')
 
     if (styles) {
