@@ -305,8 +305,6 @@ export default defineComponent({
         )
       }
 
-      console.log(keyBinding)
-
       return h(
         getComponent(schemaNode.name, schemaNode.library!),
         { ...getPropsBinding(schemaNode), key: keyBinding },

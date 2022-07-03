@@ -148,7 +148,29 @@ import type { Assets } from '@varlet/lowcode-core'
                     library: 'Varlet',
                     props: {
                       type: 'primary',
-                      onClick: toggleDisabled,
+                      onClick: schemaManager.createExpressionBinding(`function toggleDisabled() {
+    let styles = document.querySelector('#varlet-low-code-events')
+
+    if (styles) {
+      document.body.removeChild(styles)
+    } else {
+      styles = document.createElement('style')
+      const styleSheet = \`
+      .varlet-low-code--disable-events > * {
+        pointer-events: none;
+      }
+
+      .varlet-low-code--disable-events {
+        pointer-events: all;
+      }
+      \`
+
+      styles.id = \`varlet-low-code-events\`
+      styles.innerHTML = styleSheet
+
+      document.body.appendChild(styles)
+    }
+  }`),
                     },
                     slots: {
                       default: {
@@ -169,30 +191,6 @@ import type { Assets } from '@varlet/lowcode-core'
         ],
       },
     },
-  }
-
-  function toggleDisabled() {
-    let styles = document.querySelector('#varlet-low-code-events')
-
-    if (styles) {
-      document.body.removeChild(styles)
-    } else {
-      styles = document.createElement('style')
-      const styleSheet = `
-      .varlet-low-code--disable-events > * {
-        pointer-events: none;
-      }
-
-      .varlet-low-code--disable-events {
-        pointer-events: all;
-      }
-      `
-
-      styles.id = `varlet-low-code-events`
-      styles.innerHTML = styleSheet
-
-      document.body.appendChild(styles)
-    }
   }
 
   await assetsManager.loadResources(assets, document)

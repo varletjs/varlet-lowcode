@@ -6,7 +6,13 @@ import readme from './template/README.md?raw'
 import JSZip from 'jszip'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { AssetProfile, AssetsManager, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
+import {
+  AssetProfile,
+  AssetsManager,
+  schemaManager,
+  SchemaNodeProps,
+  SchemaPageNodeDataSource,
+} from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
@@ -54,24 +60,47 @@ const getRendererAssetsManager = (): AssetsManager => {
 
 const { traverseFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
 
-const stringifyObject = (object: any[] | Record<string, any>, space = 2): string => {
-  return JSON.stringify(object, null, space).replace(/"(.+)":/g, '$1:')
+const stringifyObject = (object: any[] | Record<string, any>, space = 0): string => {
+  return JSON.stringify(object, null, space)
+    .replace(/"(.+)":/g, '$1:')
+    .replace(/"/g, "'")
 }
 
-const convertEventName = (key: string) => {
+const convertExpressionBindingPropName = (key: string, schemaNode: SchemaNode, ignoreKeys: string[]) => {
+  const { props = {}, models = [] } = schemaNode
+
+  // props
   if (!key.startsWith('on')) {
+    const updateFunctionName = `onUpdate:${key}`
+    const isTwoWayBinding = props.hasOwnProperty(updateFunctionName) && models.includes(key)
+
+    if (isTwoWayBinding) {
+      ignoreKeys.push(updateFunctionName)
+
+      return key === 'modelValue' ? 'v-model' : `v-model:${key}`
+    }
+
     return `:${kebabCase(key)}`
   }
 
+  // events
   const eventName = kebabCase(key.slice(2))
 
   return `@${eventName[0]!.toLowerCase()}${eventName.slice(1)}`
 }
 
 const genProps = (schemaNode: SchemaNode): string => {
+  const ignoreKeys: string[] = []
+
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
+    if (ignoreKeys.includes(key)) {
+      return propsString
+    }
+
     if (schemaManager.isExpressionBinding(value)) {
-      propsString += ` ${convertEventName(key)}="${transformExpressionValue(value.value)}"`
+      propsString += ` ${convertExpressionBindingPropName(key, schemaNode, ignoreKeys)}="${transformExpressionValue(
+        value.value
+      )}"`
 
       return propsString
     }

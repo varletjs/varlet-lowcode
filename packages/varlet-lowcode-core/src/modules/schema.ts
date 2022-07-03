@@ -59,6 +59,7 @@ export interface SchemaNode {
   if?: SchemaNodeBinding
   for?: SchemaNodeBinding
   key?: SchemaNodeBinding
+  models?: string[]
   _item?: Record<string, any>
   _index?: Record<string, any>
   _slotProps?: Record<string, any>

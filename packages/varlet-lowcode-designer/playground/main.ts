@@ -8,6 +8,7 @@ schemaManager.importSchema({
   name: BuiltInSchemaNodeNames.PAGE,
   code: `\
 function setup() {
+  const value = ref('')
   const count = ref(1)
   const doubleCount = computed(() => count.value * 2)
   const num = 100
@@ -24,6 +25,7 @@ function setup() {
   })
 
   return {
+    value,
     record,
     count,
     doubleCount,
@@ -41,6 +43,7 @@ function setup() {
           library: 'Varlet',
           props: {
             type: 'primary',
+            style: schemaManager.createObjectBinding({ marginTop: '20px' }),
             onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
           },
           slots: {
@@ -49,11 +52,21 @@ function setup() {
                 {
                   id: schemaManager.generateId(),
                   name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: schemaManager.createExpressionBinding('record.value'),
+                  textContent: schemaManager.createExpressionBinding('value.value'),
                 },
               ],
             },
           },
+        },
+        {
+          id: schemaManager.generateId(),
+          name: 'Input',
+          library: 'Varlet',
+          props: {
+            modelValue: schemaManager.createExpressionBinding('value.value'),
+            'onUpdate:modelValue': schemaManager.createExpressionBinding('(_value) => { value.value = _value }'),
+          },
+          models: ['modelValue'],
         },
       ],
     },
