@@ -36,15 +36,14 @@ export default defineComponent({
         document.body?.addEventListener('click', clickFn)
         eventsManager.on('designer-iframe-click', clickFn)
       } else {
-        document.body?.removeEventListener('click', clickFn)
-        eventsManager.off('designer-iframe-click', clickFn)
+        clickFn()
       }
     }
+
     const clickFn = () => {
       isShow.value = false
       document.body?.removeEventListener('click', clickFn)
       eventsManager.off('designer-iframe-click', clickFn)
-      console.log(1132465)
     }
 
     return () => {
@@ -56,7 +55,12 @@ export default defineComponent({
           <Teleport to="body">
             <div>
               {isShow.value ? (
-                <div class="varlet-lowCode-popover-content" id="lowCode-popover" style={popoverStyle}>
+                <div
+                  class="varlet-lowCode-popover-content"
+                  id="lowCode-popover"
+                  style={popoverStyle}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {slots.chaoren ? slots.chaoren() : null}
                 </div>
               ) : null}
