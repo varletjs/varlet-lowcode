@@ -13,6 +13,7 @@ import '@varlet/ui/es/button/style/index.js'
 import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
 
 const vueApis = [
+  'h',
   'ref',
   'reactive',
   'computed',

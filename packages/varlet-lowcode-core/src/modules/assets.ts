@@ -61,6 +61,8 @@ export interface AssetsManager {
 
   loadResources(assets: Assets, document: Document, excludeProfileResource?: boolean): Promise<void>
 
+  unloadResources(assets: Assets, document: Document): void
+
   importAssets(assets: Assets): Assets
   importAssets(assets: Assets, payload?: any): Assets
 
@@ -208,6 +210,36 @@ export function createAssetsManager(): AssetsManager {
     await Promise.all(asyncTasks)
   }
 
+  function unloadResources(assets: Assets, document: Document) {
+    function unloadResource(resource: string) {
+      if (resource.endsWith('.css')) {
+        const element = document.querySelector(`link[href="${resource}"]`)
+
+        if (element) {
+          document.head.removeChild(element)
+        }
+      } else {
+        const element = document.querySelector(`script[src="${resource}"]`)
+
+        if (element) {
+          document.body.removeChild(element)
+        }
+      }
+    }
+
+    for (const asset of assets) {
+      if (asset.additionResources) {
+        for (const resource of asset.additionResources) {
+          unloadResource(resource)
+        }
+      }
+
+      if (asset.profileResource) {
+        unloadResource(asset.profileResource)
+      }
+    }
+  }
+
   function importAssets(assets: Assets) {
     _assets = JSON.parse(JSON.stringify(assets))
 
@@ -230,6 +262,8 @@ export function createAssetsManager(): AssetsManager {
     getProfiles,
 
     loadResources,
+
+    unloadResources,
 
     importAssets,
 

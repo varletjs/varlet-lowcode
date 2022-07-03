@@ -101,7 +101,7 @@ export type SchemaPageNodeDataSourceMethod =
   | 'put'
   | 'putJSON'
   | 'putMultipart'
-  | 'path'
+  | 'patch'
   | 'patchJSON'
   | 'patchMultipart'
 

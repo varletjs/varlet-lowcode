@@ -57,6 +57,7 @@ import type { Assets } from '@varlet/lowcode-core'
       todoItems,
       handleInsert,
       handleConfirm,
+      age: '88888888'
     }
   }
 `
@@ -68,8 +69,6 @@ import type { Assets } from '@varlet/lowcode-core'
   const schema = {
     id: schemaManager.generateId(),
     name: BuiltInSchemaNodeNames.PAGE,
-    functions: ['handleInsert', 'handleConfirm'],
-    variables: ['show', 'inputValue', 'todoItems'],
     code,
     slots: {
       default: {
@@ -198,9 +197,53 @@ import type { Assets } from '@varlet/lowcode-core'
 
   await assetsManager.loadResources(assets, document)
 
-  createApp(Renderer, {
-    mode: 'designer',
+  const app = createApp(Renderer, {
     schema,
     assets,
-  }).mount('#app')
+  })
+
+  app.mount('#app')
+
+  // test unmount
+  Object.assign(window, {
+    async unmount() {
+      app.unmount()
+      assetsManager.unloadResources(assets, document)
+
+      await assetsManager.loadResources(assets, document)
+
+      const schema = {
+        id: schemaManager.generateId(),
+        name: BuiltInSchemaNodeNames.PAGE,
+        slots: {
+          default: {
+            children: [
+              {
+                name: 'Button',
+                library: 'Varlet',
+                props: {
+                  type: 'success',
+                },
+                slots: {
+                  default: {
+                    children: [
+                      {
+                        name: BuiltInSchemaNodeNames.TEXT,
+                        textContent: 'ok!!!',
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      createApp(Renderer, {
+        schema,
+        assets,
+      }).mount('#app')
+    },
+  })
 })()

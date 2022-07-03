@@ -23,13 +23,7 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import {
-  assetsManager,
-  BuiltInSchemaNodeNames,
-  BuiltInSchemaNodeBindingTypes,
-  schemaManager,
-  SchemaPageNodeDataSource,
-} from '@varlet/lowcode-core'
+import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
@@ -141,7 +135,9 @@ export default defineComponent({
   },
 
   setup(props) {
-    Object.assign(window, {
+    const hoistedApis: string[] = []
+    const builtInApis = {
+      h,
       ref,
       reactive,
       computed,
@@ -164,7 +160,9 @@ export default defineComponent({
       onUnmounted,
       axle,
       useDataSources: createDataSources(props.schema.dataSources ?? []),
-    })
+    }
+
+    hoistWindow(builtInApis)
 
     const code = `(() => { ${
       props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
@@ -200,8 +198,25 @@ export default defineComponent({
       return JSON.parse(JSON.stringify(schemaNode))
     }
 
-    function hoistWindow() {
-      Object.assign(window, ctx)
+    function hoistWindow(apis: any, checkBuiltIn = false) {
+      Object.keys(apis).forEach((name: string) => {
+        if (name in window) {
+          throw new Error(`Property [${name}] is the built-in api of window, please replace the property name`)
+        }
+
+        if (checkBuiltIn && builtInApis.hasOwnProperty(name)) {
+          throw new Error(`Property [${name}] is the built-in api of varlet low-code, please replace the property name`)
+        }
+
+        Object.assign(window, { [name]: apis[name] })
+        hoistedApis.push(name)
+      })
+    }
+
+    function restoreWindow() {
+      hoistedApis.forEach((name) => {
+        Reflect.deleteProperty(window, name)
+      })
     }
 
     function hasScopedVariables(expression: string) {
@@ -389,10 +404,13 @@ export default defineComponent({
       return {}
     }
 
-    hoistWindow()
+    hoistWindow(ctx, true)
     setDndDisabledStyle()
 
-    onUnmounted(uninstallDndDisabledStyle)
+    onUnmounted(() => {
+      uninstallDndDisabledStyle()
+      restoreWindow()
+    })
 
     return () => h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },

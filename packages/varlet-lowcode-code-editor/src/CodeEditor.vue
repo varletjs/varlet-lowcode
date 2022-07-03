@@ -32,6 +32,7 @@ function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
 
 function createApiSuggestions(range: IRange) {
   return [
+    'h',
     'ref',
     'reactive',
     'computed',
