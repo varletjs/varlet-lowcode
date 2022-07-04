@@ -1,5 +1,5 @@
 import type { DefineComponent, Ref } from 'vue'
-import { computed, defineComponent, ref, watch, Teleport, reactive } from 'vue'
+import { computed, defineComponent, ref, watch, Teleport } from 'vue'
 import { AppBar, Icon, Space, Skeleton, Ripple } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import { getTop } from './shared'
