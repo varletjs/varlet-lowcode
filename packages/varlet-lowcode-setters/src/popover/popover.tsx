@@ -5,6 +5,7 @@ import './popover.less'
 export default defineComponent({
   setup(props, { slots }) {
     const isShow = ref(false)
+    const classNameAfter = ref('')
     const popoverStyle = reactive({
       position: 'absolute',
       zIndex: '9999',
@@ -23,16 +24,29 @@ export default defineComponent({
       isShow.value = !isShow.value
       await nextTick()
       if (isShow.value) {
-        const { clientX } = e
-        const { clientY } = e
-        // const { top, bottom, left, right } = document.getElementById('lowCode-popover')?.getBoundingClientRect() || { top: 0, bottom: 0, left: 0, right: 0 }
+        const { x, y, width, height } = e.target.getBoundingClientRect()
         const domWidth = document.getElementById('lowCode-popover')?.offsetWidth || 0
         const domHeight = document.getElementById('lowCode-popover')?.offsetHeight || 0
-        popoverStyle.left = clientX - domWidth + 'px'
-        popoverStyle.top = clientY - domHeight + 'px'
+        console.log(y, domHeight)
+        popoverStyle.left = x - domWidth + width / 2 + 'px'
+        popoverStyle.top = y - domHeight - 12 + 'px'
+        classNameAfter.value = 'varlet-lowCode-popover-bottom-right'
+
+        await nextTick()
+        const { top, bottom, left, right } = document.getElementById('lowCode-popover')?.getBoundingClientRect() || {
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }
+        if (top < 0) {
+          popoverStyle.left = x - domWidth + width / 2 + 'px'
+          popoverStyle.top = y + 12 + height + 'px'
+          classNameAfter.value = 'varlet-lowCode-popover-top-right'
+          console.log(bottom, left, right)
+        }
+
         popoverStyle.opacity = 100
-        // console.log(document.getElementById('lowCode-popover')?.getBoundingClientRect(), '213456')
-        // if (top > 0)
         document.body?.addEventListener('click', clickFn)
         eventsManager.on('designer-iframe-click', clickFn)
       } else {
@@ -56,12 +70,12 @@ export default defineComponent({
             <div>
               {isShow.value ? (
                 <div
-                  class="varlet-lowCode-popover-content"
+                  class={`varlet-lowCode-popover-content ${classNameAfter.value}`}
                   id="lowCode-popover"
                   style={popoverStyle}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {slots.chaoren ? slots.chaoren() : null}
+                  {slots.content ? slots.content() : null}
                 </div>
               ) : null}
             </div>

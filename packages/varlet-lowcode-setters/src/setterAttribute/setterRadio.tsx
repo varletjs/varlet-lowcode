@@ -4,7 +4,7 @@ import '@varlet/ui/es/radio/style/index.js'
 import '@varlet/ui/es/radio-group/style/index.js'
 
 export default defineComponent({
-  name: 'StyleRadio',
+  name: 'SetterRadio',
   props: {
     modelValue: {
       type: [String, Number, Boolean],

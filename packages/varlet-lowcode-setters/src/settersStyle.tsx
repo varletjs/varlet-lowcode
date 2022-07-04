@@ -9,6 +9,8 @@ import {
   Slider as VarSlider,
 } from '@varlet/ui'
 import SetterRadio from './setterAttribute/setterRadio'
+import SetterSelect from './setterAttribute/setterSelect'
+import SetterPosition from './setterAttribute/setterPosition'
 import Popover from './popover/popover'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
@@ -22,38 +24,66 @@ import '@varlet/ui/es/input/style/index.js'
 import '@varlet/ui/es/slider/style/index.js'
 import './settersStyle.less'
 
+const positionOptions = [
+  { value: 'static', label: 'static' },
+  { value: 'relative', label: 'relative' },
+  { value: 'absolute', label: 'absolute' },
+  { value: 'fixed', label: 'fixed' },
+  { value: 'sticky', label: 'sticky' },
+]
+const optionsBg = [
+  { value: '颜色填充', label: 0 },
+  { value: '背景图片', label: 1 },
+]
+const options = [
+  {
+    value: 'inline',
+    label: 'inline',
+  },
+  {
+    value: 'flex',
+    label: 'flex',
+  },
+  {
+    value: 'block',
+    label: 'block',
+  },
+  {
+    value: 'inline-block',
+    label: 'inline-block',
+  },
+  {
+    value: 'none',
+    label: 'none',
+  },
+]
+const floatOptions = [
+  { value: '不浮动 none', label: 'none' },
+  { value: '左浮动 left', label: 'left' },
+  { value: '右浮动 right', label: 'right' },
+]
+const clearOptions = [
+  { value: '不清除 none', label: 'none' },
+  { value: '左清除 left', label: 'left' },
+  { value: '右清除 right', label: 'right' },
+  { value: '全部清除 both', label: 'both' },
+]
+
 export default defineComponent({
   name: 'SettersStyle',
   setup() {
     const pureColor = ref('#71afe5')
-    const values = ref(['2'])
-    const options = [
-      {
-        value: 'inline',
-        label: 'inline',
-      },
-      {
-        value: 'flex',
-        label: 'flex',
-      },
-      {
-        value: 'block',
-        label: 'block',
-      },
-      {
-        value: 'inline-block',
-        label: 'inline-block',
-      },
-      {
-        value: 'none',
-        label: 'none',
-      },
-    ]
+    const values = ref(['4'])
     const formData = reactive({
       opacity: 50,
       textAlign: 'center',
       disable: '',
       fontWeight: '200',
+      background: '',
+      backgroundIndex: 0,
+      position: '',
+      float: '',
+      clear: '',
     })
     const isReady = ref(false)
     const childrenSlot = reactive({
@@ -67,7 +97,7 @@ export default defineComponent({
           />
         )
       },
-      chaoren: () => <ColorPicker v-model:pureColor={pureColor.value} isWidget />,
+      content: () => <ColorPicker v-model:pureColor={pureColor.value} isWidget />,
     })
 
     const RenderContent = () => {
@@ -178,6 +208,55 @@ export default defineComponent({
                 <div class="style-field-body-title">文字颜色:</div>
                 <div class="style-field-body-content">
                   <Popover v-slots={childrenSlot}></Popover>
+                </div>
+              </div>
+            </VarCollapseItem>
+            <VarCollapseItem title="背景" name="3">
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title">背景类型:</div>
+                <div class="style-field-body-content">
+                  <SetterRadio v-model={formData.backgroundIndex} options={optionsBg} />
+                </div>
+              </div>
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title"></div>
+                <div class="style-field-body-content">
+                  {formData.backgroundIndex === 0 ? (
+                    <Popover v-slots={childrenSlot}></Popover>
+                  ) : (
+                    <VarInput placeholder="请输入链接" v-model={formData.background} />
+                  )}
+                </div>
+              </div>
+            </VarCollapseItem>
+            <VarCollapseItem title="定位" name="4">
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title style-field-body-title-transform">定位类型:</div>
+                <div class="style-field-body-content">
+                  <SetterSelect v-model={formData.position} options={positionOptions} attr={{ clearable: true }} />
+                </div>
+              </div>
+              <div class="style-field-body">
+                <div class="style-field-body-content">
+                  <SetterPosition />
+                </div>
+              </div>
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title">叠成顺序:</div>
+                <div class="style-field-body-content">
+                  <VarCounter />
+                </div>
+              </div>
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title style-field-body-title-transform">浮动方向:</div>
+                <div class="style-field-body-content">
+                  <SetterSelect v-model={formData.float} options={floatOptions} attr={{ clearable: true }} />
+                </div>
+              </div>
+              <div class="style-field-body style-field-body-flex">
+                <div class="style-field-body-title style-field-body-title-transform">清除:</div>
+                <div class="style-field-body-content">
+                  <SetterSelect v-model={formData.clear} options={clearOptions} attr={{ clearable: true }} />
                 </div>
               </div>
             </VarCollapseItem>
