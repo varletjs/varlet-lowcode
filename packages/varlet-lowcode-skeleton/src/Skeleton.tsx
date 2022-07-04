@@ -71,7 +71,7 @@ export default defineComponent({
             {_plugins.map((plugin: SkeletonPlugin) => {
               const { icon: iconName, name } = plugin
               return (
-                <div>
+                <>
                   <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} avatar rows="0" />
                   <div
                     v-ripple
@@ -90,7 +90,7 @@ export default defineComponent({
                       <iconName />
                     )}
                   </div>
-                </div>
+                </>
               )
             })}
           </div>
@@ -151,8 +151,8 @@ export default defineComponent({
 
                 const RenderLabel: () => JSX.Element = () => {
                   return (
-                    <Space justify="space-between">
-                      {plugin?.label && <div>{plugin?.label}</div>}
+                    <Space justify="space-between" class="skeleton__sidebar-component-label">
+                      <h2>{plugin?.label || ''}</h2>
                       <Icon
                         onClick={() => {
                           sidebarPinned.value = !sidebarPinned.value
