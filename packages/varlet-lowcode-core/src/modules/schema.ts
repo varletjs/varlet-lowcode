@@ -124,6 +124,7 @@ export interface SchemaPageNode extends SchemaNode {
   setupReturnDeclarations?: SchemaPageNodeSetupReturnDeclarations
   code?: string
   compatibleCode?: string
+  css?: string
   dataSources?: SchemaPageNodeDataSource[]
 }
 

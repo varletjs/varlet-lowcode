@@ -19,20 +19,24 @@ let schema = schemaManager.exportSchema()
 const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
 
 const code: Ref<string> = ref(schema.code ?? NOOP_SETUP)
+const css: Ref<string> = ref(schema.css ?? '')
 const active: Ref<string> = ref('js')
 
 function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
-  if (newSchema.code !== code.value) {
-    code.value = newSchema.code ?? NOOP_SETUP
+  schema = newSchema
 
-    if (payload?.emitter === 'schema-editor') {
-      return
-    }
-
-    parseCode()
+  if (css.value !== newSchema.css) {
+    css.value = newSchema.css ?? ''
   }
 
-  schema = newSchema
+  if (payload?.emitter === 'schema-editor') {
+    return
+  }
+
+  if (code.value !== newSchema.code) {
+    code.value = newSchema.code ?? NOOP_SETUP
+    saveCode()
+  }
 }
 
 function createApiSuggestions(range: IRange) {
@@ -71,7 +75,7 @@ function createApiSuggestions(range: IRange) {
   })
 }
 
-function parseCode() {
+function saveCode() {
   try {
     const compatibleCode = transformCompatibleCode(code.value)
     const { returnDeclarations } = traverseFunction(code.value)
@@ -87,9 +91,16 @@ function parseCode() {
   }
 }
 
+function saveCss() {
+  schemaManager.importSchema({
+    ...schema,
+    css: css.value,
+  })
+}
+
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
-onMounted(parseCode)
+onMounted(saveCode)
 
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
@@ -104,10 +115,10 @@ onUnmounted(() => {
 
   <var-tabs-items class="varlet-low-code-code-editor__tabs-items" :can-swipe="false" v-model:active="active">
     <var-tab-item name="js">
-      <monaco v-model:code="code" :create-suggestions="createApiSuggestions" :height="'400px'" @save="parseCode" />
+      <monaco v-model:code="code" :create-suggestions="createApiSuggestions" height="400px" @save="saveCode" />
     </var-tab-item>
     <var-tab-item name="css">
-      <monaco v-model:code="code" :create-suggestions="createApiSuggestions" :height="'400px'" @save="parseCode" />
+      <monaco v-model:code="css" language="css" height="400px" @save="saveCss" />
     </var-tab-item>
   </var-tabs-items>
 </template>
@@ -119,6 +130,7 @@ onUnmounted(() => {
   }
 
   &__tabs-items {
+    width: 600px;
     margin-top: 16px;
   }
 }

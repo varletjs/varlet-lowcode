@@ -170,6 +170,26 @@ export default defineComponent({
     const setup = exec(code)
     const ctx = setup()
 
+    function mountCss() {
+      if (!props.schema.css) {
+        return
+      }
+
+      const style = document.createElement('style')
+      style.innerHTML = props.schema.css
+      style.id = 'varlet-low-code-css'
+
+      document.head.appendChild(style)
+    }
+
+    function unmountCss() {
+      const style = document.querySelector('#varlet-low-code-css')
+
+      if (style) {
+        document.head.removeChild(style)
+      }
+    }
+
     function setDndDisabledStyle() {
       const styles = document.createElement('style')
       const styleSheet = `
@@ -399,9 +419,12 @@ export default defineComponent({
     hoistWindow(ctx, true)
     setDndDisabledStyle()
 
+    onMounted(mountCss)
+
     onUnmounted(() => {
       uninstallDndDisabledStyle()
       restoreWindow()
+      unmountCss()
     })
 
     return () =>

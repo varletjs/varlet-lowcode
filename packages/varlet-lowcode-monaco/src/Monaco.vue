@@ -7,11 +7,14 @@ const props = defineProps({
   code: {
     type: String,
   },
+  width: {
+    type: String,
+  },
   height: {
     type: String,
   },
   language: {
-    type: String as PropType<'javascript' | 'json'>,
+    type: String as PropType<'javascript' | 'json' | 'css'>,
     default: 'javascript',
   },
   createSuggestions: {
@@ -91,5 +94,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="editorContainer" class="varlet-low-code-monaco" :style="{ height }"></div>
+  <div ref="editorContainer" class="varlet-low-code-monaco" :style="{ width, height }"></div>
 </template>

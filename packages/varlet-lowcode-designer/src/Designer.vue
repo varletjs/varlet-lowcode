@@ -32,16 +32,23 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
 
   schema = newSchema
 
-  if (renderer) {
-    if (
-      oldSchema?.code !== schema.code ||
-      JSON.stringify(oldSchema.dataSources ?? []) !== JSON.stringify(schema.dataSources ?? [])
-    ) {
-      await mountRenderer()
-    } else {
-      renderer.schema.value = schema
-    }
+  if (!renderer) {
+    return
   }
+
+  if (
+    oldSchema?.code !== schema.code ||
+    JSON.stringify(oldSchema.dataSources ?? []) !== JSON.stringify(schema.dataSources ?? [])
+  ) {
+    await mountRenderer()
+    return
+  }
+
+  if (schema.css && oldSchema?.css !== schema.css) {
+    patchIframeCss(schema.css)
+  }
+
+  renderer.schema.value = schema
 })
 
 eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
@@ -51,6 +58,26 @@ eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
     await mountRenderer()
   }
 })
+
+function patchIframeCss(css: string) {
+  if (!iframeElement) {
+    return
+  }
+
+  const iframeDocument = iframeElement.contentDocument!
+
+  let style = iframeDocument!.querySelector('#varlet-low-code-css')
+
+  if (!style) {
+    style = iframeDocument.createElement('style')
+    style.id = 'varlet-low-code-css'
+    style.innerHTML = css
+    iframeDocument.head.appendChild(style)
+    return
+  }
+
+  style.innerHTML = css
+}
 
 function mountIframe() {
   iframeElement = container.value!.querySelector('iframe')
