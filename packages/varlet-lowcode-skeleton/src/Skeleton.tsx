@@ -1,6 +1,6 @@
 import type { DefineComponent, Ref } from 'vue'
-import { computed, defineComponent, ref, watch, Teleport } from 'vue'
-import { AppBar, Icon, Space, Skeleton, Ripple } from '@varlet/ui'
+import { computed, defineComponent, ref, Teleport, watch } from 'vue'
+import { AppBar, Icon, Ripple, Skeleton, Space } from '@varlet/ui'
 import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import { getTop } from './shared'
 import '@varlet/ui/es/app-bar/style/index.js'
@@ -62,8 +62,8 @@ export default defineComponent({
         throw new Error(`${layout} is not a valid layout`)
       }
 
-      let rows = 10
-      let rowsWidth = ['100%']
+      let rows = 1
+      let rowsWidth = ['30vw']
 
       if (layout.includes('sidebar')) {
         return (
@@ -72,7 +72,10 @@ export default defineComponent({
               const { icon: iconName, name } = plugin
               return (
                 <>
-                  <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} avatar rows="0" />
+                  <div v-show={Boolean(loading.value)}>
+                    <Skeleton loading={Boolean(loading.value)} avatar rows="0" />
+                  </div>
+
                   <div
                     v-ripple
                     ref={(el) => sidebarRef(el, name)}
@@ -97,19 +100,48 @@ export default defineComponent({
         )
       }
 
-      if (layout.includes('header')) {
-        rows = 1
-        rowsWidth = ['30vw']
-      }
+      if (layout === SkeletonLayouts.SETTERS) {
+        if (_plugins.length > 1) {
+          console.warn(`SkeletonLayouts.SETTERS expects to use only one plugin and only display the first one!`)
+        }
 
-      if (layout.includes('setters')) {
+        const Component = _plugins[0]!.component as DefineComponent
         rows = 20
         rowsWidth = ['200px']
+
+        return (
+          <>
+            <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} {...{ rows, rowsWidth }} />
+
+            <Component v-show={Boolean(!loading.value)} />
+          </>
+        )
+      }
+
+      if (layout === SkeletonLayouts.DESIGNER) {
+        if (_plugins.length > 1) {
+          console.warn(`SkeletonLayouts.DESIGNER expects to use only one plugin and only display the first one!`)
+        }
+
+        rows = 10
+        rowsWidth = ['100%']
+
+        const Component = _plugins[0]!.component as DefineComponent
+
+        return (
+          <>
+            <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} {...{ rows, rowsWidth }} />
+
+            <Component v-show={Boolean(!loading.value)} />
+          </>
+        )
       }
 
       return (
         <>
-          <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} {...{ rows, rowsWidth }} />
+          <div v-show={Boolean(loading.value)}>
+            <Skeleton loading={Boolean(loading.value)} {...{ rows, rowsWidth }} />
+          </div>
 
           <Space v-show={Boolean(!loading.value)}>
             {_plugins.map((_plugin) => {

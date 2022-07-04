@@ -46,6 +46,11 @@ pluginsManager
     component: Designer,
   })
   .useSkeletonPlugin({
+    layout: SkeletonLayouts.DESIGNER,
+    name: 'dd',
+    component: Designer,
+  })
+  .useSkeletonPlugin({
     layout: SkeletonLayouts.SIDEBAR_TOP,
     icon: 'star',
     name: '4',
@@ -68,6 +73,11 @@ pluginsManager
   .useSkeletonPlugin({
     layout: SkeletonLayouts.SETTERS,
     name: 's',
+    component: SETTERS,
+  })
+  .useSkeletonPlugin({
+    layout: SkeletonLayouts.SETTERS,
+    name: 'sss',
     component: SETTERS,
   })
 
