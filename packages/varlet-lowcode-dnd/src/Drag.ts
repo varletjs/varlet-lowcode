@@ -16,20 +16,20 @@ interface DragHTMLElement extends HTMLElement {
 }
 
 function dragCanvasImg(name: string): HTMLImageElement {
-  const oGrayImg = new Image();
+  const oGrayImg = new Image()
   const newCanvas = document.createElement('canvas')
   newCanvas.setAttribute('width', `500px`)
   newCanvas.setAttribute('height', `200px`)
-  const ctx = newCanvas.getContext("2d")
+  const ctx = newCanvas.getContext('2d')
   ctx!.fillStyle = 'red'
   ctx!.fillRect(0, 0, 100, 30)
 
-  ctx!.font = "12px Arial"
+  ctx!.font = '12px Arial'
   ctx!.fillStyle = 'green'
   ctx!.textAlign = 'center'
   ctx!.fillText(name, 50, 20)
 
-  oGrayImg.src = newCanvas.toDataURL("image/png")
+  oGrayImg.src = newCanvas.toDataURL('image/png')
 
   return oGrayImg
 }
@@ -98,7 +98,9 @@ function mounted(el: DragHTMLElement, props: DirectiveBinding<DragOptions>) {
   el.addEventListener('dragend', onDragEnd, { passive: false })
 }
 
-function unmounted(el: HTMLElement) {
+function unmounted(el: DragHTMLElement) {
+  el._drag = undefined
+
   el.removeEventListener('dragstart', onDragStart)
   el.removeEventListener('dragenter', onDragEnter)
   el.removeEventListener('dragover', onDragOver)

@@ -268,47 +268,37 @@ export default defineComponent({
         return rawProps
       }, {} as RawProps)
 
+      rawProps.id = `dragItem${schemaNode.id}`
+
       return rawProps
     }
 
     function withDesigner(schemaNode: SchemaNode) {
       const keyBinding = getBindingValue(schemaNode.key, schemaNode)
+      const propsBinding = getPropsBinding(schemaNode)
 
-      if (props.mode === 'designer') {
-        const directives: DirectiveArguments = [
-          [Drag, { dragData: schemaNode }],
-          [Drop, { dragData: schemaNode }],
-        ]
+      const classes = isArray(propsBinding.class)
+        ? propsBinding.class
+        : isString(propsBinding.class)
+        ? propsBinding.class.split(' ')
+        : []
 
-        if (schemaManager.isSchemaPageNode(schemaNode)) {
-          directives.shift()
-          directives.push([DragOver, []])
-        }
+      const directives: DirectiveArguments = props.mode === 'designer' ? [[Drag, { dragData: schemaNode }], [Drop]] : []
 
-        const propsBinding = getPropsBinding(schemaNode)
+      props.mode === 'designer' && classes.push('varlet-low-code--disable-events')
 
-        const classes = isArray(propsBinding.class)
-          ? propsBinding.class
-          : isString(propsBinding.class)
-          ? propsBinding.class.split(' ')
-          : []
-
-        classes.push('varlet-low-code--disable-events')
-
-        return withDirectives(
-          h(
-            getComponent(schemaNode.name, schemaNode.library!),
-            { ...propsBinding, class: classes, key: keyBinding },
-            renderSchemaNodeSlots(schemaNode)
-          ),
-          directives
-        )
+      if (schemaManager.isSchemaPageNode(schemaNode)) {
+        directives.shift()
+        directives.push([DragOver, []])
       }
 
-      return h(
-        getComponent(schemaNode.name, schemaNode.library!),
-        { ...getPropsBinding(schemaNode), key: keyBinding },
-        renderSchemaNodeSlots(schemaNode)
+      return withDirectives(
+        h(
+          getComponent(schemaNode.name, schemaNode.library!),
+          { ...propsBinding, class: classes, key: keyBinding },
+          renderSchemaNodeSlots(schemaNode)
+        ),
+        directives
       )
     }
 
@@ -414,6 +404,10 @@ export default defineComponent({
       restoreWindow()
     })
 
-    return () => h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
+    return () =>
+      withDirectives(
+        h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)),
+        props.mode === 'designer' ? [[Drop], [DragOver]] : []
+      )
   },
 })

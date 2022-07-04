@@ -25,7 +25,7 @@ export interface DragOverOption {
 let nodeComputedStyles: DomRectInfo[] | undefined
 
 function getDomRectInfo(): DomRectInfo[] {
-  const list = Array.from(document.querySelectorAll('.drop-item'))
+  const list = Array.from(document.querySelectorAll('.varlet-low-code--disable-events'))
 
   if (!list || list.length === 0) return []
 
@@ -137,6 +137,7 @@ function renderBorder(nearestNodeInfo: NearestOptions) {
 
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLElement
   const nearestDom = document.querySelector(`#${id}`)
+
   const nearestStyle = nearestDom?.getBoundingClientRect()
 
   const distance: Partial<CSSStyleDeclaration> = {

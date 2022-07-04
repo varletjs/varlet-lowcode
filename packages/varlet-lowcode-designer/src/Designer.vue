@@ -61,6 +61,9 @@ function mountIframe() {
 
   iframeElement = document.createElement('iframe')
   iframeElement.frameBorder = 'none'
+  iframeElement.style.border = '1px solid black'
+  iframeElement.style.width = '375px'
+  iframeElement.style.height = '667px'
   container.value!.appendChild(iframeElement)
   iframeElement.contentWindow!.name = 'rendererWindow'
 }
@@ -81,6 +84,7 @@ async function mountRenderer() {
     eventsManager.emit('designer-iframe-click', event)
   })
 
+  renderer.mode = 'designer'
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
