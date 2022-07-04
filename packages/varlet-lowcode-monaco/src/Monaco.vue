@@ -42,6 +42,7 @@ onMounted(() => {
   editorInstance = monaco.editor.create(editorContainer.value!, {
     value: props.code,
     language: props.language,
+    automaticLayout: true,
     minimap: {
       enabled: false,
     },

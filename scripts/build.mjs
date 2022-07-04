@@ -11,7 +11,9 @@ const PKG_PROFILE = resolve(CWD, './packages/varlet-lowcode-profile')
 const PKG_RENDERER = resolve(CWD, './packages/varlet-lowcode-renderer')
 const PKG_AST = resolve(CWD, './packages/varlet-lowcode-ast')
 const PKG_CODEGEN = resolve(CWD, './packages/varlet-lowcode-codegen')
+const PKG_MONACO = resolve(CWD, './packages/varlet-lowcode-monaco')
 const PKG_CODE_EDITOR = resolve(CWD, './packages/varlet-lowcode-code-editor')
+const PKG_SCHEMA_EDITOR = resolve(CWD, './packages/varlet-lowcode-schema-editor')
 
 export const buildCli = () => execa('pnpm', ['build'], { cwd: PKG_CLI })
 
@@ -29,7 +31,11 @@ export const buildAst = () => execa('pnpm', ['compile'], { cwd: PKG_AST })
 
 export const buildCodegen = () => execa('pnpm', ['compile'], { cwd: PKG_CODEGEN })
 
+export const buildMonaco = () => execa('pnpm', ['compile'], { cwd: PKG_MONACO })
+
 export const buildCodeEditor = () => execa('pnpm', ['compile'], { cwd: PKG_CODE_EDITOR })
+
+export const buildSchemaEditor = () => execa('pnpm', ['compile'], { cwd: PKG_SCHEMA_EDITOR })
 
 export async function runTask(taskName, task) {
   const s = ora().start(`Building ${taskName}`)
