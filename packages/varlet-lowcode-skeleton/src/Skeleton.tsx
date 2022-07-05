@@ -1,7 +1,7 @@
 import type { DefineComponent, Ref } from 'vue'
 import { computed, defineComponent, ref, Teleport, watch } from 'vue'
 import { AppBar, Icon, Ripple, Skeleton, Space } from '@varlet/ui'
-import { pluginsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
+import { pluginsManager, eventsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import { getTop } from './shared'
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
@@ -66,6 +66,10 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
   }
 }
 
+export enum SidebarEvents {
+  SIDEBAR_TOGGLE_COMPONENT = 'skeleton-sidebar-toggle-component',
+}
+
 export default defineComponent({
   name: 'Skeleton',
   directives: { ripple: Ripple },
@@ -83,7 +87,7 @@ export default defineComponent({
     const sidebarPinned = ref(false)
     const sidebarActiveComponent: Ref<string | undefined> = ref()
     const sidebarFocusComponent: Ref<SkeletonPlugin | undefined> = ref()
-    const { loading } = useLoading()
+    const { layoutLoadingsComputed } = useLoading()
     const sidebarRefs: Ref<Record<string, HTMLElement>> = ref({})
 
     const sidebarRef = (el: any, pluginName: string) => {
@@ -103,11 +107,9 @@ export default defineComponent({
     })
 
     watch(
-      () => loading.value,
+      () => sidebarActiveComponent.value,
       (newVal) => {
-        if (newVal) {
-          sidebarActiveComponent.value = undefined
-        }
+        eventsManager.emit(SidebarEvents.SIDEBAR_TOGGLE_COMPONENT, { name: newVal })
       }
     )
 
@@ -120,14 +122,12 @@ export default defineComponent({
     }
 
     const renderHeader: () => JSX.Element = () => {
-      const renderPlugins: (_plugins: SkeletonPlugin[]) => JSX.Element = (_plugins) => {
+      const renderPlugins: (_plugins: SkeletonPlugin[], loading: boolean) => JSX.Element = (_plugins, loading) => {
         return (
           <>
-            <div v-show={Boolean(loading.value)}>
-              <Skeleton loading={Boolean(loading.value)} rows="1" rowsWidth={['30vw']} />
-            </div>
+            <Skeleton v-show={loading} loading={loading} rows="1" />
 
-            <Space v-show={Boolean(!loading.value)}>
+            <Space v-show={!loading}>
               {_plugins.map((_plugin) => {
                 const Component = _plugin!.component as DefineComponent
                 return <Component />
@@ -140,30 +140,28 @@ export default defineComponent({
       return (
         <AppBar class="skeleton__header" title-position="center">
           {{
-            left: renderPlugins(headerLeftPlugins),
-            default: renderPlugins(headerCenterPlugins),
-            right: renderPlugins(headerRightPlugins),
+            left: renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.headerLeft),
+            default: renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.headerCenter),
+            right: renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.headerRight),
           }}
         </AppBar>
       )
     }
 
     const renderSideBar: () => JSX.Element = () => {
-      const renderIcons: (_plugins: SkeletonPlugin[]) => JSX.Element = (_plugins) => {
+      const renderIcons: (_plugins: SkeletonPlugin[], loading: boolean) => JSX.Element = (_plugins, loading) => {
         return (
           <div class="skeleton__sidebar--container">
             {_plugins.map((plugin: SkeletonPlugin) => {
               const { icon: iconName, name } = plugin
               return (
                 <>
-                  <div v-show={Boolean(loading.value)}>
-                    <Skeleton loading={Boolean(loading.value)} avatar rows="0" />
-                  </div>
+                  <Skeleton v-show={loading} loading={loading} avatar rows="0" />
 
                   <div
                     v-ripple
                     ref={(el) => sidebarRef(el, name)}
-                    v-show={Boolean(!loading.value)}
+                    v-show={!loading}
                     class={`skeleton__sidebar--item ${
                       name === sidebarActiveComponent.value ? 'skeleton__sidebar--item-selected' : ''
                     }`}
@@ -225,8 +223,8 @@ export default defineComponent({
       return (
         <div class="skeleton__sidebar">
           <div class="skeleton__sidebar--tools">
-            {renderIcons(sidebarTopPlugins)}
-            {renderIcons(sidebarBottomPlugins)}
+            {renderIcons(sidebarTopPlugins, layoutLoadingsComputed.value.sidebarTop)}
+            {renderIcons(sidebarBottomPlugins, layoutLoadingsComputed.value.sidebarBottom)}
             <Teleport to="body">
               {sidebarFocusComponent.value?.label ? (
                 <div style={transitionStyle.value} class="skeleton__sidebar--tooltip">
@@ -254,8 +252,13 @@ export default defineComponent({
 
         return (
           <>
-            <Skeleton v-show={Boolean(loading.value)} loading={Boolean(loading.value)} card rows="0" />
-            <Component v-show={Boolean(!loading.value)} />
+            <Skeleton
+              v-show={layoutLoadingsComputed.value.designer}
+              loading={layoutLoadingsComputed.value.designer}
+              card
+              rows="0"
+            />
+            <Component v-show={!layoutLoadingsComputed.value.designer} />
           </>
         )
       }
@@ -278,13 +281,13 @@ export default defineComponent({
         return (
           <>
             <Skeleton
-              v-show={Boolean(loading.value)}
-              loading={Boolean(loading.value)}
+              v-show={layoutLoadingsComputed.value.setters}
+              loading={layoutLoadingsComputed.value.setters}
               rows="20"
               rowsWidth={['200px']}
             />
 
-            <Component v-show={Boolean(!loading.value)} />
+            <Component v-show={!layoutLoadingsComputed.value.setters} />
           </>
         )
       }

@@ -52,6 +52,26 @@
     .var-skeleton__section {
       padding-top: 0 !important;
     }
+
+    .var-app-bar__left {
+      position: static;
+      flex: auto;
+    }
+
+    .var-app-bar__title {
+      position: static;
+      flex: auto;
+    }
+
+    .var-app-bar__right {
+      position: static;
+      flex: auto;
+    }
+
+    .var-skeleton__row {
+      height: 20px;
+      margin: 0;
+    }
   }
 
   &__content {
@@ -81,6 +101,10 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+
+    .var-skeleton__section {
+      display: none;
+    }
   }
 
   &__sidebar--item {
@@ -202,6 +226,14 @@
 
   &__designer {
     flex: 1;
+
+    .var-skeleton {
+      height: 100%;
+    }
+
+    .var-skeleton__card {
+      height: 100%;
+    }
 
     :last-child {
       width: 100%;
