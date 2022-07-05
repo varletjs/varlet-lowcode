@@ -8,9 +8,8 @@ import {
   Input as VarInput,
   Slider as VarSlider,
 } from '@varlet/ui'
-import SetterRadio from './setterAttribute/setterRadio'
-import SetterSelect from './setterAttribute/setterSelect'
-import SetterPosition from './setterAttribute/setterPosition'
+import { RadioSetter, SelectSetter } from './build-in-setter/index'
+import SetterPosition from './build-in-setter/positon-setter/index'
 import Popover from './popover/popover'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
@@ -82,6 +81,12 @@ export default defineComponent({
       background: '',
       backgroundIndex: 0,
       position: '',
+      positionData: {
+        left: '',
+        top: '',
+        right: '',
+        bottom: '',
+      },
       float: '',
       clear: '',
     })
@@ -108,7 +113,7 @@ export default defineComponent({
               <div class="style-field-body">
                 <div class="style-field-body-title">布局模式</div>
                 <div class="style-field-body-content">
-                  <SetterRadio v-model={formData.disable} options={options} />
+                  <RadioSetter v-model={formData.disable} options={options} />
                 </div>
                 <div class="layout-box-container">
                   <div class="margin-top-div">
@@ -215,7 +220,7 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">背景类型:</div>
                 <div class="style-field-body-content">
-                  <SetterRadio v-model={formData.backgroundIndex} options={optionsBg} />
+                  <RadioSetter v-model={formData.backgroundIndex} options={optionsBg} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
@@ -233,14 +238,17 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title style-field-body-title-transform">定位类型:</div>
                 <div class="style-field-body-content">
-                  <SetterSelect v-model={formData.position} options={positionOptions} attr={{ clearable: true }} />
+                  <SelectSetter v-model={formData.position} options={positionOptions} attr={{ clearable: true }} />
                 </div>
               </div>
-              <div class="style-field-body">
-                <div class="style-field-body-content">
-                  <SetterPosition />
+              {formData.position !== '' && formData.position !== 'static' ? (
+                <div class="style-field-body">
+                  <div class="style-field-body-content">
+                    <SetterPosition v-model={formData.positionData} positionValue={formData.position} />
+                  </div>
                 </div>
-              </div>
+              ) : null}
+
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">叠成顺序:</div>
                 <div class="style-field-body-content">
@@ -250,13 +258,13 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title style-field-body-title-transform">浮动方向:</div>
                 <div class="style-field-body-content">
-                  <SetterSelect v-model={formData.float} options={floatOptions} attr={{ clearable: true }} />
+                  <SelectSetter v-model={formData.float} options={floatOptions} attr={{ clearable: true }} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title style-field-body-title-transform">清除:</div>
                 <div class="style-field-body-content">
-                  <SetterSelect v-model={formData.clear} options={clearOptions} attr={{ clearable: true }} />
+                  <SelectSetter v-model={formData.clear} options={clearOptions} attr={{ clearable: true }} />
                 </div>
               </div>
             </VarCollapseItem>

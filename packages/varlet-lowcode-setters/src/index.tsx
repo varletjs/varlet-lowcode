@@ -3,9 +3,9 @@ import './index.less'
 import HeaderTabs from './settersPlugins/headerTabs'
 import Empty from './empty'
 
-const isDom = ref(false)
+const isSelectDom = ref(false)
 
-isDom.value = true
+isSelectDom.value = true
 export default defineComponent({
   name: 'VarletLowCodeSelector',
   setup() {
@@ -13,9 +13,9 @@ export default defineComponent({
       return (
         <div class="varlet-lowcode-setters">
           <div class="varlet-lowcode-setters-content">
-            {/* {isDom.value ? <HeaderPath /> : null} */}
-            {isDom.value ? <HeaderTabs /> : null}
-            {isDom.value ? null : <Empty />}
+            {/* {isSelectDom.value ? <HeaderPath /> : null} */}
+            {isSelectDom.value ? <HeaderTabs /> : null}
+            {isSelectDom.value ? null : <Empty />}
           </div>
         </div>
       )

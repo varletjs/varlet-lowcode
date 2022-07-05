@@ -1,6 +1,6 @@
 import { defineComponent, ref } from 'vue'
 import { Icon, Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
-import Component from './settersComponent'
+import Component from './build-in-setter/index'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 
@@ -16,7 +16,7 @@ export default defineComponent({
           description: '卡片标题',
           setter: [
             {
-              type: 'SetterInput',
+              type: 'InputSetter',
               value: '789',
             },
           ],
@@ -26,7 +26,7 @@ export default defineComponent({
           description: '是否开启水波',
           setter: [
             {
-              type: 'SetterSwitch',
+              type: 'SwitchSetter',
               value: true,
             },
           ],
@@ -36,7 +36,7 @@ export default defineComponent({
           description: '宽度类型',
           setter: [
             {
-              type: 'SetterRadio',
+              type: 'RadioSetter',
               options: [
                 {
                   value: '自适应',
@@ -53,6 +53,7 @@ export default defineComponent({
         },
       ],
     }
+    console.log(Component, 'Component')
     const values = ref(['1'])
     return () => {
       return (

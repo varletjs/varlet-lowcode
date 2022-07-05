@@ -1,10 +1,10 @@
 import { defineComponent, ref } from 'vue'
 import { Input } from '@varlet/ui'
 import '@varlet/ui/es/input/style/index.js'
-import './styleInput.less'
+import './index.less'
 
 export default defineComponent({
-  name: 'StyleInput',
+  name: 'INPUTSETTER',
   props: {
     modelValue: {
       type: String,

@@ -2,7 +2,7 @@ import { defineComponent, ref } from 'vue'
 import { Select as VarSelect, Option as VarOption } from '@varlet/ui'
 import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
-import './setterSelect.less'
+import './index.less'
 
 export default defineComponent({
   name: 'SetterRadio',
