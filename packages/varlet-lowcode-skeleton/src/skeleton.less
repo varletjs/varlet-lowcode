@@ -11,7 +11,7 @@
 @skeleton-sidebar-item-selected-color: #fd8c73;
 @skeleton-sidebar-item-active-color: #5885dc;
 @skeleton-border-color: #eee;
-@sidebar-component-label-height: 35px;
+@sidebar-component-label-height: 48px;
 @sidebar-component-label-padding: 0 20px;
 
 :root {
@@ -48,6 +48,7 @@
     box-shadow: none;
     border-bottom: 1px solid var(--skeleton-border-color);
     box-sizing: border-box;
+    z-index: 1;
 
     .var-skeleton__section {
       padding-top: 0 !important;
@@ -182,6 +183,7 @@
   &__sidebar-component {
     min-width: 200px;
     position: absolute;
+    z-index: 0;
     left: var(--skeleton-sidebar-left-width);
     height: calc(100% - var(--app-bar-height));
     border-right: 1px solid var(--skeleton-border-color);
@@ -195,12 +197,13 @@
     box-sizing: border-box;
     line-height: var(--sidebar-component-label-height);
     color: var(--skeleton-sidebar-icon-selected-color);
+    background: #fff;
 
     h2 {
       text-transform: uppercase;
       cursor: default;
       display: block;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 400;
     }
 

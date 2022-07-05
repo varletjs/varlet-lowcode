@@ -42,7 +42,7 @@ export function useLoading() {
 
   onUnmounted(() => {
     eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADING, handleLoading)
-    eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADED, handleLoading)
+    eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADED, handleLoaded)
   })
 
   const layoutLoadingsComputed = computed(() => {

@@ -67,7 +67,7 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
 }
 
 export enum SidebarEvents {
-  SIDEBAR_TOGGLE_COMPONENT = 'skeleton-sidebar-toggle-component',
+  SIDEBAR_TOGGLE = 'skeleton-sidebar-toggle',
 }
 
 export default defineComponent({
@@ -109,7 +109,7 @@ export default defineComponent({
     watch(
       () => sidebarActiveComponent.value,
       (newVal) => {
-        eventsManager.emit(SidebarEvents.SIDEBAR_TOGGLE_COMPONENT, { name: newVal })
+        eventsManager.emit(SidebarEvents.SIDEBAR_TOGGLE, { name: newVal })
       }
     )
 
@@ -138,7 +138,7 @@ export default defineComponent({
       }
 
       return (
-        <AppBar class="skeleton__header" title-position="center">
+        <AppBar class="skeleton__header" title-position="center" elevation={false}>
           {{
             left: renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.headerLeft),
             default: renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.headerCenter),
@@ -192,7 +192,7 @@ export default defineComponent({
 
                 const renderLabel: () => JSX.Element = () => {
                   return (
-                    <Space justify="space-between" class="skeleton__sidebar-component-label">
+                    <Space justify="space-between" align="center" class="skeleton__sidebar-component-label">
                       <h2>{plugin?.label || ''}</h2>
                       <Icon
                         onClick={() => {

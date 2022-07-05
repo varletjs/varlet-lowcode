@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as monaco from 'monaco-editor'
-import { ref, Ref, onMounted, onUnmounted, PropType, defineEmits, watch, defineProps } from 'vue'
+import { ref, Ref, onMounted, onUnmounted, PropType, defineEmits, watch, defineProps, defineExpose } from 'vue'
+import theme from 'monaco-themes/themes/Chrome DevTools.json'
 import type { editor, IRange, languages, Position } from 'monaco-editor'
 
 const props = defineProps({
@@ -49,25 +50,34 @@ onMounted(() => {
     minimap: {
       enabled: false,
     },
-    tabSize: 2,
-    scrollbar: {
-      verticalScrollbarSize: 8,
-      horizontalScrollbarSize: 8,
+    padding: {
+      top: 8,
+      bottom: 8,
     },
+    tabSize: 2,
+    lineHeight: 20,
+    scrollbar: {
+      verticalScrollbarSize: 6,
+      horizontalScrollbarSize: 6,
+    },
+    fontFamily: 'Consolas,Monaco,monospace',
   })
 
+  monaco.editor.defineTheme('varlet-low-code', theme as any)
+  monaco.editor.setTheme('varlet-low-code')
+
   editorInstance.onDidFocusEditorText(() => {
-    editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-      emit('save', editorInstance.getValue())
+    editorInstance!.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      emit('save', editorInstance!.getValue())
     })
 
-    editorInstance.addCommand(monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyS, () => {
-      emit('save', editorInstance.getValue())
+    editorInstance!.addCommand(monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyS, () => {
+      emit('save', editorInstance!.getValue())
     })
   })
 
   editorInstance.onDidChangeModelContent(() => {
-    emit('update:code', editorInstance.getValue())
+    emit('update:code', editorInstance!.getValue())
   })
 
   monaco.languages.registerCompletionItemProvider('javascript', {
@@ -90,6 +100,12 @@ onMounted(() => {
 
 onUnmounted(() => {
   editorInstance!.dispose()
+})
+
+defineExpose({
+  getEditorInstance() {
+    return editorInstance
+  },
 })
 </script>
 

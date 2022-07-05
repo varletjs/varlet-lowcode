@@ -88,14 +88,12 @@ function mountIframe() {
 
   iframeElement = document.createElement('iframe')
   iframeElement.frameBorder = 'none'
-  iframeElement.style.border = '1px solid black'
-  iframeElement.style.width = '375px'
-  iframeElement.style.height = '667px'
   container.value!.appendChild(iframeElement)
   iframeElement.contentWindow!.name = 'rendererWindow'
 }
 
 async function mountRenderer() {
+  eventsManager.emit('skeleton-loading', 'designer')
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
@@ -115,6 +113,7 @@ async function mountRenderer() {
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
+  eventsManager.emit('skeleton-loaded', 'designer')
 }
 
 onMounted(async () => {

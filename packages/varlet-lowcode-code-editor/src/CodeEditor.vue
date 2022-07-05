@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import Monaco from '@varlet/lowcode-monaco'
-import { ref, Ref, onUnmounted, onMounted } from 'vue'
+import { ref, Ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
-import { Snackbar, Tabs as VarTabs, Tab as VarTab, TabsItems as VarTabsItems, TabItem as VarTabItem } from '@varlet/ui'
+import {
+  Snackbar,
+  StyleProvider,
+  Tabs as VarTabs,
+  Tab as VarTab,
+  TabsItems as VarTabsItems,
+  TabItem as VarTabItem,
+} from '@varlet/ui'
 import '@varlet/ui/es/snackbar/style/index.js'
 import '@varlet/ui/es/tabs/style/index.js'
 import '@varlet/ui/es/tab/style/index.js'
@@ -11,6 +18,8 @@ import '@varlet/ui/es/tabs-items/style/index.js'
 import '@varlet/ui/es/tab-item/style/index.js'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
 import type { IRange } from 'monaco-editor'
+
+const VarStyleProvider = StyleProvider.Component
 
 const { traverseFunction, transformCompatibleCode } = createAst()
 
@@ -21,6 +30,8 @@ const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
 const code: Ref<string> = ref(schema.code ?? NOOP_SETUP)
 const css: Ref<string> = ref(schema.css ?? '')
 const active: Ref<string> = ref('js')
+const tabs: Ref<any> = ref()
+const tabsItems: Ref<any> = ref()
 
 function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
   schema = newSchema
@@ -37,6 +48,13 @@ function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
     code.value = newSchema.code ?? NOOP_SETUP
     saveCode()
   }
+}
+
+async function handleSkeletonSidebarToggle() {
+  await nextTick()
+
+  tabs.value.resize()
+  tabsItems.value.swipe.resize()
 }
 
 function createApiSuggestions(range: IRange) {
@@ -100,38 +118,50 @@ function saveCss() {
 
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
-onMounted(saveCode)
+onMounted(() => {
+  eventsManager.on('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
+
+  saveCode()
+})
 
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
+  eventsManager.off('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
 })
 </script>
 
 <template>
-  <var-tabs class="varlet-low-code-code-editor__tabs" v-model:active="active">
-    <var-tab name="js">JS</var-tab>
-    <var-tab name="css">CSS</var-tab>
-  </var-tabs>
+  <div class="varlet-low-code-code-editor">
+    <var-style-provider :style-vars="{ '--tab-font-size': '12px' }">
+      <var-tabs ref="tabs" v-model:active="active">
+        <var-tab name="js">JS</var-tab>
+        <var-tab name="css">CSS</var-tab>
+      </var-tabs>
+    </var-style-provider>
 
-  <var-tabs-items class="varlet-low-code-code-editor__tabs-items" :can-swipe="false" v-model:active="active">
-    <var-tab-item name="js">
-      <monaco v-model:code="code" :create-suggestions="createApiSuggestions" height="400px" @save="saveCode" />
-    </var-tab-item>
-    <var-tab-item name="css">
-      <monaco v-model:code="css" language="css" height="400px" @save="saveCss" />
-    </var-tab-item>
-  </var-tabs-items>
+    <var-tabs-items
+      class="varlet-low-code-code-editor__tabs-items"
+      ref="tabsItems"
+      :can-swipe="false"
+      v-model:active="active"
+    >
+      <var-tab-item name="js">
+        <monaco
+          :create-suggestions="createApiSuggestions"
+          height="calc(100vh - 140px)"
+          v-model:code="code"
+          @save="saveCode"
+        />
+      </var-tab-item>
+      <var-tab-item name="css">
+        <monaco language="css" height="calc(100vh - 140px)" v-model:code="css" @save="saveCss" />
+      </var-tab-item>
+    </var-tabs-items>
+  </div>
 </template>
 
 <style lang="less">
 .varlet-low-code-code-editor {
-  &__tabs {
-    width: 180px;
-  }
-
-  &__tabs-items {
-    width: 600px;
-    margin-top: 16px;
-  }
+  width: 500px;
 }
 </style>

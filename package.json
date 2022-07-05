@@ -64,7 +64,9 @@
       "packages/varlet-lowcode-monaco/lib/**",
       "packages/varlet-lowcode-monaco/types/**",
       "packages/varlet-lowcode-schema-editor/lib/**",
-      "packages/varlet-lowcode-schema-editor/types/**"
+      "packages/varlet-lowcode-schema-editor/types/**",
+      "packages/varlet-lowcode-selector/lib/**",
+      "packages/varlet-lowcode-selector/types/**"
     ],
     "rules": {
       "no-new-func": "off",
@@ -129,7 +131,9 @@
       "packages/varlet-lowcode-monaco/lib/**",
       "packages/varlet-lowcode-monaco/types/**",
       "packages/varlet-lowcode-schema-editor/lib/**",
-      "packages/varlet-lowcode-schema-editor/types/**"
+      "packages/varlet-lowcode-schema-editor/types/**",
+      "packages/varlet-lowcode-selector/lib/**",
+      "packages/varlet-lowcode-selector/types/**"
     ]
   },
   "devDependencies": {

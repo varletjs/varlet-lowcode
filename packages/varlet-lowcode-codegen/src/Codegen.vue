@@ -6,13 +6,7 @@ import readme from './template/README.md?raw'
 import JSZip from 'jszip'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import {
-  AssetProfile,
-  AssetsManager,
-  schemaManager,
-  SchemaNodeProps,
-  SchemaPageNodeDataSource,
-} from '@varlet/lowcode-core'
+import { AssetProfile, AssetsManager, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
@@ -544,6 +538,6 @@ const save = async () => {
 
 <template>
   <div class="varlet-low-code-codegen">
-    <var-button type="primary" @click="save">Codegen</var-button>
+    <var-button type="primary" @click="save">出码</var-button>
   </div>
 </template>

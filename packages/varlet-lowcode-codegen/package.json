@@ -34,8 +34,7 @@
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/ui": "latest",
-    "@varlet/touch-emulator": "latest"
+    "@varlet/ui": "latest"
   },
   "browserslist": [
     "Chrome >= 51",
