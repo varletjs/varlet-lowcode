@@ -10,6 +10,7 @@ export default defineComponent({
       border: '2px solid red',
       boxSizing: 'border-box',
       position: 'absolute',
+      pointerEvents: 'none',
     }
     const selectorStyles: Ref<CSSProperties[] | undefined> = ref([])
 
@@ -40,11 +41,14 @@ export default defineComponent({
     })
 
     return () => {
-       return (
-         selectorStyles.value && selectorStyles.value.map((style: CSSProperties, i: number) => {
-          return <div key={Symbol(style.toString())} style={style}>
-            {(style && i === (selectorStyles.value!.length - 1)) && <PluginRender />}
-          </div>
+      return (
+        selectorStyles.value &&
+        selectorStyles.value.map((style: CSSProperties, i: number) => {
+          return (
+            <div key={Symbol(style.toString())} style={style}>
+              {style && i === selectorStyles.value!.length - 1 && <PluginRender />}
+            </div>
+          )
         })
       )
     }

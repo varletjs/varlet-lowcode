@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import Selector from '../src/Selector'
-import Button from './Button.vue';
+import Selector from '../src'
+import Button from './Button.vue'
 import { eventsManager } from '@varlet/lowcode-core'
 
 const onClick = (e: Event) => {
-  console.log("123123", e);
-  
-  eventsManager.emit('schema-click', e?.target?.id || '')
+  eventsManager.emit('schema-click', e?.target.id || '')
 }
-
 </script>
 
 <template>
@@ -24,7 +21,7 @@ const onClick = (e: Event) => {
   </div>
 </template>
 <style scoped>
-.button-groups{
+.button-groups {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
