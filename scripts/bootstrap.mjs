@@ -10,7 +10,8 @@ import {
   buildCodegen,
   buildMonaco,
   buildCodeEditor,
-  buildSchemaEditor
+  buildSchemaEditor,
+  buildSelector
 } from './build.mjs'
 
 await runTask('cli', buildCli)
@@ -24,3 +25,4 @@ await runTask('codegen', buildCodegen)
 await runTask('monaco', buildMonaco)
 await runTask('code-editor', buildCodeEditor)
 await runTask('schema-editor', buildSchemaEditor)
+await runTask('selector', buildSelector)
