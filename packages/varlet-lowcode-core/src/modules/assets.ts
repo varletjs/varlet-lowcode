@@ -39,6 +39,7 @@ export interface AssetProfileMaterialProp {
 
 export interface AssetProfileMaterial {
   name: string
+  label: string
   description?: string
   image?: string
   props?: AssetProfileMaterialProp[]

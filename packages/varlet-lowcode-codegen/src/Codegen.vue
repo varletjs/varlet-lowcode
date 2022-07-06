@@ -283,15 +283,16 @@ import {
   defineComponent,
 ${genVueApis(seenApis)}
 } from 'vue'
-${imports}
-${dataSourcesImport}
+${imports}\
+${dataSourcesImport}\
 
 ${code}
+
 export default defineComponent({
   setup
 })
 <${'/'}script>
-`
+${schema.css ? `\n<style>\n${schema.css}\n</style>` : ''}`
 }
 
 const genMain = (profiles: AssetProfile[]) => {
