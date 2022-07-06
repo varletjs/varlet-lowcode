@@ -141,7 +141,8 @@ function renderBorder(nearestNodeInfo: NearestOptions) {
   const nearestStyle = nearestDom?.getBoundingClientRect()
 
   const distance: Partial<CSSStyleDeclaration> = {
-    left: direction === 'right' ? `${nearestStyle?.right || 0}px` : `${nearestStyle?.left || 0}px`,
+    left:
+      direction === 'right' ? `${nearestStyle?.right ? nearestStyle?.right - 4 : 0}px` : `${nearestStyle?.left || 0}px`,
     top: direction === 'bottom' ? `${nearestStyle?.bottom || 0}px` : `${nearestStyle?.top || 0}px`,
   }
 
