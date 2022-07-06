@@ -25,8 +25,8 @@ export interface SchemaManager {
 
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
-  importSchema(schemaPageNode: SchemaPageNode): SchemaPageNode
-  importSchema(schemaPageNode: SchemaPageNode, payload?: any): SchemaPageNode
+  importSchema(schemaPageNode: SchemaPageNode): SchemaPageNode | boolean
+  importSchema(schemaPageNode: SchemaPageNode, payload?: any): SchemaPageNode | boolean
 
   exportSchema(): SchemaPageNode
 }
@@ -234,7 +234,13 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
-  function importSchema(schema: SchemaPageNode): SchemaPageNode {
+  function importSchema(schema: SchemaPageNode): SchemaPageNode | boolean {
+    const newSchema = normalizedSchemaNode(cloneSchemaNode(schema))
+
+    if (JSON.stringify(newSchema) === JSON.stringify(_schema)) {
+      return false
+    }
+
     _schema = normalizedSchemaNode(cloneSchemaNode(schema))
 
     return _schema

@@ -74,3 +74,6 @@ packages/varlet-lowcode-monaco/types
 
 packages/varlet-lowcode-schema-editor/lib
 packages/varlet-lowcode-schema-editor/types
+
+packages/varlet-lowcode-undo-redo/lib
+packages/varlet-lowcode-undo-redo/types
