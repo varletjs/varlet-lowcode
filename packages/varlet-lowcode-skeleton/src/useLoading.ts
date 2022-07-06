@@ -47,14 +47,18 @@ export function useLoading() {
 
   const layoutLoadingsComputed = computed(() => {
     return {
-      headerLeft: Boolean(layoutLoadings.headerLeft) || Boolean(layoutLoadings.fullscreen),
-      headerCenter: Boolean(layoutLoadings.headerCenter) || Boolean(layoutLoadings.fullscreen),
-      headerRight: Boolean(layoutLoadings.headerRight) || Boolean(layoutLoadings.fullscreen),
-      sidebarTop: Boolean(layoutLoadings.sidebarTop) || Boolean(layoutLoadings.fullscreen),
-      sidebarBottom: Boolean(layoutLoadings.sidebarBottom) || Boolean(layoutLoadings.fullscreen),
-      designer: Boolean(layoutLoadings.designer) || Boolean(layoutLoadings.fullscreen),
-      setters: Boolean(layoutLoadings.setters) || Boolean(layoutLoadings.fullscreen),
-      fullscreen: Boolean(layoutLoadings.fullscreen),
+      enableHeaderLeftLayout: Boolean(layoutLoadings.headerLeft) || Boolean(layoutLoadings.fullscreen),
+      enableHeaderCenterLayout: Boolean(layoutLoadings.headerCenter) || Boolean(layoutLoadings.fullscreen),
+      enableHeaderRightLayout: Boolean(layoutLoadings.headerRight) || Boolean(layoutLoadings.fullscreen),
+      enableSidebarTopLayout: Boolean(layoutLoadings.sidebarTop) || Boolean(layoutLoadings.fullscreen),
+      enableSidebarPluginLayout:
+        Boolean(layoutLoadings.sidebarTop) ||
+        Boolean(layoutLoadings.sidebarBottom) ||
+        Boolean(layoutLoadings.fullscreen),
+      enableSidebarBottomLayout: Boolean(layoutLoadings.sidebarBottom) || Boolean(layoutLoadings.fullscreen),
+      enableDesignerLayout: Boolean(layoutLoadings.designer) || Boolean(layoutLoadings.fullscreen),
+      enableSettersLayout: Boolean(layoutLoadings.setters) || Boolean(layoutLoadings.fullscreen),
+      enableFullscreenLayout: Boolean(layoutLoadings.fullscreen),
     }
   })
 

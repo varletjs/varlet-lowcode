@@ -17,8 +17,8 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
   const headerRightPlugins: SkeletonPlugin[] = []
   const sidebarTopPlugins: SkeletonPlugin[] = []
   const sidebarBottomPlugins: SkeletonPlugin[] = []
-  const designerPlugins: SkeletonPlugin[] = []
-  const settersPlugins: SkeletonPlugin[] = []
+  const designerPlugin: SkeletonPlugin[] = []
+  const settersPlugin: SkeletonPlugin[] = []
 
   plugins.forEach((plugin) => {
     if (plugin.layout === SkeletonLayouts.HEADER_LEFT) {
@@ -46,14 +46,30 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
     }
 
     if (plugin.layout === SkeletonLayouts.DESIGNER) {
-      designerPlugins.push(plugin)
+      designerPlugin.push(plugin)
       return
     }
 
     if (plugin.layout === SkeletonLayouts.SETTERS) {
-      settersPlugins.push(plugin)
+      settersPlugin.push(plugin)
     }
   })
+
+  if (!designerPlugin.length) {
+    throw new Error(`${SkeletonLayouts.DESIGNER} must have one plugin !`)
+  }
+
+  if (designerPlugin.length > 1) {
+    console.warn(`${SkeletonLayouts.DESIGNER} expects to use only one plugin and only display the first one!`)
+  }
+
+  if (!settersPlugin.length) {
+    throw new Error(`${SkeletonLayouts.SETTERS} must have one plugin !`)
+  }
+
+  if (settersPlugin.length > 1) {
+    console.warn(`${SkeletonLayouts.SETTERS} expects to use only one plugin and only display the first one!`)
+  }
 
   return {
     headerLeftPlugins,
@@ -61,8 +77,8 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
     headerRightPlugins,
     sidebarTopPlugins,
     sidebarBottomPlugins,
-    designerPlugins,
-    settersPlugins,
+    designerPlugin,
+    settersPlugin,
   }
 }
 
@@ -81,8 +97,8 @@ export default defineComponent({
       headerRightPlugins,
       sidebarTopPlugins,
       sidebarBottomPlugins,
-      designerPlugins,
-      settersPlugins,
+      designerPlugin,
+      settersPlugin,
     } = distributePlugins(plugins)
     const sidebarPinned = ref(false)
     const sidebarActiveComponent: Ref<string | undefined> = ref()
@@ -138,11 +154,11 @@ export default defineComponent({
       }
 
       return (
-        <AppBar class="skeleton__header" title-position="center" elevation={false}>
+        <AppBar class="varlet-low-code-skeleton__header" title-position="center" elevation={false}>
           {{
-            left: renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.headerLeft),
-            default: renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.headerCenter),
-            right: renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.headerRight),
+            left: renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.enableHeaderLeftLayout),
+            default: renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.enableHeaderCenterLayout),
+            right: renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.enableHeaderRightLayout),
           }}
         </AppBar>
       )
@@ -151,7 +167,7 @@ export default defineComponent({
     const renderSideBar: () => JSX.Element = () => {
       const renderIcons: (_plugins: SkeletonPlugin[], loading: boolean) => JSX.Element = (_plugins, loading) => {
         return (
-          <div class="skeleton__sidebar--container">
+          <div class="varlet-low-code-skeleton__sidebar--container">
             {_plugins.map((plugin: SkeletonPlugin) => {
               const { icon: iconName, name } = plugin
               return (
@@ -162,15 +178,15 @@ export default defineComponent({
                     v-ripple
                     ref={(el) => sidebarRef(el, name)}
                     v-show={!loading}
-                    class={`skeleton__sidebar--item ${
-                      name === sidebarActiveComponent.value ? 'skeleton__sidebar--item-selected' : ''
+                    class={`varlet-low-code-skeleton__sidebar--item ${
+                      name === sidebarActiveComponent.value ? 'varlet-low-code-skeleton__sidebar--item-selected' : ''
                     }`}
                     onClick={() => toggleSidebarActive(name)}
                     onMouseenter={() => toggleSidebarFocus(plugin)}
                     onMouseleave={() => toggleSidebarFocus()}
                   >
                     {typeof iconName === 'string' ? (
-                      <Icon name={iconName} class="skeleton__sidebar--icon" />
+                      <Icon name={iconName} class="varlet-low-code-skeleton__sidebar--icon" />
                     ) : (
                       <iconName />
                     )}
@@ -183,16 +199,31 @@ export default defineComponent({
       }
 
       const renderSidebarPlugins: () => JSX.Element = () => {
+        const sidebarPlugins = [...sidebarTopPlugins, ...sidebarBottomPlugins]
+
         return (
-          <div>
-            {plugins
-              .filter((plugin) => plugin.layout.includes('sidebar'))
-              .map((plugin) => {
+          <div
+            class={`varlet-low-code-skeleton__sidebar-component ${
+              sidebarPinned.value ? 'varlet-low-code-skeleton__sidebar-component--pinned' : ''
+            }`}
+            style={{
+              padding: `${layoutLoadingsComputed.value.enableSidebarPluginLayout ? '16px' : undefined}`,
+            }}
+            v-show={sidebarActiveComponent.value}
+          >
+            <Skeleton
+              v-show={sidebarActiveComponent.value && layoutLoadingsComputed.value.enableSidebarPluginLayout}
+              loading={layoutLoadingsComputed.value.enableSidebarPluginLayout}
+              card
+              rows="0"
+            />
+            <div v-show={sidebarActiveComponent.value && !layoutLoadingsComputed.value.enableSidebarPluginLayout}>
+              {sidebarPlugins.map((plugin) => {
                 const RenderPlugin = plugin.component as DefineComponent
 
                 const renderLabel: () => JSX.Element = () => {
                   return (
-                    <Space justify="space-between" align="center" class="skeleton__sidebar-component-label">
+                    <div class="varlet-low-code-skeleton__sidebar-component-label">
                       <h2>{plugin?.label || ''}</h2>
                       <Icon
                         onClick={() => {
@@ -200,34 +231,30 @@ export default defineComponent({
                         }}
                         name="pin-outline"
                       ></Icon>
-                    </Space>
+                    </div>
                   )
                 }
 
                 return (
-                  <div
-                    v-Show={sidebarActiveComponent.value === plugin.name}
-                    class={`skeleton__sidebar-component ${
-                      sidebarPinned.value ? 'skeleton__sidebar-component--pinned' : ''
-                    }`}
-                  >
+                  <div v-Show={sidebarActiveComponent.value === plugin.name}>
                     {renderLabel()}
                     <RenderPlugin />
                   </div>
                 )
               })}
+            </div>
           </div>
         )
       }
 
       return (
-        <div class="skeleton__sidebar">
-          <div class="skeleton__sidebar--tools">
-            {renderIcons(sidebarTopPlugins, layoutLoadingsComputed.value.sidebarTop)}
-            {renderIcons(sidebarBottomPlugins, layoutLoadingsComputed.value.sidebarBottom)}
+        <div class="varlet-low-code-skeleton__sidebar">
+          <div class="varlet-low-code-skeleton__sidebar--tools">
+            {renderIcons(sidebarTopPlugins, layoutLoadingsComputed.value.enableSidebarTopLayout)}
+            {renderIcons(sidebarBottomPlugins, layoutLoadingsComputed.value.enableSidebarBottomLayout)}
             <Teleport to="body">
               {sidebarFocusComponent.value?.label ? (
-                <div style={transitionStyle.value} class="skeleton__sidebar--tooltip">
+                <div style={transitionStyle.value} class="varlet-low-code-skeleton__sidebar--tooltip">
                   {sidebarFocusComponent.value.label}
                 </div>
               ) : null}
@@ -239,65 +266,41 @@ export default defineComponent({
     }
 
     const renderDesigner: () => JSX.Element = () => {
-      if (!designerPlugins.length) {
-        throw new Error(`${SkeletonLayouts.DESIGNER} must have one plugin !`)
-      }
+      const Component = designerPlugin[0]!.component as DefineComponent
 
-      if (designerPlugins.length > 1) {
-        console.warn(`${SkeletonLayouts.DESIGNER} expects to use only one plugin and only display the first one!`)
-      }
-
-      const renderDesignerPlugin = () => {
-        const Component = designerPlugins[0]!.component as DefineComponent
-
-        return (
-          <>
-            <Skeleton
-              v-show={layoutLoadingsComputed.value.designer}
-              loading={layoutLoadingsComputed.value.designer}
-              card
-              rows="0"
-            />
-            <Component v-show={!layoutLoadingsComputed.value.designer} />
-          </>
-        )
-      }
-
-      return <div class="skeleton__designer">{renderDesignerPlugin()}</div>
+      return (
+        <div class="varlet-low-code-skeleton__designer">
+          <Skeleton
+            v-show={layoutLoadingsComputed.value.enableDesignerLayout}
+            loading={layoutLoadingsComputed.value.enableDesignerLayout}
+            card
+            rows="0"
+          />
+          <Component v-show={!layoutLoadingsComputed.value.enableDesignerLayout} />
+        </div>
+      )
     }
 
     const renderSetters: () => JSX.Element = () => {
-      if (!settersPlugins.length) {
-        throw new Error(`${SkeletonLayouts.SETTERS} must have one plugin !`)
-      }
+      const Component = settersPlugin[0]!.component as DefineComponent
 
-      if (settersPlugins.length > 1) {
-        console.warn(`${SkeletonLayouts.SETTERS} expects to use only one plugin and only display the first one!`)
-      }
+      return (
+        <div class="varlet-low-code-skeleton__setters">
+          <Skeleton
+            v-show={layoutLoadingsComputed.value.enableSettersLayout}
+            loading={layoutLoadingsComputed.value.enableSettersLayout}
+            rows="20"
+            rowsWidth={['200px']}
+          />
 
-      const renderSettersPlugin = () => {
-        const Component = settersPlugins[0]!.component as DefineComponent
-
-        return (
-          <>
-            <Skeleton
-              v-show={layoutLoadingsComputed.value.setters}
-              loading={layoutLoadingsComputed.value.setters}
-              rows="20"
-              rowsWidth={['200px']}
-            />
-
-            <Component v-show={!layoutLoadingsComputed.value.setters} />
-          </>
-        )
-      }
-
-      return <div class="skeleton__setters">{renderSettersPlugin()}</div>
+          <Component v-show={!layoutLoadingsComputed.value.enableSettersLayout} />
+        </div>
+      )
     }
 
     const renderContent: () => JSX.Element = () => {
       return (
-        <div class="skeleton__content">
+        <div class="varlet-low-code-skeleton__content">
           {renderSideBar()}
           {renderDesigner()}
           {renderSetters()}
@@ -307,7 +310,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class="skeleton">
+        <div class="varlet-low-code-skeleton">
           {renderHeader()}
           {renderContent()}
         </div>
