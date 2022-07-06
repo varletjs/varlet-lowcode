@@ -14,6 +14,7 @@ export interface SkeletonPlugin {
   readonly name: string
   readonly layout: SkeletonLayouts
   readonly component: Component | DefineComponent
+  readonly componentProps?: Record<string, any>
   readonly icon?: string | Component | DefineComponent
   readonly label?: string
 }
@@ -21,6 +22,7 @@ export interface SkeletonPlugin {
 export interface SelectorPlugin {
   readonly name: string
   readonly component: Component | DefineComponent
+  readonly componentProps?: Record<string, any>
 }
 
 export interface PluginsManager {

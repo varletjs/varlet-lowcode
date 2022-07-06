@@ -41,5 +41,10 @@ export function usePlugins() {
       layout: SkeletonLayouts.HEADER_RIGHT,
       name: 'codegen',
       component: Codegen,
+      componentProps: {
+        style: {
+          marginRight: '18px',
+        },
+      },
     })
 }

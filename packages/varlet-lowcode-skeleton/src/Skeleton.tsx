@@ -146,7 +146,9 @@ export default defineComponent({
             <Space v-show={!loading}>
               {_plugins.map((_plugin) => {
                 const Component = _plugin!.component as DefineComponent
-                return <Component />
+                const componentProps = _plugin!.componentProps ?? {}
+
+                return <Component {...componentProps} />
               })}
             </Space>
           </>
@@ -219,7 +221,8 @@ export default defineComponent({
             />
             <div v-show={sidebarActiveComponent.value && !layoutLoadingsComputed.value.enableSidebarPluginLayout}>
               {sidebarPlugins.map((plugin) => {
-                const RenderPlugin = plugin.component as DefineComponent
+                const Component = plugin.component as DefineComponent
+                const componentProps = plugin.componentProps ?? {}
 
                 const renderLabel: () => JSX.Element = () => {
                   return (
@@ -238,7 +241,7 @@ export default defineComponent({
                 return (
                   <div v-Show={sidebarActiveComponent.value === plugin.name}>
                     {renderLabel()}
-                    <RenderPlugin />
+                    <Component {...componentProps} />
                   </div>
                 )
               })}
@@ -267,6 +270,7 @@ export default defineComponent({
 
     const renderDesigner: () => JSX.Element = () => {
       const Component = designerPlugin[0]!.component as DefineComponent
+      const componentProps = designerPlugin[0]!.componentProps ?? {}
 
       return (
         <div class="varlet-low-code-skeleton__designer">
@@ -276,13 +280,14 @@ export default defineComponent({
             card
             rows="0"
           />
-          <Component v-show={!layoutLoadingsComputed.value.enableDesignerLayout} />
+          <Component {...componentProps} v-show={!layoutLoadingsComputed.value.enableDesignerLayout} />
         </div>
       )
     }
 
     const renderSetters: () => JSX.Element = () => {
       const Component = settersPlugin[0]!.component as DefineComponent
+      const componentProps = settersPlugin[0]!.componentProps ?? {}
 
       return (
         <div class="varlet-low-code-skeleton__setters">
@@ -293,7 +298,7 @@ export default defineComponent({
             rowsWidth={['200px']}
           />
 
-          <Component v-show={!layoutLoadingsComputed.value.enableSettersLayout} />
+          <Component {...componentProps} v-show={!layoutLoadingsComputed.value.enableSettersLayout} />
         </div>
       )
     }
