@@ -66,7 +66,6 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
       (rendererDataSources, { name, url, method, headers, timeout, withCredentials, successHandler, errorHandler }) => {
         const load = async (params?: Record<string, any>, options?: Record<string, any>) => {
           try {
-            // @ts-ignore
             const response = await axle.helpers[method](url, params, {
               ...options,
               headers,

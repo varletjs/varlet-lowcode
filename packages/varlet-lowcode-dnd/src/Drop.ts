@@ -17,7 +17,7 @@ function onDropEnter(this: DropHTMLElement) {
   const { dropStyle } = _drop
 
   dropStyle && mergeStyle(this, dropStyle)
-  
+
   eventBroadcast('drop-enter', this)
 }
 
@@ -38,7 +38,7 @@ function onDragOver(this: DropHTMLElement, e: DragEvent) {
 
   const _drop = this._drop as DropOptions
   const { type = 'none' } = _drop
-  
+
   e.dataTransfer!.dropEffect = type
   // eventBroadcast('drop-over', this)
 }
@@ -67,14 +67,14 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
   const { dropStyle } = _drop
 
   dropStyle && mergeStyle(this, dropStyle, true)
-  
+
   eventBroadcast('drop', { el: this, data: _dragData })
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
   const defalutProps: DropOptions = {
     dropStyle: {
-      border: '1px solid red',
+      background: 'red',
     },
     type: 'move',
   }

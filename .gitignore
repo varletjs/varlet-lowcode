@@ -35,6 +35,7 @@ packages/varlet-lowcode-designer/lib
 packages/varlet-lowcode-designer/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-profile.umd.js
+packages/varlet-lowcode-designer/public/varlet-lowcode-selector.umd.js
 packages/varlet-lowcode-designer/types
 
 packages/varlet-lowcode-codegen/lib

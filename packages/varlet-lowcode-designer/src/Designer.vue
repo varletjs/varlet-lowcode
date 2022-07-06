@@ -7,6 +7,7 @@ import {
   Assets,
   SchemaPageNode,
 } from '@varlet/lowcode-core'
+import Selector from '@varlet/lowcode-selector'
 import { onMounted, ref } from 'vue'
 
 const presetAssets: Assets = [
@@ -124,5 +125,6 @@ onMounted(async () => {
 <template>
   <div ref="container" class="varlet-low-code-designer">
     <iframe ref="iframe" frameborder="0" />
+    <Selector />
   </div>
 </template>
