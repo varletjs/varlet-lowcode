@@ -1,6 +1,6 @@
 import { defineComponent, ref } from 'vue'
 import { Icon, Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
-import Component from '../../build-in-setter/index'
+import Component from '../../built-in-setters/index'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 

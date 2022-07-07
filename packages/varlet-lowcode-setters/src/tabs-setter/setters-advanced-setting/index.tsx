@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref, Ref, watchEffect } from 'vue'
 import { AppBar as VarAppBar } from '@varlet/ui'
-import { RadioSetter, SwitchSetter, InputSetter } from '../../build-in-setter/index'
+import { RadioSetter, SwitchSetter, InputSetter } from '../../built-in-setters/index'
 import { createAst } from '@varlet/lowcode-ast'
 import { schemaManager } from '@varlet/lowcode-core'
 import Dialog from '../../component/dialog-setter/index'
