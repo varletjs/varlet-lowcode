@@ -14,7 +14,7 @@
     z-index: 2;
     color: #000;
     background: #fff;
-    height: 48px;
+    height: 48px !important;
 
     .var-skeleton__section {
       padding-top: 0;
@@ -223,7 +223,10 @@
   }
 
   &__designer {
+    display: flex;
+    justify-content: center;
     flex: 1;
+    background: #fcfcfc;
 
     .var-skeleton {
       height: 100%;

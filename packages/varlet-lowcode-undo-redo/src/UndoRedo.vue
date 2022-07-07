@@ -94,7 +94,7 @@ onUnmounted(() => {
 
 <template>
   <div class="varlet-low-code-undo-redo">
-    <var-space>
+    <var-space :size="[0, 16]">
       <var-button type="primary" @click="undo" :disabled="undoStack.length === 0">
         <var-icon name="refresh" class="varlet-low-code-undo-redo__undo-icon" />
       </var-button>

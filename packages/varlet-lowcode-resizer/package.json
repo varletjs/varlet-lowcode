@@ -1,0 +1,34 @@
+{
+  "name": "@varlet/lowcode-resizer",
+  "version": "0.0.0",
+  "main": "lib/varlet-lowcode-resizer.es.js",
+  "module": "lib/varlet-lowcode-resizer.es.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "lib",
+    "types",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "compile": "varlet-lowcode-cli compile",
+    "compile:watch": "varlet-lowcode-cli compile -w"
+  },
+  "devDependencies": {
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-cli": "workspace: *",
+    "@varlet/ui": "1.27.16",
+    "live-server": "^1.2.1",
+    "typescript": "^4.4.4",
+    "vite": "^2.9.12",
+    "vue": "3.2.25",
+    "vue-tsc": "^0.37.3"
+  },
+  "peerDependencies": {
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/ui": "1.27.16"
+  },
+  "browserslist": [
+    "Chrome >= 51",
+    "iOS >= 10"
+  ]
+}

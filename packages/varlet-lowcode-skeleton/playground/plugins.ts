@@ -2,6 +2,7 @@ import Designer from '@varlet/lowcode-designer'
 import CodeEditor from '@varlet/lowcode-code-editor'
 import SchemaEditor from '@varlet/lowcode-schema-editor'
 import UndoRedo from '@varlet/lowcode-undo-redo'
+import Resizer from '@varlet/lowcode-resizer'
 import Codegen from '@varlet/lowcode-codegen'
 import Setters from '../../varlet-lowcode-setters/src/index'
 import { pluginsManager, SkeletonLayouts } from '@varlet/lowcode-core'
@@ -18,7 +19,7 @@ export function usePlugins() {
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.HEADER_CENTER,
-      component: UndoRedo,
+      component: Resizer,
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.SIDEBAR_TOP,
@@ -34,10 +35,15 @@ export function usePlugins() {
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.HEADER_RIGHT,
+      component: UndoRedo,
+    })
+    .useSkeletonPlugin({
+      layout: SkeletonLayouts.HEADER_RIGHT,
       component: Codegen,
       componentProps: {
         style: {
-          marginRight: '18px',
+          marginRight: '30px',
+          marginLeft: '4px',
         },
       },
     })

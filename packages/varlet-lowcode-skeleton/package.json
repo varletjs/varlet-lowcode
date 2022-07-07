@@ -23,6 +23,8 @@
     "@varlet/lowcode-code-editor": "workspace: *",
     "@varlet/lowcode-schema-editor": "workspace: *",
     "@varlet/lowcode-undo-redo": "workspace: *",
+    "@varlet/lowcode-resizer": "workspace: *",
+    "@varlet/lowcode-setters": "workspace: *",
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
