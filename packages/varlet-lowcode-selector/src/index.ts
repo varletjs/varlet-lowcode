@@ -6,15 +6,12 @@ import Demo from './selectorPlugins/demo.vue'
 
 pluginsManager
   .useSelectorPlugin({
-    name: 'copy',
     component: Copy,
   })
   .useSelectorPlugin({
-    name: 'transh',
     component: Transh,
   })
   .useSelectorPlugin({
-    name: 'demo',
     component: Demo,
   })
 

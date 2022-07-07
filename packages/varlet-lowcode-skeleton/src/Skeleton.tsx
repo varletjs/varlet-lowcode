@@ -87,7 +87,7 @@ export enum SidebarEvents {
 }
 
 export default defineComponent({
-  name: 'Skeleton',
+  name: 'VarletLowCodeSkeleton',
   directives: { ripple: Ripple },
   setup() {
     const plugins = pluginsManager.exportSkeletonPlugins()
