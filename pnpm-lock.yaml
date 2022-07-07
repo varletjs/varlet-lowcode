@@ -431,6 +431,7 @@ importers:
       '@varlet/lowcode-schema-editor': 'workspace: *'
       '@varlet/lowcode-setters': 'workspace: *'
       '@varlet/lowcode-undo-redo': 'workspace: *'
+      '@varlet/touch-emulator': ^1.27.17
       '@varlet/ui': ^1.27.17
       live-server: ^1.2.1
       typescript: ^4.4.4
@@ -448,6 +449,7 @@ importers:
       '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
       '@varlet/lowcode-setters': link:../varlet-lowcode-setters
       '@varlet/lowcode-undo-redo': link:../varlet-lowcode-undo-redo
+      '@varlet/touch-emulator': 1.27.17
       '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2

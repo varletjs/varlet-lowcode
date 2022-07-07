@@ -2,6 +2,7 @@ import App from './App.vue'
 import { usePlugins } from './plugins'
 import { createApp } from 'vue'
 import { schemaManager, assetsManager, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import '@varlet/touch-emulator'
 
 usePlugins()
 
