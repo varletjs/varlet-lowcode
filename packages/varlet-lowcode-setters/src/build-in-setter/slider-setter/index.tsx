@@ -14,7 +14,7 @@ export default defineComponent({
     const sliderValue = ref()
     const childrenSlot = {
       button: (props: any) => {
-        slots.default ? slots.default(props.currentValue) : null
+        return slots.default ? slots.default(props.currentValue) : null
       },
     }
     sliderValue.value = props.modelValue

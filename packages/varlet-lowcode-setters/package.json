@@ -19,6 +19,7 @@
   "devDependencies": {
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-ast": "workspace: *",
     "@varlet/touch-emulator": "latest",
     "@varlet/ui": "latest",
     "vue3-colorpicker": "^2.0.4",

@@ -378,6 +378,7 @@ importers:
 
   packages/varlet-lowcode-setters:
     specifiers:
+      '@varlet/lowcode-ast': 'workspace: *'
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/touch-emulator': latest
@@ -388,6 +389,7 @@ importers:
       vue-tsc: ^0.37.3
       vue3-colorpicker: ^2.0.4
     devDependencies:
+      '@varlet/lowcode-ast': link:../varlet-lowcode-ast
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/touch-emulator': 1.27.17
@@ -5247,7 +5249,7 @@ packages:
     dev: true
 
   /fresh/0.5.2:
-    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
+    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
     dev: true
 

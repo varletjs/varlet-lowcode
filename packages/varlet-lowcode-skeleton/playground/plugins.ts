@@ -1,7 +1,7 @@
 import Designer from '@varlet/lowcode-designer'
 import CodeEditor from '@varlet/lowcode-code-editor'
 import SchemaEditor from '@varlet/lowcode-schema-editor'
-import UndoRedo from '@varlet/lowcode-undo-redo'
+// import UndoRedo from '@varlet/lowcode-undo-redo'
 import Codegen from '@varlet/lowcode-codegen'
 import Setters from '../../varlet-lowcode-setters/src/index'
 import { pluginsManager, SkeletonLayouts } from '@varlet/lowcode-core'
@@ -18,11 +18,11 @@ export function usePlugins() {
       name: 'setters',
       component: Setters,
     })
-    .useSkeletonPlugin({
-      layout: SkeletonLayouts.HEADER_CENTER,
-      name: 'undo-repo',
-      component: UndoRedo,
-    })
+    // .useSkeletonPlugin({
+    //   layout: SkeletonLayouts.HEADER_CENTER,
+    //   name: 'undo-repo',
+    //   // component: UndoRedo,
+    // })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.SIDEBAR_TOP,
       name: 'code-editor',
