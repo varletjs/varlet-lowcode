@@ -105,7 +105,7 @@ importers:
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/lowcode-monaco': 'workspace: *'
-      '@varlet/ui': 1.27.16
+      '@varlet/ui': 1.27.17
       live-server: ^1.2.1
       monaco-editor: ^0.33.0
       typescript: ^4.4.4
@@ -118,7 +118,7 @@ importers:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
-      '@varlet/ui': 1.27.16_vue@3.2.25
+      '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       monaco-editor: 0.33.0
       typescript: 4.7.2
@@ -134,7 +134,7 @@ importers:
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/shared': latest
-      '@varlet/ui': latest
+      '@varlet/ui': 1.27.17
       file-saver: ^2.0.5
       jszip: ^3.6.0
       live-server: ^1.2.1
@@ -338,7 +338,7 @@ importers:
     specifiers:
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
-      '@varlet/ui': 1.27.16
+      '@varlet/ui': 1.27.17
       live-server: ^1.2.1
       typescript: ^4.4.4
       vite: ^2.9.12
@@ -347,7 +347,7 @@ importers:
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
-      '@varlet/ui': 1.27.16_vue@3.2.25
+      '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
       vite: 2.9.12
@@ -401,8 +401,7 @@ importers:
       '@varlet/lowcode-ast': 'workspace: *'
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
-      '@varlet/touch-emulator': latest
-      '@varlet/ui': latest
+      '@varlet/ui': ^1.27.17
       live-server: ^1.2.1
       typescript: ^4.4.4
       vue: 3.2.25
@@ -412,7 +411,6 @@ importers:
       '@varlet/lowcode-ast': link:../varlet-lowcode-ast
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
-      '@varlet/touch-emulator': 1.27.17
       '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
@@ -433,7 +431,7 @@ importers:
       '@varlet/lowcode-schema-editor': 'workspace: *'
       '@varlet/lowcode-setters': 'workspace: *'
       '@varlet/lowcode-undo-redo': 'workspace: *'
-      '@varlet/ui': ^1.27.16
+      '@varlet/ui': ^1.27.17
       live-server: ^1.2.1
       typescript: ^4.4.4
       vue: 3.2.25
@@ -450,7 +448,7 @@ importers:
       '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
       '@varlet/lowcode-setters': link:../varlet-lowcode-setters
       '@varlet/lowcode-undo-redo': link:../varlet-lowcode-undo-redo
-      '@varlet/ui': 1.27.16_vue@3.2.25
+      '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
       vue: 3.2.25
@@ -460,7 +458,7 @@ importers:
     specifiers:
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
-      '@varlet/ui': 1.27.16
+      '@varlet/ui': 1.27.17
       live-server: ^1.2.1
       typescript: ^4.4.4
       vite: ^2.9.12
@@ -469,7 +467,7 @@ importers:
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
-      '@varlet/ui': 1.27.16_vue@3.2.25
+      '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
       vite: 2.9.12
@@ -2606,17 +2604,6 @@ packages:
       - typescript
     dev: true
 
-  /@varlet/icons/1.27.16:
-    resolution: {integrity: sha512-z4+/ZzrtzseN9CFSqCQW973XTXDwk89hqtkwqgCLQGQuRnHCb6qSD5ZT7GBhfUVt/IZjpVbbPqzcEbMKicmzZA==}
-    hasBin: true
-    dependencies:
-      commander: 6.2.1
-      fs-extra: 9.1.0
-      webfont: 9.0.0
-    transitivePeerDependencies:
-      - chokidar
-    dev: true
-
   /@varlet/icons/1.27.17:
     resolution: {integrity: sha512-Wp1ehjAWewsIEWLC7jwADXySdk6dceEW1zYhfcDVNjRJ9RcdR/6An1IO3SpbJEZVPz+lp3W/wooidLTebOee+w==}
     hasBin: true
@@ -2646,10 +2633,6 @@ packages:
       markdown-it: 12.3.2
     dev: true
 
-  /@varlet/shared/1.27.16:
-    resolution: {integrity: sha512-EUx+7G8edtJr7gAng4PtlxKMEQLWZV9v200N7xsKCyVmVv5TjbdR12TJO5snvfkNydxpaGAdsmTbQTy0Icz8RA==}
-    dev: true
-
   /@varlet/shared/1.27.17:
     resolution: {integrity: sha512-ogEKif2ZAXW6Bff5PENGv77AFLtX5C+lnTGLNeoly59M2WKba0GuiwEsG+UNbjNZrEhh4T6c5gt5ZYR3t4qFSg==}
 
@@ -2664,20 +2647,6 @@ packages:
 
   /@varlet/touch-emulator/1.27.17:
     resolution: {integrity: sha512-SGGLYEeW7zxkSs6hC1/Hzo3qNYZJi8VX+4mf+LUgEOvtq3Fey94MEAqjTVMa7SNUz+ShYCQ2MzSMsuw1uKyfpQ==}
-    dev: true
-
-  /@varlet/ui/1.27.16_vue@3.2.25:
-    resolution: {integrity: sha512-NWybGdrptMiWWiGoNkRcmHaeWkJv2l/iBywOyhSQ6NjriTXfXSbZnJMII2GBC4MRJ5Ljf7GYCIlM8DhEeYIhkw==}
-    peerDependencies:
-      vue: ^3.2.0
-    dependencies:
-      '@varlet/icons': 1.27.16
-      '@varlet/shared': 1.27.16
-      dayjs: 1.11.3
-      decimal.js: 10.3.1
-      vue: 3.2.25
-    transitivePeerDependencies:
-      - chokidar
     dev: true
 
   /@varlet/ui/1.27.17_vue@3.2.25:

@@ -22,7 +22,7 @@
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/ui": "latest",
+    "@varlet/ui": "1.27.17",
     "@types/file-saver": "^2.0.5",
     "@types/node": "*",
     "live-server": "^1.2.1",
@@ -34,7 +34,7 @@
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/ui": "latest"
+    "@varlet/ui": "1.27.17"
   },
   "browserslist": [
     "Chrome >= 51",
