@@ -25,15 +25,15 @@ export default defineComponent({
       await nextTick()
       if (isShow.value) {
         const { x, y, width, height } = e.target.getBoundingClientRect()
-        const domWidth = document.getElementById('lowCode-popover')?.offsetWidth || 0
-        const domHeight = document.getElementById('lowCode-popover')?.offsetHeight || 0
+        const domWidth = document.getElementById('low-code-popover')?.offsetWidth || 0
+        const domHeight = document.getElementById('low-code-popover')?.offsetHeight || 0
         console.log(y, domHeight)
         popoverStyle.left = x - domWidth + width / 2 + 'px'
         popoverStyle.top = y - domHeight - 12 + 'px'
-        classNameAfter.value = 'varlet-lowCode-popover-bottom-right'
+        classNameAfter.value = 'varlet-low-Code-popover-bottom-right'
 
         await nextTick()
-        const { top, bottom, left, right } = document.getElementById('lowCode-popover')?.getBoundingClientRect() || {
+        const { top, bottom, left, right } = document.getElementById('low-code-popover')?.getBoundingClientRect() || {
           top: 0,
           bottom: 0,
           left: 0,
@@ -42,7 +42,7 @@ export default defineComponent({
         if (top < 0) {
           popoverStyle.left = x - domWidth + width / 2 + 'px'
           popoverStyle.top = y + 12 + height + 'px'
-          classNameAfter.value = 'varlet-lowCode-popover-top-right'
+          classNameAfter.value = 'varlet-low-Code-popover-top-right'
           console.log(bottom, left, right)
         }
 
@@ -62,7 +62,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class="varlet-lowCode-popover">
+        <div class="varlet-low-code-popover">
           <div onClick={getDomLocation}>{slots.default ? slots.default() : <div>点击</div>}</div>
 
           {/* 这是具名插槽 */}
@@ -70,8 +70,8 @@ export default defineComponent({
             <div>
               {isShow.value ? (
                 <div
-                  class={`varlet-lowCode-popover-content ${classNameAfter.value}`}
-                  id="lowCode-popover"
+                  class={`varlet-low-code-popover__content ${classNameAfter.value}`}
+                  id="low-code-popover"
                   style={popoverStyle}
                   onClick={(e) => e.stopPropagation()}
                 >

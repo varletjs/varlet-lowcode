@@ -1,7 +1,7 @@
 import { defineComponent, ref } from 'vue'
-import './index.less'
 import HeaderTabs from './settersPlugins/headerTabs'
 import Empty from './empty'
+import './index.less'
 
 const isSelectDom = ref(false)
 

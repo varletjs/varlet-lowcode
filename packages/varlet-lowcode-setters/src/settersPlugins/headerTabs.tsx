@@ -4,8 +4,10 @@ import '@varlet/ui/es/tabs/style/index.js'
 import '@varlet/ui/es/tab/style/index.js'
 import '@varlet/ui/es/tab-item/style/index.js'
 import '@varlet/ui/es/tabs-items/style/index.js'
-import SettersAttribute from '../settersAttribute'
-import SettersStyle from '../settersStyle'
+import SettersAttribute from '../tabs-setter/setters-attribute/index'
+import SettersStyle from '../tabs-setter/setters-style/index'
+import SettersAdvancedSettings from '../tabs-setter/setters-advanced-setting/index'
+import './headerTabs.less'
 
 const active = ref(0)
 
@@ -18,20 +20,17 @@ export default defineComponent({
           <VarTabs elevation v-model:active={active.value}>
             <VarTab>属性</VarTab>
             <VarTab>样式</VarTab>
-            <VarTab>事件</VarTab>
             <VarTab>高级</VarTab>
           </VarTabs>
           <VarTabsItems v-model:active={active.value}>
             <VarTabItems>
-              {/* <SettersStyle /> */}
               <SettersAttribute />
             </VarTabItems>
             <VarTabItems>
               <SettersStyle />
             </VarTabItems>
             <VarTabItems>
-              <div>事件绑定</div>
-              {/* <SettersContent tab-index={active.value} /> */}
+              <SettersAdvancedSettings />
             </VarTabItems>
           </VarTabsItems>
         </div>

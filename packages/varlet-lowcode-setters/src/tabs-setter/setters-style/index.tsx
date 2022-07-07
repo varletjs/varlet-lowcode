@@ -1,27 +1,17 @@
 import { defineComponent, reactive, ref } from 'vue'
-import {
-  Collapse as VarCollapse,
-  CollapseItem as VarCollapseItem,
-  Counter as VarCounter,
-  Select as VarSelect,
-  Option as VarOption,
-  Input as VarInput,
-  Slider as VarSlider,
-} from '@varlet/ui'
-import { RadioSetter, SelectSetter } from './build-in-setter/index'
-import SetterPosition from './build-in-setter/positon-setter/index'
-import Popover from './popover/popover'
+import { Collapse as VarCollapse, CollapseItem as VarCollapseItem, Counter as VarCounter } from '@varlet/ui'
+import { RadioSetter, SelectSetter, InputSetter, SliderSetter } from '../../build-in-setter/index'
+import SetterPosition from '../../build-in-setter/positon-setter/index'
+import Popover from '../../component/popover/popover'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import '@varlet/touch-emulator'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 import '@varlet/ui/es/counter/style/index.js'
-import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
-import '@varlet/ui/es/input/style/index.js'
 import '@varlet/ui/es/slider/style/index.js'
-import './settersStyle.less'
+import './index.less'
 
 const positionOptions = [
   { value: 'static', label: 'static' },
@@ -67,7 +57,12 @@ const clearOptions = [
   { value: '右清除 right', label: 'right' },
   { value: '全部清除 both', label: 'both' },
 ]
-
+const textAlignOptions = [
+  { value: '左对齐 left', label: 'left' },
+  { value: '居中 center', label: 'center' },
+  { value: '右对齐 right', label: 'right' },
+  { value: '两端对齐 justify', label: 'justify' },
+]
 export default defineComponent({
   name: 'SettersStyle',
   setup() {
@@ -189,24 +184,19 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title style-field-body-title-transform">字重:</div>
                 <div class="style-field-body-content">
-                  <VarInput placeholder="请输入字重" v-model={formData.fontWeight} />
+                  <InputSetter v-model={formData.fontWeight} attr={{ clearable: true }} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title style-field-body-title-transform">对齐:</div>
                 <div class="style-field-body-content">
-                  <VarSelect v-model={formData.textAlign} placeholder="请选择一个选项">
-                    <VarOption label="left">左对齐 left</VarOption>
-                    <VarOption label="center">居中 center</VarOption>
-                    <VarOption label="right">右对齐 right</VarOption>
-                    <VarOption label="justify">两端对齐 justify</VarOption>
-                  </VarSelect>
+                  <SelectSetter v-model={formData.textAlign} options={textAlignOptions} attr={{ clearable: true }} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">透明度:</div>
                 <div class="style-field-body-content">
-                  <VarSlider v-model={formData.opacity} />
+                  <SliderSetter v-model={formData.opacity} />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
@@ -229,7 +219,7 @@ export default defineComponent({
                   {formData.backgroundIndex === 0 ? (
                     <Popover v-slots={childrenSlot}></Popover>
                   ) : (
-                    <VarInput placeholder="请输入链接" v-model={formData.background} />
+                    <InputSetter v-model={formData.background} attr={{ placeholder: '请输入链接' }} />
                   )}
                 </div>
               </div>

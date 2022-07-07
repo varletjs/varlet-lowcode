@@ -10,6 +10,12 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    attr: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
   },
   setup(props, { emit }) {
     const inputValue = ref('')
@@ -18,11 +24,7 @@ export default defineComponent({
       emit('update:modelValue', val)
     }
     return () => {
-      return (
-        <span class="setters-style-input">
-          <Input v-model={inputValue.value} onChange={updateSchema} />
-        </span>
-      )
+      return <Input v-model={inputValue.value} onChange={updateSchema} {...props.attr} />
     }
   },
 })
