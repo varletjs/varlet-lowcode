@@ -23,7 +23,13 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
+import {
+  assetsManager,
+  BuiltInSchemaNodeNames,
+  eventsManager,
+  schemaManager,
+  SchemaPageNodeDataSource,
+} from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
@@ -287,7 +293,14 @@ export default defineComponent({
         return rawProps
       }, {} as RawProps)
 
+      const clickEvent = rawProps.onClick
+
       rawProps.id = `dragItem${schemaNode.id}`
+      rawProps.onClick = (...arg: any) => {
+        eventsManager.emit('schema-click', `dragItem${schemaNode.id}` || '')
+
+        clickEvent && clickEvent(...arg)
+      }
 
       return rawProps
     }
