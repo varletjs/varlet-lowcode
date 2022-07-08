@@ -63,7 +63,7 @@ eventsManager.on('skeleton-loaded', handleSkeletonLoaded)
 
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
-  eventsManager.off('skeleton-sidebar-toggle', handleSkeletonLoaded)
+  eventsManager.off('skeleton-loaded', handleSkeletonLoaded)
 })
 </script>
 
