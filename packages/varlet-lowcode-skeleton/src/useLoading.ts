@@ -29,13 +29,33 @@ export function useLoading() {
     fullscreen: 0,
   })
 
+  const layoutLoadingPrepares: Record<string, number> = reactive({
+    headerLeft: 0,
+    headerCenter: 0,
+    headerRight: 0,
+    sidebarTop: 0,
+    sidebarBottom: 0,
+    designer: 0,
+    setters: 0,
+    fullscreen: 0,
+  })
+
   const handleLoading = (layout: SkeletonLayoutLoadings) => {
+    layoutLoadingPrepares[layout]++
+
     setTimeout(() => {
-      layoutLoadings[layout]++
-    }, 10000)
+      layoutLoadings[layout] += layoutLoadingPrepares[layout]
+      layoutLoadingPrepares[layout] = 0
+    }, 5000)
   }
 
   const handleLoaded = (layout: SkeletonLayoutLoadings) => {
+    if (layoutLoadingPrepares[layout]) {
+      layoutLoadingPrepares[layout]--
+
+      return
+    }
+
     layoutLoadings[layout]--
   }
 
