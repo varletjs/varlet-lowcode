@@ -2,11 +2,21 @@ import { defineComponent, reactive, Teleport, ref, nextTick } from 'vue'
 import { eventsManager } from '@varlet/lowcode-core'
 import './popover.less'
 
+interface styleType {
+  position: any
+  zIndex: any
+  top: any
+  left: any
+  padding: any
+  maxWidth: any
+  maxHeight: any
+  opacity: any
+}
 export default defineComponent({
   setup(props, { slots }) {
     const isShow = ref(false)
     const classNameAfter = ref('')
-    const popoverStyle = reactive({
+    const popoverStyle: styleType = reactive({
       position: 'absolute',
       zIndex: '9999',
       top: '0',
@@ -14,8 +24,6 @@ export default defineComponent({
       padding: '0',
       maxWidth: '400px',
       maxHeight: '400px',
-      minWidth: '50px',
-      minHeight: '100px',
       opacity: 0,
     })
 

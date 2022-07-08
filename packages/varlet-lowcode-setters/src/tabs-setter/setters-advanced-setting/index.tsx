@@ -1,8 +1,6 @@
 import { defineComponent, reactive, ref, Ref, watchEffect } from 'vue'
 import { AppBar as VarAppBar } from '@varlet/ui'
 import { RadioSetter, SwitchSetter, InputSetter } from '../../built-in-setters/index'
-import { createAst } from '@varlet/lowcode-ast'
-import { schemaManager } from '@varlet/lowcode-core'
 import Dialog from '../../component/dialog-setter/index'
 import '@varlet/ui/es/app-bar/style/index.js'
 import './index.less'
@@ -20,12 +18,6 @@ const typeOptions: any[] = [
 export default defineComponent({
   name: 'SETTERSADVANCEDSETTINGS',
   setup() {
-    const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
-    const schema = schemaManager.exportSchema()
-    const code: Ref<string> = ref(schema.code ?? NOOP_SETUP)
-    const { traverseFunction } = createAst()
-    const { returnDeclarations } = traverseFunction(code.value)
-    console.log(returnDeclarations, 'returnDeclarations')
     const formData = reactive({
       isShow: false,
       isShowType: '0',
