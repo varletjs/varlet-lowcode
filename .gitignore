@@ -80,3 +80,6 @@ packages/varlet-lowcode-undo-redo/types
 
 packages/varlet-lowcode-resizer/lib
 packages/varlet-lowcode-resizer/types
+
+packages/varlet-lowcode-setters/lib
+packages/varlet-lowcode-setters/types
