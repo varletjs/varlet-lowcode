@@ -13,6 +13,33 @@ const profiles: Ref<AssetProfile[]> = ref([])
 const snapshots: Ref<AssetProfileMaterialSnapshot[]> = ref([])
 const snapshotToMaterial = new WeakMap()
 
+function handleAssetsChange(newAssets: Assets) {
+  assets = newAssets
+}
+
+function getProfiles(assets: Assets) {
+  const rendererWindow = Array.from(window).find((w) => w.name === 'rendererWindow') as any
+  const rendererAssetsManager = rendererWindow?.VarletLowcodeCore?.assetsManager as AssetsManager | undefined
+
+  if (!rendererAssetsManager) {
+    return []
+  }
+
+  return rendererAssetsManager.getProfiles(assets)
+}
+
+function handleSkeletonLoaded(loader: any) {
+  if (loader !== 'designer') {
+    return
+  }
+
+  profiles.value = getProfiles(assets)
+}
+
+if (assets) {
+  profiles.value = getProfiles(assets)
+}
+
 watch(
   () => profiles.value,
   (newProfiles) => {
@@ -31,36 +58,11 @@ watch(
   }
 )
 
-function getProfiles(assets: Assets) {
-  const rendererWindow = Array.from(window).find((w) => w.name === 'rendererWindow') as any
-  const rendererAssetsManager = rendererWindow?.VarletLowcodeCore?.assetsManager as AssetsManager | undefined
-
-  if (!rendererAssetsManager) {
-    return []
-  }
-
-  return rendererAssetsManager.getProfiles(assets)
-}
-
-if (assets) {
-  profiles.value = getProfiles(assets)
-}
-
-function handleSkeletonLoaded(loader: any) {
-  if (loader !== 'designer') {
-    return
-  }
-
-  profiles.value = getProfiles(assets)
-}
-
-eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
-  assets = newAssets
-})
-
+eventsManager.on(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
 eventsManager.on('skeleton-loaded', handleSkeletonLoaded)
 
 onUnmounted(() => {
+  eventsManager.off(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
   eventsManager.off('skeleton-sidebar-toggle', handleSkeletonLoaded)
 })
 </script>
