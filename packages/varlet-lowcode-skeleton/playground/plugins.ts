@@ -3,6 +3,7 @@ import CodeEditor from '@varlet/lowcode-code-editor'
 import SchemaEditor from '@varlet/lowcode-schema-editor'
 import Codegen from '@varlet/lowcode-codegen'
 import Setters from '../../varlet-lowcode-setters/src/index'
+import DataSource from '../../varlet-lowcode-data-source/src/index'
 import { pluginsManager, SkeletonLayouts } from '@varlet/lowcode-core'
 
 export function usePlugins() {
@@ -35,5 +36,12 @@ export function usePlugins() {
       layout: SkeletonLayouts.HEADER_RIGHT,
       name: 'codegen',
       component: Codegen,
+    })
+    .useSkeletonPlugin({
+      layout: SkeletonLayouts.SIDEBAR_TOP,
+      name: 'data-source',
+      component: DataSource,
+      icon: 'weather-cloudy',
+      label: '数据源',
     })
 }
