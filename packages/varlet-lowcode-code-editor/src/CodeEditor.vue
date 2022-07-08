@@ -34,18 +34,22 @@ const tabs: Ref<any> = ref()
 const tabsItems: Ref<any> = ref()
 
 function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
+  const oldSchema = schema
   schema = newSchema
 
   if (css.value !== newSchema.css) {
     css.value = newSchema.css ?? ''
   }
 
-  if (payload?.emitter === 'schema-editor') {
+  if (code.value !== newSchema.code) {
+    code.value = newSchema.code ?? NOOP_SETUP
+  }
+
+  if (payload?.emitter === 'undo-redo' || payload?.emitter === 'schema-editor') {
     return
   }
 
-  if (code.value !== newSchema.code) {
-    code.value = newSchema.code ?? NOOP_SETUP
+  if (newSchema.code !== oldSchema.code) {
     saveCode()
   }
 }

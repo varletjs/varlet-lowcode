@@ -29,11 +29,33 @@ export function useLoading() {
     fullscreen: 0,
   })
 
+  const layoutLoadingPrepares: Record<string, number> = reactive({
+    headerLeft: 0,
+    headerCenter: 0,
+    headerRight: 0,
+    sidebarTop: 0,
+    sidebarBottom: 0,
+    designer: 0,
+    setters: 0,
+    fullscreen: 0,
+  })
+
   const handleLoading = (layout: SkeletonLayoutLoadings) => {
-    layoutLoadings[layout]++
+    layoutLoadingPrepares[layout]++
+
+    setTimeout(() => {
+      layoutLoadings[layout] += layoutLoadingPrepares[layout]
+      layoutLoadingPrepares[layout] = 0
+    }, 5000)
   }
 
   const handleLoaded = (layout: SkeletonLayoutLoadings) => {
+    if (layoutLoadingPrepares[layout]) {
+      layoutLoadingPrepares[layout]--
+
+      return
+    }
+
     layoutLoadings[layout]--
   }
 
@@ -47,14 +69,16 @@ export function useLoading() {
 
   const layoutLoadingsComputed = computed(() => {
     return {
-      headerLeft: Boolean(layoutLoadings.headerLeft) || Boolean(layoutLoadings.fullscreen),
-      headerCenter: Boolean(layoutLoadings.headerCenter) || Boolean(layoutLoadings.fullscreen),
-      headerRight: Boolean(layoutLoadings.headerRight) || Boolean(layoutLoadings.fullscreen),
-      sidebarTop: Boolean(layoutLoadings.sidebarTop) || Boolean(layoutLoadings.fullscreen),
-      sidebarBottom: Boolean(layoutLoadings.sidebarBottom) || Boolean(layoutLoadings.fullscreen),
-      designer: Boolean(layoutLoadings.designer) || Boolean(layoutLoadings.fullscreen),
-      setters: Boolean(layoutLoadings.setters) || Boolean(layoutLoadings.fullscreen),
-      fullscreen: Boolean(layoutLoadings.fullscreen),
+      enableHeaderLeftLayout: layoutLoadings.headerLeft > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderCenterLayout: layoutLoadings.headerCenter > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderRightLayout: layoutLoadings.headerRight > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarTopLayout: layoutLoadings.sidebarTop > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarPluginLayout:
+        layoutLoadings.sidebarTop > 0 || layoutLoadings.sidebarBottom > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarBottomLayout: layoutLoadings.sidebarBottom > 0 || layoutLoadings.fullscreen > 0,
+      enableDesignerLayout: layoutLoadings.designer > 0 || layoutLoadings.fullscreen > 0,
+      enableSettersLayout: layoutLoadings.setters > 0 || layoutLoadings.fullscreen > 0,
+      enableFullscreenLayout: layoutLoadings.fullscreen > 0,
     }
   })
 

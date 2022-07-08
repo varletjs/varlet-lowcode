@@ -11,7 +11,9 @@ import {
   buildMonaco,
   buildCodeEditor,
   buildSchemaEditor,
-  buildSelector
+  buildSelector,
+  buildUndoRedo,
+  buildResizer
 } from './build.mjs'
 
 await runTask('cli', buildCli)
@@ -26,3 +28,5 @@ await runTask('monaco', buildMonaco)
 await runTask('code-editor', buildCodeEditor)
 await runTask('schema-editor', buildSchemaEditor)
 await runTask('selector', buildSelector)
+await runTask('undo-redo', buildUndoRedo)
+await runTask('resizer', buildResizer)

@@ -2,6 +2,7 @@ import InputSetter from './input-setter/index'
 import RadioSetter from './radio-setter/index'
 import SwitchSetter from './switch-setter/index'
 import SelectSetter from './select-setter/index'
+import SliderSetter from './slider-setter'
 
 const Component = [
   {
@@ -26,4 +27,4 @@ const Component = [
   },
 ]
 export default Component
-export { SwitchSetter, InputSetter, RadioSetter, SelectSetter }
+export { SwitchSetter, InputSetter, RadioSetter, SelectSetter, SliderSetter }

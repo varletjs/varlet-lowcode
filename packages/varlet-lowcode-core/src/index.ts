@@ -15,7 +15,9 @@ const originImportAssets = assetsManager.importAssets
 schemaManager.importSchema = function (schemaPageNode: SchemaPageNode, payload?: any) {
   const newSchema = originImportSchema.call(this, schemaPageNode)
 
-  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema, payload)
+  if (newSchema) {
+    eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema, payload)
+  }
 
   return newSchema
 }
@@ -23,7 +25,9 @@ schemaManager.importSchema = function (schemaPageNode: SchemaPageNode, payload?:
 assetsManager.importAssets = function (assets: Assets, payload?: any) {
   const newAssets = originImportAssets.call(this, assets)
 
-  eventsManager.emit(BuiltInEvents.ASSETS_CHANGE, newAssets, payload)
+  if (newAssets) {
+    eventsManager.emit(BuiltInEvents.ASSETS_CHANGE, newAssets, payload)
+  }
 
   return newAssets
 }

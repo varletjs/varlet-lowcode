@@ -66,7 +66,11 @@
       "packages/varlet-lowcode-schema-editor/lib/**",
       "packages/varlet-lowcode-schema-editor/types/**",
       "packages/varlet-lowcode-selector/lib/**",
-      "packages/varlet-lowcode-selector/types/**"
+      "packages/varlet-lowcode-selector/types/**",
+      "packages/varlet-lowcode-undo-redo/lib/**",
+      "packages/varlet-lowcode-undo-redo/types/**",
+      "packages/varlet-lowcode-resizer/lib/**",
+      "packages/varlet-lowcode-resizer/types/**"
     ],
     "rules": {
       "no-new-func": "off",
@@ -132,8 +136,10 @@
       "packages/varlet-lowcode-monaco/types/**",
       "packages/varlet-lowcode-schema-editor/lib/**",
       "packages/varlet-lowcode-schema-editor/types/**",
-      "packages/varlet-lowcode-selector/lib/**",
-      "packages/varlet-lowcode-selector/types/**"
+      "packages/varlet-lowcode-undo-redo/lib/**",
+      "packages/varlet-lowcode-undo-redo/types/**",
+      "packages/varlet-lowcode-resizer/lib/**",
+      "packages/varlet-lowcode-resizer/types/**"
     ]
   },
   "devDependencies": {

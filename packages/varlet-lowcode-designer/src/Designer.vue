@@ -39,6 +39,7 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
 
   if (
     oldSchema?.code !== schema.code ||
+    oldSchema?.compatibleCode !== schema.compatibleCode ||
     JSON.stringify(oldSchema.dataSources ?? []) !== JSON.stringify(schema.dataSources ?? [])
   ) {
     await mountRenderer()

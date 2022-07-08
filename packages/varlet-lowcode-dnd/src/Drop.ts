@@ -68,17 +68,18 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
 
   dropStyle && mergeStyle(this, dropStyle, true)
 
+  // TODO: this data's type is same as the DragOptions.dragData
   eventBroadcast('drop', { el: this, data: _dragData })
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
-  const defalutProps: DropOptions = {
+  const defaultProps: DropOptions = {
     dropStyle: {
       background: 'red',
     },
     type: 'move',
   }
-  el._drop = { ...defalutProps, ...props.value }
+  el._drop = { ...defaultProps, ...props.value }
 
   el.addEventListener('dragenter', onDropEnter, { passive: false })
   el.addEventListener('dragend', onDropEnd, { passive: false })

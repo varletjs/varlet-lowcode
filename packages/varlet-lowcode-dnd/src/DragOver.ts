@@ -29,23 +29,17 @@ function getDomRectInfo(): DomRectInfo[] {
 
   if (!list || list.length === 0) return []
 
-  // filter the nodes that draped
-  return (
-    list
-      // .filter((item) => item.id !== 'dragItem0')
-      .map((node: Element) => {
-        const rect = node.getBoundingClientRect()
+  return list.map((node: Element) => {
+    const rect = node.getBoundingClientRect()
 
-        return {
-          id: node.id,
-          xAxis: [rect.left, rect.right],
-          yAxis: [rect.top, rect.bottom],
-        }
-      })
-  )
+    return {
+      id: node.id,
+      xAxis: [rect.left, rect.right],
+      yAxis: [rect.top, rect.bottom],
+    }
+  })
 }
 
-// get the nearest direction of the mouse on the node
 function getDirection(
   pageY: number,
   pageX: number,
@@ -64,7 +58,6 @@ function getDirection(
   return minY === Math.abs(pageY - top) ? 'top' : 'bottom'
 }
 
-// get the nearest distance of the mouse on the node
 function getDistance(
   pageY: number,
   pageX: number,
@@ -109,13 +102,11 @@ function calculateStyle(event: DragEvent): NearestOptions | null {
       distance: getDistance(pageY, pageX, top, bottom, left, right, direction, 'outside', true),
     }
 
-    // if the mouse is in the range of the node, it's must inside in the inside node
     if (pageX > left && pageX < right && pageY > top && pageY < bottom) {
       thisTheNearest.type = 'inside'
       thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, 'inside', true)
     }
 
-    // if the mouse is not in the range of the node, it's must outside in the nearest node
     if ((pageX < left || pageX > right) && (pageY < top || pageY > bottom)) {
       thisTheNearest.distance = getDistance(pageY, pageX, top, bottom, left, right, direction, 'outside', false)
     }
@@ -160,6 +151,17 @@ function onDragOver(event: DragEvent) {
   nearestNodeInfo && renderBorder(nearestNodeInfo)
 }
 
+// TODO: this params need a types from the Drag, the other params also need type from the Drop
+function onDragStart({ id }: any) {
+  if (!id) {
+    throw new Error(`this Node is not a Really Dom`)
+  }
+
+  if (id && nodeComputedStyles && nodeComputedStyles.length) {
+    nodeComputedStyles = nodeComputedStyles.filter((item) => item.id !== `${id}`)
+  }
+}
+
 function onDragEnd() {
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border') as HTMLDivElement
 
@@ -181,6 +183,7 @@ function mounted() {
   document.body.appendChild(borderDiv)
 
   document.addEventListener('dragover', onDragOver, { passive: false })
+  eventsManager.on('drag-start', onDragStart)
   eventsManager.on('drag-end', onDragEnd)
 }
 
@@ -194,6 +197,7 @@ function unmounted() {
   nodeComputedStyles = undefined
 
   document.removeEventListener('dragover', onDragOver)
+  eventsManager.off('drag-start', onDragStart)
   eventsManager.off('drag-end', onDragEnd)
 }
 

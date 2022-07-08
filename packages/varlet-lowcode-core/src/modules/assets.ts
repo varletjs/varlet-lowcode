@@ -64,8 +64,8 @@ export interface AssetsManager {
 
   unloadResources(assets: Assets, document: Document): void
 
-  importAssets(assets: Assets): Assets
-  importAssets(assets: Assets, payload?: any): Assets
+  importAssets(assets: Assets): Assets | boolean
+  importAssets(assets: Assets, payload?: any): Assets | boolean
 
   exportAssets(): Assets
 }
@@ -241,7 +241,11 @@ export function createAssetsManager(): AssetsManager {
     }
   }
 
-  function importAssets(assets: Assets) {
+  function importAssets(assets: Assets): Assets | boolean {
+    if (JSON.stringify(_assets) === JSON.stringify(assets)) {
+      return false
+    }
+
     _assets = JSON.parse(JSON.stringify(assets))
 
     return _assets

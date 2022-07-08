@@ -1,30 +1,22 @@
 {
-  "name": "@varlet/lowcode-code-editor",
+  "name": "@varlet/lowcode-resizer",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-code-editor.es.js",
-  "module": "lib/varlet-lowcode-code-editor.es.js",
+  "main": "lib/varlet-lowcode-resizer.es.js",
+  "module": "lib/varlet-lowcode-resizer.es.js",
   "types": "types/index.d.ts",
   "files": [
     "lib",
-    "lib/assets",
     "types",
     "tsconfig.json"
   ],
   "scripts": {
-    "dev": "varlet-lowcode-cli dev",
-    "build": "varlet-lowcode-cli build",
     "compile": "varlet-lowcode-cli compile",
-    "compile:watch": "varlet-lowcode-cli compile -w",
-    "preview": "varlet-lowcode-cli preview"
+    "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/ui": "1.27.17",
-    "@types/node": "*",
-    "monaco-editor": "^0.33.0",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vite": "^2.9.12",
@@ -33,8 +25,6 @@
   },
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/ui": "1.27.17"
   },
   "browserslist": [

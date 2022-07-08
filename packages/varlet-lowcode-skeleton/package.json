@@ -22,10 +22,14 @@
     "@varlet/lowcode-designer": "workspace: *",
     "@varlet/lowcode-code-editor": "workspace: *",
     "@varlet/lowcode-schema-editor": "workspace: *",
+    "@varlet/lowcode-undo-redo": "workspace: *",
+    "@varlet/lowcode-resizer": "workspace: *",
+    "@varlet/lowcode-setters": "workspace: *",
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
-    "@varlet/ui": "^1.27.16",
+    "@varlet/ui": "^1.27.17",
+    "@varlet/touch-emulator": "^1.27.17",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",
@@ -33,7 +37,7 @@
   },
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
-    "@varlet/ui": "^1.27.16"
+    "@varlet/ui": "^1.27.17"
   },
   "browserslist": [
     "Chrome >= 51",

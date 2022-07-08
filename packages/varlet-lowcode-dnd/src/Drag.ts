@@ -6,6 +6,7 @@ import { SchemaNode } from '@varlet/lowcode-core'
 export interface DragOptions {
   id?: string
   dragStyle?: Partial<CSSStyleDeclaration>
+  // TODO: this attributes will like this { schema: SchemaNode; snapshot: SnapShotType }
   dragData: SchemaNode
   dragImg?: HTMLImageElement | HTMLCanvasElement
   type?: DataTransfer['effectAllowed']
@@ -51,7 +52,11 @@ function onDragStart(this: DragHTMLElement, e: DragEvent) {
     e.dataTransfer!.setDragImage(_dragImg, 50, 15)
   }
 
-  eventBroadcast('drag-start', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
+  eventBroadcast('drag-start', {
+    dragEvent: e,
+    dragOptions: JSON.parse(JSON.stringify(_drag)),
+    id: (<HTMLElement>e?.target).id,
+  })
 }
 
 function onDragEnter(this: DragHTMLElement, e: DragEvent) {

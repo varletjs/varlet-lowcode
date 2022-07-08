@@ -1,0 +1,68 @@
+:root {
+  --dialog-width: 800px;
+}
+
+.varlet-low-code-variable-bind {
+  &__content {
+    display: flex;
+    height: 60vh;
+  }
+
+  &__right {
+    flex: 1;
+  }
+
+  &__left {
+    width: 40%;
+    min-width: 320px;
+  }
+
+  &__title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #000;
+  }
+
+  &__select {
+    display: flex;
+    border: 1px solid rgba(31, 56, 88, 0.3);
+    height: calc(100% - 24px);
+    border-radius: 3px;
+  }
+
+  &__category {
+    width: 160px;
+    border-right: 1px solid rgba(31, 56, 88, 0.3);
+    height: 100%;
+    overflow: auto;
+
+    .active {
+      background: rgba(31, 56, 88, 0.06);
+    }
+  }
+
+  &__category > div,
+  &__select-items > div {
+    height: 28px;
+    line-height: 28px;
+    padding: 0 12px;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  &__category > div:hover,
+  &__select-items > div:hover {
+    background: rgba(31, 56, 88, 0.06);
+  }
+
+  &__select-items {
+    flex: 1;
+    overflow: auto;
+    height: 100%;
+  }
+}
+
+.var-dialog {
+  overflow: hidden;
+}

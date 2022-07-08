@@ -15,6 +15,8 @@ export default defineComponent({
     const selectorStyles: Ref<CSSProperties[] | undefined> = ref([])
 
     function computedSelectorStyles(id: string) {
+      console.log('123123', id)
+
       const nodes = document.querySelectorAll(`#${id}`)
 
       if (nodes && nodes.length > 0) {
