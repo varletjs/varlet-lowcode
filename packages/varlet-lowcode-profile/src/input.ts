@@ -2,7 +2,6 @@ import { AssetProfileMaterial } from '@varlet/lowcode-core'
 
 export default {
   name: 'Input',
-  description: 'A varlet input component',
   slots: [
     {
       name: 'prepend-icon',

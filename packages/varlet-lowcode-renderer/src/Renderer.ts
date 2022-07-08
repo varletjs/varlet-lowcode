@@ -83,7 +83,7 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
               ? exec(`(${successHandler.compatibleValue ?? successHandler.value})`)
               : undefined
 
-            const value = successHandlerFunction?.(response) ?? response
+            const value = await (successHandlerFunction?.(response) ?? response)
 
             rendererDataSource.value = value
 
@@ -169,9 +169,7 @@ export default defineComponent({
 
     hoistWindow(builtInApis)
 
-    const code = `(() => { ${
-      props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
-    } })()`.replace(/function\s+setup\s*\(\)\s*\{/, 'return function setup() {')
+    const code = props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
     const setup = exec(code)
     const ctx = setup()
 

@@ -346,14 +346,15 @@ export function createAst(rendererWindowGetter?: () => any) {
   }
 
   function transformCompatibleCode(code: string) {
-    return babel.transform(code, {
+    const { code: compatibleCode } = babel.transform(code, {
       targets: {
-        chrome: '51',
-        ios: '10',
+        browsers: ['chrome >= 55', 'ios >= 10.4'],
       },
       sourceType: 'unambiguous',
       presets: ['env'],
-    }).code
+    })
+
+    return compatibleCode
   }
 
   return {

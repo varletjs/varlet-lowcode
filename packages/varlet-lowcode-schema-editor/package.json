@@ -35,7 +35,7 @@
     "@varlet/ui": "latest"
   },
   "browserslist": [
-    "Chrome >= 51",
-    "iOS >= 10"
+    "Chrome >= 55",
+    "iOS >= 10.4"
   ]
 }

@@ -2,7 +2,6 @@ import type { AssetProfileMaterial } from '@varlet/lowcode-core'
 
 export default {
   name: 'Card',
-  description: 'A varlet card component',
   slots: [
     {
       name: 'image',

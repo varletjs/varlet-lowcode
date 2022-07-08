@@ -1,5 +1,6 @@
 import { get } from 'lodash-es'
 import type { Component, DefineComponent } from 'vue'
+import type { SchemaNode } from './schema'
 
 export interface Asset {
   profileLibrary?: string
@@ -11,8 +12,8 @@ export interface AssetProfile {
   library: string
   packageName: string
   packageVersion: string
-  materials: AssetProfileMaterial[]
-  isVuePlugin: boolean
+  materials?: AssetProfileMaterial[]
+  isVuePlugin?: boolean
 }
 
 export interface AssetProfileMaterialCodegen {
@@ -21,27 +22,32 @@ export interface AssetProfileMaterialCodegen {
 
 export interface AssetProfileMaterialSlot {
   name: string
-  hasSlotProps: boolean
+  hasSlotProps?: boolean
 }
 
-export type AssetProfileMaterialSetter =
-  | string
-  | {
-      setter: string | Component | DefineComponent
-      block?: boolean
-      props?: Record<string, any>
-    }
+export interface AssetProfileMaterialSetterOptions {
+  setter: string | Component | DefineComponent
+  block?: boolean
+  props?: Record<string, any>
+}
+
+export type AssetProfileMaterialSetter = string | AssetProfileMaterialSetterOptions
 
 export interface AssetProfileMaterialProp {
   name: string
+  label?: string
   setters: AssetProfileMaterialSetter[]
+}
+
+export interface AssetProfileMaterialSnapshot {
+  schemas: SchemaNode[]
+  image?: string
+  label?: string
 }
 
 export interface AssetProfileMaterial {
   name: string
-  label: string
-  description?: string
-  image?: string
+  snapshots?: AssetProfileMaterialSnapshot[]
   props?: AssetProfileMaterialProp[]
   slots?: AssetProfileMaterialSlot[]
   codegen: AssetProfileMaterialCodegen
@@ -80,7 +86,7 @@ export function createAssetsManager(): AssetsManager {
       }
 
       const assetProfile = get(window, asset.profileLibrary) as AssetProfile
-      const matchedName = assetProfile.materials.some((material) => material.name === name)
+      const matchedName = (assetProfile.materials ?? []).some((material) => material.name === name)
       const matchedLibrary = library === assetProfile.library
 
       return matchedName && matchedLibrary
@@ -104,7 +110,7 @@ export function createAssetsManager(): AssetsManager {
       const assetProfile = get(window, asset.profileLibrary) as AssetProfile
 
       if (assetProfile.library === library) {
-        for (const material of assetProfile.materials) {
+        for (const material of assetProfile.materials ?? []) {
           if (material.name === name) {
             return material
           }
@@ -124,7 +130,7 @@ export function createAssetsManager(): AssetsManager {
       const assetProfile = get(window, asset.profileLibrary) as AssetProfile
 
       if (assetProfile.library === library) {
-        for (const material of assetProfile.materials) {
+        for (const material of assetProfile.materials ?? []) {
           if (material.name === name) {
             return assetProfile
           }

@@ -29,7 +29,7 @@
     "@varlet/lowcode-core": "workspace: *"
   },
   "browserslist": [
-    "Chrome >= 51",
-    "iOS >= 10"
+    "Chrome >= 55",
+    "iOS >= 10.4"
   ]
 }

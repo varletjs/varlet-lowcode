@@ -1,5 +1,6 @@
 import Designer from '@varlet/lowcode-designer'
 import CodeEditor from '@varlet/lowcode-code-editor'
+import MaterialsPanel from '@varlet/lowcode-materials-panel'
 import SchemaEditor from '@varlet/lowcode-schema-editor'
 import UndoRedo from '@varlet/lowcode-undo-redo'
 import Resizer from '@varlet/lowcode-resizer'
@@ -26,6 +27,13 @@ export function usePlugins() {
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.SIDEBAR_TOP,
+      name: 'materials-panel',
+      component: MaterialsPanel,
+      icon: 'image-outline',
+      label: '物料面板',
+    })
+    .useSkeletonPlugin({
+      layout: SkeletonLayouts.SIDEBAR_TOP,
       name: 'code-editor',
       component: CodeEditor,
       icon: 'xml',
@@ -39,7 +47,7 @@ export function usePlugins() {
       label: 'SCHEMA 面板',
     })
     .useSkeletonPlugin({
-      layout: SkeletonLayouts.HEADER_CENTER,
+      layout: SkeletonLayouts.HEADER_RIGHT,
       name: 'undo-repo',
       component: UndoRedo,
     })
