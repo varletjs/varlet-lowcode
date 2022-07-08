@@ -11,6 +11,7 @@ export enum SkeletonLayouts {
 }
 
 export interface SkeletonPlugin {
+  readonly name: string
   readonly layout: SkeletonLayouts
   readonly component: Component | DefineComponent
   readonly componentProps?: Record<string, any>
@@ -19,6 +20,7 @@ export interface SkeletonPlugin {
 }
 
 export interface SelectorPlugin {
+  readonly name: string
   readonly component: Component | DefineComponent
   readonly componentProps?: Record<string, any>
 }
@@ -44,12 +46,22 @@ export function createPluginsManager(): PluginsManager {
   }
 
   function useSkeletonPlugin(skeletonPlugin: SkeletonPlugin): PluginsManager {
+    if (skeletonPlugins.some((_skeletonPlugin) => _skeletonPlugin.name === skeletonPlugin.name)) {
+      console.warn('Skeleton plugins registered with the same name will be automatically ignored')
+      return pluginManager
+    }
+
     skeletonPlugins.push(skeletonPlugin)
 
     return pluginManager
   }
 
   function useSelectorPlugin(selectorPlugin: SelectorPlugin): PluginsManager {
+    if (selectorPlugins.some((_selectorPlugin) => _selectorPlugin.name === selectorPlugin.name)) {
+      console.warn('Selector plugins registered with the same name will be automatically ignored')
+      return pluginManager
+    }
+
     selectorPlugins.push(selectorPlugin)
 
     return pluginManager
