@@ -86,7 +86,7 @@ window.addEventListener('keydown', handleKeydown)
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
-  rendererWindow.removeEventListener('keydown', handleKeydown)
+  rendererWindow?.removeEventListener('keydown', handleKeydown)
   eventsManager.off('designer-iframe-click', handleDesignerIframeClick)
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 })

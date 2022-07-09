@@ -17,6 +17,9 @@ export enum SkeletonLoadingEvents {
   SKELETON_LOADED = 'skeleton-loaded',
 }
 
+const LOADING_DELAY = 300
+const LOADED_DELAY = 600
+
 export function useLoading() {
   const layoutLoadings: Record<string, number> = reactive({
     headerLeft: 0,
@@ -40,13 +43,15 @@ export function useLoading() {
     fullscreen: 0,
   })
 
-  const handleLoading = (layout: SkeletonLayoutLoadings) => {
+  const handleLoading = (layout: SkeletonLayoutLoadings, delay?: number) => {
     layoutPendingLoadings[layout]++
 
     setTimeout(() => {
-      layoutLoadings[layout] += layoutPendingLoadings[layout]
-      layoutPendingLoadings[layout] = 0
-    }, 5000)
+      if (layoutPendingLoadings[layout] > 0) {
+        layoutLoadings[layout] += 1
+        layoutPendingLoadings[layout] -= 1
+      }
+    }, delay ?? LOADING_DELAY)
   }
 
   const handleLoaded = (layout: SkeletonLayoutLoadings) => {
@@ -56,7 +61,9 @@ export function useLoading() {
       return
     }
 
-    layoutLoadings[layout]--
+    setTimeout(() => {
+      layoutLoadings[layout]--
+    }, LOADED_DELAY)
   }
 
   eventsManager.on(SkeletonLoadingEvents.SKELETON_LOADING, handleLoading)

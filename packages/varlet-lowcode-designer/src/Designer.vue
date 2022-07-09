@@ -119,7 +119,9 @@ async function mountRenderer() {
 }
 
 onMounted(async () => {
+  eventsManager.emit('skeleton-loading', 'fullscreen', 0)
   await mountRenderer()
+  eventsManager.emit('skeleton-loaded', 'fullscreen', 0)
 })
 </script>
 
