@@ -13,7 +13,8 @@ import {
   buildSchemaEditor,
   buildSelector,
   buildUndoRedo,
-  buildResizer
+  buildResizer,
+  buildMaterialsPanel
 } from './build.mjs'
 
 await runTask('cli', buildCli)
@@ -30,3 +31,4 @@ await runTask('schema-editor', buildSchemaEditor)
 await runTask('selector', buildSelector)
 await runTask('undo-redo', buildUndoRedo)
 await runTask('resizer', buildResizer)
+await runTask('materials-panel', buildMaterialsPanel)

@@ -17,6 +17,7 @@ const PKG_SCHEMA_EDITOR = resolve(CWD, './packages/varlet-lowcode-schema-editor'
 const PKG_SELECTOR = resolve(CWD, './packages/varlet-lowcode-selector')
 const PKG_UNDO_REDO = resolve(CWD, './packages/varlet-lowcode-undo-redo')
 const PKG_RESIZER = resolve(CWD, './packages/varlet-lowcode-resizer')
+const PKG_MATERIALS_PANEL =  resolve(CWD, './packages/varlet-lowcode-materials-panel')
 
 export const buildCli = () => execa('pnpm', ['build'], { cwd: PKG_CLI })
 
@@ -45,6 +46,8 @@ export const buildSelector = () => execa('pnpm', ['compile'], { cwd: PKG_SELECTO
 export const buildUndoRedo = () => execa('pnpm', ['compile'], { cwd: PKG_UNDO_REDO })
 
 export const buildResizer = () => execa('pnpm', ['compile'], { cwd: PKG_RESIZER })
+
+export const buildMaterialsPanel = () => execa('pnpm', ['compile'], { cwd: PKG_MATERIALS_PANEL })
 
 export async function runTask(taskName, task) {
   const s = ora().start(`Building ${taskName}`)
