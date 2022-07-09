@@ -48,16 +48,15 @@ export function useLoading() {
 
     setTimeout(() => {
       if (layoutPendingLoadings[layout] > 0) {
-        layoutLoadings[layout] += 1
-        layoutPendingLoadings[layout] -= 1
+        layoutLoadings[layout]++
+        layoutPendingLoadings[layout]--
       }
     }, delay ?? LOADING_DELAY)
   }
 
   const handleLoaded = (layout: SkeletonLayoutLoadings) => {
-    if (layoutPendingLoadings[layout]) {
+    if (layoutPendingLoadings[layout] > 0) {
       layoutPendingLoadings[layout]--
-
       return
     }
 
