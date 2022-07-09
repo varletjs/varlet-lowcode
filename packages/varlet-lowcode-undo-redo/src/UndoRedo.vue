@@ -71,7 +71,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 function handleDesignerIframeClick() {
-  const rendererWindow = getRendererWindow()
+  rendererWindow = getRendererWindow()
 
   if (!rendererWindow) {
     return
