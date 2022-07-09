@@ -29,7 +29,7 @@ export function useLoading() {
     fullscreen: 0,
   })
 
-  const layoutLoadingPrepares: Record<string, number> = reactive({
+  const layoutPendingLoadings: Record<string, number> = reactive({
     headerLeft: 0,
     headerCenter: 0,
     headerRight: 0,
@@ -41,17 +41,17 @@ export function useLoading() {
   })
 
   const handleLoading = (layout: SkeletonLayoutLoadings) => {
-    layoutLoadingPrepares[layout]++
+    layoutPendingLoadings[layout]++
 
     setTimeout(() => {
-      layoutLoadings[layout] += layoutLoadingPrepares[layout]
-      layoutLoadingPrepares[layout] = 0
+      layoutLoadings[layout] += layoutPendingLoadings[layout]
+      layoutPendingLoadings[layout] = 0
     }, 5000)
   }
 
   const handleLoaded = (layout: SkeletonLayoutLoadings) => {
-    if (layoutLoadingPrepares[layout]) {
-      layoutLoadingPrepares[layout]--
+    if (layoutPendingLoadings[layout]) {
+      layoutPendingLoadings[layout]--
 
       return
     }
