@@ -144,12 +144,14 @@ export default defineComponent({
             <Skeleton v-show={loading} loading={loading} rows="1" />
 
             <Space v-show={!loading}>
-              {_plugins.map((_plugin) => {
-                const Component = _plugin!.component as DefineComponent
-                const componentProps = _plugin!.componentProps ?? {}
+              {_plugins.length
+                ? _plugins.map((_plugin) => {
+                    const Component = _plugin!.component as DefineComponent
+                    const componentProps = _plugin!.componentProps ?? {}
 
-                return <Component {...componentProps} />
-              })}
+                    return <Component {...componentProps} />
+                  })
+                : null}
             </Space>
           </>
         )
@@ -158,9 +160,9 @@ export default defineComponent({
       return (
         <AppBar class="varlet-low-code-skeleton__header" title-position="center" elevation={false}>
           {{
-            left: renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.enableHeaderLeftLayout),
-            default: renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.enableHeaderCenterLayout),
-            right: renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.enableHeaderRightLayout),
+            left: () => renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.enableHeaderLeftLayout),
+            default: () => renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.enableHeaderCenterLayout),
+            right: () => renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.enableHeaderRightLayout),
           }}
         </AppBar>
       )
@@ -170,32 +172,36 @@ export default defineComponent({
       const renderIcons: (_plugins: SkeletonPlugin[], loading: boolean) => JSX.Element = (_plugins, loading) => {
         return (
           <div class="varlet-low-code-skeleton__sidebar--container">
-            {_plugins.map((plugin: SkeletonPlugin) => {
-              const { icon: iconName, name } = plugin
-              return (
-                <>
-                  <Skeleton v-show={loading} loading={loading} avatar rows="0" />
+            {_plugins.length
+              ? _plugins.map((plugin: SkeletonPlugin) => {
+                  const { icon: iconName, name } = plugin
+                  return (
+                    <>
+                      <Skeleton v-show={loading} loading={loading} avatar rows="0" />
 
-                  <div
-                    v-ripple
-                    ref={(el) => sidebarRef(el, name)}
-                    v-show={!loading}
-                    class={`varlet-low-code-skeleton__sidebar--item ${
-                      name === sidebarActiveComponent.value ? 'varlet-low-code-skeleton__sidebar--item-selected' : ''
-                    }`}
-                    onClick={() => toggleSidebarActive(name)}
-                    onMouseenter={() => toggleSidebarFocus(plugin)}
-                    onMouseleave={() => toggleSidebarFocus()}
-                  >
-                    {typeof iconName === 'string' ? (
-                      <Icon name={iconName} class="varlet-low-code-skeleton__sidebar--icon" />
-                    ) : (
-                      <iconName />
-                    )}
-                  </div>
-                </>
-              )
-            })}
+                      <div
+                        v-ripple
+                        ref={(el) => sidebarRef(el, name)}
+                        v-show={!loading}
+                        class={`varlet-low-code-skeleton__sidebar--item ${
+                          name === sidebarActiveComponent.value
+                            ? 'varlet-low-code-skeleton__sidebar--item-selected'
+                            : ''
+                        }`}
+                        onClick={() => toggleSidebarActive(name)}
+                        onMouseenter={() => toggleSidebarFocus(plugin)}
+                        onMouseleave={() => toggleSidebarFocus()}
+                      >
+                        {typeof iconName === 'string' ? (
+                          <Icon name={iconName} class="varlet-low-code-skeleton__sidebar--icon" />
+                        ) : (
+                          <iconName />
+                        )}
+                      </div>
+                    </>
+                  )
+                })
+              : null}
           </div>
         )
       }
@@ -220,32 +226,34 @@ export default defineComponent({
               rows="0"
             />
             <div v-show={sidebarActiveComponent.value && !layoutLoadingsComputed.value.enableSidebarPluginLayout}>
-              {sidebarPlugins.map((plugin) => {
-                const Component = plugin.component as DefineComponent
-                const componentProps = plugin.componentProps ?? {}
+              {sidebarPlugins.length
+                ? sidebarPlugins.map((plugin) => {
+                    const Component = plugin.component as DefineComponent
+                    const componentProps = plugin.componentProps ?? {}
 
-                const renderLabel: () => JSX.Element = () => {
-                  return (
-                    <div class="varlet-low-code-skeleton__sidebar-component-label">
-                      <h2>{plugin?.label || ''}</h2>
-                      <Icon
-                        onClick={() => {
-                          sidebarPinned.value = !sidebarPinned.value
-                        }}
-                        transition="200"
-                        name="pin-outline"
-                      ></Icon>
-                    </div>
-                  )
-                }
+                    const renderLabel: () => JSX.Element = () => {
+                      return (
+                        <div class="varlet-low-code-skeleton__sidebar-component-label">
+                          <h2>{plugin?.label || ''}</h2>
+                          <Icon
+                            onClick={() => {
+                              sidebarPinned.value = !sidebarPinned.value
+                            }}
+                            transition="200"
+                            name="pin-outline"
+                          ></Icon>
+                        </div>
+                      )
+                    }
 
-                return (
-                  <div v-Show={sidebarActiveComponent.value === plugin.name}>
-                    {renderLabel()}
-                    <Component {...componentProps} />
-                  </div>
-                )
-              })}
+                    return (
+                      <div v-Show={sidebarActiveComponent.value === plugin.name}>
+                        {renderLabel()}
+                        <Component {...componentProps} />
+                      </div>
+                    )
+                  })
+                : null}
             </div>
           </div>
         )
