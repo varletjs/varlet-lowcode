@@ -44,7 +44,7 @@ onUnmounted(() => {
 
 <template>
   <div class="varlet-low-code-schema-editor">
-    <monaco language="json" height="calc(100vh - 90px)" v-model:code="schemaJSON" @save="changeSchema" />
+    <monaco language="json" height="calc(100vh - 110px)" v-model:code="schemaJSON" @save="changeSchema" />
   </div>
 </template>
 

@@ -152,13 +152,13 @@ onUnmounted(() => {
       <var-tab-item name="js">
         <monaco
           :create-suggestions="createApiSuggestions"
-          height="calc(100vh - 140px)"
+          height="calc(100vh - 160px)"
           v-model:code="code"
           @save="saveCode"
         />
       </var-tab-item>
       <var-tab-item name="css">
-        <monaco language="css" height="calc(100vh - 140px)" v-model:code="css" @save="saveCss" />
+        <monaco language="css" height="calc(100vh - 160px)" v-model:code="css" @save="saveCss" />
       </var-tab-item>
     </var-tabs-items>
   </div>
