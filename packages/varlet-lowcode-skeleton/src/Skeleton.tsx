@@ -232,6 +232,7 @@ export default defineComponent({
                         onClick={() => {
                           sidebarPinned.value = !sidebarPinned.value
                         }}
+                        transition="200"
                         name="pin-outline"
                       ></Icon>
                     </div>
