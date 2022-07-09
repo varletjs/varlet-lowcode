@@ -409,7 +409,7 @@ export default defineComponent({
               slot._slotProps = {}
             }
 
-            slot._slotProps[schemaNode.id] = slotProps
+            slot._slotProps[schemaNode.id!] = slotProps
 
             const slotChildren = slot.children ?? []
             const conditionedSchemaNodes = withCondition(slotChildren as SchemaNode[])
