@@ -215,7 +215,7 @@ export default defineComponent({
               sidebarPinned.value ? 'varlet-low-code-skeleton__sidebar-component--pinned' : ''
             }`}
             style={{
-              padding: `${layoutLoadingsComputed.value.enableSidebarPluginLayout ? '16px' : undefined}`,
+              padding: `${layoutLoadingsComputed.value.enableSidebarPluginLayout ? '14px' : undefined}`,
             }}
             v-show={sidebarActiveComponent.value}
           >
