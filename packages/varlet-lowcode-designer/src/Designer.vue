@@ -9,7 +9,8 @@ import {
 } from '@varlet/lowcode-core'
 import Selector from '@varlet/lowcode-selector'
 import { onMounted, ref } from 'vue'
-import { SkeletonLayoutLoadings, SkeletonLoadingEvents } from '@varlet/lowcode-skeleton/src/useLoading'
+import { SkeletonLayoutLoadings, SkeletonLoadingEvents } from '@varlet/lowcode-skeleton'
+import { DesignerEvents } from './enums'
 
 const presetAssets: Assets = [
   {
@@ -109,7 +110,7 @@ async function mountRenderer() {
   app.id = 'app'
   iframeElement!.contentDocument!.body.appendChild(app)
   iframeElement!.contentDocument!.addEventListener('click', (event) => {
-    eventsManager.emit('designer-iframe-click', event)
+    eventsManager.emit(DesignerEvents.IFRAME_CLICK, event)
   })
 
   renderer.mode = 'designer'
