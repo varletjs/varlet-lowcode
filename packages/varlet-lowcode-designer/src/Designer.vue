@@ -9,6 +9,7 @@ import {
 } from '@varlet/lowcode-core'
 import Selector from '@varlet/lowcode-selector'
 import { onMounted, ref } from 'vue'
+import { SkeletonLayoutLoadings, SkeletonLoadingEvents } from '@varlet/lowcode-skeleton/src/useLoading'
 
 const presetAssets: Assets = [
   {
@@ -95,7 +96,7 @@ function mountIframe() {
 }
 
 async function mountRenderer() {
-  eventsManager.emit('skeleton-loading', 'designer')
+  eventsManager.emit(SkeletonLoadingEvents.SKELETON_LOADING, SkeletonLayoutLoadings.DESIGNER)
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
@@ -115,13 +116,13 @@ async function mountRenderer() {
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
-  eventsManager.emit('skeleton-loaded', 'designer')
+  eventsManager.emit(SkeletonLoadingEvents.SKELETON_LOADED, SkeletonLayoutLoadings.DESIGNER)
 }
 
 onMounted(async () => {
-  eventsManager.emit('skeleton-loading', 'fullscreen', 0)
+  eventsManager.emit(SkeletonLoadingEvents.SKELETON_LOADING, SkeletonLayoutLoadings.FULLSCREEN, 0)
   await mountRenderer()
-  eventsManager.emit('skeleton-loaded', 'fullscreen', 0)
+  eventsManager.emit(SkeletonLoadingEvents.SKELETON_LOADED, SkeletonLayoutLoadings.FULLSCREEN, 0)
 })
 </script>
 

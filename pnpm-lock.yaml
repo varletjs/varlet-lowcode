@@ -197,12 +197,15 @@ importers:
       '@varlet/lowcode-monaco': 'workspace: *'
       '@varlet/lowcode-schema-editor': 'workspace: *'
       '@varlet/lowcode-selector': 'workspace: *'
+      '@varlet/lowcode-skeleton': 'workspace: *'
       '@varlet/touch-emulator': latest
       '@varlet/ui': latest
       live-server: ^1.2.1
       typescript: ^4.4.4
       vue: 3.2.25
       vue-tsc: ^0.37.3
+    dependencies:
+      '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-code-editor': link:../varlet-lowcode-code-editor
@@ -4359,7 +4362,7 @@ packages:
     dev: true
 
   /ee-first/1.1.1:
-    resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
+    resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
   /ejs/3.1.8:
