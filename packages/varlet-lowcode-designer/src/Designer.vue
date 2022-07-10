@@ -10,7 +10,7 @@ import {
 import Selector from '@varlet/lowcode-selector'
 import { onMounted, ref } from 'vue'
 import { SkeletonLayoutLoadings, SkeletonLoadingEvents } from '@varlet/lowcode-skeleton'
-import { DesignerEvents } from './enums'
+import { DesignerEvents } from './types'
 
 const presetAssets: Assets = [
   {

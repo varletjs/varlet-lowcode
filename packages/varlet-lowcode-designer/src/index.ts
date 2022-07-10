@@ -1,5 +1,5 @@
 import Designer from './Designer.vue'
 
-export * from './enums'
+export * from './types'
 
 export default Designer
