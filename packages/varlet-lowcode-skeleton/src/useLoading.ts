@@ -1,60 +1,45 @@
 import { computed, onUnmounted, reactive } from 'vue'
 import { eventsManager } from '@varlet/lowcode-core'
-
-export enum SkeletonLayoutLoadings {
-  HEADER_LEFT = 'headerLeft',
-  HEADER_CENTER = 'headerCenter',
-  HEADER_RIGHT = 'headerRight',
-  SIDEBAR_TOP = 'sidebarTop',
-  SIDEBAR_BOTTOM = 'sidebarBottom',
-  DESIGNER = 'designer',
-  SETTERS = 'setters',
-  FULLSCREEN = 'fullscreen',
-}
-
-export enum SkeletonLoadingEvents {
-  SKELETON_LOADING = 'skeleton-loading',
-  SKELETON_LOADED = 'skeleton-loaded',
-}
+import { SkeletonEvents, SkeletonLoaders } from './types'
 
 const LOADING_DELAY = 300
 const LOADED_DELAY = 600
 
 export function useLoading() {
   const layoutLoadings: Record<string, number> = reactive({
-    headerLeft: 0,
-    headerCenter: 0,
-    headerRight: 0,
-    sidebarTop: 0,
-    sidebarBottom: 0,
+    'header-left': 0,
+    'header-center': 0,
+    'header-right': 0,
+    'sidebar-top': 0,
+    'sidebar-bottom': 0,
     designer: 0,
     setters: 0,
     fullscreen: 0,
   })
 
   const layoutPendingLoadings: Record<string, number> = reactive({
-    headerLeft: 0,
-    headerCenter: 0,
-    headerRight: 0,
-    sidebarTop: 0,
-    sidebarBottom: 0,
+    'header-left': 0,
+    'header-center': 0,
+    'header-right': 0,
+    'sidebar-top': 0,
+    'sidebar-bottom': 0,
     designer: 0,
     setters: 0,
     fullscreen: 0,
   })
 
-  const handleLoading = (layout: SkeletonLayoutLoadings, delay?: number) => {
-    layoutPendingLoadings[layout]++
+  const handleLoading = (loader: SkeletonLoaders, delay?: number) => {
+    layoutPendingLoadings[loader]++
 
     setTimeout(() => {
-      if (layoutPendingLoadings[layout] > 0) {
-        layoutLoadings[layout]++
-        layoutPendingLoadings[layout]--
+      if (layoutPendingLoadings[loader] > 0) {
+        layoutLoadings[loader]++
+        layoutPendingLoadings[loader]--
       }
     }, delay ?? LOADING_DELAY)
   }
 
-  const handleLoaded = (layout: SkeletonLayoutLoadings) => {
+  const handleLoaded = (layout: SkeletonLoaders) => {
     if (layoutPendingLoadings[layout] > 0) {
       layoutPendingLoadings[layout]--
       return
@@ -65,12 +50,12 @@ export function useLoading() {
     }, LOADED_DELAY)
   }
 
-  eventsManager.on(SkeletonLoadingEvents.SKELETON_LOADING, handleLoading)
-  eventsManager.on(SkeletonLoadingEvents.SKELETON_LOADED, handleLoaded)
+  eventsManager.on(SkeletonEvents.LOADING, handleLoading)
+  eventsManager.on(SkeletonEvents.LOADED, handleLoaded)
 
   onUnmounted(() => {
-    eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADING, handleLoading)
-    eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADED, handleLoaded)
+    eventsManager.off(SkeletonEvents.LOADING, handleLoading)
+    eventsManager.off(SkeletonEvents.LOADED, handleLoaded)
   })
 
   const layoutLoadingsComputed = computed(() => {

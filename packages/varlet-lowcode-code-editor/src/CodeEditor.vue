@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Monaco from '@varlet/lowcode-monaco'
-import { ref, Ref, onUnmounted, onMounted, nextTick } from 'vue'
+import { ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
 import {
@@ -11,11 +11,13 @@ import {
   TabsItems as VarTabsItems,
   TabItem as VarTabItem,
 } from '@varlet/ui'
+import { SkeletonEvents } from '@varlet/lowcode-skeleton'
 import '@varlet/ui/es/snackbar/style/index.js'
 import '@varlet/ui/es/tabs/style/index.js'
 import '@varlet/ui/es/tab/style/index.js'
 import '@varlet/ui/es/tabs-items/style/index.js'
 import '@varlet/ui/es/tab-item/style/index.js'
+import type { Ref } from 'vue'
 import type { SchemaPageNode } from '@varlet/lowcode-core'
 import type { IRange } from 'monaco-editor'
 
@@ -123,14 +125,14 @@ function saveCss() {
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
 onMounted(() => {
-  eventsManager.on('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
+  eventsManager.on(SkeletonEvents.SIDEBAR_TOGGLE, handleSkeletonSidebarToggle)
 
   saveCode()
 })
 
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
-  eventsManager.off('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
+  eventsManager.off(SkeletonEvents.SIDEBAR_TOGGLE, handleSkeletonSidebarToggle)
 })
 </script>
 

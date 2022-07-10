@@ -10,6 +10,7 @@ import '@varlet/ui/es/skeleton/style/index.js'
 import '@varlet/ui/es/ripple/style/index'
 import './skeleton.less'
 import { useLoading } from './useLoading'
+import { SkeletonEvents } from './types'
 
 function distributePlugins(plugins: SkeletonPlugin[]) {
   const headerLeftPlugins: SkeletonPlugin[] = []
@@ -82,10 +83,6 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
   }
 }
 
-export enum SidebarEvents {
-  SIDEBAR_TOGGLE = 'skeleton-sidebar-toggle',
-}
-
 export default defineComponent({
   name: 'VarletLowCodeSkeleton',
   directives: { ripple: Ripple },
@@ -125,7 +122,7 @@ export default defineComponent({
     watch(
       () => sidebarActiveComponent.value,
       (newVal) => {
-        eventsManager.emit(SidebarEvents.SIDEBAR_TOGGLE, { name: newVal })
+        eventsManager.emit(SkeletonEvents.SIDEBAR_TOGGLE, { name: newVal })
       }
     )
 

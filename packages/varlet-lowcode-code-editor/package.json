@@ -17,6 +17,9 @@
     "compile:watch": "varlet-lowcode-cli compile -w",
     "preview": "varlet-lowcode-cli preview"
   },
+  "dependencies": {
+    "@varlet/lowcode-skeleton": "workspace: *"
+  },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",

@@ -1,5 +1,5 @@
 import Skeleton from './Skeleton'
 
-export * from './useLoading'
+export * from './types'
 
 export default Skeleton
