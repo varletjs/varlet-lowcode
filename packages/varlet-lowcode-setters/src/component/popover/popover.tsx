@@ -38,7 +38,7 @@ export default defineComponent({
         console.log(y, domHeight)
         popoverStyle.left = x - domWidth + width / 2 + 'px'
         popoverStyle.top = y - domHeight - 12 + 'px'
-        classNameAfter.value = 'varlet-low-Code-popover-bottom-right'
+        classNameAfter.value = 'varlet-low-code-popover-bottom-right'
 
         await nextTick()
         const { top, bottom, left, right } = document.getElementById('low-code-popover')?.getBoundingClientRect() || {
@@ -50,8 +50,11 @@ export default defineComponent({
         if (top < 0) {
           popoverStyle.left = x - domWidth + width / 2 + 'px'
           popoverStyle.top = y + 12 + height + 'px'
-          classNameAfter.value = 'varlet-low-Code-popover-top-right'
+          classNameAfter.value = 'varlet-low-code-popover-top-right'
           console.log(bottom, left, right)
+        }
+        if (right < 0) {
+          alert()
         }
 
         popoverStyle.opacity = 100
