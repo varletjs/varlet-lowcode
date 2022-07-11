@@ -221,12 +221,12 @@ export default defineComponent({
             v-show={sidebarActiveComponent.value}
           >
             <Skeleton
-              v-show={sidebarActiveComponent.value && layoutLoadingsComputed.value.enableSidebarPluginLayout}
+              v-Show={layoutLoadingsComputed.value.enableSidebarPluginLayout}
               loading={layoutLoadingsComputed.value.enableSidebarPluginLayout}
               card
               rows="0"
             />
-            <div v-show={sidebarActiveComponent.value && !layoutLoadingsComputed.value.enableSidebarPluginLayout}>
+            <div>
               {sidebarPlugins.length
                 ? sidebarPlugins.map((plugin) => {
                     const Component = plugin.component as DefineComponent
@@ -249,9 +249,17 @@ export default defineComponent({
                         </div>
                       )
                     }
-
                     return (
-                      <div v-Show={sidebarActiveComponent.value === plugin.name}>
+                      <div
+                        v-Show={sidebarActiveComponent.value === plugin.name}
+                        class={`
+                      ${
+                        sidebarActiveComponent.value && layoutLoadingsComputed.value.enableSidebarPluginLayout
+                          ? 'varlet-low-code-skeleton__sidebar-component--loading'
+                          : ''
+                      }
+                      `}
+                      >
                         {renderLabel()}
                         <Component {...componentProps} />
                       </div>
