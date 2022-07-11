@@ -29,22 +29,28 @@ export function usePlugins() {
       layout: SkeletonLayouts.SIDEBAR_TOP,
       name: 'materials-panel',
       component: MaterialsPanel,
-      icon: 'image-outline',
-      label: '物料面板',
+      layoutProps: {
+        icon: 'image-outline',
+        label: '物料面板',
+      },
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.SIDEBAR_TOP,
       name: 'code-editor',
       component: CodeEditor,
-      icon: 'xml',
-      label: '源码面板',
+      layoutProps: {
+        icon: 'xml',
+        label: '源码面板',
+      },
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.SIDEBAR_BOTTOM,
       name: 'schema-editor',
       component: SchemaEditor,
-      icon: 'code-json',
-      label: 'SCHEMA 面板',
+      layoutProps: {
+        icon: 'code-json',
+        label: 'SCHEMA 面板',
+      },
     })
     .useSkeletonPlugin({
       layout: SkeletonLayouts.HEADER_RIGHT,

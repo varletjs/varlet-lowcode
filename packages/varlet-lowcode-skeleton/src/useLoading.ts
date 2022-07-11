@@ -60,13 +60,13 @@ export function useLoading() {
 
   const layoutLoadingsComputed = computed(() => {
     return {
-      enableHeaderLeftLayout: layoutLoadings.headerLeft > 0 || layoutLoadings.fullscreen > 0,
-      enableHeaderCenterLayout: layoutLoadings.headerCenter > 0 || layoutLoadings.fullscreen > 0,
-      enableHeaderRightLayout: layoutLoadings.headerRight > 0 || layoutLoadings.fullscreen > 0,
-      enableSidebarTopLayout: layoutLoadings.sidebarTop > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderLeftLayout: layoutLoadings['header-left'] > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderCenterLayout: layoutLoadings['header-center'] > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderRightLayout: layoutLoadings['header-right'] > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarTopLayout: layoutLoadings['sidebar-top'] > 0 || layoutLoadings.fullscreen > 0,
       enableSidebarPluginLayout:
-        layoutLoadings.sidebarTop > 0 || layoutLoadings.sidebarBottom > 0 || layoutLoadings.fullscreen > 0,
-      enableSidebarBottomLayout: layoutLoadings.sidebarBottom > 0 || layoutLoadings.fullscreen > 0,
+        layoutLoadings['sidebar-top'] > 0 || layoutLoadings['sidebar-bottom'] > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarBottomLayout: layoutLoadings['sidebar-bottom'] > 0 || layoutLoadings.fullscreen > 0,
       enableDesignerLayout: layoutLoadings.designer > 0 || layoutLoadings.fullscreen > 0,
       enableSettersLayout: layoutLoadings.setters > 0 || layoutLoadings.fullscreen > 0,
       enableFullscreenLayout: layoutLoadings.fullscreen > 0,

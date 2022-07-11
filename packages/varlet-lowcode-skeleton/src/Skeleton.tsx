@@ -144,7 +144,10 @@ export default defineComponent({
               {_plugins.length
                 ? _plugins.map((_plugin) => {
                     const Component = _plugin!.component as DefineComponent
-                    const componentProps = _plugin!.componentProps ?? {}
+                    const componentProps = {
+                      name: _plugin.name,
+                      ...(_plugin.componentProps ?? {}),
+                    }
 
                     return <Component {...componentProps} />
                   })
@@ -171,7 +174,8 @@ export default defineComponent({
           <div class="varlet-low-code-skeleton__sidebar--container">
             {_plugins.length
               ? _plugins.map((plugin: SkeletonPlugin) => {
-                  const { icon: iconName, name } = plugin
+                  const { name } = plugin
+                  const iconName = plugin.layoutProps?.icon
                   return (
                     <>
                       <Skeleton v-show={loading} loading={loading} avatar rows="0" />
@@ -226,12 +230,15 @@ export default defineComponent({
               {sidebarPlugins.length
                 ? sidebarPlugins.map((plugin) => {
                     const Component = plugin.component as DefineComponent
-                    const componentProps = plugin.componentProps ?? {}
+                    const componentProps = {
+                      name: plugin.name,
+                      ...(plugin.componentProps ?? {}),
+                    }
 
                     const renderLabel: () => JSX.Element = () => {
                       return (
                         <div class="varlet-low-code-skeleton__sidebar-component-label">
-                          <h2>{plugin?.label || ''}</h2>
+                          <h2>{plugin?.layoutProps?.label || ''}</h2>
                           <Icon
                             onClick={() => {
                               sidebarPinned.value = !sidebarPinned.value
@@ -262,9 +269,9 @@ export default defineComponent({
             {renderIcons(sidebarTopPlugins, layoutLoadingsComputed.value.enableSidebarTopLayout)}
             {renderIcons(sidebarBottomPlugins, layoutLoadingsComputed.value.enableSidebarBottomLayout)}
             <Teleport to="body">
-              {sidebarFocusComponent.value?.label ? (
+              {sidebarFocusComponent.value?.layoutProps?.label ? (
                 <div style={transitionStyle.value} class="varlet-low-code-skeleton__sidebar--tooltip">
-                  {sidebarFocusComponent.value.label}
+                  {sidebarFocusComponent.value.layoutProps.label}
                 </div>
               ) : null}
             </Teleport>
@@ -276,7 +283,10 @@ export default defineComponent({
 
     const renderDesigner: () => JSX.Element = () => {
       const Component = designerPlugin[0]!.component as DefineComponent
-      const componentProps = designerPlugin[0]!.componentProps ?? {}
+      const componentProps = {
+        name: designerPlugin[0]!.name,
+        ...(designerPlugin[0]!.componentProps ?? {}),
+      }
 
       return (
         <div class="varlet-low-code-skeleton__designer">
@@ -293,7 +303,10 @@ export default defineComponent({
 
     const renderSetters: () => JSX.Element = () => {
       const Component = settersPlugin[0]!.component as DefineComponent
-      const componentProps = settersPlugin[0]!.componentProps ?? {}
+      const componentProps = {
+        name: settersPlugin[0]!.name,
+        ...(settersPlugin[0]!.componentProps ?? {}),
+      }
 
       return (
         <div class="varlet-low-code-skeleton__setters">
