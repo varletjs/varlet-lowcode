@@ -16,11 +16,9 @@
     "compile:watch": "varlet-lowcode-cli compile -w",
     "preview": "varlet-lowcode-cli preview"
   },
-  "dependencies": {
-    "@varlet/lowcode-skeleton": "workspace: *"
-  },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-code-editor": "workspace: *",
@@ -35,7 +33,8 @@
     "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
-    "@varlet/lowcode-core": "workspace: *"
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *"
   },
   "browserslist": [
     "Chrome >= 55",

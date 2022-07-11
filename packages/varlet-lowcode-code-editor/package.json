@@ -17,14 +17,12 @@
     "compile:watch": "varlet-lowcode-cli compile -w",
     "preview": "varlet-lowcode-cli preview"
   },
-  "dependencies": {
-    "@varlet/lowcode-skeleton": "workspace: *"
-  },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *",
     "@varlet/ui": "1.27.17",
     "@types/node": "*",
     "monaco-editor": "^0.33.0",
@@ -36,6 +34,7 @@
   },
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *",
     "@varlet/lowcode-ast": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/ui": "1.27.17"

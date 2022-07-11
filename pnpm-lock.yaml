@@ -113,14 +113,13 @@ importers:
       vite: ^2.9.12
       vue: 3.2.25
       vue-tsc: ^0.37.3
-    dependencies:
-      '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
     devDependencies:
       '@types/node': 17.0.36
       '@varlet/lowcode-ast': link:../varlet-lowcode-ast
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
+      '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
       '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       monaco-editor: 0.33.0
@@ -207,8 +206,6 @@ importers:
       typescript: ^4.4.4
       vue: 3.2.25
       vue-tsc: ^0.37.3
-    dependencies:
-      '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-code-editor': link:../varlet-lowcode-code-editor
@@ -217,6 +214,7 @@ importers:
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
       '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
       '@varlet/lowcode-selector': link:../varlet-lowcode-selector
+      '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
       '@varlet/touch-emulator': 1.27.17
       '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
@@ -474,6 +472,7 @@ importers:
     specifiers:
       '@varlet/lowcode-cli': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/lowcode-designer': 'workspace: *'
       '@varlet/ui': 1.27.17
       live-server: ^1.2.1
       typescript: ^4.4.4
@@ -483,6 +482,7 @@ importers:
     devDependencies:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
+      '@varlet/lowcode-designer': link:../varlet-lowcode-designer
       '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
