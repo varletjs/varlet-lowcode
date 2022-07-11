@@ -144,9 +144,12 @@ export default defineComponent({
               {_plugins.length
                 ? _plugins.map((_plugin) => {
                     const Component = _plugin!.component as DefineComponent
+                    if (_plugin?.componentProps?.pluginName) {
+                      console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+                    }
                     const componentProps = {
-                      name: _plugin.name,
-                      ...(_plugin.componentProps ?? {}),
+                      pluginName: _plugin.name,
+                      ...(_plugin?.componentProps ?? {}),
                     }
 
                     return <Component {...componentProps} />
@@ -228,17 +231,20 @@ export default defineComponent({
             />
             <div>
               {sidebarPlugins.length
-                ? sidebarPlugins.map((plugin) => {
-                    const Component = plugin.component as DefineComponent
+                ? sidebarPlugins.map((_plugin) => {
+                    const Component = _plugin.component as DefineComponent
+                    if (_plugin?.componentProps?.pluginName) {
+                      console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+                    }
                     const componentProps = {
-                      name: plugin.name,
-                      ...(plugin.componentProps ?? {}),
+                      pluginName: _plugin.name,
+                      ...(_plugin.componentProps ?? {}),
                     }
 
                     const renderLabel: () => JSX.Element = () => {
                       return (
                         <div class="varlet-low-code-skeleton__sidebar-component-label">
-                          <h2>{plugin?.layoutProps?.label || ''}</h2>
+                          <h2>{_plugin?.layoutProps?.label || ''}</h2>
                           <Icon
                             onClick={() => {
                               sidebarPinned.value = !sidebarPinned.value
@@ -251,7 +257,7 @@ export default defineComponent({
                     }
                     return (
                       <div
-                        v-Show={sidebarActiveComponent.value === plugin.name}
+                        v-Show={sidebarActiveComponent.value === _plugin.name}
                         class={`
                       ${
                         sidebarActiveComponent.value && layoutLoadingsComputed.value.enableSidebarPluginLayout
@@ -291,8 +297,11 @@ export default defineComponent({
 
     const renderDesigner: () => JSX.Element = () => {
       const Component = designerPlugin[0]!.component as DefineComponent
+      if (designerPlugin[0]?.componentProps?.pluginName) {
+        console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+      }
       const componentProps = {
-        name: designerPlugin[0]!.name,
+        pluginName: designerPlugin[0]!.name,
         ...(designerPlugin[0]!.componentProps ?? {}),
       }
 
@@ -311,8 +320,11 @@ export default defineComponent({
 
     const renderSetters: () => JSX.Element = () => {
       const Component = settersPlugin[0]!.component as DefineComponent
+      if (settersPlugin[0]?.componentProps?.pluginName) {
+        console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+      }
       const componentProps = {
-        name: settersPlugin[0]!.name,
+        pluginName: settersPlugin[0]!.name,
         ...(settersPlugin[0]!.componentProps ?? {}),
       }
 
