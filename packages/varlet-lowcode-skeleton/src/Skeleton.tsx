@@ -144,12 +144,13 @@ export default defineComponent({
               {_plugins.length
                 ? _plugins.map((_plugin) => {
                     const Component = _plugin!.component as DefineComponent
+
                     if (_plugin?.componentProps?.pluginName) {
-                      console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+                      console.warn('Use pluginName in componentProps will be overwritten by name!')
                     }
                     const componentProps = {
-                      pluginName: _plugin.name,
                       ...(_plugin?.componentProps ?? {}),
+                      pluginName: _plugin.name,
                     }
 
                     return <Component {...componentProps} />
@@ -233,12 +234,13 @@ export default defineComponent({
               {sidebarPlugins.length
                 ? sidebarPlugins.map((_plugin) => {
                     const Component = _plugin.component as DefineComponent
+
                     if (_plugin?.componentProps?.pluginName) {
-                      console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+                      console.warn('Use pluginName in componentProps will be overwritten by name!')
                     }
                     const componentProps = {
-                      pluginName: _plugin.name,
                       ...(_plugin.componentProps ?? {}),
+                      pluginName: _plugin.name,
                     }
 
                     const renderLabel: () => JSX.Element = () => {
@@ -297,12 +299,13 @@ export default defineComponent({
 
     const renderDesigner: () => JSX.Element = () => {
       const Component = designerPlugin[0]!.component as DefineComponent
+
       if (designerPlugin[0]?.componentProps?.pluginName) {
-        console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+        console.warn('Use pluginName in componentProps will be overwritten by name!')
       }
       const componentProps = {
-        pluginName: designerPlugin[0]!.name,
         ...(designerPlugin[0]!.componentProps ?? {}),
+        pluginName: designerPlugin[0]!.name,
       }
 
       return (
@@ -320,12 +323,13 @@ export default defineComponent({
 
     const renderSetters: () => JSX.Element = () => {
       const Component = settersPlugin[0]!.component as DefineComponent
+
       if (settersPlugin[0]?.componentProps?.pluginName) {
-        console.warn('Use pluginName in componentProps may cause some unexpected problems!')
+        console.warn('Use pluginName in componentProps will be overwritten by name!')
       }
       const componentProps = {
-        pluginName: settersPlugin[0]!.name,
         ...(settersPlugin[0]!.componentProps ?? {}),
+        pluginName: settersPlugin[0]!.name,
       }
 
       return (
