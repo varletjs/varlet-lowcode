@@ -14,12 +14,14 @@ import {
   buildSelector,
   buildUndoRedo,
   buildResizer,
-  buildMaterialsPanel
+  buildMaterialsPanel,
+  buildSkeleton
 } from './build.mjs'
 
 await runTask('cli', buildCli)
 await runTask('core', buildCore)
 await runTask('dnd', buildDnd)
+await runTask('skeleton', buildSkeleton)
 await runTask('designer', buildDesigner)
 await runTask('profile', buildProfile)
 await runTask('renderer', buildRenderer)
