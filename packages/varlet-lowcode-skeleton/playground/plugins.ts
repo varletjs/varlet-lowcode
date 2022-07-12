@@ -34,15 +34,7 @@ export function usePlugins() {
         label: '物料面板',
       },
     })
-    .useSkeletonPlugin({
-      layout: SkeletonLayouts.SIDEBAR_TOP,
-      name: 'code-editor',
-      component: CodeEditor,
-      layoutProps: {
-        icon: 'xml',
-        label: '源码面板',
-      },
-    })
+    // .useSkeletonPlugin(CodeEditor)
     .useSkeletonPlugin({
       layout: SkeletonLayouts.SIDEBAR_BOTTOM,
       name: 'schema-editor',
