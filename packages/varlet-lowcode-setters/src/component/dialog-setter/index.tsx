@@ -1,6 +1,6 @@
 import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import Monaco from '@varlet/lowcode-monaco'
-import { defineComponent, Teleport, computed, ref, Ref, reactive } from 'vue'
+import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect } from 'vue'
 import { schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
 import '@varlet/ui/es/dialog/style/index.js'
@@ -25,32 +25,36 @@ export default defineComponent({
       },
     },
   },
+  emits: ['update:modelValue', 'update:code', 'Confirm'],
   setup(props, { emit }) {
+    console.log(emit, 'emit')
     const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
     const { traverseFunction } = createAst()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
-
+    const code: Ref<string> = ref('')
     const show = computed({
       get: () => props.modelValue,
       set: (val) => {
         emit('update:modelValue', val)
       },
     })
-    const code: Ref<string> = ref('')
-    code.value = props.code
-
+    watchEffect(() => {
+      if (show.value) {
+        code.value = props.code
+      }
+    })
     const selectIndex = ref('')
     let selectItemData: string[] = reactive([])
     const selectCategory = (val: string) => {
       selectIndex.value = val
       selectItemData = returnDeclarations[val]
-      console.log(selectItemData, 'selectItemData')
     }
     const saveCode = () => {
       try {
         emit('update:code', code.value)
+        emit('Confirm', code.value)
       } catch (e: any) {
         Snackbar.error(e.toString())
       }
@@ -59,7 +63,6 @@ export default defineComponent({
       if (selectIndex.value === 'ref' || selectIndex.value === 'computed') {
         val += '.value'
       }
-      console.log(code.value)
       code.value += val
     }
     const selectCategoryContent = () => {

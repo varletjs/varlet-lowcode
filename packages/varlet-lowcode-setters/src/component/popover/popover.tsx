@@ -54,7 +54,7 @@ export default defineComponent({
           console.log(bottom, left, right)
         }
         if (right < 0) {
-          alert()
+          // alert()
         }
 
         popoverStyle.opacity = 100
@@ -84,7 +84,6 @@ export default defineComponent({
                   class={`varlet-low-code-popover__content ${classNameAfter.value}`}
                   id="low-code-popover"
                   style={popoverStyle}
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {slots.content ? slots.content() : null}
                 </div>

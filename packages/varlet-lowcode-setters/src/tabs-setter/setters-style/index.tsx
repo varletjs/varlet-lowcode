@@ -96,7 +96,11 @@ export default defineComponent({
           />
         )
       },
-      content: () => <ColorPicker v-model:pureColor={pureColor.value} isWidget />,
+      content: () => (
+        <div onClick={(e) => e.stopPropagation()}>
+          <ColorPicker v-model:pureColor={pureColor.value} isWidget />
+        </div>
+      ),
     })
 
     const RenderContent = () => {
