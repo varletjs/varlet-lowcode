@@ -13,4 +13,6 @@ export enum SkeletonEvents {
   LOADING = 'skeleton-loading',
   LOADED = 'skeleton-loaded',
   SIDEBAR_TOGGLE = 'skeleton-sidebar-toggle',
+  SIDEBAR_OPEN = 'skeleton-sidebar-open',
+  SIDEBAR_CLOSE = 'skeleton-sidebar-close',
 }

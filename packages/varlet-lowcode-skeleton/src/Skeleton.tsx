@@ -1,5 +1,5 @@
 import type { DefineComponent, Ref } from 'vue'
-import { computed, defineComponent, ref, Teleport, watch } from 'vue'
+import { computed, defineComponent, onUnmounted, ref, Teleport, watch } from 'vue'
 import { AppBar, Icon, Ripple, Skeleton, Space } from '@varlet/ui'
 import { pluginsManager, eventsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import { getTop } from './shared'
@@ -125,6 +125,24 @@ export default defineComponent({
         eventsManager.emit(SkeletonEvents.SIDEBAR_TOGGLE, { name: newVal })
       }
     )
+
+    const sidebarOpen = (name: string) => {
+      sidebarActiveComponent.value = name
+    }
+
+    const sidebarClose = (name?: string) => {
+      if (!name || sidebarActiveComponent.value === name) {
+        sidebarActiveComponent.value = undefined
+      }
+    }
+
+    eventsManager.on(SkeletonEvents.SIDEBAR_OPEN, sidebarOpen)
+    eventsManager.on(SkeletonEvents.SIDEBAR_OPEN, sidebarClose)
+
+    onUnmounted(() => {
+      eventsManager.off(SkeletonEvents.SIDEBAR_OPEN, sidebarOpen)
+      eventsManager.off(SkeletonEvents.SIDEBAR_OPEN, sidebarClose)
+    })
 
     const toggleSidebarActive = (name: string) => {
       sidebarActiveComponent.value = name === sidebarActiveComponent.value ? undefined : name
