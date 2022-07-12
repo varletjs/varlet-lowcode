@@ -12,19 +12,18 @@ export enum SkeletonLayouts {
 
 export type SkeletonLayoutProps = Record<string, any>
 
-export interface SkeletonPlugin {
+export interface Plugin {
   readonly name: string
-  readonly layout: SkeletonLayouts
-  readonly layoutProps?: SkeletonLayoutProps
-  readonly component: Component | DefineComponent
-  readonly componentProps?: Record<string, any>
+  component: Component | DefineComponent
+  componentProps?: Record<string, any>
 }
 
-export interface SelectorPlugin {
-  readonly name: string
-  readonly component: Component | DefineComponent
-  readonly componentProps?: Record<string, any>
+export interface SkeletonPlugin extends Plugin {
+  layout: SkeletonLayouts
+  layoutProps?: SkeletonLayoutProps
 }
+
+export interface SelectorPlugin extends Plugin {}
 
 export interface PluginsManager {
   useSkeletonPlugin(skeletonPlugin: SkeletonPlugin): PluginsManager

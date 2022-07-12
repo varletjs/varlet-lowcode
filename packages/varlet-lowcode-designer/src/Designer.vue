@@ -39,20 +39,20 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
     return
   }
 
+  renderer.schema.value = schema
+
   if (
     oldSchema?.code !== schema.code ||
     oldSchema?.compatibleCode !== schema.compatibleCode ||
     JSON.stringify(oldSchema.dataSources ?? []) !== JSON.stringify(schema.dataSources ?? [])
   ) {
-    await mountRenderer()
+    renderer.rerender()
     return
   }
 
   if (schema.css && oldSchema?.css !== schema.css) {
     patchIframeCss(schema.css)
   }
-
-  renderer.schema.value = schema
 })
 
 eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
@@ -97,7 +97,8 @@ function mountIframe() {
 }
 
 async function mountRenderer() {
-  eventsManager.emit(SkeletonEvents.LOADING, SkeletonLoaders.DESIGNER)
+  eventsManager.emit(SkeletonEvents.LOADING, SkeletonLoaders.FULLSCREEN, 0)
+
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
@@ -113,17 +114,16 @@ async function mountRenderer() {
     eventsManager.emit(DesignerEvents.IFRAME_CLICK, event)
   })
 
-  renderer.mode = 'designer'
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
-  eventsManager.emit(SkeletonEvents.LOADED, SkeletonLoaders.DESIGNER)
+  renderer.mount()
+
+  eventsManager.emit(SkeletonEvents.LOADED, SkeletonLoaders.FULLSCREEN, 0)
 }
 
 onMounted(async () => {
-  eventsManager.emit(SkeletonEvents.LOADING, SkeletonLoaders.FULLSCREEN, 0)
   await mountRenderer()
-  eventsManager.emit(SkeletonEvents.LOADED, SkeletonLoaders.FULLSCREEN, 0)
 })
 </script>
 

@@ -221,14 +221,10 @@ export default defineComponent({
       return JSON.parse(JSON.stringify(schemaNode))
     }
 
-    function hoistWindow(apis: any, checkBuiltIn = false) {
+    function hoistWindow(apis: any) {
       Object.keys(apis).forEach((name: string) => {
         if (name in window) {
           throw new Error(`Property [${name}] is the built-in api of window, please replace the property name`)
-        }
-
-        if (checkBuiltIn && builtInApis.hasOwnProperty(name)) {
-          throw new Error(`Property [${name}] is the built-in api of varlet low-code, please replace the property name`)
         }
 
         Object.assign(window, { [name]: apis[name] })
@@ -426,7 +422,7 @@ export default defineComponent({
       return {}
     }
 
-    hoistWindow(ctx, true)
+    hoistWindow(ctx)
     setDndDisabledStyle()
 
     onMounted(mountCss)
