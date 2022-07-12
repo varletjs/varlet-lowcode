@@ -1,0 +1,39 @@
+{
+  "name": "@varlet/lowcode-dragable-tree",
+  "version": "0.0.0",
+  "main": "lib/varlet-lowcode-dragable-tree.es.js",
+  "module": "lib/varlet-lowcode-dragable-tree.es.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "lib",
+    "types",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "dev": "varlet-lowcode-cli dev",
+    "build": "varlet-lowcode-cli build",
+    "compile": "varlet-lowcode-cli compile",
+    "compile:watch": "varlet-lowcode-cli compile -w",
+    "preview": "varlet-lowcode-cli preview"
+  },
+  "devDependencies": {
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *",
+    "@varlet/lowcode-cli": "workspace: *",
+    "@varlet/lowcode-schema-editor": "workspace: *",
+    "@varlet/ui": "latest",
+    "@varlet/touch-emulator": "latest",
+    "live-server": "^1.2.1",
+    "typescript": "^4.4.4",
+    "vue": "3.2.25",
+    "vue-tsc": "^0.37.3"
+  },
+  "peerDependencies": {
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *"
+  },
+  "browserslist": [
+    "Chrome >= 55",
+    "iOS >= 10.4"
+  ]
+}

@@ -80,3 +80,7 @@ packages/varlet-lowcode-resizer/types
 
 packages/varlet-lowcode-setters/lib
 packages/varlet-lowcode-setters/types
+
+
+packages/varlet-lowcode-dragable-tree/lib
+packages/varlet-lowcode-dragable-tree/types
