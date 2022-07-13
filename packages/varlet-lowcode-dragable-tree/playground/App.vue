@@ -15,6 +15,24 @@ const tree = [
         id: 2,
         text: 'C',
       },
+      {
+        id: 4,
+        text: 'E',
+      },
+      {
+        id: 5,
+        text: 'F',
+        children: [
+          {
+            id: 6,
+            text: 'G',
+          },
+          {
+            id: 7,
+            text: 'H',
+          },
+        ],
+      },
     ],
   },
   {
@@ -25,5 +43,7 @@ const tree = [
 </script>
 
 <template>
-  <DragableTree :tree="tree" />
+  <div style="width: 400px; background: #eee">
+    <DragableTree :tree="tree" />
+  </div>
 </template>
