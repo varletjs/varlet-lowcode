@@ -53,8 +53,9 @@ export default defineComponent({
         },
       ],
     }
-    console.log(Component, 'Component')
+
     const values = ref(['1'])
+
     return () => {
       return (
         <div class="setters-attribute-field">
@@ -66,18 +67,11 @@ export default defineComponent({
                     <div class="attribute-field-body-title">{item.description}</div>
                     <div class="attribute-field-body-content">
                       {item.setter.map((itemSetter: any) => {
-                        let setterComponent
-                        Component.forEach((itemComponent) => {
-                          itemComponent.name === itemSetter.type ? (setterComponent = itemComponent.component) : null
-                        })
-                        return itemSetter.options ? (
-                          <setterComponent
-                            v-model={itemSetter.value}
-                            options={itemSetter.options ? itemSetter.options : null}
-                          />
-                        ) : (
-                          <setterComponent v-model={itemSetter.value} />
+                        const setterTypeComponents = Component.filter(
+                          (itemComponent) => itemComponent.name === itemSetter.type
                         )
+                        const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
+                        return <SetterComponent v-model={itemSetter.value} options={itemSetter.options ?? undefined} />
                       })}
                       <Icon name="dots-vertical" />
                     </div>
