@@ -15,7 +15,7 @@ export default defineComponent({
     const selectorStyles: Ref<CSSProperties[] | undefined> = ref([])
 
     function computedSelectorStyles(id: string) {
-      console.log('123123', id)
+      console.log('66666666666666', id)
 
       const nodes = document.querySelectorAll(`#${id}`)
 
@@ -35,11 +35,11 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      eventsManager.on('schema-click', computedSelectorStyles)
+      eventsManager.on('selector', computedSelectorStyles)
     })
 
     onUnmounted(() => {
-      eventsManager.off('schema-click', computedSelectorStyles)
+      eventsManager.off('selector', computedSelectorStyles)
     })
 
     return () => {

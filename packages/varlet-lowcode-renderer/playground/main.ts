@@ -196,6 +196,7 @@ import type { Assets } from '@varlet/lowcode-core'
   await assetsManager.loadResources(assets, document)
 
   const app = createApp(Renderer, {
+    mode: 'designer',
     schema,
     assets,
   })

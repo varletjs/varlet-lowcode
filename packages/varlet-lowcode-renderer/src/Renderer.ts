@@ -23,13 +23,7 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import {
-  assetsManager,
-  BuiltInSchemaNodeNames,
-  eventsManager,
-  schemaManager,
-  SchemaPageNodeDataSource,
-} from '@varlet/lowcode-core'
+import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
@@ -290,11 +284,12 @@ export default defineComponent({
       const clickEvent = rawProps.onClick
 
       rawProps.id = `dragItem${schemaNode.id}`
-      rawProps.onClick = (...arg: any) => {
-        eventsManager.emit('schema-click', `dragItem${schemaNode.id}` || '')
+      props.mode === 'designer' &&
+        (rawProps.onClick = (...arg: any) => {
+          props.designerEventsManager!.emit('selector', `dragItem${schemaNode.id}` || '')
 
-        clickEvent && clickEvent(...arg)
-      }
+          clickEvent && clickEvent(...arg)
+        })
 
       return rawProps
     }
@@ -434,9 +429,11 @@ export default defineComponent({
     })
 
     return () =>
-      withDirectives(
-        h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)),
-        props.mode === 'designer' ? [[Drop], [DragOver]] : []
-      )
+      props.mode === 'designer'
+        ? withDirectives(h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)), [
+            [Drop],
+            [DragOver],
+          ])
+        : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
 })
