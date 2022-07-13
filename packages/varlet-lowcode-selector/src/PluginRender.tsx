@@ -9,11 +9,9 @@ export default defineComponent({
   setup() {
     const plugins: SelectorPlugin[] = pluginsManager.exportSelectorPlugins()
 
-    console.log('plugins', plugins)
-
     return () => {
       return (
-        <div class="varlet-low-code--selector-plugins">
+        <div class="varlet-low-code-selector__plugins">
           {plugins.map(({ component }) => {
             const PluginComponent = component as DefineComponent
             return <PluginComponent />
