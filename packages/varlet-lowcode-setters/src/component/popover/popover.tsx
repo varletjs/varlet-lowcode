@@ -59,7 +59,7 @@ export default defineComponent({
 
         popoverStyle.opacity = 100
         document.body?.addEventListener('click', clickFn)
-        eventsManager.on('designer-iframe-click', clickFn)
+        eventsManager.once('designer-iframe-click', clickFn)
       } else {
         clickFn()
       }
@@ -68,7 +68,6 @@ export default defineComponent({
     const clickFn = () => {
       isShow.value = false
       document.body?.removeEventListener('click', clickFn)
-      eventsManager.off('designer-iframe-click', clickFn)
     }
 
     return () => {
