@@ -35,10 +35,10 @@ export default defineComponent({
         const { x, y, width, height } = e.target.getBoundingClientRect()
         const domWidth = document.getElementById('low-code-popover')?.offsetWidth || 0
         const domHeight = document.getElementById('low-code-popover')?.offsetHeight || 0
-        console.log(y, domHeight)
+
         popoverStyle.left = x - domWidth + width / 2 + 'px'
-        popoverStyle.top = y - domHeight - 12 + 'px'
-        classNameAfter.value = 'varlet-low-code-popover-bottom-right'
+        popoverStyle.top = y + 12 + height + 'px'
+        classNameAfter.value = 'varlet-low-code-popover-top-right'
 
         await nextTick()
         const { top, bottom, left, right } = document.getElementById('low-code-popover')?.getBoundingClientRect() || {
@@ -47,11 +47,12 @@ export default defineComponent({
           left: 0,
           right: 0,
         }
-        if (top < 0) {
+        if (bottom < 0) {
           popoverStyle.left = x - domWidth + width / 2 + 'px'
-          popoverStyle.top = y + 12 + height + 'px'
-          classNameAfter.value = 'varlet-low-code-popover-top-right'
-          console.log(bottom, left, right)
+          popoverStyle.top = y - domHeight - 12 + 'px'
+          classNameAfter.value = 'varlet-low-code-popover-bottom-right'
+
+          console.log(top, left, right)
         }
         if (right < 0) {
           // alert()
@@ -66,6 +67,7 @@ export default defineComponent({
     }
 
     const clickFn = () => {
+      popoverStyle.opacity = 0
       isShow.value = false
       document.body?.removeEventListener('click', clickFn)
     }

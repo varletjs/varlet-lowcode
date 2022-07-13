@@ -7,7 +7,7 @@ import './index.less'
 const props = defineProps({
   modelValue: {
     type: String,
-    default: 'BoolSetter',
+    default: 'Setter',
   },
 })
 const emit = defineEmits(['update:modelValue', 'SelectVariable'])
@@ -28,29 +28,23 @@ const changeBindType = (val: string) => {
 </script>
 
 <template>
-  <div class="main">
-    <Popover>
-      <template #default>
-        <div>
-          <Icon name="dots-vertical" />
+  <Popover>
+    <template #default>
+      <div>
+        <Icon name="dots-vertical" />
+      </div>
+    </template>
+    <template #content>
+      <div class="varlet-low-code__popover--select-bind">
+        <div @click="changeBindType('Setter')" class="varlet-low-code__select--item">
+          <Icon name="check" :class="bindType !== 'Setter' ? 'varlet-low-code__opacity' : ''" color="#2979ff" />
+          Setter
         </div>
-      </template>
-      <template #content>
-        <div class="varlet-low-code__popover--select-bind">
-          <div @click="changeBindType('BoolSetter')" class="varlet-low-code__select--item">
-            <Icon name="check" :class="bindType !== 'BoolSetter' ? 'varlet-low-code__opacity' : ''" color="#2979ff" />
-            BoolSetter
-          </div>
-          <div @click="changeBindType('variableInput')" class="varlet-low-code__select--item">
-            <Icon
-              name="check"
-              :class="bindType !== 'variableInput' ? 'varlet-low-code__opacity' : ''"
-              color="#2979ff"
-            />
-            变量输入
-          </div>
+        <div @click="changeBindType('variableInput')" class="varlet-low-code__select--item">
+          <Icon name="check" :class="bindType !== 'variableInput' ? 'varlet-low-code__opacity' : ''" color="#2979ff" />
+          变量输入
         </div>
-      </template>
-    </Popover>
-  </div>
+      </div>
+    </template>
+  </Popover>
 </template>

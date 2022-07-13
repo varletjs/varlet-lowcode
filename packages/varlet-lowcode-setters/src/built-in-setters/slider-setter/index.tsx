@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { Slider as VarSlider } from '@varlet/ui'
 import '@varlet/ui/es/slider/style/index.js'
 
@@ -11,18 +11,20 @@ export default defineComponent({
     },
   },
   setup(props, { emit, slots }) {
-    const sliderValue = ref()
+    const sliderValue = computed({
+      get: () => props.modelValue,
+      set: (val) => {
+        emit('update:modelValue', val)
+      },
+    })
     const childrenSlot = {
       button: (props: any) => {
         return slots.default ? slots.default(props.currentValue) : null
       },
     }
     sliderValue.value = props.modelValue
-    const updateModelValue = (val: any) => {
-      emit('update:modelValue', val)
-    }
     return () => {
-      return <VarSlider v-model={sliderValue.value} onChange={updateModelValue} v-slots={childrenSlot}></VarSlider>
+      return <VarSlider v-model={sliderValue.value} v-slots={childrenSlot}></VarSlider>
     }
   },
 })

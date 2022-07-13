@@ -1,6 +1,7 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { Switch } from '@varlet/ui'
 import '@varlet/ui/es/switch/style/index.js'
+import './index.less'
 
 export default defineComponent({
   name: 'StyleInput',
@@ -11,13 +12,14 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const switchValue = ref(false)
-    switchValue.value = props.modelValue
-    const updateModelValue = (val: boolean) => {
-      emit('update:modelValue', val)
-    }
+    const switchValue = computed({
+      get: () => props.modelValue,
+      set: (val) => {
+        emit('update:modelValue', val)
+      },
+    })
     return () => {
-      return <Switch v-model={switchValue.value} onChange={updateModelValue}></Switch>
+      return <Switch v-model={switchValue.value}></Switch>
     }
   },
 })

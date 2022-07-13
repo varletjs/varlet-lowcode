@@ -1,31 +1,26 @@
 import { defineComponent, computed } from 'vue'
-import { Input } from '@varlet/ui'
+import { Counter as VarCounter } from '@varlet/ui'
+
 import '@varlet/ui/es/input/style/index.js'
-import './index.less'
 
 export default defineComponent({
-  name: 'INPUTSETTER',
+  name: 'COUNTERSETTER',
   props: {
     modelValue: {
-      type: String,
-      default: '',
-    },
-    attr: {
-      type: Object,
-      default: () => {
-        return {}
-      },
+      type: Number,
+      default: 0,
     },
   },
   setup(props, { emit }) {
-    const inputValue = computed({
+    const counterValue = computed({
       get: () => props.modelValue,
       set: (val) => {
         emit('update:modelValue', val)
       },
     })
+    console.log(counterValue.value, '123')
     return () => {
-      return <Input v-model={inputValue.value} {...props.attr} />
+      return <VarCounter v-model={counterValue.value} />
     }
   },
 })
