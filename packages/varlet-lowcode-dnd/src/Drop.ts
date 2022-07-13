@@ -1,7 +1,7 @@
 import { DirectiveBinding } from 'vue'
 import type { Directive, Plugin, App } from 'vue'
-import { mergeStyle, eventBroadcast } from './shared'
-import { SchemaNode } from '@varlet/lowcode-core'
+import { mergeStyle } from './shared'
+import { eventsManager, SchemaNode } from '@varlet/lowcode-core'
 
 export interface DropOptions {
   dropStyle?: Partial<CSSStyleDeclaration>
@@ -18,7 +18,7 @@ function onDropEnter(this: DropHTMLElement) {
 
   dropStyle && mergeStyle(this, dropStyle)
 
-  eventBroadcast('drop-enter', this)
+  eventsManager.emit('drop-enter', this)
 }
 
 function onDropLeave(this: DropHTMLElement, e: DragEvent) {
@@ -30,7 +30,7 @@ function onDropLeave(this: DropHTMLElement, e: DragEvent) {
 
   dropStyle && mergeStyle(this, dropStyle, true)
 
-  eventBroadcast('drop-leave', this)
+  eventsManager.emit('drop-leave', this)
 }
 
 function onDragOver(this: DropHTMLElement, e: DragEvent) {
@@ -54,7 +54,7 @@ function onDropEnd(this: DropHTMLElement, e: DragEvent) {
 
   dropStyle && mergeStyle(this, dropStyle, true)
 
-  eventBroadcast('drop-end', { el: this, data: _dragData })
+  eventsManager.emit('drop-end', { el: this, data: _dragData })
 }
 
 function onDrop(this: DropHTMLElement, e: DragEvent) {
@@ -69,7 +69,7 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
   dropStyle && mergeStyle(this, dropStyle, true)
 
   // TODO: this data's type is same as the DragOptions.dragData
-  eventBroadcast('drop', { el: this, data: _dragData })
+  eventsManager.emit('drop', { el: this, data: _dragData })
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
