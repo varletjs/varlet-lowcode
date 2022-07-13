@@ -5,7 +5,7 @@ import UndoRedo from '@varlet/lowcode-undo-redo'
 import Resizer from '@varlet/lowcode-resizer'
 import Codegen from '@varlet/lowcode-codegen'
 import Setters from '../../varlet-lowcode-setters/src/index'
-import DataSource from '../../varlet-lowcode-data-source/src/index'
+import DataSource from '../../varlet-lowcode-data-source-panel/src/index'
 import { pluginsManager, SkeletonLayouts } from '@varlet/lowcode-core'
 
 export function usePlugins() {
