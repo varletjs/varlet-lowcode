@@ -10,20 +10,20 @@ export enum SkeletonLayouts {
   SETTERS = 'setters',
 }
 
-export interface SkeletonPlugin {
+export type SkeletonLayoutProps = Record<string, any>
+
+export interface Plugin {
   readonly name: string
-  readonly layout: SkeletonLayouts
-  readonly component: Component | DefineComponent
-  readonly componentProps?: Record<string, any>
-  readonly icon?: string | Component | DefineComponent
-  readonly label?: string
+  component: Component | DefineComponent
+  componentProps?: Record<string, any>
 }
 
-export interface SelectorPlugin {
-  readonly name: string
-  readonly component: Component | DefineComponent
-  readonly componentProps?: Record<string, any>
+export interface SkeletonPlugin extends Plugin {
+  layout: SkeletonLayouts
+  layoutProps?: SkeletonLayoutProps
 }
+
+export interface SelectorPlugin extends Plugin {}
 
 export interface PluginsManager {
   useSkeletonPlugin(skeletonPlugin: SkeletonPlugin): PluginsManager

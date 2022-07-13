@@ -65,6 +65,9 @@ packages/varlet-lowcode-undo-redo/types/**
 packages/varlet-lowcode-resizer/lib/**
 packages/varlet-lowcode-resizer/types/**
 
+packages/varlet-lowcode-materials-panel/lib/**
+packages/varlet-lowcode-materials-panel/types/**
+
 **/package.json
 *.md
 

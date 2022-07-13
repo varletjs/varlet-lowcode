@@ -1,9 +1,6 @@
 import { nextTick } from 'vue'
-import '@varlet/ui/es/snackbar/style/index.js'
-import '@varlet/ui/es/tabs/style/index.js'
-import '@varlet/ui/es/tab/style/index.js'
-import '@varlet/ui/es/tabs-items/style/index.js'
-import '@varlet/ui/es/tab-item/style/index.js'
+import '@varlet/ui/es/button/style/index.js'
+import '@varlet/ui/es/divider/style/index.js'
 
 declare const _default: {
   new (...args: any[]): {
@@ -155,6 +152,6 @@ declare const _default: {
   import('vue').AllowedComponentProps &
   import('vue').ComponentCustomProps &
   (new () => {
-    $slots: typeof import('./CodeEditor.vue.__VLS_template').default
+    $slots: typeof import('./DataSourcePanel.vue.__VLS_template').default
   })
 export default _default

@@ -130,15 +130,21 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
         entry: getEntry()!,
       },
       rollupOptions: {
-        external: ['vue', '@varlet/lowcode-core', '@varlet/lowcode-ast', '@varlet/lowcode-monaco', '@varlet/ui'],
+        external: [
+          'vue',
+          /@varlet\/ui/,
+          '@varlet/lowcode-core',
+          '@varlet/lowcode-ast',
+          '@varlet/lowcode-monaco',
+          '@varlet/lowcode-skeleton',
+          '@varlet/lowcode-designer',
+        ],
         output: {
           exports: 'named',
           globals: {
             vue: 'Vue',
-            '@varlet/lowcode-core': 'VarletLowcodeCore',
-            '@varlet/lowcode-ast': 'VarletLowcodeAst',
-            '@varlet/lowcode-monaco': 'VarletLowcodeMonaco',
             '@varlet/ui': 'Varlet',
+            '@varlet/lowcode-core': 'VarletLowcodeCore',
           },
         },
       },

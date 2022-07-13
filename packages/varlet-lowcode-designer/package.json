@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-code-editor": "workspace: *",
@@ -32,10 +33,11 @@
     "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
-    "@varlet/lowcode-core": "workspace: *"
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-skeleton": "workspace: *"
   },
   "browserslist": [
-    "Chrome >= 51",
-    "iOS >= 10"
+    "Chrome >= 55",
+    "iOS >= 10.4"
   ]
 }

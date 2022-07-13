@@ -23,13 +23,7 @@ import {
   onUnmounted,
   withDirectives,
 } from 'vue'
-import {
-  assetsManager,
-  BuiltInSchemaNodeNames,
-  eventsManager,
-  schemaManager,
-  SchemaPageNodeDataSource,
-} from '@varlet/lowcode-core'
+import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
@@ -83,7 +77,7 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
               ? exec(`(${successHandler.compatibleValue ?? successHandler.value})`)
               : undefined
 
-            const value = successHandlerFunction?.(response) ?? response
+            const value = await (successHandlerFunction?.(response) ?? response)
 
             rendererDataSource.value = value
 
@@ -169,9 +163,7 @@ export default defineComponent({
 
     hoistWindow(builtInApis)
 
-    const code = `(() => { ${
-      props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
-    } })()`.replace(/function\s+setup\s*\(\)\s*\{/, 'return function setup() {')
+    const code = props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
     const setup = exec(code)
     const ctx = setup()
 
@@ -223,14 +215,10 @@ export default defineComponent({
       return JSON.parse(JSON.stringify(schemaNode))
     }
 
-    function hoistWindow(apis: any, checkBuiltIn = false) {
+    function hoistWindow(apis: any) {
       Object.keys(apis).forEach((name: string) => {
         if (name in window) {
           throw new Error(`Property [${name}] is the built-in api of window, please replace the property name`)
-        }
-
-        if (checkBuiltIn && builtInApis.hasOwnProperty(name)) {
-          throw new Error(`Property [${name}] is the built-in api of varlet low-code, please replace the property name`)
         }
 
         Object.assign(window, { [name]: apis[name] })
@@ -296,11 +284,12 @@ export default defineComponent({
       const clickEvent = rawProps.onClick
 
       rawProps.id = `dragItem${schemaNode.id}`
-      rawProps.onClick = (...arg: any) => {
-        eventsManager.emit('schema-click', `dragItem${schemaNode.id}` || '')
+      props.mode === 'designer' &&
+        (rawProps.onClick = (...arg: any) => {
+          props.designerEventsManager!.emit('selector', `dragItem${schemaNode.id}` || '')
 
-        clickEvent && clickEvent(...arg)
-      }
+          clickEvent && clickEvent(...arg)
+        })
 
       return rawProps
     }
@@ -411,7 +400,7 @@ export default defineComponent({
               slot._slotProps = {}
             }
 
-            slot._slotProps[schemaNode.id] = slotProps
+            slot._slotProps[schemaNode.id!] = slotProps
 
             const slotChildren = slot.children ?? []
             const conditionedSchemaNodes = withCondition(slotChildren as SchemaNode[])
@@ -428,7 +417,7 @@ export default defineComponent({
       return {}
     }
 
-    hoistWindow(ctx, true)
+    hoistWindow(ctx)
     setDndDisabledStyle()
 
     onMounted(mountCss)
@@ -440,9 +429,11 @@ export default defineComponent({
     })
 
     return () =>
-      withDirectives(
-        h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)),
-        props.mode === 'designer' ? [[Drop], [DragOver]] : []
-      )
+      props.mode === 'designer'
+        ? withDirectives(h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)), [
+            [Drop],
+            [DragOver],
+          ])
+        : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
 })

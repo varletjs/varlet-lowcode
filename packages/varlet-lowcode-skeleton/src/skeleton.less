@@ -19,6 +19,7 @@
     .var-skeleton__section {
       padding-top: 0;
     }
+
     .var-skeleton__content {
       padding: 16px 10px;
     }
@@ -116,10 +117,6 @@
     display: block;
   }
 
-  &__sidebar--icon {
-    font-size: 30px;
-  }
-
   &__sidebar--tooltip {
     background-color: #000000ba;
     color: #fff;
@@ -162,7 +159,7 @@
     left: 48px;
     border-right: 1px solid #eee;
     box-sizing: border-box;
-    background: #f5f7f9;
+    background: #fff;
 
     .var-skeleton {
       height: 100%;
@@ -203,10 +200,6 @@
       font-weight: 400;
     }
 
-    .var-icon {
-      vertical-align: middle;
-    }
-
     .var-icon-pin-outline {
       transform: rotate(45deg);
     }
@@ -215,6 +208,11 @@
   &__sidebar-component--pinned {
     position: static;
     height: 100%;
+  }
+
+  &__sidebar-component--loading {
+    max-height: 0;
+    overflow: hidden;
   }
 
   &__sidebar-component--pinned &__sidebar-component-label {
@@ -228,6 +226,9 @@
     justify-content: center;
     flex: 1;
     background: #fcfcfc;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 
     .var-skeleton {
       height: 100%;
@@ -236,17 +237,12 @@
     .var-skeleton__card {
       height: 100%;
     }
-
-    :last-child {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
   }
 
   &__setters {
     overflow: hidden;
     border-left: 1px solid #eee;
     box-sizing: border-box;
+    width: 300px;
   }
 }

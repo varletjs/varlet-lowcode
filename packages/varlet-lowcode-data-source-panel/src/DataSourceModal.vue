@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, PropType, defineEmits, defineProps } from 'vue'
+import { ref, watch, PropType, defineEmits, defineProps } from 'vue'
 import {
   Dialog,
   // Button as VarButton,
@@ -26,7 +26,16 @@ const props = defineProps({
 
 const dataSourceForm = ref(JSON.parse(JSON.stringify(props.formData)))
 
-const show = ref(JSON.parse(JSON.stringify(props.modalShow)))
+const show = ref(false)
+
+console.log(props)
+
+watch(
+  () => props.modalShow,
+  (value) => {
+    show.value = value
+  }
+)
 
 const emits = defineEmits(['close'])
 

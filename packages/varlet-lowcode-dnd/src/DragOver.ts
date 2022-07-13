@@ -157,7 +157,8 @@ function onDragStart({ id }: any) {
     throw new Error(`this Node is not a Really Dom`)
   }
 
-  if (id && nodeComputedStyles && nodeComputedStyles.length) {
+  if (id) {
+    nodeComputedStyles = getDomRectInfo()
     nodeComputedStyles = nodeComputedStyles.filter((item) => item.id !== `${id}`)
   }
 }
@@ -171,32 +172,29 @@ function onDragEnd() {
   }
 }
 
-function mounted() {
-  nodeComputedStyles = getDomRectInfo()
-
+function mounted(el: HTMLElement) {
   const borderDiv = document.createElement('div')
 
   borderDiv.id = 'varlet-lowcode-dnd-border'
   borderDiv.style.position = 'absolute'
   borderDiv.style.backgroundColor = 'blue'
+  borderDiv.style.zIndex = '99999'
 
   document.body.appendChild(borderDiv)
 
-  document.addEventListener('dragover', onDragOver, { passive: false })
+  el.addEventListener('dragover', onDragOver, { passive: false })
   eventsManager.on('drag-start', onDragStart)
   eventsManager.on('drag-end', onDragEnd)
 }
 
-function unmounted() {
+function unmounted(el: HTMLElement) {
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border')
 
-  if (borderDiv) {
-    document.body.removeChild(borderDiv)
-  }
+  borderDiv && document.body.removeChild(borderDiv)
 
   nodeComputedStyles = undefined
 
-  document.removeEventListener('dragover', onDragOver)
+  el.removeEventListener('dragover', onDragOver)
   eventsManager.off('drag-start', onDragStart)
   eventsManager.off('drag-end', onDragEnd)
 }

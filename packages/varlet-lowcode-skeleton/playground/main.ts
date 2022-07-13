@@ -44,6 +44,26 @@ function setup() {
             },
           },
         },
+        {
+          id: schemaManager.generateId(),
+          name: 'Button',
+          library: 'Varlet',
+          props: {
+            type: 'primary',
+            onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
+          },
+          slots: {
+            default: {
+              children: [
+                {
+                  id: schemaManager.generateId(),
+                  name: BuiltInSchemaNodeNames.TEXT,
+                  textContent: schemaManager.createExpressionBinding('doubleCount.value'),
+                },
+              ],
+            },
+          },
+        },
       ],
     },
   },

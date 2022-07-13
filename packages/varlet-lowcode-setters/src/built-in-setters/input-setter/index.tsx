@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { Input } from '@varlet/ui'
 import '@varlet/ui/es/input/style/index.js'
 import './index.less'
@@ -18,13 +18,14 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const inputValue = ref('')
-    inputValue.value = props.modelValue
-    const updateSchema = (val: string) => {
-      emit('update:modelValue', val)
-    }
+    const inputValue = computed({
+      get: () => props.modelValue,
+      set: (val) => {
+        emit('update:modelValue', val)
+      },
+    })
     return () => {
-      return <Input v-model={inputValue.value} onChange={updateSchema} {...props.attr} />
+      return <Input v-model={inputValue.value} {...props.attr} />
     }
   },
 })

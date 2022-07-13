@@ -10,10 +10,10 @@ import SettersAdvancedSettings from '../tabs-setter/setters-advanced-setting/ind
 import './headerTabs.less'
 
 const active = ref(0)
-
 export default defineComponent({
   name: 'VarletLowCodeSelector',
-  setup() {
+  props: ['refCallback'],
+  setup(props) {
     return () => {
       return (
         <div class="setters-tabs-content">
@@ -22,7 +22,7 @@ export default defineComponent({
             <VarTab>样式</VarTab>
             <VarTab>高级</VarTab>
           </VarTabs>
-          <VarTabsItems v-model:active={active.value}>
+          <VarTabsItems v-model:active={active.value} ref={props.refCallback}>
             <VarTabItems>
               <SettersAttribute />
             </VarTabItems>

@@ -1,81 +1,72 @@
 import { computed, onUnmounted, reactive } from 'vue'
 import { eventsManager } from '@varlet/lowcode-core'
+import { SkeletonEvents, SkeletonLoaders } from './types'
 
-export enum SkeletonLayoutLoadings {
-  HEADER_LEFT = 'headerLeft',
-  HEADER_CENTER = 'headerCenter',
-  HEADER_RIGHT = 'headerRight',
-  SIDEBAR_TOP = 'sidebarTop',
-  SIDEBAR_BOTTOM = 'sidebarBottom',
-  DESIGNER = 'designer',
-  SETTERS = 'setters',
-  FULLSCREEN = 'fullscreen',
-}
-
-export enum SkeletonLoadingEvents {
-  SKELETON_LOADING = 'skeleton-loading',
-  SKELETON_LOADED = 'skeleton-loaded',
-}
+const LOADING_DELAY = 300
+const LOADED_DELAY = 600
 
 export function useLoading() {
   const layoutLoadings: Record<string, number> = reactive({
-    headerLeft: 0,
-    headerCenter: 0,
-    headerRight: 0,
-    sidebarTop: 0,
-    sidebarBottom: 0,
+    'header-left': 0,
+    'header-center': 0,
+    'header-right': 0,
+    'sidebar-top': 0,
+    'sidebar-bottom': 0,
     designer: 0,
     setters: 0,
     fullscreen: 0,
   })
 
-  const layoutLoadingPrepares: Record<string, number> = reactive({
-    headerLeft: 0,
-    headerCenter: 0,
-    headerRight: 0,
-    sidebarTop: 0,
-    sidebarBottom: 0,
+  const layoutPendingLoadings: Record<string, number> = reactive({
+    'header-left': 0,
+    'header-center': 0,
+    'header-right': 0,
+    'sidebar-top': 0,
+    'sidebar-bottom': 0,
     designer: 0,
     setters: 0,
     fullscreen: 0,
   })
 
-  const handleLoading = (layout: SkeletonLayoutLoadings) => {
-    layoutLoadingPrepares[layout]++
+  const handleLoading = (loader: SkeletonLoaders, delay?: number) => {
+    layoutPendingLoadings[loader]++
 
     setTimeout(() => {
-      layoutLoadings[layout] += layoutLoadingPrepares[layout]
-      layoutLoadingPrepares[layout] = 0
-    }, 5000)
+      if (layoutPendingLoadings[loader] > 0) {
+        layoutLoadings[loader]++
+        layoutPendingLoadings[loader]--
+      }
+    }, delay ?? LOADING_DELAY)
   }
 
-  const handleLoaded = (layout: SkeletonLayoutLoadings) => {
-    if (layoutLoadingPrepares[layout]) {
-      layoutLoadingPrepares[layout]--
-
+  const handleLoaded = (layout: SkeletonLoaders) => {
+    if (layoutPendingLoadings[layout] > 0) {
+      layoutPendingLoadings[layout]--
       return
     }
 
-    layoutLoadings[layout]--
+    setTimeout(() => {
+      layoutLoadings[layout]--
+    }, LOADED_DELAY)
   }
 
-  eventsManager.on(SkeletonLoadingEvents.SKELETON_LOADING, handleLoading)
-  eventsManager.on(SkeletonLoadingEvents.SKELETON_LOADED, handleLoaded)
+  eventsManager.on(SkeletonEvents.LOADING, handleLoading)
+  eventsManager.on(SkeletonEvents.LOADED, handleLoaded)
 
   onUnmounted(() => {
-    eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADING, handleLoading)
-    eventsManager.off(SkeletonLoadingEvents.SKELETON_LOADED, handleLoaded)
+    eventsManager.off(SkeletonEvents.LOADING, handleLoading)
+    eventsManager.off(SkeletonEvents.LOADED, handleLoaded)
   })
 
   const layoutLoadingsComputed = computed(() => {
     return {
-      enableHeaderLeftLayout: layoutLoadings.headerLeft > 0 || layoutLoadings.fullscreen > 0,
-      enableHeaderCenterLayout: layoutLoadings.headerCenter > 0 || layoutLoadings.fullscreen > 0,
-      enableHeaderRightLayout: layoutLoadings.headerRight > 0 || layoutLoadings.fullscreen > 0,
-      enableSidebarTopLayout: layoutLoadings.sidebarTop > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderLeftLayout: layoutLoadings['header-left'] > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderCenterLayout: layoutLoadings['header-center'] > 0 || layoutLoadings.fullscreen > 0,
+      enableHeaderRightLayout: layoutLoadings['header-right'] > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarTopLayout: layoutLoadings['sidebar-top'] > 0 || layoutLoadings.fullscreen > 0,
       enableSidebarPluginLayout:
-        layoutLoadings.sidebarTop > 0 || layoutLoadings.sidebarBottom > 0 || layoutLoadings.fullscreen > 0,
-      enableSidebarBottomLayout: layoutLoadings.sidebarBottom > 0 || layoutLoadings.fullscreen > 0,
+        layoutLoadings['sidebar-top'] > 0 || layoutLoadings['sidebar-bottom'] > 0 || layoutLoadings.fullscreen > 0,
+      enableSidebarBottomLayout: layoutLoadings['sidebar-bottom'] > 0 || layoutLoadings.fullscreen > 0,
       enableDesignerLayout: layoutLoadings.designer > 0 || layoutLoadings.fullscreen > 0,
       enableSettersLayout: layoutLoadings.setters > 0 || layoutLoadings.fullscreen > 0,
       enableFullscreenLayout: layoutLoadings.fullscreen > 0,

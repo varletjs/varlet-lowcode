@@ -440,7 +440,7 @@ ${headers ? `\n    headers: ${stringifyObject(headers, 6).replace(/\}$/, '    }'
           usedLibraries
         )
 
-        successHandlerTemplate = `response = (${code})(response)\n`
+        successHandlerTemplate = `response = ${code.startsWith('async') ? 'await ' : ''}(${code})(response)\n`
         namedImports = mergeNamedImports(namedImports, successHandlerNamedImports)
       }
 
@@ -450,7 +450,7 @@ ${headers ? `\n    headers: ${stringifyObject(headers, 6).replace(/\}$/, '    }'
           usedLibraries
         )
 
-        errorHandlerTemplate = `return (${code})(e)`
+        errorHandlerTemplate = `return ${code.startsWith('async') ? 'await ' : ''}(${code})(e)`
         namedImports = mergeNamedImports(namedImports, errorHandlerNamedImports)
       }
 

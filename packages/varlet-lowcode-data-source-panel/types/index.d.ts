@@ -1,3 +1,4 @@
-import CodeEditor from './CodeEditor.vue'
+import type { SkeletonPlugin } from '@varlet/lowcode-core'
 
-export default CodeEditor
+declare const DataSourcePanelPlugin: SkeletonPlugin
+export default DataSourcePanelPlugin

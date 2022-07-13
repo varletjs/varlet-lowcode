@@ -1,5 +1,5 @@
 import type { DefineComponent, Ref } from 'vue'
-import { computed, defineComponent, ref, Teleport, watch } from 'vue'
+import { computed, defineComponent, onUnmounted, ref, Teleport, watch } from 'vue'
 import { AppBar, Icon, Ripple, Skeleton, Space } from '@varlet/ui'
 import { pluginsManager, eventsManager, SkeletonLayouts, SkeletonPlugin } from '@varlet/lowcode-core'
 import { getTop } from './shared'
@@ -10,6 +10,7 @@ import '@varlet/ui/es/skeleton/style/index.js'
 import '@varlet/ui/es/ripple/style/index'
 import './skeleton.less'
 import { useLoading } from './useLoading'
+import { SkeletonEvents } from './types'
 
 function distributePlugins(plugins: SkeletonPlugin[]) {
   const headerLeftPlugins: SkeletonPlugin[] = []
@@ -82,10 +83,6 @@ function distributePlugins(plugins: SkeletonPlugin[]) {
   }
 }
 
-export enum SidebarEvents {
-  SIDEBAR_TOGGLE = 'skeleton-sidebar-toggle',
-}
-
 export default defineComponent({
   name: 'VarletLowCodeSkeleton',
   directives: { ripple: Ripple },
@@ -125,9 +122,27 @@ export default defineComponent({
     watch(
       () => sidebarActiveComponent.value,
       (newVal) => {
-        eventsManager.emit(SidebarEvents.SIDEBAR_TOGGLE, { name: newVal })
+        eventsManager.emit(SkeletonEvents.SIDEBAR_TOGGLE, { name: newVal })
       }
     )
+
+    const sidebarOpen = (name: string) => {
+      sidebarActiveComponent.value = name
+    }
+
+    const sidebarClose = (name?: string) => {
+      if (!name || sidebarActiveComponent.value === name) {
+        sidebarActiveComponent.value = undefined
+      }
+    }
+
+    eventsManager.on(SkeletonEvents.SIDEBAR_OPEN, sidebarOpen)
+    eventsManager.on(SkeletonEvents.SIDEBAR_OPEN, sidebarClose)
+
+    onUnmounted(() => {
+      eventsManager.off(SkeletonEvents.SIDEBAR_OPEN, sidebarOpen)
+      eventsManager.off(SkeletonEvents.SIDEBAR_OPEN, sidebarClose)
+    })
 
     const toggleSidebarActive = (name: string) => {
       sidebarActiveComponent.value = name === sidebarActiveComponent.value ? undefined : name
@@ -144,12 +159,14 @@ export default defineComponent({
             <Skeleton v-show={loading} loading={loading} rows="1" />
 
             <Space v-show={!loading}>
-              {_plugins.map((_plugin) => {
-                const Component = _plugin!.component as DefineComponent
-                const componentProps = _plugin!.componentProps ?? {}
+              {_plugins.length
+                ? _plugins.map((_plugin) => {
+                    const Component = _plugin!.component as DefineComponent
+                    const componentProps = _plugin?.componentProps ?? {}
 
-                return <Component {...componentProps} />
-              })}
+                    return <Component {...componentProps} />
+                  })
+                : null}
             </Space>
           </>
         )
@@ -158,9 +175,9 @@ export default defineComponent({
       return (
         <AppBar class="varlet-low-code-skeleton__header" title-position="center" elevation={false}>
           {{
-            left: renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.enableHeaderLeftLayout),
-            default: renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.enableHeaderCenterLayout),
-            right: renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.enableHeaderRightLayout),
+            left: () => renderPlugins(headerLeftPlugins, layoutLoadingsComputed.value.enableHeaderLeftLayout),
+            default: () => renderPlugins(headerCenterPlugins, layoutLoadingsComputed.value.enableHeaderCenterLayout),
+            right: () => renderPlugins(headerRightPlugins, layoutLoadingsComputed.value.enableHeaderRightLayout),
           }}
         </AppBar>
       )
@@ -170,32 +187,37 @@ export default defineComponent({
       const renderIcons: (_plugins: SkeletonPlugin[], loading: boolean) => JSX.Element = (_plugins, loading) => {
         return (
           <div class="varlet-low-code-skeleton__sidebar--container">
-            {_plugins.map((plugin: SkeletonPlugin) => {
-              const { icon: iconName, name } = plugin
-              return (
-                <>
-                  <Skeleton v-show={loading} loading={loading} avatar rows="0" />
+            {_plugins.length
+              ? _plugins.map((plugin: SkeletonPlugin) => {
+                  const { name } = plugin
+                  const iconName = plugin.layoutProps?.icon
+                  return (
+                    <>
+                      <Skeleton v-show={loading} loading={loading} avatar rows="0" />
 
-                  <div
-                    v-ripple
-                    ref={(el) => sidebarRef(el, name)}
-                    v-show={!loading}
-                    class={`varlet-low-code-skeleton__sidebar--item ${
-                      name === sidebarActiveComponent.value ? 'varlet-low-code-skeleton__sidebar--item-selected' : ''
-                    }`}
-                    onClick={() => toggleSidebarActive(name)}
-                    onMouseenter={() => toggleSidebarFocus(plugin)}
-                    onMouseleave={() => toggleSidebarFocus()}
-                  >
-                    {typeof iconName === 'string' ? (
-                      <Icon name={iconName} class="varlet-low-code-skeleton__sidebar--icon" />
-                    ) : (
-                      <iconName />
-                    )}
-                  </div>
-                </>
-              )
-            })}
+                      <div
+                        v-ripple
+                        ref={(el) => sidebarRef(el, name)}
+                        v-show={!loading}
+                        class={`varlet-low-code-skeleton__sidebar--item ${
+                          name === sidebarActiveComponent.value
+                            ? 'varlet-low-code-skeleton__sidebar--item-selected'
+                            : ''
+                        }`}
+                        onClick={() => toggleSidebarActive(name)}
+                        onMouseenter={() => toggleSidebarFocus(plugin)}
+                        onMouseleave={() => toggleSidebarFocus()}
+                      >
+                        {typeof iconName === 'string' ? (
+                          <Icon name={iconName} class="varlet-low-code-skeleton__sidebar--icon" />
+                        ) : (
+                          <iconName />
+                        )}
+                      </div>
+                    </>
+                  )
+                })
+              : null}
           </div>
         )
       }
@@ -209,42 +231,53 @@ export default defineComponent({
               sidebarPinned.value ? 'varlet-low-code-skeleton__sidebar-component--pinned' : ''
             }`}
             style={{
-              padding: `${layoutLoadingsComputed.value.enableSidebarPluginLayout ? '16px' : undefined}`,
+              padding: `${layoutLoadingsComputed.value.enableSidebarPluginLayout ? '14px' : undefined}`,
             }}
             v-show={sidebarActiveComponent.value}
           >
             <Skeleton
-              v-show={sidebarActiveComponent.value && layoutLoadingsComputed.value.enableSidebarPluginLayout}
+              v-Show={layoutLoadingsComputed.value.enableSidebarPluginLayout}
               loading={layoutLoadingsComputed.value.enableSidebarPluginLayout}
               card
               rows="0"
             />
-            <div v-show={sidebarActiveComponent.value && !layoutLoadingsComputed.value.enableSidebarPluginLayout}>
-              {sidebarPlugins.map((plugin) => {
-                const Component = plugin.component as DefineComponent
-                const componentProps = plugin.componentProps ?? {}
+            <div>
+              {sidebarPlugins.length
+                ? sidebarPlugins.map((_plugin) => {
+                    const Component = _plugin.component as DefineComponent
+                    const componentProps = _plugin.componentProps ?? {}
 
-                const renderLabel: () => JSX.Element = () => {
-                  return (
-                    <div class="varlet-low-code-skeleton__sidebar-component-label">
-                      <h2>{plugin?.label || ''}</h2>
-                      <Icon
-                        onClick={() => {
-                          sidebarPinned.value = !sidebarPinned.value
-                        }}
-                        name="pin-outline"
-                      ></Icon>
-                    </div>
-                  )
-                }
-
-                return (
-                  <div v-Show={sidebarActiveComponent.value === plugin.name}>
-                    {renderLabel()}
-                    <Component {...componentProps} />
-                  </div>
-                )
-              })}
+                    const renderLabel: () => JSX.Element = () => {
+                      return (
+                        <div class="varlet-low-code-skeleton__sidebar-component-label">
+                          <h2>{_plugin?.layoutProps?.label || ''}</h2>
+                          <Icon
+                            onClick={() => {
+                              sidebarPinned.value = !sidebarPinned.value
+                            }}
+                            transition="200"
+                            name="pin-outline"
+                          ></Icon>
+                        </div>
+                      )
+                    }
+                    return (
+                      <div
+                        v-Show={sidebarActiveComponent.value === _plugin.name}
+                        class={`
+                      ${
+                        sidebarActiveComponent.value && layoutLoadingsComputed.value.enableSidebarPluginLayout
+                          ? 'varlet-low-code-skeleton__sidebar-component--loading'
+                          : ''
+                      }
+                      `}
+                      >
+                        {renderLabel()}
+                        <Component {...componentProps} />
+                      </div>
+                    )
+                  })
+                : null}
             </div>
           </div>
         )
@@ -256,9 +289,9 @@ export default defineComponent({
             {renderIcons(sidebarTopPlugins, layoutLoadingsComputed.value.enableSidebarTopLayout)}
             {renderIcons(sidebarBottomPlugins, layoutLoadingsComputed.value.enableSidebarBottomLayout)}
             <Teleport to="body">
-              {sidebarFocusComponent.value?.label ? (
+              {sidebarFocusComponent.value?.layoutProps?.label ? (
                 <div style={transitionStyle.value} class="varlet-low-code-skeleton__sidebar--tooltip">
-                  {sidebarFocusComponent.value.label}
+                  {sidebarFocusComponent.value.layoutProps.label}
                 </div>
               ) : null}
             </Teleport>

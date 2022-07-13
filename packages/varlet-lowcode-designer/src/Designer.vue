@@ -9,6 +9,8 @@ import {
 } from '@varlet/lowcode-core'
 import Selector from '@varlet/lowcode-selector'
 import { onMounted, ref } from 'vue'
+import { SkeletonEvents, SkeletonLoaders } from '@varlet/lowcode-skeleton'
+import { DesignerEvents } from './types'
 
 const presetAssets: Assets = [
   {
@@ -37,20 +39,20 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
     return
   }
 
+  renderer.schema.value = schema
+
   if (
     oldSchema?.code !== schema.code ||
     oldSchema?.compatibleCode !== schema.compatibleCode ||
     JSON.stringify(oldSchema.dataSources ?? []) !== JSON.stringify(schema.dataSources ?? [])
   ) {
-    await mountRenderer()
+    renderer.rerender()
     return
   }
 
   if (schema.css && oldSchema?.css !== schema.css) {
     patchIframeCss(schema.css)
   }
-
-  renderer.schema.value = schema
 })
 
 eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
@@ -95,7 +97,8 @@ function mountIframe() {
 }
 
 async function mountRenderer() {
-  eventsManager.emit('skeleton-loading', 'designer')
+  eventsManager.emit(SkeletonEvents.LOADING, SkeletonLoaders.FULLSCREEN, 0)
+
   mountIframe()
 
   const iframeWindow = iframeElement!.contentWindow as Record<string, any>
@@ -108,14 +111,15 @@ async function mountRenderer() {
   app.id = 'app'
   iframeElement!.contentDocument!.body.appendChild(app)
   iframeElement!.contentDocument!.addEventListener('click', (event) => {
-    eventsManager.emit('designer-iframe-click', event)
+    eventsManager.emit(DesignerEvents.IFRAME_CLICK, event)
   })
 
-  renderer.mode = 'designer'
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
   renderer.init('#app', eventsManager)
-  eventsManager.emit('skeleton-loaded', 'designer')
+  renderer.mount()
+
+  eventsManager.emit(SkeletonEvents.LOADED, SkeletonLoaders.FULLSCREEN, 0)
 }
 
 onMounted(async () => {

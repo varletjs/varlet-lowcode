@@ -1,7 +1,7 @@
 import { DirectiveBinding } from 'vue'
 import type { Directive, Plugin, App } from 'vue'
-import { mergeStyle, eventBroadcast } from './shared'
-import { SchemaNode } from '@varlet/lowcode-core'
+import { mergeStyle } from './shared'
+import { SchemaNode, eventsManager } from '@varlet/lowcode-core'
 
 export interface DragOptions {
   id?: string
@@ -42,6 +42,8 @@ function onDragStart(this: DragHTMLElement, e: DragEvent) {
   const { dragStyle, dragData, dragImg, type = 'all' } = _drag
 
   dragStyle && mergeStyle(this, dragStyle)
+  // TODO: `DragData` not only schema data and also some hook functions and snapshots
+  // dragData.onDragStart that use on the Material library
   dragData && e.dataTransfer!.setData('text/plain', JSON.stringify(dragData))
   e.dataTransfer!.effectAllowed = type
 
@@ -52,7 +54,7 @@ function onDragStart(this: DragHTMLElement, e: DragEvent) {
     e.dataTransfer!.setDragImage(_dragImg, 50, 15)
   }
 
-  eventBroadcast('drag-start', {
+  eventsManager.emit('drag-start', {
     dragEvent: e,
     dragOptions: JSON.parse(JSON.stringify(_drag)),
     id: (<HTMLElement>e?.target).id,
@@ -66,7 +68,7 @@ function onDragEnter(this: DragHTMLElement, e: DragEvent) {
   const _drag = this._drag as DragOptions
 
   if (this._drag?.id) {
-    eventBroadcast('drag-enter', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
+    eventsManager.emit('drag-enter', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
   }
 }
 
@@ -84,7 +86,7 @@ function onDragEnd(this: DragHTMLElement, e: DragEvent) {
 
   dragStyle && mergeStyle(this, dragStyle, true)
 
-  eventBroadcast('drag-end', this)
+  eventsManager.emit('drag-end', this)
 }
 
 function mounted(el: DragHTMLElement, props: DirectiveBinding<DragOptions>) {

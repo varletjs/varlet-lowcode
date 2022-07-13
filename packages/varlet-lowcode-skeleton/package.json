@@ -20,6 +20,7 @@
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-designer": "workspace: *",
+    "@varlet/lowcode-materials-panel": "workspace: *",
     "@varlet/lowcode-code-editor": "workspace: *",
     "@varlet/lowcode-schema-editor": "workspace: *",
     "@varlet/lowcode-undo-redo": "workspace: *",
@@ -40,7 +41,7 @@
     "@varlet/ui": "^1.27.17"
   },
   "browserslist": [
-    "Chrome >= 51",
-    "iOS >= 10"
+    "Chrome >= 55",
+    "iOS >= 10.4"
   ]
 }

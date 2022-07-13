@@ -4,7 +4,7 @@ import Button from './Button.vue'
 import { eventsManager } from '@varlet/lowcode-core'
 
 const onClick = (e: Event) => {
-  eventsManager.emit('schema-click', e?.target.id || '')
+  eventsManager.emit('schema-click', (<HTMLElement>e?.target).id || '')
 }
 </script>
 

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Button as VarButton, Icon as VarIcon, Space as VarSpace, Snackbar } from '@varlet/ui'
-import { schemaManager, eventsManager, BuiltInEvents, SchemaPageNode } from '@varlet/lowcode-core'
+import { schemaManager, eventsManager, BuiltInEvents } from '@varlet/lowcode-core'
+import { DesignerEvents } from '@varlet/lowcode-designer'
 import { ref, onUnmounted } from 'vue'
-import type { Ref } from 'vue'
 import '@varlet/ui/es/button/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
+import type { Ref } from 'vue'
+import type { SchemaPageNode } from '@varlet/lowcode-core'
 
 let schema = schemaManager.exportSchema()
 
@@ -71,7 +73,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 function handleDesignerIframeClick() {
-  const rendererWindow = getRendererWindow()
+  rendererWindow = getRendererWindow()
 
   if (!rendererWindow) {
     return
@@ -81,13 +83,13 @@ function handleDesignerIframeClick() {
 }
 
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
-eventsManager.on('designer-iframe-click', handleDesignerIframeClick)
+eventsManager.on(DesignerEvents.IFRAME_CLICK, handleDesignerIframeClick)
 window.addEventListener('keydown', handleKeydown)
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
-  rendererWindow.removeEventListener('keydown', handleKeydown)
-  eventsManager.off('designer-iframe-click', handleDesignerIframeClick)
+  rendererWindow?.removeEventListener('keydown', handleKeydown)
+  eventsManager.off(DesignerEvents.IFRAME_CLICK, handleDesignerIframeClick)
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 })
 </script>

@@ -16,13 +16,14 @@
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
+    "@varlet/ui": "1.27.17",
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",
     "vue-tsc": "^0.37.3"
   },
   "browserslist": [
-    "Chrome >= 51",
-    "iOS >= 10"
+    "Chrome >= 55",
+    "iOS >= 10.4"
   ]
 }

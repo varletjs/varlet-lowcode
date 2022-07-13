@@ -1,6 +1,6 @@
 import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import Monaco from '@varlet/lowcode-monaco'
-import { defineComponent, Teleport, computed, ref, Ref } from 'vue'
+import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect } from 'vue'
 import { schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
 import '@varlet/ui/es/dialog/style/index.js'
@@ -14,6 +14,10 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    code: {
+      type: String,
+      default: '',
+    },
     attr: {
       type: Object,
       default: () => {
@@ -21,41 +25,54 @@ export default defineComponent({
       },
     },
   },
+  emits: ['update:modelValue', 'update:code', 'Confirm'],
   setup(props, { emit }) {
+    console.log(emit, 'emit')
     const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
-    const { traverseFunction, transformCompatibleCode } = createAst()
+    const { traverseFunction } = createAst()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
-    console.log(returnDeclarations, 'returnDeclarations')
+    const code: Ref<string> = ref('')
     const show = computed({
       get: () => props.modelValue,
       set: (val) => {
         emit('update:modelValue', val)
       },
     })
+    watchEffect(() => {
+      if (show.value) {
+        code.value = props.code
+      }
+    })
     const selectIndex = ref('')
+    let selectItemData: string[] = reactive([])
     const selectCategory = (val: string) => {
       selectIndex.value = val
+      selectItemData = returnDeclarations[val]
     }
-    const code: Ref<string> = ref('')
     const saveCode = () => {
       try {
-        const compatibleCode = transformCompatibleCode(code.value)
-        const { returnDeclarations } = traverseFunction(code.value)
-
-        schemaManager.importSchema({
-          ...schema,
-          setupReturnDeclarations: returnDeclarations,
-          code: code.value,
-          compatibleCode,
-        })
+        emit('update:code', code.value)
+        emit('Confirm', code.value)
       } catch (e: any) {
         Snackbar.error(e.toString())
       }
     }
     const saveItems = (val: string) => {
+      if (selectIndex.value === 'ref' || selectIndex.value === 'computed') {
+        val += '.value'
+      }
       code.value += val
+    }
+    const selectCategoryContent = () => {
+      return Object.keys(returnDeclarations).map((item) => {
+        return (
+          <div class={selectIndex.value === item ? 'active' : null} onClick={() => selectCategory(item)}>
+            {item}
+          </div>
+        )
+      })
     }
     const dialogContent = () => {
       return (
@@ -63,25 +80,17 @@ export default defineComponent({
           <div class="varlet-low-code-variable-bind__left">
             <div class="varlet-low-code-variable-bind__title">变量列表</div>
             <div class="varlet-low-code-variable-bind__select">
-              <div class="varlet-low-code-variable-bind__category">
-                {Object.keys(returnDeclarations).map((item) => {
-                  return (
-                    <div class={selectIndex.value === item ? 'active' : null} onClick={() => selectCategory(item)}>
-                      {item}
-                    </div>
-                  )
-                })}
-              </div>
+              <div class="varlet-low-code-variable-bind__category">{selectCategoryContent()}</div>
               <div class="varlet-low-code-variable-bind__select-items">
-                <div onClick={() => saveItems('testRef.value')}>testRef.value</div>
-                <div onClick={() => saveItems('testRef2.value')}>testRef2.value</div>
-                <div onClick={() => saveItems('testRef3.value')}>testRef3.value</div>
+                {selectItemData.map((item) => {
+                  return <div onClick={() => saveItems(item)}>{item}</div>
+                })}
               </div>
             </div>
           </div>
           <div class="varlet-low-code-variable-bind__right">
             <div class="varlet-low-code-variable-bind__title">绑定</div>
-            <Monaco language="json" height="calc(100% - 24px)" v-model:code={code.value} onSave={saveCode} />
+            <Monaco height="calc(100% - 24px)" v-model:code={code.value} onSave={saveCode} />
           </div>
         </div>
       )
@@ -97,7 +106,11 @@ export default defineComponent({
     return () => {
       return (
         <Teleport to="body">
-          <VarDialog.Component v-model:show={show.value} v-slots={childrenSlot}></VarDialog.Component>
+          <VarDialog.Component
+            v-model:show={show.value}
+            v-slots={childrenSlot}
+            onConfirm={saveCode}
+          ></VarDialog.Component>
         </Teleport>
       )
     }

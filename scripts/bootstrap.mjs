@@ -13,20 +13,25 @@ import {
   buildSchemaEditor,
   buildSelector,
   buildUndoRedo,
-  buildResizer
+  buildResizer,
+  buildMaterialsPanel,
+  buildSkeleton
 } from './build.mjs'
 
 await runTask('cli', buildCli)
 await runTask('core', buildCore)
-await runTask('dnd', buildDnd)
-await runTask('designer', buildDesigner)
-await runTask('profile', buildProfile)
-await runTask('renderer', buildRenderer)
 await runTask('ast', buildAst)
-await runTask('codegen', buildCodegen)
+await runTask('skeleton', buildSkeleton)
+await runTask('dnd', buildDnd)
+await runTask('selector', buildSelector)
+await runTask('renderer', buildRenderer)
+await runTask('designer', buildDesigner)
 await runTask('monaco', buildMonaco)
 await runTask('code-editor', buildCodeEditor)
 await runTask('schema-editor', buildSchemaEditor)
-await runTask('selector', buildSelector)
+await runTask('codegen', buildCodegen)
 await runTask('undo-redo', buildUndoRedo)
 await runTask('resizer', buildResizer)
+await runTask('materials-panel', buildMaterialsPanel)
+await runTask('profile', buildProfile)
+
