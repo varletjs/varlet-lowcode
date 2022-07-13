@@ -15,9 +15,9 @@ export default defineComponent({
     const selectorStyles: Ref<CSSProperties[] | undefined> = ref([])
 
     function computedSelectorStyles(id: string) {
-      console.log('66666666666666', id)
+      const iframe = document.querySelector('iframe')
 
-      const nodes = document.querySelectorAll(`#${id}`)
+      const nodes = iframe!.contentDocument!.querySelectorAll(`#${id}`)
 
       if (nodes && nodes.length > 0) {
         const _nodes = Array.from(nodes)
