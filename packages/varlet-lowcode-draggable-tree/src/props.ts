@@ -6,7 +6,7 @@ export interface TreeNode {
   children?: TreeNode[]
 }
 
-export const props = {
+export const treeProps = {
   tree: {
     type: Array as PropType<TreeNode[]>,
     required: true,

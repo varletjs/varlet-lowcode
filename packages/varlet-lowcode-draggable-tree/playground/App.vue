@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import DragableTree from '../src/DragableTree'
+import DraggableTree from '../src/index'
 
 const tree = [
   {
     id: 0,
     text: 'A',
-    expanded: true, // required on each item if using the expandable option
   },
   {
     id: 1,
@@ -44,6 +43,6 @@ const tree = [
 
 <template>
   <div style="width: 400px; background: #eee">
-    <DragableTree :tree="tree" />
+    <DraggableTree :tree="tree" />
   </div>
 </template>

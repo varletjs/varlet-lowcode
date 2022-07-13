@@ -1,8 +1,8 @@
 {
-  "name": "@varlet/lowcode-dragable-tree",
+  "name": "@varlet/lowcode-draggable-tree",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-dragable-tree.es.js",
-  "module": "lib/varlet-lowcode-dragable-tree.es.js",
+  "main": "lib/varlet-lowcode-draggable-tree.es.js",
+  "module": "lib/varlet-lowcode-draggable-tree.es.js",
   "types": "types/index.d.ts",
   "files": [
     "lib",

@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'varlet-lowcode-dragable-tree',
+  name: 'varlet-lowcode-draggable-tree',
 
   configureVite(command, config) {
     if (command === 'compile') {
