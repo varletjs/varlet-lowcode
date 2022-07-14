@@ -49,7 +49,7 @@ const onDragEnter = (args: any) => {
 }
 
 const onDrop = (event: any) => {
-  console.log('eee',event)
+  console.log('eee', event)
   const dragOptions = toRaw(dragSchema.value)
   const dropOptions = toRaw(dropSchema.value)
 

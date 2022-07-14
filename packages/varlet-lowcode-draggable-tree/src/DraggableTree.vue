@@ -1,9 +1,14 @@
 <script lang="ts" setup name="VarletLowcodeDraggableTree">
 import { treeProps } from './props'
+import useTree from './useTree'
 import DraggableTreeNode from './DraggableTreeNode.vue'
 import { defineProps } from 'vue'
 
 const props = defineProps(treeProps)
+
+const { setRelation } = useTree()
+
+setRelation(props.tree)
 </script>
 
 <template>
