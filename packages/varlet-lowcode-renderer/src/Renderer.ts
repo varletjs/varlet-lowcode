@@ -304,14 +304,20 @@ export default defineComponent({
         ? propsBinding.class.split(' ')
         : []
 
-      const directives: DirectiveArguments = props.mode === 'designer' ? [[Drag, { dragData: schemaNode }], [Drop]] : []
-
-      props.mode === 'designer' && classes.push('varlet-low-code--disable-events')
-
-      if (schemaManager.isSchemaPageNode(schemaNode)) {
-        directives.shift()
-        directives.push([DragOver, []])
+      if (props.mode !== 'designer') {
+        return h(
+          getComponent(schemaNode.name, schemaNode.library!),
+          { ...propsBinding, class: classes, key: keyBinding },
+          renderSchemaNodeSlots(schemaNode)
+        )
       }
+
+      const directives: DirectiveArguments = [
+        [Drag, { dragData: schemaNode, eventsManager: props.designerEventsManager }],
+        [Drop, { eventsManager: props.designerEventsManager }],
+      ]
+
+      classes.push('varlet-low-code--disable-events')
 
       return withDirectives(
         h(
@@ -431,8 +437,8 @@ export default defineComponent({
     return () =>
       props.mode === 'designer'
         ? withDirectives(h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)), [
-            [Drop],
-            [DragOver],
+            [Drop, { eventsManager: props.designerEventsManager }],
+            [DragOver, { eventsManager: props.designerEventsManager }],
           ])
         : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
