@@ -1,11 +1,12 @@
 import { DirectiveBinding } from 'vue'
 import type { Directive, Plugin, App } from 'vue'
 import { mergeStyle } from './shared'
-import { eventsManager, SchemaNode } from '@varlet/lowcode-core'
+import type { EventsManager, SchemaNode } from '@varlet/lowcode-core'
 
 export interface DropOptions {
   dropStyle?: Partial<CSSStyleDeclaration>
   type?: DataTransfer['dropEffect']
+  eventsManager: EventsManager
 }
 
 interface DropHTMLElement extends HTMLElement {
@@ -14,7 +15,7 @@ interface DropHTMLElement extends HTMLElement {
 
 function onDropEnter(this: DropHTMLElement) {
   const _drop = this._drop as DropOptions
-  const { dropStyle } = _drop
+  const { dropStyle, eventsManager } = _drop
 
   dropStyle && mergeStyle(this, dropStyle)
 
@@ -26,7 +27,7 @@ function onDropLeave(this: DropHTMLElement, e: DragEvent) {
 
   e.dataTransfer!.dropEffect = 'none'
   const _drop = this._drop as DropOptions
-  const { dropStyle } = _drop
+  const { dropStyle, eventsManager } = _drop
 
   dropStyle && mergeStyle(this, dropStyle, true)
 
@@ -50,7 +51,7 @@ function onDropEnd(this: DropHTMLElement, e: DragEvent) {
 
   const _dragData: SchemaNode = JSON.parse(_data)
   const _drop = this._drop as DropOptions
-  const { dropStyle } = _drop
+  const { dropStyle, eventsManager } = _drop
 
   dropStyle && mergeStyle(this, dropStyle, true)
 
@@ -64,7 +65,7 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
 
   const _dragData: SchemaNode = JSON.parse(_data)
   const _drop = this._drop as DropOptions
-  const { dropStyle } = _drop
+  const { dropStyle, eventsManager } = _drop
 
   dropStyle && mergeStyle(this, dropStyle, true)
 
@@ -73,12 +74,12 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
 }
 
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
-  const defaultProps: DropOptions = {
+  const defaultProps = {
     dropStyle: {
       background: 'red',
     },
     type: 'move',
-  }
+  } as DropOptions
   el._drop = { ...defaultProps, ...props.value }
 
   el.addEventListener('dragenter', onDropEnter, { passive: false })

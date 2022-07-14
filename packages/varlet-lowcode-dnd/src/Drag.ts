@@ -1,13 +1,14 @@
-import { DirectiveBinding } from 'vue'
-import type { Directive, Plugin, App } from 'vue'
+import { toRaw } from 'vue'
+import type { Directive, Plugin, App, DirectiveBinding } from 'vue'
 import { mergeStyle } from './shared'
-import { SchemaNode, eventsManager } from '@varlet/lowcode-core'
+import type { SchemaNode, EventsManager } from '@varlet/lowcode-core'
 
 export interface DragOptions {
   id?: string
   dragStyle?: Partial<CSSStyleDeclaration>
   // TODO: this attributes will like this { schema: SchemaNode; snapshot: SnapShotType }
   dragData: SchemaNode
+  eventsManager: EventsManager
   dragImg?: HTMLImageElement | HTMLCanvasElement
   type?: DataTransfer['effectAllowed']
 }
@@ -39,7 +40,7 @@ function onDragStart(this: DragHTMLElement, e: DragEvent) {
   if (e.target !== e.currentTarget) return
 
   const _drag = this._drag as DragOptions
-  const { dragStyle, dragData, dragImg, type = 'all' } = _drag
+  const { dragStyle, dragData, dragImg, type = 'all', eventsManager } = _drag
 
   dragStyle && mergeStyle(this, dragStyle)
   // TODO: `DragData` not only schema data and also some hook functions and snapshots
@@ -68,7 +69,7 @@ function onDragEnter(this: DragHTMLElement, e: DragEvent) {
   const _drag = this._drag as DragOptions
 
   if (this._drag?.id) {
-    eventsManager.emit('drag-enter', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
+    _drag.eventsManager.emit('drag-enter', { dragEvent: e, dragOptions: JSON.parse(JSON.stringify(_drag)) })
   }
 }
 
@@ -82,7 +83,7 @@ function onDragEnd(this: DragHTMLElement, e: DragEvent) {
   e.preventDefault()
 
   const _drag = this._drag as DragOptions
-  const { dragStyle } = _drag
+  const { dragStyle, eventsManager } = _drag
 
   dragStyle && mergeStyle(this, dragStyle, true)
 
@@ -96,7 +97,7 @@ function mounted(el: DragHTMLElement, props: DirectiveBinding<DragOptions>) {
     },
     type: 'move',
   } as DragOptions
-  el._drag = { ...defaultsProps, ...props.value }
+  el._drag = { ...defaultsProps, ...toRaw(props.value) }
   el.draggable = true
 
   el.addEventListener('dragstart', onDragStart, { passive: false })

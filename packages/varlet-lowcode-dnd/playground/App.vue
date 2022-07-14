@@ -19,6 +19,7 @@ for (let i = 0; i < 10; i++) {
       id: uuid(),
       name: 'Drag Item ' + i,
     },
+    eventsManager,
   })
 }
 
@@ -27,6 +28,7 @@ const dropProps: DropOptions = {
     background: '#f1c40f',
   },
   type: 'move',
+  eventsManager,
 }
 
 const slotsDropProps: DropOptions = {
@@ -34,6 +36,7 @@ const slotsDropProps: DropOptions = {
     background: '#f1c40f',
   },
   type: 'move',
+  eventsManager,
 }
 
 const renderList = reactive<DragOptions[]>([])
@@ -61,7 +64,8 @@ const onDrop = () => {
     dragOptions && renderList.splice(dropIndex, 0, dragOptions)
   } else {
     dragSchema.value && ((dragSchema.value.id = uuid()), (dragSchema.value.dragData.id = uuid()))
-    dragOptions && (dropOptions ? renderList.splice(dropIndex, 0, dragOptions) : renderList.push(dragOptions))
+    dragOptions &&
+      (dropOptions ? renderList.splice(dropIndex, 0, dragOptions) : renderList.push({ ...dragOptions, eventsManager }))
   }
 
   dragSchema.value = undefined
@@ -91,7 +95,7 @@ onUnmounted(() => {
     <!-- <iframe width="500" src="./demo.html" /> -->
     <transition-group
       :key="renderList.length"
-      v-drag-over=""
+      v-drag-over="{ eventsManager }"
       v-drop="dropProps"
       name="drag"
       tag="div"
