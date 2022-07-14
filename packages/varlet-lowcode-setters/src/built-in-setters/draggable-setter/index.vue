@@ -3,8 +3,8 @@ import { Icon as VarIcon, Input as VarInput } from '@varlet/ui'
 import { defineProps, defineEmits, ref, reactive } from 'vue'
 import draggable from 'vuedraggable'
 import './index.less'
-import edit from './edit.png'
-import move from './move.png'
+import edit from '../../../assets/edit.png'
+import move from '../../../assets/move.png'
 
 const myArray: any = reactive({
   value: [
@@ -26,7 +26,6 @@ const myArray: any = reactive({
   ],
 })
 console.log(myArray.value, '')
-const drag = ref(false)
 </script>
 
 <template>
