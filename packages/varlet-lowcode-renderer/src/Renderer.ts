@@ -272,7 +272,7 @@ export default defineComponent({
             Fragment,
             value.value.map((schemaNodeChild: SchemaNode) => {
               schemaNodeChild._renderArgs = {
-                ...(schemaNode._renderArgs ?? {}),
+                ...schemaNode._renderArgs,
                 [value.renderId!]: args,
               }
 
@@ -332,7 +332,7 @@ export default defineComponent({
       if (props.mode !== 'designer') {
         return h(
           getComponent(schemaNode.name, schemaNode.library!),
-          { ...propsBinding, class: classes, key: keyBinding },
+          { ...propsBinding, class: classes },
           renderSchemaNodeSlots(schemaNode)
         )
       }
@@ -432,18 +432,16 @@ export default defineComponent({
       if (isPlainObject(schemaNode.slots)) {
         return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, slot]) => {
           rawSlots[slotName] = (slotProps: any) => {
-            if (!slot._slotProps) {
-              slot._slotProps = {}
+            slot._slotProps = {
+              ...schemaNode._slotProps,
+              ...slot._slotProps,
+              [schemaNode.id!]: slotProps,
             }
-
-            slot._slotProps[schemaNode.id!] = slotProps
-            const mergedSlotProps = { ...schemaNode._slotProps, ...slot._slotProps }
-            slot._slotProps = mergedSlotProps
 
             const slotChildren = slot.children ?? []
 
             const conditionedSchemaNodes = withCondition(slotChildren as SchemaNode[])
-            const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode, mergedSlotProps)
+            const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode, slot._slotProps)
             const loopedSchemaNodes = withLoop(scopedSchemaNodes)
 
             return loopedSchemaNodes.map((schemaNodeChild) => renderSchemaNode(schemaNodeChild))
@@ -466,9 +464,6 @@ export default defineComponent({
       restoreWindow()
       unmountCss()
     })
-
-    // @ts-ignore
-    window.abc = props.schema
 
     return () =>
       props.mode === 'designer'

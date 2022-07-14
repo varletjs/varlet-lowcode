@@ -91,6 +91,8 @@ function mountIframe() {
   }
 
   iframeElement = document.createElement('iframe')
+  iframeElement.style.width = '100%'
+  iframeElement.style.height = '100%'
   iframeElement.frameBorder = 'none'
   container.value!.appendChild(iframeElement)
   iframeElement.contentWindow!.name = 'rendererWindow'
@@ -132,7 +134,12 @@ onMounted(async () => {
 
 <template>
   <div ref="container" class="varlet-low-code-designer">
-    <iframe ref="iframe" frameborder="0" />
     <Selector />
   </div>
 </template>
+
+<style lang="less">
+.varlet-low-code-designer {
+  width: 100%;
+}
+</style>
