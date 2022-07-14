@@ -1,5 +1,6 @@
-import { eventsManager } from '@varlet/lowcode-core'
-import type { Directive } from 'vue'
+import type { EventsManager } from '@varlet/lowcode-core'
+import type { App, Directive, DirectiveBinding } from 'vue'
+import { DragOptions } from './Drag'
 import { mergeStyle } from './shared'
 
 type NearestDirection = 'left' | 'top' | 'right' | 'bottom'
@@ -19,6 +20,11 @@ interface NearestOptions {
 
 export interface DragOverOption {
   blockStyle?: Partial<CSSStyleDeclaration>
+  eventsManager: EventsManager
+}
+
+interface DragOverHTMLElement extends HTMLElement {
+  _dragover?: DragOverOption
 }
 
 // avoid repeatedly obtaining doms information
@@ -152,15 +158,10 @@ function onDragOver(event: DragEvent) {
 }
 
 // TODO: this params need a types from the Drag, the other params also need type from the Drop
-function onDragStart({ id }: any) {
-  if (!id) {
-    throw new Error(`this Node is not a Really Dom`)
-  }
+function onDragStart({ id }: DragOptions) {
+  nodeComputedStyles = getDomRectInfo()
 
-  if (id) {
-    nodeComputedStyles = getDomRectInfo()
-    nodeComputedStyles = nodeComputedStyles.filter((item) => item.id !== `${id}`)
-  }
+  id && (nodeComputedStyles = nodeComputedStyles.filter((item) => item.id !== `${id}`))
 }
 
 function onDragEnd() {
@@ -172,7 +173,9 @@ function onDragEnd() {
   }
 }
 
-function mounted(el: HTMLElement) {
+function mounted(el: DragOverHTMLElement, props: DirectiveBinding<DragOverOption>) {
+  el._dragover = { eventsManager: props.value.eventsManager }
+
   const borderDiv = document.createElement('div')
 
   borderDiv.id = 'varlet-lowcode-dnd-border'
@@ -183,11 +186,12 @@ function mounted(el: HTMLElement) {
   document.body.appendChild(borderDiv)
 
   el.addEventListener('dragover', onDragOver, { passive: false })
-  eventsManager.on('drag-start', onDragStart)
-  eventsManager.on('drag-end', onDragEnd)
+
+  props.value.eventsManager.on('drag-start', onDragStart)
+  props.value.eventsManager.on('drag-end', onDragEnd)
 }
 
-function unmounted(el: HTMLElement) {
+function unmounted(el: DragOverHTMLElement) {
   const borderDiv = document.querySelector('#varlet-lowcode-dnd-border')
 
   borderDiv && document.body.removeChild(borderDiv)
@@ -195,8 +199,12 @@ function unmounted(el: HTMLElement) {
   nodeComputedStyles = undefined
 
   el.removeEventListener('dragover', onDragOver)
-  eventsManager.off('drag-start', onDragStart)
-  eventsManager.off('drag-end', onDragEnd)
+
+  if (el._dragover) {
+    const { eventsManager } = el._dragover
+    eventsManager.off('drag-start', onDragStart)
+    eventsManager.off('drag-end', onDragEnd)
+  }
 }
 
 export type VarletMouseMoveProps = Directive<any, DragOverOption>
@@ -204,4 +212,7 @@ export type VarletMouseMoveProps = Directive<any, DragOverOption>
 export default {
   mounted,
   unmounted,
+  install(app: App) {
+    app.directive('drag', this)
+  },
 } as VarletMouseMoveProps

@@ -27,6 +27,7 @@
     "live-server": "^1.2.1",
     "typescript": "^4.4.4",
     "vue": "3.2.25",
+    "vuedraggable": "^4.1.0",
     "vue-tsc": "^0.37.3"
   },
   "peerDependencies": {
