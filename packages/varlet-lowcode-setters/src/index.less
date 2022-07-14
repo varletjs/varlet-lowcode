@@ -59,6 +59,7 @@
     display: flex;
     align-items: center;
     margin: 20px 0;
+    flex-wrap: wrap;
 
     .attribute-field-body-title {
       width: 70px;
@@ -72,6 +73,7 @@
       align-items: center;
       margin-right: 20px;
       position: relative;
+      width: 100%;
 
       > i {
         cursor: pointer;
@@ -80,6 +82,23 @@
         top: 50%;
         transform: translate(100%, -50%);
       }
+
+      &__sing-row {
+        width: 100%;
+        position: relative;
+
+        > :first-child {
+          margin-bottom: 10px;
+        }
+      }
+    }
+
+    &__setter-icon {
+      cursor: pointer;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translate(100%, -50%);
     }
   }
 }

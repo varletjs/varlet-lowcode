@@ -4,7 +4,7 @@ import '@varlet/ui/es/switch/style/index.js'
 import './index.less'
 
 export default defineComponent({
-  name: 'StyleInput',
+  name: 'SWITCHSETTER',
   props: {
     modelValue: {
       type: Boolean,
