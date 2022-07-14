@@ -153,15 +153,11 @@ export function createSchemaManager(): SchemaManager {
   }
 
   function isObjectBinding(value: unknown): boolean {
-    return (
-      isPlainObject(value) &&
-      value.type !== BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING &&
-      value.type !== BuiltInSchemaNodeBindingTypes.RENDER_BINDING
-    )
+    return isPlainObject(value) && !isExpressionBinding(value) && !isRenderBinding(value)
   }
 
   function isRenderBinding(value: unknown): boolean {
-    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.RENDER_BINDING
+    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.RENDER_BINDING && value.renderId
   }
 
   function generateId() {
