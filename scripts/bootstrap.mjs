@@ -15,7 +15,7 @@ import {
   buildUndoRedo,
   buildResizer,
   buildMaterialsPanel,
-  buildSkeleton
+  buildSkeleton, buildLocaleSwitcher
 } from './build.mjs'
 
 await runTask('cli', buildCli)
@@ -34,4 +34,5 @@ await runTask('undo-redo', buildUndoRedo)
 await runTask('resizer', buildResizer)
 await runTask('materials-panel', buildMaterialsPanel)
 await runTask('profile', buildProfile)
+await runTask('locale-switcher', buildLocaleSwitcher)
 

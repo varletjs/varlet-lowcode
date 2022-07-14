@@ -119,6 +119,9 @@ async function mountRenderer() {
   renderer.init('#app', eventsManager)
   renderer.mount()
 
+  // @ts-ignore
+  window.eventsManager = eventsManager
+
   eventsManager.emit(SkeletonEvents.LOADED, SkeletonLoaders.FULLSCREEN, 0)
 }
 

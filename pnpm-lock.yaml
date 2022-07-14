@@ -268,6 +268,28 @@ importers:
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
 
+  packages/varlet-lowcode-locale-switcher:
+    specifiers:
+      '@varlet/lowcode-cli': 'workspace: *'
+      '@varlet/lowcode-core': 'workspace: *'
+      '@varlet/lowcode-designer': 'workspace: *'
+      '@varlet/ui': 1.27.17
+      live-server: ^1.2.1
+      typescript: ^4.4.4
+      vite: ^2.9.12
+      vue: 3.2.25
+      vue-tsc: ^0.37.3
+    devDependencies:
+      '@varlet/lowcode-cli': link:../varlet-lowcode-cli
+      '@varlet/lowcode-core': link:../varlet-lowcode-core
+      '@varlet/lowcode-designer': link:../varlet-lowcode-designer
+      '@varlet/ui': 1.27.17_vue@3.2.25
+      live-server: 1.2.2
+      typescript: 4.7.2
+      vite: 2.9.12
+      vue: 3.2.25
+      vue-tsc: 0.37.3_typescript@4.7.2
+
   packages/varlet-lowcode-materials-panel:
     specifiers:
       '@varlet/lowcode-cli': 'workspace: *'
@@ -460,6 +482,7 @@ importers:
       '@varlet/lowcode-codegen': 'workspace: *'
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/lowcode-designer': 'workspace: *'
+      '@varlet/lowcode-locale-switcher': 'workspace: *'
       '@varlet/lowcode-materials-panel': 'workspace: *'
       '@varlet/lowcode-monaco': 'workspace: *'
       '@varlet/lowcode-resizer': 'workspace: *'
@@ -479,6 +502,7 @@ importers:
       '@varlet/lowcode-codegen': link:../varlet-lowcode-codegen
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-designer': link:../varlet-lowcode-designer
+      '@varlet/lowcode-locale-switcher': link:../varlet-lowcode-locale-switcher
       '@varlet/lowcode-materials-panel': link:../varlet-lowcode-materials-panel
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
       '@varlet/lowcode-resizer': link:../varlet-lowcode-resizer

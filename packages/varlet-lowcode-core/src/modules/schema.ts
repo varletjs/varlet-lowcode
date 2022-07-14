@@ -9,13 +9,15 @@ export interface SchemaManager {
 
   isExpressionBinding(value: unknown): boolean
 
-  generateId(): string
-
   isObjectBinding(value: unknown): boolean
+
+  isRenderBinding(value: unknown): boolean
+
+  generateId(): string
 
   createExpressionBinding(expression: string): SchemaNodeBinding
 
-  createObjectBinding(record: Record<string, any>): SchemaNodeBinding
+  createRenderBinding(schemaNodes: SchemaNode[]): SchemaNodeBinding
 
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]): void
 
@@ -39,6 +41,7 @@ export enum BuiltInSchemaNodeNames {
 export enum BuiltInSchemaNodeBindingTypes {
   OBJECT_BINDING = 'Object',
   EXPRESSION_BINDING = 'Expression',
+  RENDER_BINDING = 'Render',
 }
 
 export type SchemaNodeProps = Record<string, SchemaNodeBinding>
@@ -63,6 +66,7 @@ export interface SchemaNode {
   _item?: Record<string, any>
   _index?: Record<string, any>
   _slotProps?: Record<string, any>
+  _renderArgs?: Record<string, any[]>
 }
 
 export interface SchemaTextNode extends SchemaNode {
@@ -149,7 +153,15 @@ export function createSchemaManager(): SchemaManager {
   }
 
   function isObjectBinding(value: unknown): boolean {
-    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.OBJECT_BINDING
+    return (
+      isPlainObject(value) &&
+      value.type !== BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING &&
+      value.type !== BuiltInSchemaNodeBindingTypes.RENDER_BINDING
+    )
+  }
+
+  function isRenderBinding(value: unknown): boolean {
+    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.RENDER_BINDING
   }
 
   function generateId() {
@@ -220,17 +232,19 @@ export function createSchemaManager(): SchemaManager {
     return schemaNode
   }
 
-  function createExpressionBinding(expression: string): SchemaNodeBinding {
+  function createExpressionBinding(expression: string, compatibleExpression?: string): SchemaNodeBinding {
     return {
       type: BuiltInSchemaNodeBindingTypes.EXPRESSION_BINDING,
       value: expression,
+      compatibleValue: compatibleExpression,
     }
   }
 
-  function createObjectBinding(record: Record<string, any>): SchemaNodeBinding {
+  function createRenderBinding(schemaNodes: SchemaNode[]): SchemaNodeBinding {
     return {
-      type: BuiltInSchemaNodeBindingTypes.OBJECT_BINDING,
-      value: record,
+      type: BuiltInSchemaNodeBindingTypes.RENDER_BINDING,
+      renderId: generateId(),
+      value: schemaNodes,
     }
   }
 
@@ -255,11 +269,13 @@ export function createSchemaManager(): SchemaManager {
 
     isSchemaPageNode,
     isSchemaTextNode,
+
     isExpressionBinding,
     isObjectBinding,
+    isRenderBinding,
 
     createExpressionBinding,
-    createObjectBinding,
+    createRenderBinding,
 
     cloneSchemaNode,
     visitSchemaNode,

@@ -72,7 +72,9 @@
       "packages/varlet-lowcode-resizer/lib/**",
       "packages/varlet-lowcode-resizer/types/**",
       "packages/varlet-lowcode-materials-panel/lib/**",
-      "packages/varlet-lowcode-materials-panel/types/**"
+      "packages/varlet-lowcode-materials-panel/types/**",
+      "packages/varlet-lowcode-locale-switcher/lib/**",
+      "packages/varlet-lowcode-locale-switcher/types/**"
     ],
     "rules": {
       "no-new-func": "off",
@@ -143,7 +145,9 @@
       "packages/varlet-lowcode-resizer/lib/**",
       "packages/varlet-lowcode-resizer/types/**",
       "packages/varlet-lowcode-materials-panel/lib/**",
-      "packages/varlet-lowcode-materials-panel/types/**"
+      "packages/varlet-lowcode-materials-panel/types/**",
+      "packages/varlet-lowcode-locale-switcher/lib/**",
+      "packages/varlet-lowcode-locale-switcher/types/**"
     ]
   },
   "devDependencies": {

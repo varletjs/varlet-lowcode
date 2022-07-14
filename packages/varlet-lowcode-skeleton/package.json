@@ -25,6 +25,7 @@
     "@varlet/lowcode-schema-editor": "workspace: *",
     "@varlet/lowcode-undo-redo": "workspace: *",
     "@varlet/lowcode-resizer": "workspace: *",
+    "@varlet/lowcode-locale-switcher": "workspace: *",
     "@varlet/lowcode-setters": "workspace: *",
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
