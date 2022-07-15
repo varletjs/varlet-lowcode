@@ -25,18 +25,32 @@ const myArray: any = reactive({
     },
   ],
 })
-console.log(myArray.value, '')
+const addTableRow = () => {
+  const object = {
+    name: 'component',
+    order: 3,
+    fixed: false,
+  }
+  myArray.value.push(object)
+}
+const deleteTableRow = (index: any) => {
+  myArray.value.splice(index, 1)
+}
+const openEdit = (index: any) => {
+  myArray.value.splice(index, 1)
+}
 </script>
 
 <template>
-  <draggable tag="ul" :list="myArray.value" class="list-group" handle=".handle" item-key="name">
-    <template #item="{ element }">
+  <draggable tag="ul" :list="myArray.value" handle=".handle" item-key="name">
+    <template #item="{ element, index }">
       <div class="varlet-low-code-setter__table--row">
-        <var-icon :name="edit" :size="24" />
+        <var-icon :name="edit" :size="24" @click="openEdit(element)" />
         <var-input v-model="element.name"></var-input>
-        <var-icon name="delete" :size="24" />
+        <var-icon name="delete" :size="24" @Click="deleteTableRow(index)" />
         <var-icon :name="move" class="handle" :size="24" />
       </div>
     </template>
   </draggable>
+  <span class="varlet-low-code-setter__add-button" @Click="addTableRow"> 添加一项 + </span>
 </template>

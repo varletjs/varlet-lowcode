@@ -47,14 +47,17 @@ export default defineComponent({
           left: 0,
           right: 0,
         }
-        if (bottom < 0) {
-          popoverStyle.left = x - domWidth + width / 2 + 'px'
+        const bodyHeight = document.body.clientHeight
+        const bodyWidth = document.body.clientWidth
+        if (bottom > bodyHeight) {
           popoverStyle.top = y - domHeight - 12 + 'px'
           classNameAfter.value = 'varlet-low-code-popover-bottom-right'
-
-          console.log(top, left, right)
         }
-        if (right < 0) {
+        if (left < 0) {
+          popoverStyle.left = x + width / 2 + 'px'
+          classNameAfter.value = 'varlet-low-code-popover-top-left'
+        }
+        if (right < bodyWidth) {
           // alert()
         }
 
