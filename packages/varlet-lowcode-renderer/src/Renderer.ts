@@ -468,10 +468,17 @@ export default defineComponent({
 
     return () =>
       props.mode === 'designer'
-        ? withDirectives(h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)), [
-            [Drop, { eventsManager: props.designerEventsManager }],
-            [DragOver, { eventsManager: props.designerEventsManager }],
-          ])
+        ? withDirectives(
+            h(
+              'div',
+              { class: 'varlet-low-code-renderer varlet-low-code-renderer__designer', mode: props.mode },
+              renderSchemaNodeSlots(props.schema)
+            ),
+            [
+              [Drop, { eventsManager: props.designerEventsManager }],
+              [DragOver, { eventsManager: props.designerEventsManager }],
+            ]
+          )
         : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
 })
