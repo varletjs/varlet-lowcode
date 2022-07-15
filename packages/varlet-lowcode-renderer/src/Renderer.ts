@@ -31,6 +31,7 @@ import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode, DirectiveArguments } from 'vue'
 import type { SchemaPageNode, SchemaNode, SchemaTextNode, EventsManager, Assets } from '@varlet/lowcode-core'
 import { createAxle } from '@varlet/axle'
+import './renderer.less'
 
 declare const window: Window & {
   setup(): any
