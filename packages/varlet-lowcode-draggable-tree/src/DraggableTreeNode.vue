@@ -1,26 +1,27 @@
 <script lang="ts" setup name="DraggableTreeNode">
 import { TreeNode, treeNodeProps } from './props'
-import { ref, defineProps, Ref } from 'vue'
+import { ref, defineProps } from 'vue'
 import { Icon } from '@varlet/ui'
 import '@varlet/ui/es/icon/style/index.js'
-import useTree from './useTree'
+import useTree from './hooks/useTree'
+import useDnd from './hooks/useDnd'
+import { eventsManager } from '@varlet/lowcode-core'
 
 const props = defineProps(treeNodeProps)
 const expand = ref(false)
 
 const { toggleTreeNodeChange } = useTree()
-
-const dragNode: Ref<TreeNode | null> = ref(null)
-const dropNode: Ref<TreeNode | null> = ref(null)
+const { setDragNode, setDropNode, dragNode, dropNode } = useDnd()
 
 const toggleExpand = () => {
   expand.value = !expand.value
 }
 
 const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
+  e.stopPropagation()
   e.dataTransfer!.effectAllowed = 'move'
 
-  dragNode.value = treeNode
+  setDragNode(treeNode)
 }
 
 const onDragOver = (e: DragEvent) => {
@@ -32,11 +33,12 @@ const onDragOver = (e: DragEvent) => {
 const onDragEnter = (e: Event, treeNode: TreeNode) => {
   e.stopPropagation()
 
-  dropNode.value = treeNode
+  setDropNode(treeNode)
 }
 
 const onDrop = (e: DragEvent) => {
   e.preventDefault()
+  e.stopPropagation()
 
   if (dragNode.value!.id !== dropNode.value!.id) {
     toggleTreeNodeChange(dragNode.value as TreeNode, dropNode.value as TreeNode)

@@ -12,6 +12,9 @@ export const treeProps = {
     required: true,
     default: () => [],
   },
+  'onUpdate:tree': {
+    type: Function as PropType<(value: TreeNode[]) => void>,
+  },
 }
 
 export const treeNodeProps = {
