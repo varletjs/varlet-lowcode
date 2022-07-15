@@ -19,12 +19,16 @@ export default defineComponent({
         <div class="setters-tabs-content">
           <VarTabs elevation v-model:active={active.value}>
             <VarTab>属性</VarTab>
+            <VarTab>事件</VarTab>
             <VarTab>样式</VarTab>
             <VarTab>高级</VarTab>
           </VarTabs>
           <VarTabsItems v-model:active={active.value} ref={props.refCallback}>
             <VarTabItems>
               <SettersAttribute />
+            </VarTabItems>
+            <VarTabItems>
+              <div>事件</div>
             </VarTabItems>
             <VarTabItems>
               <SettersStyle />

@@ -2,6 +2,7 @@
 import { Icon as VarIcon, Input as VarInput } from '@varlet/ui'
 import { defineProps, defineEmits, ref, reactive } from 'vue'
 import draggable from 'vuedraggable'
+import DialogDetail from '../../component/dialog-detail/index'
 import './index.less'
 import edit from '../../../assets/edit.png'
 import move from '../../../assets/move.png'
@@ -37,12 +38,16 @@ const deleteTableRow = (index: any) => {
   myArray.value.splice(index, 1)
 }
 const openEdit = (index: any) => {
-  myArray.value.splice(index, 1)
+  showDialog.value = !showDialog.value
+}
+const showDialog = ref(false)
+const stopTouch = (e: any) => {
+  e.stopPropagation()
 }
 </script>
 
 <template>
-  <draggable tag="ul" :list="myArray.value" handle=".handle" item-key="name">
+  <draggable tag="ul" :list="myArray.value" handle=".handle" item-key="name" @touchstart="stopTouch">
     <template #item="{ element, index }">
       <div class="varlet-low-code-setter__table--row">
         <var-icon :name="edit" :size="24" @click="openEdit(element)" />
@@ -53,4 +58,5 @@ const openEdit = (index: any) => {
     </template>
   </draggable>
   <span class="varlet-low-code-setter__add-button" @Click="addTableRow"> 添加一项 + </span>
+  <DialogDetail v-model="showDialog" />
 </template>

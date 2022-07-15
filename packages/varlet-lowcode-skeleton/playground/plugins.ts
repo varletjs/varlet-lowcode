@@ -21,7 +21,7 @@ export function usePlugins() {
     .useSkeletonPlugin(DesignerPlugin)
     .useSkeletonPlugin(SettersPlugin)
     .useSkeletonPlugin(ResizerPlugin)
-    .useSkeletonPlugin(LocaleSwitcherPlugin)
+    // .useSkeletonPlugin(LocaleSwitcherPlugin)
     .useSkeletonPlugin(MaterialsPanelPlugin)
     .useSkeletonPlugin(CodeEditorPlugin)
     .useSkeletonPlugin(SchemaEditorPlugin)
