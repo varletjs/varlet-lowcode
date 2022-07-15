@@ -41,6 +41,7 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
 
   renderer.schema.value = schema
 
+  // TODO: I reported an error after here. I'm not sure if it's renderer.render () or something else.
   if (
     oldSchema?.code !== schema.code ||
     oldSchema?.compatibleCode !== schema.compatibleCode ||
