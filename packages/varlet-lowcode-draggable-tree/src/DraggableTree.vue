@@ -6,16 +6,18 @@ import { defineProps } from 'vue'
 
 const props = defineProps(treeProps)
 
+const onDragOver = (e: DragEvent) => {
+  e.dataTransfer!.dropEffect = 'move'
+}
+
 const { setRelation } = useTree()
 
 setRelation(props.tree)
 </script>
 
 <template>
-  <div class="varlet-low-code-draggable-tree">
-    <template v-for="treeNode of props.tree" :key="treeNode.id">
-      <DraggableTreeNode :tree-node="treeNode" />
-    </template>
+  <div @dragover="onDragOver" class="varlet-low-code-draggable-tree">
+    <DraggableTreeNode v-for="treeNode of props.tree" :key="treeNode.id" :tree-node="treeNode" />
   </div>
 </template>
 
