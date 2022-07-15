@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { Snackbar, Button, Icon } from '@varlet/ui'
+import { Button, Icon } from '@varlet/ui'
+import { defineProps } from 'vue'
+import _props from './props'
+
+const props = defineProps(_props)
 
 const trashClick = () => {
-  Snackbar.error('Trashed ! This is a dangerous operation.')
+  console.log('props', props.schemaId)
 }
 </script>
 <template>

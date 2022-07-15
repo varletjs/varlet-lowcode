@@ -5,13 +5,12 @@ import _props from './props'
 
 const props = defineProps(_props)
 
-const copyClick = () => {
+const menuOpen = () => {
   console.log('props', props.schemaId)
 }
 </script>
-
 <template>
-  <Button @click="copyClick" round size="small" type="success">
-    <Icon name="file-document-outline" />
+  <Button @click="menuOpen" round size="small" type="warning">
+    <Icon name="menu" />
   </Button>
 </template>

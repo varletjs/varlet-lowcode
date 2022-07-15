@@ -6,7 +6,12 @@ import './plugin.less'
 
 export default defineComponent({
   name: 'VarletLowCodeSelectorPluginRender',
-  setup() {
+  props: {
+    schemaId: {
+      type: String,
+    },
+  },
+  setup(props) {
     const plugins: SelectorPlugin[] = pluginsManager.exportSelectorPlugins()
 
     return () => {
@@ -14,7 +19,7 @@ export default defineComponent({
         <div class="varlet-low-code-selector__plugins">
           {plugins.map(({ component }) => {
             const PluginComponent = component as DefineComponent
-            return <PluginComponent />
+            return <PluginComponent schemaId={props.schemaId} />
           })}
         </div>
       )

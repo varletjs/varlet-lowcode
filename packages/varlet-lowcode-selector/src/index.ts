@@ -1,8 +1,8 @@
 import VarletLowCodeSelector from './Selector'
 import { pluginsManager } from '@varlet/lowcode-core'
 import Copy from './selectorPlugins/copy.vue'
-import Transh from './selectorPlugins/transh.vue'
-import Demo from './selectorPlugins/demo.vue'
+import Remove from './selectorPlugins/remove.vue'
+import OpenSlots from './selectorPlugins/openSlots.vue'
 
 pluginsManager
   .useSelectorPlugin({
@@ -10,12 +10,12 @@ pluginsManager
     component: Copy,
   })
   .useSelectorPlugin({
-    name: 'transh',
-    component: Transh,
+    name: 'remove',
+    component: Remove,
   })
   .useSelectorPlugin({
-    name: 'demo',
-    component: Demo,
+    name: 'openSlots',
+    component: OpenSlots,
   })
 
 export default VarletLowCodeSelector
