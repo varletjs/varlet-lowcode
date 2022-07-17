@@ -22,25 +22,21 @@ import {
   onBeforeUnmount,
   onUnmounted,
   withDirectives,
+  Fragment,
 } from 'vue'
 import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
-import { isArray, isPlainObject, isString } from '@varlet/shared'
+import { isArray, isObject, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import type { PropType, VNode, DirectiveArguments } from 'vue'
-import type {
-  SchemaPageNode,
-  SchemaNode,
-  SchemaTextNode,
-  EventsManager,
-  SchemaNodeSlot,
-  Assets,
-} from '@varlet/lowcode-core'
+import type { SchemaPageNode, SchemaNode, SchemaTextNode, EventsManager, Assets } from '@varlet/lowcode-core'
 import { createAxle } from '@varlet/axle'
+import './renderer.less'
 
 declare const window: Window & {
   setup(): any
   $slotProps?: Record<string, any>
+  $renderArgs?: Record<string, any[]>
   $item?: Record<string, any>
   $index?: Record<string, any>
 }
@@ -233,19 +229,23 @@ export default defineComponent({
     }
 
     function hasScopedVariables(expression: string) {
-      return ['$item', '$index', '$slotProps'].some((scopedVariable) => expression.includes(scopedVariable))
+      return ['$item', '$index', '$slotProps', '$renderArgs'].some((scopedVariable) =>
+        expression.includes(scopedVariable)
+      )
     }
 
     function resolveScopedExpression(expression: string, schemaNode: SchemaNode) {
       window.$item = schemaNode._item
       window.$index = schemaNode._index
       window.$slotProps = schemaNode._slotProps
+      window.$renderArgs = schemaNode._renderArgs
 
-      const resolved = exec(`(${expression})`)
+      const resolved = exec(expression)
 
       delete window.$item
       delete window.$index
       delete window.$slotProps
+      delete window.$renderArgs
 
       return resolved
     }
@@ -258,13 +258,40 @@ export default defineComponent({
       return resolveScopedExpression(expression, schemaNode)
     }
 
-    function getBindingValue(value: any, schemaNode: SchemaNode) {
+    function getObjectBindingValue(value: any, schemaNode: SchemaNode) {
+      return Object.keys(value).reduce((newValue, key) => {
+        newValue[key] = getBindingValue(value[key], schemaNode)
+
+        return newValue
+      }, {} as Record<string, any>)
+    }
+
+    function getBindingValue(value: any, schemaNode: SchemaNode): any {
+      if (schemaManager.isRenderBinding(value)) {
+        return (...args: any[]) =>
+          h(
+            Fragment,
+            value.value.map((schemaNodeChild: SchemaNode) => {
+              schemaNodeChild._renderArgs = {
+                ...schemaNode._renderArgs,
+                [value.renderId!]: args,
+              }
+
+              return renderSchemaNode(schemaNodeChild)
+            })
+          )
+      }
+
       if (schemaManager.isExpressionBinding(value)) {
         return getExpressionBindingValue(value.compatibleValue ?? value.value, schemaNode)
       }
 
       if (schemaManager.isObjectBinding(value)) {
-        return value.value
+        return getObjectBindingValue(value, schemaNode)
+      }
+
+      if (isArray(value)) {
+        return value.map((item) => getBindingValue(item, schemaNode))
       }
 
       return value
@@ -295,7 +322,6 @@ export default defineComponent({
     }
 
     function withDesigner(schemaNode: SchemaNode) {
-      const keyBinding = getBindingValue(schemaNode.key, schemaNode)
       const propsBinding = getPropsBinding(schemaNode)
 
       const classes = isArray(propsBinding.class)
@@ -307,7 +333,7 @@ export default defineComponent({
       if (props.mode !== 'designer') {
         return h(
           getComponent(schemaNode.name, schemaNode.library!),
-          { ...propsBinding, class: classes, key: keyBinding },
+          { ...propsBinding, class: classes },
           renderSchemaNodeSlots(schemaNode)
         )
       }
@@ -322,7 +348,7 @@ export default defineComponent({
       return withDirectives(
         h(
           getComponent(schemaNode.name, schemaNode.library!),
-          { ...propsBinding, class: classes, key: keyBinding },
+          { ...propsBinding, class: classes },
           renderSchemaNodeSlots(schemaNode)
         ),
         directives
@@ -333,10 +359,11 @@ export default defineComponent({
       return schemaNodes.filter((schemaNode) => Boolean(getBindingValue(schemaNode.if ?? true, schemaNode)))
     }
 
-    function withScopedVariables(schemaNodes: SchemaNode[], parentSchemaNode: SchemaNode, parentSlot: SchemaNodeSlot) {
-      const slotProps = { ...parentSchemaNode._slotProps, ...parentSlot._slotProps }
-      parentSlot._slotProps = slotProps
-
+    function withScopedVariables(
+      schemaNodes: SchemaNode[],
+      parentSchemaNode: SchemaNode,
+      mergedSlotProps: Record<string, any>
+    ) {
       schemaNodes.forEach((schemaNode) => {
         if (parentSchemaNode._item) {
           schemaNode._item = parentSchemaNode._item
@@ -346,7 +373,11 @@ export default defineComponent({
           schemaNode._index = parentSchemaNode._index
         }
 
-        schemaNode._slotProps = slotProps
+        if (parentSchemaNode._renderArgs) {
+          schemaNode._renderArgs = parentSchemaNode._renderArgs
+        }
+
+        schemaNode._slotProps = mergedSlotProps
       })
 
       return schemaNodes
@@ -392,7 +423,7 @@ export default defineComponent({
       if (schemaNode.name === BuiltInSchemaNodeNames.TEXT) {
         const textContent = getBindingValue((schemaNode as SchemaTextNode).textContent, schemaNode)
 
-        return isPlainObject(textContent) ? JSON.stringify(textContent) : (textContent ?? '').toString()
+        return isObject(textContent) ? JSON.stringify(textContent) : (textContent ?? '').toString()
       }
 
       return withDesigner(schemaNode)
@@ -402,15 +433,16 @@ export default defineComponent({
       if (isPlainObject(schemaNode.slots)) {
         return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, slot]) => {
           rawSlots[slotName] = (slotProps: any) => {
-            if (!slot._slotProps) {
-              slot._slotProps = {}
+            slot._slotProps = {
+              ...schemaNode._slotProps,
+              ...slot._slotProps,
+              [schemaNode.id!]: slotProps,
             }
 
-            slot._slotProps[schemaNode.id!] = slotProps
-
             const slotChildren = slot.children ?? []
+
             const conditionedSchemaNodes = withCondition(slotChildren as SchemaNode[])
-            const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode, slot)
+            const scopedSchemaNodes = withScopedVariables(conditionedSchemaNodes, schemaNode, slot._slotProps)
             const loopedSchemaNodes = withLoop(scopedSchemaNodes)
 
             return loopedSchemaNodes.map((schemaNodeChild) => renderSchemaNode(schemaNodeChild))
@@ -436,10 +468,17 @@ export default defineComponent({
 
     return () =>
       props.mode === 'designer'
-        ? withDirectives(h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema)), [
-            [Drop, { eventsManager: props.designerEventsManager }],
-            [DragOver, { eventsManager: props.designerEventsManager }],
-          ])
+        ? withDirectives(
+            h(
+              'div',
+              { class: 'varlet-low-code-renderer varlet-low-code-renderer__designer', mode: props.mode },
+              renderSchemaNodeSlots(props.schema)
+            ),
+            [
+              [Drop, { eventsManager: props.designerEventsManager }],
+              [DragOver, { eventsManager: props.designerEventsManager }],
+            ]
+          )
         : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
 })

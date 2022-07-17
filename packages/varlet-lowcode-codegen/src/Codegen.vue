@@ -6,11 +6,29 @@ import readme from './template/README.md?raw'
 import JSZip from 'jszip'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { AssetProfile, AssetsManager, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
+import { schemaManager, localeManager } from '@varlet/lowcode-core'
 import { saveAs } from 'file-saver'
 import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
-import type { AssetProfileMaterial, Assets, SchemaNode, SchemaNodeSlot, SchemaPageNode } from '@varlet/lowcode-core'
+import type {
+  AssetProfileMaterial,
+  Assets,
+  SchemaNode,
+  SchemaNodeSlot,
+  SchemaPageNode,
+  SchemaPageNodeDataSource,
+  AssetProfile,
+  AssetsManager,
+} from '@varlet/lowcode-core'
+
+const { t } = localeManager.useLocale({
+  'zh-CN': {
+    codegen: '出码',
+  },
+  'en-US': {
+    codegen: 'CODEGEN',
+  },
+})
 
 const vueApis = [
   'h',
@@ -539,6 +557,6 @@ const save = async () => {
 
 <template>
   <div class="varlet-low-code-codegen">
-    <var-button type="primary" @click="save">出码</var-button>
+    <var-button type="primary" @click="save">{{ t('codegen') }}</var-button>
   </div>
 </template>

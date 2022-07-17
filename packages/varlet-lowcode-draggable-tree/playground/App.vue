@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import DraggableTree from '../src/index'
+import { ref } from 'vue'
 
-const tree = [
+const tree = ref([
   {
     id: 0,
     text: 'A',
@@ -38,11 +39,11 @@ const tree = [
     id: 3,
     text: 'D',
   },
-]
+])
 </script>
 
 <template>
   <div style="width: 400px; background: #eee">
-    <DraggableTree :tree="tree" />
+    <DraggableTree v-model:tree="tree" />
   </div>
 </template>

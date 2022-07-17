@@ -41,6 +41,7 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
 
   renderer.schema.value = schema
 
+  // TODO: I reported an error after here. I'm not sure if it's renderer.render () or something else.
   if (
     oldSchema?.code !== schema.code ||
     oldSchema?.compatibleCode !== schema.compatibleCode ||
@@ -91,6 +92,8 @@ function mountIframe() {
   }
 
   iframeElement = document.createElement('iframe')
+  iframeElement.style.width = '100%'
+  iframeElement.style.height = '100%'
   iframeElement.frameBorder = 'none'
   container.value!.appendChild(iframeElement)
   iframeElement.contentWindow!.name = 'rendererWindow'
@@ -119,6 +122,9 @@ async function mountRenderer() {
   renderer.init('#app', eventsManager)
   renderer.mount()
 
+  // @ts-ignore
+  window.eventsManager = eventsManager
+
   eventsManager.emit(SkeletonEvents.LOADED, SkeletonLoaders.FULLSCREEN, 0)
 }
 
@@ -129,7 +135,12 @@ onMounted(async () => {
 
 <template>
   <div ref="container" class="varlet-low-code-designer">
-    <iframe ref="iframe" frameborder="0" />
     <Selector />
   </div>
 </template>
+
+<style lang="less">
+.varlet-low-code-designer {
+  width: 100%;
+}
+</style>

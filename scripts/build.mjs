@@ -19,6 +19,7 @@ const PKG_UNDO_REDO = resolve(CWD, './packages/varlet-lowcode-undo-redo')
 const PKG_RESIZER = resolve(CWD, './packages/varlet-lowcode-resizer')
 const PKG_MATERIALS_PANEL =  resolve(CWD, './packages/varlet-lowcode-materials-panel')
 const PKG_SKELETON = resolve(CWD,'./packages/varlet-lowcode-skeleton')
+const PKG_LOCALE_SWITCHER = resolve(CWD,'./packages/varlet-lowcode-locale-switcher')
 
 export const buildCli = () => execa('pnpm', ['build'], { cwd: PKG_CLI })
 
@@ -51,6 +52,8 @@ export const buildResizer = () => execa('pnpm', ['compile'], { cwd: PKG_RESIZER 
 export const buildMaterialsPanel = () => execa('pnpm', ['compile'], { cwd: PKG_MATERIALS_PANEL })
 
 export const buildSkeleton =  () => execa('pnpm', ['compile'], { cwd: PKG_SKELETON })
+
+export const buildLocaleSwitcher =  () => execa('pnpm', ['compile'], { cwd: PKG_LOCALE_SWITCHER })
 
 export async function runTask(taskName, task) {
   const s = ora().start(`Building ${taskName}`)

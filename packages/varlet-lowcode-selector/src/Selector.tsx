@@ -14,10 +14,12 @@ export default defineComponent({
       pointerEvents: 'none',
     }
     const selectorStyles: Ref<CSSProperties[] | undefined> = ref([])
+    const selectorId: Ref<string | undefined> = ref()
 
     function computedSelectorStyles(id: string) {
-      const iframe = document.querySelector('iframe')
+      selectorId.value = id.split('dragItem')[1]
 
+      const iframe = document.querySelector('iframe')
       const nodes = iframe!.contentDocument!.querySelectorAll(`#${id}`)
 
       if (nodes && nodes.length > 0) {
@@ -46,11 +48,12 @@ export default defineComponent({
 
     return () => {
       return (
+        selectorId.value &&
         selectorStyles.value &&
         selectorStyles.value.map((style: CSSProperties, i: number) => {
           return (
             <div key={Symbol(style.toString())} style={style}>
-              {style && i === selectorStyles.value!.length - 1 && <PluginRender />}
+              {style && i === selectorStyles.value!.length - 1 && <PluginRender schemaId={selectorId.value} />}
             </div>
           )
         })

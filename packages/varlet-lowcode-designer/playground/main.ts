@@ -43,7 +43,7 @@ function setup() {
           library: 'Varlet',
           props: {
             type: 'primary',
-            style: schemaManager.createObjectBinding({ marginTop: '20px' }),
+            style: { marginTop: '20px' },
             onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
           },
           slots: {
