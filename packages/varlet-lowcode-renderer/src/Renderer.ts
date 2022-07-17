@@ -434,8 +434,8 @@ export default defineComponent({
         return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, slot]) => {
           rawSlots[slotName] = (slotProps: any) => {
             slot._slotProps = {
-              ...schemaNode._slotProps,
               ...slot._slotProps,
+              ...schemaNode._slotProps,
               [schemaNode.id!]: slotProps,
             }
 

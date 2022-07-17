@@ -138,8 +138,14 @@ importers:
       '@varlet/shared': latest
       '@varlet/ui': 1.27.17
       file-saver: ^2.0.5
+      get-own-enumerable-property-symbols: ^3.0.2
+      is-obj: ^3.0.0
+      is-regexp: ^3.0.0
       jszip: ^3.6.0
       live-server: ^1.2.1
+      lodash-es: ^4.17.21
+      prettier: ^2.7.1
+      stringify-object: ^4.0.1
       typescript: ^4.4.4
       vite: ^2.9.12
       vue: 3.2.25
@@ -147,7 +153,13 @@ importers:
     dependencies:
       '@varlet/shared': 1.27.17
       file-saver: 2.0.5
+      get-own-enumerable-property-symbols: 3.0.2
+      is-obj: 3.0.0
+      is-regexp: 3.1.0
       jszip: 3.10.0
+      lodash-es: 4.17.21
+      prettier: 2.7.1
+      stringify-object: 4.0.1
     devDependencies:
       '@types/file-saver': 2.0.5
       '@types/node': 17.0.36
@@ -5365,7 +5377,7 @@ packages:
     dev: true
 
   /fresh/0.5.2:
-    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
+    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -5465,7 +5477,6 @@ packages:
 
   /get-own-enumerable-property-symbols/3.0.2:
     resolution: {integrity: sha512-I0UBV/XOz1XkIJHEUDMZAbzCThU/H8DxmSfmdGcKPnVhu2VfFqr34jr9777IyaTYvxjedWhqVIilEDsCdP5G6g==}
-    dev: true
 
   /get-package-type/0.1.0:
     resolution: {integrity: sha512-pjzuKtY64GYfWizNAJ0fr9VqttZkNiK2iS430LtIHzjBEr6bX8Am2zm4sW4Ro5wjWW5cAlRL1qAMTcXbjNAO2Q==}
@@ -6218,6 +6229,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /is-obj/3.0.0:
+    resolution: {integrity: sha512-IlsXEHOjtKhpN8r/tRFj2nDyTmHvcfNeu/nrRIcXE17ROeatXchkojffa1SpdqW4cr/Fj6QkEf/Gn4zf6KKvEQ==}
+    engines: {node: '>=12'}
+    dev: false
+
   /is-plain-obj/1.1.0:
     resolution: {integrity: sha512-yvkRyxmFKEOQ4pNXCmJG5AEQNlXJS5LaONXo5/cLdTZdWvsZ1ioJEonLGAosKlMWE8lwUy/bJzMjcw8az73+Fg==}
     engines: {node: '>=0.10.0'}
@@ -6261,6 +6277,11 @@ packages:
     resolution: {integrity: sha512-OZ4IlER3zmRIoB9AqNhEggVxqIH4ofDns5nRrPS6yQxXE1TPCUpFznBfRQmQa8uC+pXqjMnukiJBxCisIxiLGA==}
     engines: {node: '>=6'}
     dev: true
+
+  /is-regexp/3.1.0:
+    resolution: {integrity: sha512-rbku49cWloU5bSMI+zaRaXdQHXnthP6DZ/vLnfdSKyL4zUzuWnomtOEiZZOd+ioQ+avFo/qau3KPTc7Fjy1uPA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /is-shared-array-buffer/1.0.2:
     resolution: {integrity: sha512-sqN2UDu1/0y6uvXyStCOzyhAjCSlHceFoMKJW8W9EU9cvic/QdsZ0kEU93HEy3IUEFZIiH/3w+AH/UQbPHNdhA==}
@@ -8179,6 +8200,12 @@ packages:
     hasBin: true
     dev: true
 
+  /prettier/2.7.1:
+    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: false
+
   /pretty-format/26.6.2:
     resolution: {integrity: sha512-7AeGuCYNGmycyQbCqd/3PWH4eOoX/OiCa0uphp57NVTeAGdJGaAliecxwBDHYQCIvrW7aDBZCYeNTP/WX69mkg==}
     engines: {node: '>= 10'}
@@ -9034,6 +9061,15 @@ packages:
       is-obj: 1.0.1
       is-regexp: 1.0.0
     dev: true
+
+  /stringify-object/4.0.1:
+    resolution: {integrity: sha512-qpV1FBpN0R1gDAhCHIU71SYGZb35Te+gOQbQ6lYRmVJT7pF1NB8mkHeEJvyYNiHXw+fB4KIbeIjQl1rgiIijiA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      get-own-enumerable-property-symbols: 3.0.2
+      is-obj: 3.0.0
+      is-regexp: 3.1.0
+    dev: false
 
   /strip-ansi/6.0.1:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}

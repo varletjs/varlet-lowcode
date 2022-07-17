@@ -27,6 +27,8 @@ export function createAst(rendererWindowGetter?: () => any) {
       .replace(/\$item\.(.+)(?![.\[])/g, '$item_$1')
       .replace(/\$slotProps\[['"](.+)['"]\]/g, '$slotProps_$1')
       .replace(/\$slotProps\.(.+)(?![.\[])/g, '$slotProps_$1')
+      .replace(/\$renderArgs\[['"](.+)['"]\]/g, '$renderArgs_$1')
+      .replace(/\$renderArgs\.(.+)(?![.\[])/g, '$renderArgs_$1')
 
     const ast = parse(value, {
       sourceType: 'module',
