@@ -4,34 +4,27 @@ import { v4 as uuid } from 'uuid'
 
 export interface SchemaManager {
   isSchemaPageNode(schemaNode: unknown): schemaNode is SchemaPageNode
-
   isSchemaTextNode(schemaNode: unknown): schemaNode is SchemaTextNode
 
   isExpressionBinding(value: unknown): boolean
-
   isObjectBinding(value: unknown): boolean
-
   isRenderBinding(value: unknown): boolean
 
   generateId(): string
 
-  createExpressionBinding(expression: string): SchemaNodeBinding
+  createExpressionBinding(expression: string, compatibleExpression?: string): SchemaNodeBinding
+  createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
 
-  createRenderBinding(schemaNodes: SchemaNode[]): SchemaNodeBinding
-
-  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]): void
-
+  visitRenderSchemaNode(record: Record<string, any>, schemaNodeVisitor: SchemaNodeVisitor): void | boolean
+  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor): void
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
 
   addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slotsName?: string): SchemaNode
-
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
-
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
   importSchema(schemaPageNode: SchemaPageNode): SchemaPageNode | boolean
   importSchema(schemaPageNode: SchemaPageNode, payload?: any): SchemaPageNode | boolean
-
   exportSchema(): SchemaPageNode
 }
 
@@ -49,6 +42,11 @@ export enum BuiltInSchemaNodeBindingTypes {
 export type SchemaNodeProps = Record<string, SchemaNodeBinding>
 
 export type SchemaNodeBinding = any
+
+export enum SchemaNodePlaces {
+  TREE = 'Tree',
+  RENDER_FUNCTION_ROOT = 'RenderFunctionRoot',
+}
 
 export interface SchemaNodeSlot {
   children: (SchemaNode | SchemaTextNode)[]
@@ -134,7 +132,12 @@ export interface SchemaPageNode extends SchemaNode {
   dataSources?: SchemaPageNodeDataSource[]
 }
 
-export type SchemaNodeVisitor = (schemaNode: SchemaNode, schemaNodeSiblings: SchemaNode[] | null) => boolean | void
+export type SchemaNodeVisitor = (
+  schemaNode: SchemaNode,
+  schemaNodeSiblings: SchemaNode[] | null,
+  schemaNodePlace: SchemaNodePlaces,
+  renderBinding?: SchemaNodeBinding
+) => boolean | void
 
 export function createSchemaManager(): SchemaManager {
   let _schema: SchemaPageNode = {
@@ -170,18 +173,42 @@ export function createSchemaManager(): SchemaManager {
     return JSON.parse(JSON.stringify(schemaNode))
   }
 
-  function visitSchemaNode(schemaNode: SchemaNode, visitor: SchemaNodeVisitor, schemaNodeSiblings?: SchemaNode[]) {
-    const stop = visitor(schemaNode, schemaNodeSiblings ?? null)
+  function visitRenderSchemaNode(record: Record<string, any> | any[], visitor: SchemaNodeVisitor): boolean | void {
+    for (const value of Object.values(record)) {
+      if (isRenderBinding(value)) {
+        for (const schemaNode of value.value) {
+          if (visitor(schemaNode, value.value, SchemaNodePlaces.RENDER_FUNCTION_ROOT, value)) {
+            return true
+          }
 
-    if (stop) {
-      return
+          visitSchemaNode(schemaNode, visitor)
+        }
+      }
+
+      if (isObjectBinding(value) || isArray(value)) {
+        if (visitRenderSchemaNode(value, visitor)) {
+          return true
+        }
+      }
+    }
+  }
+
+  function visitSchemaNode(schemaNode: SchemaNode, visitor: SchemaNodeVisitor) {
+    if (isPlainObject(schemaNode.props)) {
+      if (visitRenderSchemaNode(schemaNode.props, visitor)) {
+        return
+      }
     }
 
     if (isPlainObject(schemaNode.slots)) {
       for (const slot of Object.values(schemaNode.slots)) {
         if (isArray(slot.children) && slot.children.length > 0) {
           for (const schemaNodeChild of slot.children) {
-            visitSchemaNode(schemaNodeChild, visitor, slot.children)
+            if (visitor(schemaNodeChild, slot.children, SchemaNodePlaces.TREE)) {
+              return
+            }
+
+            visitSchemaNode(schemaNodeChild, visitor)
           }
         }
       }
@@ -220,10 +247,6 @@ export function createSchemaManager(): SchemaManager {
   }
 
   function removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode {
-    if (schemaNode.id === id) {
-      throw new Error('Cannot delete itself')
-    }
-
     visitSchemaNode(schemaNode, (schemaNode, schemaNodeSiblings) => {
       if (schemaNode.id === id) {
         removeItem(schemaNodeSiblings!, schemaNode)
@@ -234,7 +257,9 @@ export function createSchemaManager(): SchemaManager {
     return schemaNode
   }
 
-  function normalizedSchemaNode<T extends SchemaNode>(schemaNode: T): T {
+  function normalizeSchemaNode<T extends SchemaNode>(schemaNode: T): T {
+    removePrivateProperty(schemaNode)
+
     visitSchemaNode(schemaNode, (schemaNode) => {
       removePrivateProperty(schemaNode)
 
@@ -256,22 +281,22 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
-  function createRenderBinding(schemaNodes: SchemaNode[]): SchemaNodeBinding {
+  function createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding {
     return {
       type: BuiltInSchemaNodeBindingTypes.RENDER_BINDING,
-      renderId: generateId(),
+      renderId: renderId ?? generateId(),
       value: schemaNodes,
     }
   }
 
   function importSchema(schema: SchemaPageNode): SchemaPageNode | boolean {
-    const newSchema = normalizedSchemaNode(cloneSchemaNode(schema))
+    const newSchema = normalizeSchemaNode(cloneSchemaNode(schema))
 
     if (JSON.stringify(newSchema) === JSON.stringify(_schema)) {
       return false
     }
 
-    _schema = normalizedSchemaNode(cloneSchemaNode(schema))
+    _schema = normalizeSchemaNode(cloneSchemaNode(schema))
 
     return _schema
   }
@@ -293,9 +318,11 @@ export function createSchemaManager(): SchemaManager {
     createExpressionBinding,
     createRenderBinding,
 
-    cloneSchemaNode,
+    visitRenderSchemaNode,
     visitSchemaNode,
+
     addSchemaNode,
+    cloneSchemaNode,
     findSchemaNodeById,
     removeSchemaNodeById,
 

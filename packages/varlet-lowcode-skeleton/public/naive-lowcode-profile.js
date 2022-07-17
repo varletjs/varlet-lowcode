@@ -5,10 +5,16 @@ window.NaiveLowcodeProfile = {
   isVuePlugin: true,
   materials: [
     {
-      name: 'NButton'
+      name: 'NButton',
+      codegen: {
+        name: 'n-button'
+      }
     },
     {
-      name: 'NDataTable'
+      name: 'NDataTable',
+      codegen: {
+        name: 'n-data-table'
+      }
     }
   ]
 }

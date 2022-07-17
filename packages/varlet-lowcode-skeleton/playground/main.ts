@@ -6,6 +6,126 @@ import '@varlet/touch-emulator'
 
 usePlugins()
 
+const countdownId = schemaManager.generateId()
+const childRenderId = schemaManager.generateId()
+const childRender = schemaManager.createRenderBinding(
+  [
+    {
+      id: schemaManager.generateId(),
+      name: 'Card',
+      library: 'Varlet',
+      slots: {
+        title: {
+          children: [
+            {
+              id: schemaManager.generateId(),
+              name: BuiltInSchemaNodeNames.TEXT,
+              textContent: schemaManager.createExpressionBinding(`$renderArgs['${childRenderId}'][0].title`),
+            },
+          ],
+        },
+        subtitle: {
+          children: [
+            {
+              id: countdownId,
+              name: 'Countdown',
+              library: 'Varlet',
+              props: {
+                time: 30000,
+              },
+              slots: {
+                default: {
+                  children: [
+                    {
+                      id: schemaManager.generateId(),
+                      name: 'Button',
+                      library: 'Varlet',
+                      props: {
+                        type: 'success',
+                      },
+                      slots: {
+                        default: {
+                          children: [
+                            {
+                              id: schemaManager.generateId(),
+                              name: BuiltInSchemaNodeNames.TEXT,
+                              textContent: schemaManager.createExpressionBinding(
+                                `$slotProps['${countdownId}'].seconds`
+                              ),
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  ],
+  childRenderId
+)
+
+const parentRenderId = schemaManager.generateId()
+const parentRender = schemaManager.createRenderBinding(
+  [
+    {
+      id: schemaManager.generateId(),
+      name: 'NButton',
+      library: 'naive',
+      props: {
+        style: {
+          marginBottom: '10px',
+        },
+        type: 'primary',
+        onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
+      },
+      slots: {
+        default: {
+          children: [
+            {
+              id: schemaManager.generateId(),
+              name: BuiltInSchemaNodeNames.TEXT,
+              textContent: schemaManager.createExpressionBinding(`$renderArgs['${parentRenderId}'][0].title`),
+            },
+          ],
+        },
+      },
+    },
+    {
+      id: schemaManager.generateId(),
+      name: 'NDataTable',
+      library: 'naive',
+      props: {
+        columns: [
+          {
+            title: 'No',
+            key: 'no',
+          },
+          {
+            title: 'Title',
+            key: 'title',
+          },
+          {
+            title: 'Action',
+            key: 'actions',
+            render: childRender,
+          },
+        ],
+        data: [
+          { no: 100, title: '套一下' },
+          { no: 200, title: '套两下' },
+          { no: 300, title: '套三下' },
+        ],
+      },
+    },
+  ],
+  parentRenderId
+)
+
 schemaManager.importSchema({
   id: schemaManager.generateId(),
   name: BuiltInSchemaNodeNames.PAGE,
@@ -26,46 +146,6 @@ function setup() {
       children: [
         {
           id: schemaManager.generateId(),
-          name: 'Button',
-          library: 'Varlet',
-          props: {
-            type: 'primary',
-            onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
-          },
-          slots: {
-            default: {
-              children: [
-                {
-                  id: schemaManager.generateId(),
-                  name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: schemaManager.createExpressionBinding('doubleCount.value'),
-                },
-              ],
-            },
-          },
-        },
-        {
-          id: schemaManager.generateId(),
-          name: 'NButton',
-          library: 'naive',
-          props: {
-            type: 'primary',
-            onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
-          },
-          slots: {
-            default: {
-              children: [
-                {
-                  id: schemaManager.generateId(),
-                  name: BuiltInSchemaNodeNames.TEXT,
-                  textContent: schemaManager.createExpressionBinding('doubleCount.value'),
-                },
-              ],
-            },
-          },
-        },
-        {
-          id: schemaManager.generateId(),
           name: 'NDataTable',
           library: 'naive',
           props: {
@@ -81,76 +161,7 @@ function setup() {
               {
                 title: 'Action',
                 key: 'actions',
-                render: schemaManager.createRenderBinding([
-                  {
-                    id: schemaManager.generateId(),
-                    name: 'NButton',
-                    library: 'naive',
-                    props: {
-                      type: 'primary',
-                      onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
-                    },
-                    slots: {
-                      default: {
-                        children: [
-                          {
-                            id: schemaManager.generateId(),
-                            name: BuiltInSchemaNodeNames.TEXT,
-                            textContent: schemaManager.createExpressionBinding('$renderArgs'),
-                          },
-                        ],
-                      },
-                    },
-                  },
-                  {
-                    id: schemaManager.generateId(),
-                    name: 'NDataTable',
-                    library: 'naive',
-                    props: {
-                      columns: [
-                        {
-                          title: 'No',
-                          key: 'no',
-                        },
-                        {
-                          title: 'Title',
-                          key: 'title',
-                        },
-                        {
-                          title: 'Action',
-                          key: 'actions',
-                          render: schemaManager.createRenderBinding([
-                            {
-                              id: schemaManager.generateId(),
-                              name: 'NButton',
-                              library: 'naive',
-                              props: {
-                                type: 'primary',
-                                onClick: schemaManager.createExpressionBinding('() => { count.value++; }'),
-                              },
-                              slots: {
-                                default: {
-                                  children: [
-                                    {
-                                      id: schemaManager.generateId(),
-                                      name: BuiltInSchemaNodeNames.TEXT,
-                                      textContent: schemaManager.createExpressionBinding('$renderArgs'),
-                                    },
-                                  ],
-                                },
-                              },
-                            },
-                          ]),
-                        },
-                      ],
-                      data: [
-                        { no: 100, title: '套一下' },
-                        { no: 200, title: '套两下' },
-                        { no: 300, title: '套三下' },
-                      ],
-                    },
-                  },
-                ]),
+                render: parentRender,
               },
             ],
             data: [

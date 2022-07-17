@@ -9,6 +9,7 @@
     "declarationDir": "./types",
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "allowJs": true,
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
     "types": ["vite/client"]

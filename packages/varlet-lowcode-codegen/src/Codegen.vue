@@ -4,21 +4,26 @@ import pkg from './template/package.json?raw'
 import config from './template/vite.config.js?raw'
 import readme from './template/README.md?raw'
 import JSZip from 'jszip'
+import prettier from 'prettier/esm/standalone.mjs'
+import parserBabel from 'prettier/esm/parser-babel.mjs'
+import parserHtml from 'prettier/esm/parser-html.mjs'
+import { saveAs } from 'file-saver'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { schemaManager, localeManager } from '@varlet/lowcode-core'
-import { saveAs } from 'file-saver'
+import { localeManager, schemaManager, SchemaNodePlaces } from '@varlet/lowcode-core'
+import { cloneDeep } from 'lodash-es'
 import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
+import _stringifyObject from './utils/stringifyObject.js'
 import type {
+  AssetProfile,
   AssetProfileMaterial,
   Assets,
+  AssetsManager,
   SchemaNode,
   SchemaNodeSlot,
   SchemaPageNode,
   SchemaPageNodeDataSource,
-  AssetProfile,
-  AssetsManager,
 } from '@varlet/lowcode-core'
 
 const { t } = localeManager.useLocale({
@@ -56,6 +61,27 @@ const vueApis = [
 
 const internalResourcesKeywords = ['varlet-lowcode-core', 'varlet-lowcode-renderer']
 
+const hasSlotProps = (schemaNode: SchemaNode, slotName: string) => {
+  const material = getRendererMaterial(schemaNode)
+
+  return material.slots?.find((slot) => slot.name === slotName)?.hasSlotProps ?? false
+}
+
+const formatCode = (code: string, parser = 'vue') => {
+  return prettier.format(code, {
+    parser,
+    semi: false,
+    singleQuote: true,
+    plugins: [parserBabel, parserHtml],
+  })
+}
+
+const stringifyObject = (...args: any[]) => {
+  return _stringifyObject(...args)
+    .replaceAll("'____####", '')
+    .replaceAll("####____'", '')
+}
+
 const getRendererWindow = () => Array.from(window).find((w) => w.name === 'rendererWindow') as any
 
 const getRendererSchema = (): SchemaPageNode => {
@@ -66,17 +92,15 @@ const getRendererAssets = (): Assets => {
   return getRendererWindow().VarletLowcodeRenderer.default.assets.value
 }
 
+const getRendererMaterial = (schemaNode: SchemaNode): AssetProfileMaterial => {
+  return getRendererAssetsManager().findMaterial(getRendererAssets(), schemaNode.name, schemaNode.library!)
+}
+
 const getRendererAssetsManager = (): AssetsManager => {
   return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
 const { traverseFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
-
-const stringifyObject = (object: any[] | Record<string, any>, space = 0): string => {
-  return JSON.stringify(object, null, space)
-    .replace(/"(.+)":/g, '$1:')
-    .replace(/"/g, "'")
-}
 
 const convertExpressionBindingPropName = (key: string, schemaNode: SchemaNode, ignoreKeys: string[]) => {
   const { props = {}, models = [] } = schemaNode
@@ -101,6 +125,30 @@ const convertExpressionBindingPropName = (key: string, schemaNode: SchemaNode, i
   return `@${eventName[0]!.toLowerCase()}${eventName.slice(1)}`
 }
 
+const normalizeObject = (record: Record<string, any> | any[], expressionRaw = false) => {
+  const clonedRecord = cloneDeep(record)
+
+  for (const [key, value] of Object.entries(clonedRecord)) {
+    if (schemaManager.isRenderBinding(value)) {
+      Reflect.set(clonedRecord, key, `____####render_${value.renderId}####____`)
+    }
+
+    if (schemaManager.isExpressionBinding(value)) {
+      Reflect.set(
+        clonedRecord,
+        key,
+        `____####${expressionRaw ? value.value : transformExpressionValue(value.value)}####____`
+      )
+    }
+
+    if (schemaManager.isObjectBinding(value) || isArray(value)) {
+      Reflect.set(clonedRecord, key, normalizeObject(value))
+    }
+  }
+
+  return clonedRecord
+}
+
 const genProps = (schemaNode: SchemaNode): string => {
   const ignoreKeys: string[] = []
 
@@ -117,14 +165,8 @@ const genProps = (schemaNode: SchemaNode): string => {
       return propsString
     }
 
-    if (schemaManager.isObjectBinding(value)) {
-      propsString += ` :${key}="${stringifyObject(value.value)}"`
-
-      return propsString
-    }
-
-    if (isArray(value)) {
-      propsString += ` :${key}="${stringifyObject(value)}"`
+    if (schemaManager.isObjectBinding(value) || isArray(value)) {
+      propsString += ` :${key}="${stringifyObject(normalizeObject(value))}"`
 
       return propsString
     }
@@ -150,11 +192,7 @@ const genCondition = (schemaNode: SchemaNode): string => {
     return ` v-if="${transformExpressionValue(schemaNode.if.value)}"`
   }
 
-  if (schemaManager.isObjectBinding(schemaNode.if)) {
-    return ` v-if="${stringifyObject(schemaNode.if.value)}"`
-  }
-
-  if (isArray(schemaNode.if)) {
+  if (schemaManager.isObjectBinding(schemaNode.if) || isArray(schemaNode.if)) {
     return ` v-if="${stringifyObject(schemaNode.if)}"`
   }
 
@@ -174,11 +212,7 @@ const genLoop = (schemaNode: SchemaNode): string => {
     return ` v-for="$item_${schemaNode.id} in ${transformExpressionValue(schemaNode.for.value)}"`
   }
 
-  if (schemaManager.isObjectBinding(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.for.value)}"`
-  }
-
-  if (isArray(schemaNode.for)) {
+  if (schemaManager.isObjectBinding(schemaNode.for) || isArray(schemaNode.for)) {
     return ` v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.for)}"`
   }
 
@@ -189,36 +223,25 @@ const genLoop = (schemaNode: SchemaNode): string => {
   return ` v-for="$item_${schemaNode.id} in ${schemaNode.for}"`
 }
 
-const genSlots = (
-  schemaNodeSlots: Record<string, SchemaNodeSlot>,
-  schemaNode: SchemaNode,
-  material: AssetProfileMaterial,
-  depth: number
-) => {
+const genSlots = (schemaNodeSlots: Record<string, SchemaNodeSlot>, schemaNode: SchemaNode) => {
   return Object.entries(schemaNodeSlots)
     .map(([slotName, slot]) => {
-      const hasSlotProps = material.slots?.find((slot) => slot.name === slotName)?.hasSlotProps ?? false
-      const slotPropsVariable = hasSlotProps ? `="$slotProps_${schemaNode.id}"` : ''
+      const slotPropsVariable = hasSlotProps(schemaNode, slotName) ? `="$slotProps_${schemaNode.id}"` : ''
 
       if (slotName === 'default' && !hasSlotProps) {
-        return slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 1)).join('\n')
+        return slot.children.map((schemaNode) => genTag(schemaNode)).join('\n')
       }
 
-      const indent = ' '.repeat((depth + 1) * 2)
-
       return `\
-${indent}<template #${slotName}${slotPropsVariable}>
-${slot.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 2)).join('\n')}
-${indent}</template>`
+  <template #${slotName}${slotPropsVariable}>
+${slot.children.map((schemaNode) => genTag(schemaNode)).join('\n')}</template>`
     })
     .join('\n')
 }
 
-const genSchemaNode = (schemaNode: SchemaNode, depth: number): string => {
-  const indent = ' '.repeat(depth * 2)
-
+const genTag = (schemaNode: SchemaNode): string => {
   if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots?.default.children)) {
-    return schemaNode.slots!.default.children.map((schemaNode) => genSchemaNode(schemaNode, depth + 1)).join('\n')
+    return schemaNode.slots!.default.children.map(genTag).join('\n')
   }
 
   if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots?.default.children)) {
@@ -227,24 +250,21 @@ const genSchemaNode = (schemaNode: SchemaNode, depth: number): string => {
 
   if (schemaManager.isSchemaTextNode(schemaNode)) {
     if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `${indent}{{ ${transformExpressionValue(schemaNode.textContent.value)} }}`
+      return `{{ ${transformExpressionValue(schemaNode.textContent.value)} }}`
     }
-    return `${indent}${schemaNode.textContent}`
+    return schemaNode.textContent
   }
 
-  const material = getRendererAssetsManager().findMaterial(getRendererAssets(), schemaNode.name, schemaNode.library!)
-  const { name } = material.codegen
+  const { name } = getRendererMaterial(schemaNode).codegen
 
   if (!isPlainObject(schemaNode.slots)) {
-    return `${indent}<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
+    return `<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
   }
 
-  return `${indent}<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
+  return `<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
     schemaNode.slots,
-    schemaNode,
-    material,
-    depth
-  )}\n${indent}</${name}>`
+    schemaNode
+  )}\n</${name}>`
 }
 
 const genVueApis = (seenApis: string[]) => {
@@ -254,7 +274,7 @@ const genVueApis = (seenApis: string[]) => {
     .join(',\n')
 }
 
-const genNamedImportNames = (library: string, namedImports: Record<string, string[]>) => {
+const genNamedImportMembers = (library: string, namedImports: Record<string, string[]>) => {
   return `{ ${namedImports[library]
     .map((namedImport) => {
       return namedImport === 'default' ? `default as ${library}Default` : namedImport
@@ -268,57 +288,148 @@ const genImports = (profiles: AssetProfile[], namedImports: Record<string, strin
       const allImport = allImportedApis.includes(library) ? `import * as ${library} from '${packageName}'\n` : ''
 
       const namedImport = namedImports[library]
-        ? `import ${genNamedImportNames(library, namedImports)} from '${packageName}'`
+        ? `import ${genNamedImportMembers(library, namedImports)} from '${packageName}'\n`
         : ''
 
       return `${allImport}${namedImport}`
     })
+    .join('')
+}
+
+const genSlotsRender = (schemaNode: SchemaNode, seenLibraries: Set<string>) => {
+  let start = '{'
+
+  for (const [slotName, slot] of Object.entries(schemaNode.slots ?? {})) {
+    const slotProps = hasSlotProps(schemaNode, slotName) ? `$slotProps_${schemaNode.id}` : ''
+    const schemaNodeHs = slot.children.map((schemaNode) => genH(schemaNode, seenLibraries))
+
+    start += `\n${slotName}: (${slotProps}) => [${schemaNodeHs}],`
+  }
+
+  start += '\n}'
+
+  return start
+}
+
+const genH = (schemaNode: SchemaNode, seenLibraries: Set<string>) => {
+  if (schemaManager.isSchemaTextNode(schemaNode)) {
+    if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
+      return `${transformExpressionValue(schemaNode.textContent.value)}`
+    }
+    return `${schemaNode.textContent}`
+  }
+
+  seenLibraries.add(schemaNode.library!)
+
+  const props = stringifyObject(normalizeObject(schemaNode.props ?? {}, true))
+  const slots = genSlotsRender(schemaNode, seenLibraries)
+
+  return `\
+h(${schemaNode.library}.${schemaNode.name}, ${props}, ${slots})
+`
+}
+
+const genRenders = (schema: SchemaPageNode) => {
+  const renders: Record<string, string> = {}
+  const seenLibraries: Set<string> = new Set()
+
+  schemaManager.visitSchemaNode(schema, (schemaNode, schemaNodeSiblings, schemaNodePlace, renderBinding) => {
+    if (schemaNodePlace === SchemaNodePlaces.RENDER_FUNCTION_ROOT) {
+      const { value, renderId } = renderBinding
+
+      if (renders[renderId]) {
+        return
+      }
+      const schemaNodeSeenLibraries = new Set<string>()
+      const schemaNodeHs = value.map((schemaNode: SchemaNode) => genH(schemaNode, schemaNodeSeenLibraries))
+      const renderArgs = `...$renderArgs_${renderId}`
+
+      renders[renderId] = `\
+function render_${renderId}(${renderArgs}) {
+  return [\n${schemaNodeHs}]
+}
+`
+
+      schemaNodeSeenLibraries.forEach((value) => seenLibraries.add(value))
+    }
+  })
+
+  return { renders, seenLibraries: [...seenLibraries] }
+}
+
+const withRenders = (code: string, renders: Record<string, string>) => {
+  const renderTemplates = Object.values(renders)
+    .map((value) => value)
     .join('\n')
+  const renderNames = Object.keys(renders)
+    .map((key) => `render_${key}`)
+    .join(',\n')
+
+  return code
+    .replace(/(return\s*\{(.|\s)+(?!return)$)/, `${renderTemplates}$1`)
+    .replace(/(return\s*\{(.|\s)+)(?!return)\}(.|\s)*\}\s*$/, `$1,\n${renderNames}}}`)
 }
 
 const genApp = (schema: SchemaPageNode, profiles: AssetProfile[]) => {
+  const libraries = profiles.map((profile) => profile.library)
   const { seenApis, allImportedApis } = traverseFunction(schema.code ?? '')
-  const { code, namedImports } = transformNamedImports(
-    schema.code ?? '',
-    profiles.map((profile) => profile.library)
-  )
+  const { code, namedImports } = transformNamedImports(schema.code ?? '', libraries)
+  const { renders, seenLibraries } = genRenders(schema)
+  const withRendersCode = withRenders(code, renders)
 
-  const imports = genImports(profiles, namedImports, allImportedApis)
+  if (Object.keys(renders).length > 0) {
+    seenApis.push('h')
+  }
+
+  const imports = genImports(profiles, namedImports, uniq([...allImportedApis, ...seenLibraries]))
 
   const dataSourcesImport = `${
     seenApis.includes('useDataSources') ? "import { useDataSources } from './dataSources'" : ''
   }`
 
-  return `\
+  const template = formatCode(`\
 <template>
   <div class="varlet-low-code-page">
-${genSchemaNode(schema, 1)}
+${genTag(schema)}
   </div>
 </template>
+`)
 
-<script>
+  const script = formatCode(
+    `
 import {
   defineComponent,
 ${genVueApis(seenApis)}
 } from 'vue'
-${imports}\
-${dataSourcesImport}\
+${imports}
+${dataSourcesImport}
 
-${code}
+${withRendersCode}
 
 export default defineComponent({
   setup
-})
+})`,
+    'babel'
+  )
+
+  const style = formatCode(schema.css ? `\n<style>\n${schema.css}\n</style>` : '', 'vue')
+
+  return `\
+${template}
+<script>
+${script}\
 <${'/'}script>
-${schema.css ? `\n<style>\n${schema.css}\n</style>` : ''}`
+
+${style}
+`
 }
 
 const genMain = (profiles: AssetProfile[]) => {
   const vuePlugins = profiles.filter(({ isVuePlugin }) => isVuePlugin)
 
-  const imports = vuePlugins.map(({ library, packageName }) => `import ${library} from '${packageName}'\n`)
+  const imports = vuePlugins.map(({ library, packageName }) => `import ${library} from '${packageName}'`).join('\n')
 
-  const uses = vuePlugins.map(({ library }) => `.use(${library})\n  `)
+  const uses = vuePlugins.map(({ library }) => `.use(${library})`)
 
   return `\
 import App from './App.vue'
@@ -446,7 +557,7 @@ const genDataSources = (dataSources: SchemaPageNodeDataSource[], profiles: Asset
     ...options,\
 ${timeout ? `\n    timeout: ${timeout},` : ''}\
 ${withCredentials ? `\n    withCredentials: ${withCredentials},` : ''}\
-${headers ? `\n    headers: ${stringifyObject(headers, 6).replace(/\}$/, '    }')}` : ''}
+${headers ? `\n    headers: ${stringifyObject(headers, null, 6).replace(/\}$/, '    }')}` : ''}
   }
 `
       let successHandlerTemplate = ''
@@ -538,17 +649,17 @@ const save = async () => {
 
   zip.file('index.html', genIndex())
   zip.file('package.json', genPkg(profiles))
-  zip.file('vite.config.js', genConfig(profiles))
+  zip.file('vite.config.js', formatCode(genConfig(profiles), 'babel'))
   zip.file('README.md', readme)
 
   const src = zip.folder('src')!
 
   if (isArray(rendererSchema.dataSources) && rendererSchema.dataSources.length > 0) {
-    src.file('dataSources.js', genDataSources(rendererSchema.dataSources, profiles))
+    src.file('dataSources.js', formatCode(genDataSources(rendererSchema.dataSources, profiles), 'babel'))
   }
 
   src.file('App.vue', genApp(rendererSchema, profiles))
-  src.file('main.js', genMain(profiles))
+  src.file('main.js', formatCode(genMain(profiles), 'babel'))
 
   const blob = await zip.generateAsync({ type: 'blob' })
   saveAs(blob, 'vite-varlet-low-code-starter.zip')
