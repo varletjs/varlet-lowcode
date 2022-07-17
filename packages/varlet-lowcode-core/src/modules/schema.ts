@@ -50,7 +50,6 @@ export enum SchemaNodePlaces {
 
 export interface SchemaNodeSlot {
   children: (SchemaNode | SchemaTextNode)[]
-  _slotProps?: Record<string, any>
 }
 
 export interface SchemaNode {
@@ -65,8 +64,6 @@ export interface SchemaNode {
   models?: string[]
   _item?: Record<string, any>
   _index?: Record<string, any>
-  _slotProps?: Record<string, any>
-  _renderArgs?: Record<string, any[]>
 }
 
 export interface SchemaTextNode extends SchemaNode {

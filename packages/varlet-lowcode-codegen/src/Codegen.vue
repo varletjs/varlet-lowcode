@@ -209,18 +209,20 @@ const genLoop = (schemaNode: SchemaNode): string => {
   }
 
   if (schemaManager.isExpressionBinding(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in ${transformExpressionValue(schemaNode.for.value)}"`
+    return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${transformExpressionValue(
+      schemaNode.for.value
+    )}"`
   }
 
   if (schemaManager.isObjectBinding(schemaNode.for) || isArray(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in ${stringifyObject(schemaNode.for)}"`
+    return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${stringifyObject(schemaNode.for)}"`
   }
 
   if (isString(schemaNode.for)) {
-    return ` v-for="$item_${schemaNode.id} in '${schemaNode.for}'"`
+    return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in '${schemaNode.for}'"`
   }
 
-  return ` v-for="$item_${schemaNode.id} in ${schemaNode.for}"`
+  return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${schemaNode.for}"`
 }
 
 const genSlots = (schemaNodeSlots: Record<string, SchemaNodeSlot>, schemaNode: SchemaNode) => {
