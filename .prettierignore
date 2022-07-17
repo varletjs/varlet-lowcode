@@ -53,6 +53,9 @@ packages/varlet-lowcode-cli/lib/**
 packages/varlet-lowcode-code-editor/lib/**
 packages/varlet-lowcode-code-editor/types/**
 
+packages/varlet-lowcode-data-source-panel/lib/**
+packages/varlet-lowcode-data-source-panel/types/**
+
 packages/varlet-lowcode-monaco/lib/**
 packages/varlet-lowcode-monaco/types/**
 

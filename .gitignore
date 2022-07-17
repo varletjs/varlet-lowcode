@@ -81,6 +81,9 @@ packages/varlet-lowcode-resizer/types
 packages/varlet-lowcode-setters/lib
 packages/varlet-lowcode-setters/types
 
+packages/varlet-lowcode-data-source-panel/lib
+packages/varlet-lowcode-data-source-panel/types
+
 packages/varlet-lowcode-dragable-tree/lib
 packages/varlet-lowcode-dragable-tree/types
 
