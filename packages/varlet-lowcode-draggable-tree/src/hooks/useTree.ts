@@ -33,11 +33,17 @@ export default function useTree(tree?: TreeNode[]) {
   )
 
   const toggleTreeNodeChange = (from: TreeNode, to: TreeNode) => {
-    const formNode = findParentNode(from)
-    const toNode = findParentNode(to)
+    const formNode = findParentNode(from) || {
+      children: _tree.value,
+    }
+    const toNode = findParentNode(to) || {
+      children: _tree.value,
+    }
 
     const fromIndex = formNode.children.findIndex((node: TreeNode) => node.id === from.id)
-    const toIndex = toNode.children.findIndex((node: TreeNode) => node.id === to.id)
+    const toIndex = toNode.children.findIndex((node: TreeNode) => {
+      return node.id === to.id
+    })
 
     formNode.children.splice(fromIndex, 1)
     toNode.children.splice(toIndex, 0, from)
@@ -55,7 +61,7 @@ export default function useTree(tree?: TreeNode[]) {
 
   const findNodeById = (id: undefined | number | string, treeNodes = _tree.value) => {
     if (!id) {
-      return null
+      return
     }
 
     let node = null

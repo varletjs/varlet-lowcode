@@ -5,7 +5,6 @@ import { Icon } from '@varlet/ui'
 import '@varlet/ui/es/icon/style/index.js'
 import useTree from './hooks/useTree'
 import useDnd from './hooks/useDnd'
-import { eventsManager } from '@varlet/lowcode-core'
 
 const props = defineProps(treeNodeProps)
 const expand = ref(false)
