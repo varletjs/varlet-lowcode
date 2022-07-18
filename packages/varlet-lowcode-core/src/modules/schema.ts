@@ -19,7 +19,6 @@ export interface SchemaManager {
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor): void
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
 
-  addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slotsName?: string): SchemaNode
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
@@ -225,24 +224,6 @@ export function createSchemaManager(): SchemaManager {
     return founded
   }
 
-  function addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slotsName = 'default'): SchemaNode {
-    const rootSchemaNode = cloneSchemaNode(_schema)
-    const { id } = schemaNode
-
-    visitSchemaNode(rootSchemaNode, (_schemaNode) => {
-      if (_schemaNode.id === id) {
-        throw new Error("SchemaNode already added. The schema's id is repeatedly")
-      }
-
-      if (_schemaNode.id === parentId) {
-        _schemaNode.slots![slotsName].children!.push(schemaNode)
-        return true
-      }
-    })
-
-    return rootSchemaNode
-  }
-
   function removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode {
     visitSchemaNode(schemaNode, (schemaNode, schemaNodeSiblings) => {
       if (schemaNode.id === id) {
@@ -318,7 +299,6 @@ export function createSchemaManager(): SchemaManager {
     visitRenderSchemaNode,
     visitSchemaNode,
 
-    addSchemaNode,
     cloneSchemaNode,
     findSchemaNodeById,
     removeSchemaNodeById,
