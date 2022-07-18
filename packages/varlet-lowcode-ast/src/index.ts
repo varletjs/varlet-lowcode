@@ -13,6 +13,13 @@ function uniqConcat(arr: any[], ...items: any) {
   return arr ? uniq([...arr, ...items]) : [...items]
 }
 
+function cleanCode(code: string) {
+  code = code.endsWith(';') ? code.slice(0, -1) : code
+  code = code.replaceAll('\n', '')
+
+  return code
+}
+
 export enum SetupReturnVariableDeclarationGroups {
   FUNCTION = 'function',
   VARIABLE = 'variable',
@@ -50,7 +57,7 @@ export function createAst(rendererWindowGetter?: () => any) {
 
     const { code } = generate(ast)
 
-    return code.endsWith(';') ? code.slice(0, -1) : code
+    return cleanCode(code)
   }
 
   function traverseFunction(code: string, name = 'setup') {
@@ -342,7 +349,7 @@ export function createAst(rendererWindowGetter?: () => any) {
     })
 
     return {
-      code: generate(ast, { retainLines: true }).code,
+      code: cleanCode(generate(ast).code),
       namedImports,
     }
   }
@@ -356,7 +363,7 @@ export function createAst(rendererWindowGetter?: () => any) {
       presets: ['env'],
     })
 
-    return compatibleCode
+    return cleanCode(compatibleCode)
   }
 
   return {

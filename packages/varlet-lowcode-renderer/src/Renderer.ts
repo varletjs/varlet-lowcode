@@ -28,10 +28,13 @@ import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDat
 import { isArray, isObject, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
+import { createAxle } from '@varlet/axle'
+import { Snackbar } from '@varlet/ui'
+import '@varlet/ui/es/snackbar/style/index'
+import './renderer.less'
+
 import type { PropType, VNode, DirectiveArguments } from 'vue'
 import type { SchemaPageNode, SchemaNode, SchemaTextNode, EventsManager, Assets } from '@varlet/lowcode-core'
-import { createAxle } from '@varlet/axle'
-import './renderer.less'
 
 declare const window: Window & {
   setup(): any
@@ -441,7 +444,11 @@ export default defineComponent({
     }
 
     function renderSchemaNodeSlots(schemaNode: SchemaNode, renderArgs?: any, extendSlotProps?: any): RawSlots {
-      if (isPlainObject(schemaNode.slots)) {
+      try {
+        if (!isPlainObject(schemaNode.slots)) {
+          return {}
+        }
+
         return Object.entries(schemaNode.slots).reduce((rawSlots, [slotName, slot]) => {
           rawSlots[slotName] = (slotProps: any) => {
             const _slotProps = {
@@ -470,9 +477,10 @@ export default defineComponent({
 
           return rawSlots
         }, {} as RawSlots)
+      } catch (e) {
+        Snackbar.error('Renderer error, please check console')
+        throw e
       }
-
-      return {}
     }
 
     hoistWindow(ctx)

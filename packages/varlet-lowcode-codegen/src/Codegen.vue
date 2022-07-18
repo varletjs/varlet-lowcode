@@ -10,7 +10,7 @@ import parserHtml from 'prettier/esm/parser-html.mjs'
 import { saveAs } from 'file-saver'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { localeManager, schemaManager, SchemaNodePlaces } from '@varlet/lowcode-core'
+import { localeManager, schemaManager, SchemaNodeIn } from '@varlet/lowcode-core'
 import { cloneDeep } from 'lodash-es'
 import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
@@ -80,6 +80,7 @@ const stringifyObject = (...args: any[]) => {
   return _stringifyObject(...args)
     .replaceAll("'____####", '')
     .replaceAll("####____'", '')
+    .replaceAll("\\'", "'")
 }
 
 const getRendererWindow = () => Array.from(window).find((w) => w.name === 'rendererWindow') as any
@@ -125,31 +126,27 @@ const convertExpressionBindingPropName = (key: string, schemaNode: SchemaNode, i
   return `@${eventName[0]!.toLowerCase()}${eventName.slice(1)}`
 }
 
-const normalizeObject = (record: Record<string, any> | any[], expressionRaw = false) => {
+const normalizeObject = (record: Record<string, any> | any[], seenLibraries: Set<string>) => {
   const clonedRecord = cloneDeep(record)
 
   for (const [key, value] of Object.entries(clonedRecord)) {
     if (schemaManager.isRenderBinding(value)) {
-      Reflect.set(clonedRecord, key, `____####render_${value.renderId}####____`)
+      Reflect.set(clonedRecord, key, `____####${genRender(value.renderId, value.value, seenLibraries)}####____`)
     }
 
     if (schemaManager.isExpressionBinding(value)) {
-      Reflect.set(
-        clonedRecord,
-        key,
-        `____####${expressionRaw ? value.value : transformExpressionValue(value.value)}####____`
-      )
+      Reflect.set(clonedRecord, key, `____####${transformExpressionValue(value.value)}####____`)
     }
 
     if (schemaManager.isObjectBinding(value) || isArray(value)) {
-      Reflect.set(clonedRecord, key, normalizeObject(value))
+      Reflect.set(clonedRecord, key, normalizeObject(value, seenLibraries))
     }
   }
 
   return clonedRecord
 }
 
-const genProps = (schemaNode: SchemaNode): string => {
+const genProps = (schemaNode: SchemaNode, seenLibraries: Set<string>): string => {
   const ignoreKeys: string[] = []
 
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
@@ -166,7 +163,7 @@ const genProps = (schemaNode: SchemaNode): string => {
     }
 
     if (schemaManager.isObjectBinding(value) || isArray(value)) {
-      propsString += ` :${key}="${stringifyObject(normalizeObject(value))}"`
+      propsString += ` :${key}="${stringifyObject(normalizeObject(value, seenLibraries))}"`
 
       return propsString
     }
@@ -225,25 +222,29 @@ const genLoop = (schemaNode: SchemaNode): string => {
   return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${schemaNode.for}"`
 }
 
-const genSlots = (schemaNodeSlots: Record<string, SchemaNodeSlot>, schemaNode: SchemaNode) => {
+const genSlots = (
+  schemaNodeSlots: Record<string, SchemaNodeSlot>,
+  schemaNode: SchemaNode,
+  seenLibraries: Set<string>
+) => {
   return Object.entries(schemaNodeSlots)
     .map(([slotName, slot]) => {
       const slotPropsVariable = hasSlotProps(schemaNode, slotName) ? `="$slotProps_${schemaNode.id}"` : ''
 
       if (slotName === 'default' && !hasSlotProps) {
-        return slot.children.map((schemaNode) => genTag(schemaNode)).join('\n')
+        return slot.children.map((schemaNode) => genTag(schemaNode, seenLibraries)).join('\n')
       }
 
       return `\
   <template #${slotName}${slotPropsVariable}>
-${slot.children.map((schemaNode) => genTag(schemaNode)).join('\n')}</template>`
+${slot.children.map((schemaNode) => genTag(schemaNode, seenLibraries)).join('\n')}</template>`
     })
     .join('\n')
 }
 
-const genTag = (schemaNode: SchemaNode): string => {
+const genTag = (schemaNode: SchemaNode, seenLibraries: Set<string>): string => {
   if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots?.default.children)) {
-    return schemaNode.slots!.default.children.map(genTag).join('\n')
+    return schemaNode.slots!.default.children.map((schemaNode) => genTag(schemaNode, seenLibraries)).join('\n')
   }
 
   if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots?.default.children)) {
@@ -260,12 +261,13 @@ const genTag = (schemaNode: SchemaNode): string => {
   const { name } = getRendererMaterial(schemaNode).codegen
 
   if (!isPlainObject(schemaNode.slots)) {
-    return `<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
+    return `<${name}${genProps(schemaNode, seenLibraries)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
   }
 
-  return `<${name}${genProps(schemaNode)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
+  return `<${name}${genProps(schemaNode, seenLibraries)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
     schemaNode.slots,
-    schemaNode
+    schemaNode,
+    seenLibraries
   )}\n</${name}>`
 }
 
@@ -323,7 +325,7 @@ const genH = (schemaNode: SchemaNode, seenLibraries: Set<string>) => {
 
   seenLibraries.add(schemaNode.library!)
 
-  const props = stringifyObject(normalizeObject(schemaNode.props ?? {}, true))
+  const props = stringifyObject(normalizeObject(schemaNode.props ?? {}, seenLibraries))
   const slots = genSlotsRender(schemaNode, seenLibraries)
 
   return `\
@@ -331,60 +333,40 @@ h(${schemaNode.library}.${schemaNode.name}, ${props}, ${slots})
 `
 }
 
-const genRenders = (schema: SchemaPageNode) => {
-  const renders: Record<string, string> = {}
-  const seenLibraries: Set<string> = new Set()
+const genRender = (renderId: string, schemaNodes: SchemaNode[], seenLibraries: Set<string>) => {
+  const schemaNodeHs = schemaNodes.map((schemaNode: SchemaNode) => genH(schemaNode, seenLibraries))
+  const renderArgs = `...$renderArgs_${renderId}`
 
-  schemaManager.visitSchemaNode(schema, (schemaNode, schemaNodeSiblings, schemaNodePlace, renderBinding) => {
-    if (schemaNodePlace === SchemaNodePlaces.RENDER_FUNCTION_ROOT) {
-      const { value, renderId } = renderBinding
-
-      if (renders[renderId]) {
-        return
-      }
-      const schemaNodeSeenLibraries = new Set<string>()
-      const schemaNodeHs = value.map((schemaNode: SchemaNode) => genH(schemaNode, schemaNodeSeenLibraries))
-      const renderArgs = `...$renderArgs_${renderId}`
-
-      renders[renderId] = `\
+  return `
 function render_${renderId}(${renderArgs}) {
-  return [\n${schemaNodeHs}]
+  return [${schemaNodeHs}]
 }
-`
-
-      schemaNodeSeenLibraries.forEach((value) => seenLibraries.add(value))
-    }
-  })
-
-  return { renders, seenLibraries: [...seenLibraries] }
+`.replaceAll('\n', '')
 }
 
-const withRenders = (code: string, renders: Record<string, string>) => {
-  const renderTemplates = Object.values(renders)
-    .map((value) => value)
-    .join('\n')
-  const renderNames = Object.keys(renders)
-    .map((key) => `render_${key}`)
-    .join(',\n')
-
-  return code
-    .replace(/(return\s*\{(.|\s)+(?!return)$)/, `${renderTemplates}$1`)
-    .replace(/(return\s*\{(.|\s)+)(?!return)\}(.|\s)*\}\s*$/, `$1,\n${renderNames}}}`)
-}
+const withReturn = (code: string, returns: string[]) =>
+  code.replace(/(return\s*\{(.|\s)+)(?!return)\}(.|\s)*\}\s*$/, `$1,\n${returns}}}`)
 
 const genApp = (schema: SchemaPageNode, profiles: AssetProfile[]) => {
   const libraries = profiles.map((profile) => profile.library)
   const { seenApis, allImportedApis } = traverseFunction(schema.code ?? '')
-  const { code, namedImports } = transformNamedImports(schema.code ?? '', libraries)
-  const { renders, seenLibraries } = genRenders(schema)
-  const withRendersCode = withRenders(code, renders)
+  const transformed = transformNamedImports(schema.code ?? '', libraries)
+  const tagTreeSeenLibraries = new Set<string>()
+  const tagTree = genTag(schema, tagTreeSeenLibraries)
 
-  if (Object.keys(renders).length > 0) {
+  let { code } = transformed
+
+  if (tagTreeSeenLibraries.size > 0) {
+    code = withReturn(code, ['h', ...tagTreeSeenLibraries])
     seenApis.push('h')
   }
 
-  const imports = genImports(profiles, namedImports, uniq([...allImportedApis, ...seenLibraries]))
-
+  const vueImports = `import { defineComponent, ${genVueApis(seenApis)} } from 'vue'`
+  const librariesImports = genImports(
+    profiles,
+    transformed.namedImports,
+    uniq([...allImportedApis, ...tagTreeSeenLibraries])
+  )
   const dataSourcesImport = `${
     seenApis.includes('useDataSources') ? "import { useDataSources } from './dataSources'" : ''
   }`
@@ -392,21 +374,18 @@ const genApp = (schema: SchemaPageNode, profiles: AssetProfile[]) => {
   const template = formatCode(`\
 <template>
   <div class="varlet-low-code-page">
-${genTag(schema)}
+${tagTree}
   </div>
 </template>
 `)
 
   const script = formatCode(
     `
-import {
-  defineComponent,
-${genVueApis(seenApis)}
-} from 'vue'
-${imports}
+${vueImports}
+${librariesImports}
 ${dataSourcesImport}
 
-${withRendersCode}
+${code}
 
 export default defineComponent({
   setup

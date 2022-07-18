@@ -15,8 +15,7 @@ export interface SchemaManager {
   createExpressionBinding(expression: string, compatibleExpression?: string): SchemaNodeBinding
   createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
 
-  visitRenderSchemaNode(record: Record<string, any>, schemaNodeVisitor: SchemaNodeVisitor): void | boolean
-  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor): void
+  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include: SchemaNodeIn[]): void
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
 
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
@@ -42,9 +41,9 @@ export type SchemaNodeProps = Record<string, SchemaNodeBinding>
 
 export type SchemaNodeBinding = any
 
-export enum SchemaNodePlaces {
-  TREE = 'Tree',
-  RENDER_FUNCTION_ROOT = 'RenderFunctionRoot',
+export enum SchemaNodeIn {
+  SLOTS = 'Slots',
+  PROPS = 'Props',
 }
 
 export interface SchemaNodeSlot {
@@ -131,7 +130,7 @@ export interface SchemaPageNode extends SchemaNode {
 export type SchemaNodeVisitor = (
   schemaNode: SchemaNode,
   schemaNodeSiblings: SchemaNode[] | null,
-  schemaNodePlace: SchemaNodePlaces,
+  schemaNodeIn: SchemaNodeIn,
   renderBinding?: SchemaNodeBinding
 ) => boolean | void
 
@@ -169,42 +168,50 @@ export function createSchemaManager(): SchemaManager {
     return JSON.parse(JSON.stringify(schemaNode))
   }
 
-  function visitRenderSchemaNode(record: Record<string, any> | any[], visitor: SchemaNodeVisitor): boolean | void {
+  function visitPropsSchemaNode(
+    record: Record<string, any> | any[],
+    visitor: SchemaNodeVisitor,
+    include: SchemaNodeIn[] = [SchemaNodeIn.SLOTS, SchemaNodeIn.PROPS]
+  ): boolean | void {
     for (const value of Object.values(record)) {
-      if (isRenderBinding(value)) {
-        for (const schemaNode of value.value) {
-          if (visitor(schemaNode, value.value, SchemaNodePlaces.RENDER_FUNCTION_ROOT, value)) {
-            return true
-          }
-
-          visitSchemaNode(schemaNode, visitor)
+      if (isObjectBinding(value) || isArray(value)) {
+        if (visitPropsSchemaNode(value, visitor, include)) {
+          return true
         }
       }
 
-      if (isObjectBinding(value) || isArray(value)) {
-        if (visitRenderSchemaNode(value, visitor)) {
-          return true
+      if (isRenderBinding(value)) {
+        for (const schemaNode of value.value) {
+          if (visitor(schemaNode, value.value, SchemaNodeIn.PROPS, value)) {
+            return true
+          }
+
+          visitSchemaNode(schemaNode, visitor, include)
         }
       }
     }
   }
 
-  function visitSchemaNode(schemaNode: SchemaNode, visitor: SchemaNodeVisitor) {
-    if (isPlainObject(schemaNode.props)) {
-      if (visitRenderSchemaNode(schemaNode.props, visitor)) {
+  function visitSchemaNode(
+    schemaNode: SchemaNode,
+    visitor: SchemaNodeVisitor,
+    include: SchemaNodeIn[] = [SchemaNodeIn.SLOTS, SchemaNodeIn.PROPS]
+  ) {
+    if (isPlainObject(schemaNode.props) && include.includes(SchemaNodeIn.PROPS)) {
+      if (visitPropsSchemaNode(schemaNode.props, visitor, include)) {
         return
       }
     }
 
-    if (isPlainObject(schemaNode.slots)) {
+    if (isPlainObject(schemaNode.slots) && include.includes(SchemaNodeIn.SLOTS)) {
       for (const slot of Object.values(schemaNode.slots)) {
         if (isArray(slot.children) && slot.children.length > 0) {
           for (const schemaNodeChild of slot.children) {
-            if (visitor(schemaNodeChild, slot.children, SchemaNodePlaces.TREE)) {
+            if (visitor(schemaNodeChild, slot.children, SchemaNodeIn.SLOTS)) {
               return
             }
 
-            visitSchemaNode(schemaNodeChild, visitor)
+            visitSchemaNode(schemaNodeChild, visitor, include)
           }
         }
       }
@@ -296,7 +303,6 @@ export function createSchemaManager(): SchemaManager {
     createExpressionBinding,
     createRenderBinding,
 
-    visitRenderSchemaNode,
     visitSchemaNode,
 
     cloneSchemaNode,
