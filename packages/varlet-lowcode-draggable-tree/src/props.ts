@@ -1,8 +1,9 @@
 import { PropType } from 'vue'
+import DragTree from './hooks/DragTree'
 
 export interface TreeNode {
   id: string
-  text: string
+  text?: string
   children?: TreeNode[]
 }
 
@@ -12,6 +13,7 @@ export const treeProps = {
     required: true,
     default: () => [],
   },
+
   'onUpdate:tree': {
     type: Function as PropType<(value: TreeNode[]) => void>,
   },
@@ -22,5 +24,9 @@ export const treeNodeProps = {
     type: Object as PropType<TreeNode>,
     required: true,
     default: () => {},
+  },
+  dragTree: {
+    type: Object as PropType<DragTree>,
+    required: true,
   },
 }

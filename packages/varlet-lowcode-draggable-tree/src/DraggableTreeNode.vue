@@ -3,13 +3,11 @@ import { TreeNode, treeNodeProps } from './props'
 import { ref, defineProps } from 'vue'
 import { Icon } from '@varlet/ui'
 import '@varlet/ui/es/icon/style/index.js'
-import useTree from './hooks/useTree'
 import useDnd from './hooks/useDnd'
 
 const props = defineProps(treeNodeProps)
 const expand = ref(false)
 
-const { toggleTreeNodeChange } = useTree()
 const { setDragNode, setDropNode, dragNode, dropNode } = useDnd()
 
 const toggleExpand = () => {
@@ -19,6 +17,9 @@ const toggleExpand = () => {
 const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
   e.stopPropagation()
   e.dataTransfer!.effectAllowed = 'move'
+  expand.value = false
+
+  props.dragTree?.setFrom(treeNode)
 
   setDragNode(treeNode)
 }
@@ -33,20 +34,29 @@ const onDragEnter = (e: Event, treeNode: TreeNode) => {
   e.stopPropagation()
 
   setDropNode(treeNode)
+
+  if (dragNode.value!.id !== dropNode.value!.id) {
+    props.dragTree?.toggleTreeNodeChange(dropNode.value as TreeNode)
+  }
 }
 
 const onDrop = (e: DragEvent) => {
   e.preventDefault()
   e.stopPropagation()
 
-  if (dragNode.value!.id !== dropNode.value!.id) {
-    toggleTreeNodeChange(dragNode.value as TreeNode, dropNode.value as TreeNode)
-  }
+  props.dragTree?.submitTreeNodeChange()
+
+  setDropNode()
+  setDragNode()
 }
 </script>
 
 <template>
   <div
+    :class="{
+      'varlet-low-code-draggable-tree-node--dragging': dragNode?.id == props.treeNode.id,
+      'varlet-low-code-draggable-tree-node__holder': treeNode.id == 'holder',
+    }"
     class="varlet-low-code-draggable-tree-node"
     draggable="true"
     @dragstart="onDragStart($event, props.treeNode)"
@@ -54,32 +64,43 @@ const onDrop = (e: DragEvent) => {
     @dragover="onDragOver"
     @drop="onDrop"
   >
-    <div>
+    <div class="varlet-low-code-draggable-tree-node__title">
       <Icon
-        v-if="props.treeNode.children?.length"
+        v-if="treeNode.children?.length"
         @click="toggleExpand"
         name="chevron-right"
         :class="expand ? 'varlet-low-code-draggable-tree-node__icon-expand' : ''"
       />
-      {{ props.treeNode.text }}
+      {{ treeNode.text }}
     </div>
-    <template v-if="props.treeNode.children?.length">
+    <div style="padding-left: 20px" v-if="treeNode.children?.length && expand">
       <DraggableTreeNode
+        :drag-tree="dragTree"
         v-show="expand"
         :tree-node="treeNode"
-        v-for="treeNode of props.treeNode.children"
+        v-for="treeNode of treeNode.children"
         :key="treeNode.id"
       />
-    </template>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
 .varlet-low-code-draggable-tree-node {
-  margin-left: 20px;
+  &__title {
+    height: 30px;
+  }
 
   &__icon-expand {
     transform: rotate(90deg);
+  }
+
+  &--dragging {
+    background: red;
+  }
+
+  &__holder {
+    border: 1px #3a7afe dashed;
   }
 }
 </style>
