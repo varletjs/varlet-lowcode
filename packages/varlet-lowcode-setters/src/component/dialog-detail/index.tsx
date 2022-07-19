@@ -1,6 +1,7 @@
 import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import { defineComponent, Teleport, computed, ref, Ref, reactive } from 'vue'
-import BindTypePopover from '../bind-type/index.vue'
+import BindTypePopover from '../bind-type/index'
+import BindDialog from '../dialog-setter/index'
 import Monaco from '@varlet/lowcode-monaco'
 import { schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
@@ -41,7 +42,17 @@ export default defineComponent({
     const propsDetail = reactive([
       {
         name: 'title',
-        description: '卡片标题',
+        description: '标题',
+        setterType: 'Setter',
+        options: [
+          {
+            value: '123',
+            label: '456',
+            fn: () => {
+              console.log(231456)
+            },
+          },
+        ],
         setter: [
           {
             type: 'InputSetter',
@@ -51,7 +62,8 @@ export default defineComponent({
       },
       {
         name: 'titleChildren',
-        description: '子标题',
+        description: '表头说明',
+        setterType: 'Setter',
         setter: [
           {
             type: 'SwitchInputSetter',
@@ -61,7 +73,8 @@ export default defineComponent({
       },
       {
         name: 'ripple',
-        description: '开启水波',
+        description: '开启插槽',
+        setterType: 'Setter',
         setter: [
           {
             type: 'SwitchSetter',
@@ -72,6 +85,7 @@ export default defineComponent({
       {
         name: 'padding',
         description: '区块行距',
+        setterType: 'Setter',
         setter: [
           {
             type: 'CounterSetter',
@@ -82,6 +96,7 @@ export default defineComponent({
       {
         name: 'widthType',
         description: '宽度类型',
+        setterType: 'Setter',
         setter: [
           {
             type: 'RadioSetter',
@@ -100,11 +115,9 @@ export default defineComponent({
         ],
       },
     ])
-    const formData = reactive({
-      isShowType: 'Setter',
-    })
+    const showDialog = ref(false)
     const openBindDialog = (val: string) => {
-      console.log(val)
+      showDialog.value = true
     }
     const saveCode = () => {
       try {
@@ -113,22 +126,6 @@ export default defineComponent({
         Snackbar.error(e.toString())
       }
     }
-    const saveItems = (val: string) => {
-      if (selectIndex.value === 'ref' || selectIndex.value === 'computed') {
-        val += '.value'
-      }
-      code.value += val
-    }
-    const selectCategoryContent = () => {
-      return Object.keys(returnDeclarations).map((item) => {
-        return (
-          <div class={selectIndex.value === item ? 'active' : null} onClick={() => selectCategory(item)}>
-            {item}
-          </div>
-        )
-      })
-    }
-    const isBindVariable = ref(false)
     const dialogContent = () => {
       return (
         <div class="varlet-low-code-variable-bind__content">
@@ -153,7 +150,8 @@ export default defineComponent({
                     })}
                     <BindTypePopover
                       class="varlet-low-code-field__body-setter-icon"
-                      v-model={formData.isShowType}
+                      v-model={item.setterType}
+                      options={item.options ?? undefined}
                       onSelectVariable={() => openBindDialog('showCode')}
                     />
                   </div>
@@ -161,24 +159,7 @@ export default defineComponent({
               )
             })}
           </div>
-          <div class="varlet-low-code-variable-bind__content-variable">
-            <div class="varlet-low-code-variable-bind__left">
-              <div class="varlet-low-code-variable-bind__title">变量列表</div>
-              <div class="varlet-low-code-variable-bind__select">
-                <div class="varlet-low-code-variable-bind__category">{selectCategoryContent()}</div>
-                <div class="varlet-low-code-variable-bind__select-items">
-                  {selectItemData.map((item) => {
-                    return <div onClick={() => saveItems(item)}>{item}</div>
-                  })}
-                </div>
-              </div>
-            </div>
-            <div class="varlet-low-code-variable-bind__right">
-              <div class="varlet-low-code-variable-bind__title">绑定</div>
-              <Monaco height="calc(100% - 24px)" v-model:code={code.value} onSave={saveCode} />
-            </div>
-            <div class={`${isBindVariable.value ? 'varlet-low-code-variable-bind__show' : null}`}></div>
-          </div>
+          <BindDialog v-model={showDialog.value} />
         </div>
       )
     }
