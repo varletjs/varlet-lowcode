@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Icon as VarIcon, Input as VarInput } from '@varlet/ui'
 import { ref, reactive } from 'vue'
-import draggable from 'vuedraggable'
 import DialogDetail from '../../component/dialog-detail/index'
 import './index.less'
 import edit from '../../../assets/edit.png'
@@ -47,16 +46,14 @@ const stopTouch = (e: any) => {
 </script>
 
 <template>
-  <draggable tag="ul" :list="myArray.value" handle=".handle" item-key="name" @touchstart="stopTouch">
-    <template #item="{ element, index }">
-      <div class="varlet-low-code-setter__table--row">
-        <var-icon :name="edit" :size="24" @click="openEdit(element)" />
-        <var-input v-model="element.name"></var-input>
-        <var-icon name="delete" :size="24" @Click="deleteTableRow(index)" />
-        <var-icon :name="move" class="handle" :size="24" />
-      </div>
-    </template>
-  </draggable>
+  <template v-for="(item, index) in myArray.value" :key="index">
+    <div class="varlet-low-code-setter__table--row">
+      <var-icon :name="edit" :size="24" @click="openEdit(item)" />
+      <var-input v-model="item.name"></var-input>
+      <var-icon name="delete" :size="24" @Click="deleteTableRow(index)" />
+      <var-icon :name="move" class="handle" :size="24" />
+    </div>
+  </template>
   <span class="varlet-low-code-setter__add-button" @Click="addTableRow"> 添加一项 + </span>
   <DialogDetail v-model="showDialog" />
 </template>
