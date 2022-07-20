@@ -327,6 +327,8 @@ export default defineComponent({
       rawProps.id = `dragItem${schemaNode.id}`
       props.mode === 'designer' &&
         (rawProps.onClick = (...arg: any) => {
+          console.log('123123123')
+
           props.designerEventsManager!.emit('selector', `dragItem${schemaNode.id}` || '')
 
           clickEvent && clickEvent(...arg)
@@ -496,17 +498,19 @@ export default defineComponent({
 
     return () =>
       props.mode === 'designer'
-        ? withDirectives(
-            h(
-              'div',
-              { class: 'varlet-low-code-renderer varlet-low-code-renderer__designer', mode: props.mode },
-              renderSchemaNodeSlots(props.schema)
+        ? [
+            withDirectives(
+              h(
+                'div',
+                { class: 'varlet-low-code-renderer varlet-low-code-renderer__designer', mode: props.mode },
+                renderSchemaNodeSlots(props.schema)
+              ),
+              [
+                [Drop, { eventsManager: props.designerEventsManager }],
+                [DragOver, { eventsManager: props.designerEventsManager }],
+              ]
             ),
-            [
-              [Drop, { eventsManager: props.designerEventsManager }],
-              [DragOver, { eventsManager: props.designerEventsManager }],
-            ]
-          )
+          ]
         : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
 })

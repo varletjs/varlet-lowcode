@@ -1,11 +1,17 @@
-import { eventsManager } from '@varlet/lowcode-core'
+import { EventsManager } from '@varlet/lowcode-core'
 import type { CSSProperties, Ref } from 'vue'
-import { onMounted, onUnmounted, defineComponent, ref } from 'vue'
+import { onMounted, onUnmounted, defineComponent, ref, PropType } from 'vue'
 import PluginRender from './PluginRender'
 
 export default defineComponent({
   name: 'VarletLowCodeSelector',
-  setup() {
+  props: {
+    designerEventsManager: {
+      type: Object as PropType<EventsManager>,
+      required: true,
+    },
+  },
+  setup(props) {
     const initStyle: CSSProperties = {
       border: '2px solid red',
       boxSizing: 'border-box',
@@ -19,17 +25,15 @@ export default defineComponent({
     function computedSelectorStyles(id: string) {
       selectorId.value = id.split('dragItem')[1]
 
-      const iframe = document.querySelector('iframe')
-      const nodes = iframe!.contentDocument!.querySelectorAll(`#${id}`)
+      const nodes = document.querySelectorAll(`#${id}`)
 
       if (nodes && nodes.length > 0) {
         const _nodes = Array.from(nodes)
-        const { top: iframeTop = 0, left: iframeLeft = 0 } = iframe!.getBoundingClientRect()
         selectorStyles.value = _nodes.map((node: Element) => {
           const { top, left, width, height } = node.getBoundingClientRect()
           const _style: CSSProperties = {
-            top: `${top + iframeTop}px`,
-            left: `${left + iframeLeft}px`,
+            top: `${top}px`,
+            left: `${left}px`,
             width: `${width}px`,
             height: `${height}px`,
           }
@@ -39,11 +43,11 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      eventsManager.on('selector', computedSelectorStyles)
+      props!.designerEventsManager.on('selector', computedSelectorStyles)
     })
 
     onUnmounted(() => {
-      eventsManager.off('selector', computedSelectorStyles)
+      props!.designerEventsManager.off('selector', computedSelectorStyles)
     })
 
     return () => {

@@ -15,7 +15,7 @@ export interface SchemaManager {
   createExpressionBinding(expression: string, compatibleExpression?: string): SchemaNodeBinding
   createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
 
-  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include: SchemaNodeIn[]): void
+  visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
 
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
