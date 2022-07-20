@@ -1,6 +1,6 @@
 import Popover from '../popover/popover'
 import { Icon } from '@varlet/ui'
-import { computed, defineComponent, defineEmits } from 'vue'
+import { computed, defineComponent } from 'vue'
 import './index.less'
 
 export default defineComponent({

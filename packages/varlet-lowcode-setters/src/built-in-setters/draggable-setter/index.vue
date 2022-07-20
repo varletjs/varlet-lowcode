@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon as VarIcon, Input as VarInput } from '@varlet/ui'
-import { defineProps, defineEmits, ref, reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import draggable from 'vuedraggable'
 import DialogDetail from '../../component/dialog-detail/index'
 import './index.less'

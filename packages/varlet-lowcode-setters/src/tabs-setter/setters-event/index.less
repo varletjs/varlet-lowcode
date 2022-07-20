@@ -10,10 +10,17 @@
     align-items: center;
 
     > div {
-      flex: 1;
       word-wrap: break-word;
       padding: 5px 10px;
       box-sizing: border-box;
+    }
+
+    > :first-child {
+      flex: 1;
+    }
+
+    > :last-child {
+      width: 100px !important;
     }
   }
 }
