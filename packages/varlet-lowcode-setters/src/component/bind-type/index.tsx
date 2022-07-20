@@ -1,6 +1,6 @@
 import Popover from '../popover/popover'
 import { Icon } from '@varlet/ui'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, defineEmits } from 'vue'
 import './index.less'
 
 export default defineComponent({
@@ -9,7 +9,7 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: '',
+      default: 'Setter',
     },
     options: {
       type: Array as any,
@@ -43,9 +43,6 @@ export default defineComponent({
       } else {
         fn()
       }
-    }
-    const asd = () => {
-      // emit('SelectVariable')
     }
     const childrenSlot = {
       default: () => {

@@ -4,6 +4,7 @@ import Component from '../../built-in-setters/index'
 import Draggable from '../../built-in-setters/draggable-setter/index.vue'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
+import BindTypePopover from '../../component/bind-type/index'
 
 export default defineComponent({
   name: 'SettersAttribute',
@@ -128,7 +129,12 @@ export default defineComponent({
                   />
                 )
               })}
-              <Icon name="dots-vertical" class="attribute-field-body__setter-icon" />
+              <BindTypePopover
+                class="varlet-low-code-field__body-setter-icon"
+                v-model={item.setterType}
+                options={item.options ?? undefined}
+                // onSelectVariable={() => openBindDialog('showCode')}
+              />
             </div>
           </div>
         )
