@@ -236,7 +236,6 @@ importers:
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/lowcode-monaco': 'workspace: *'
       '@varlet/lowcode-schema-editor': 'workspace: *'
-      '@varlet/lowcode-selector': 'workspace: *'
       '@varlet/lowcode-skeleton': 'workspace: *'
       '@varlet/touch-emulator': latest
       '@varlet/ui': latest
@@ -251,7 +250,6 @@ importers:
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
       '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
-      '@varlet/lowcode-selector': link:../varlet-lowcode-selector
       '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
       '@varlet/touch-emulator': 1.27.17
       '@varlet/ui': 1.27.17_vue@3.2.25
@@ -398,6 +396,7 @@ importers:
       '@varlet/lowcode-core': 'workspace: *'
       '@varlet/lowcode-dnd': 'workspace: *'
       '@varlet/lowcode-profile': 'workspace: *'
+      '@varlet/lowcode-selector': 'workspace: *'
       '@varlet/shared': latest
       '@varlet/ui': ^1.27.17
       live-server: ^1.2.1
@@ -419,6 +418,7 @@ importers:
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-dnd': link:../varlet-lowcode-dnd
       '@varlet/lowcode-profile': link:../varlet-lowcode-profile
+      '@varlet/lowcode-selector': link:../varlet-lowcode-selector
       '@varlet/ui': 1.27.17_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2

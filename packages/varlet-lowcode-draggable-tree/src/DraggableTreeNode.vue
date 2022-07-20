@@ -3,12 +3,9 @@ import { TreeNode, treeNodeProps } from './props'
 import { ref, defineProps } from 'vue'
 import { Icon } from '@varlet/ui'
 import '@varlet/ui/es/icon/style/index.js'
-import useDnd from './hooks/useDnd'
 
 const props = defineProps(treeNodeProps)
 const expand = ref(false)
-
-const { setDragNode, setDropNode, dragNode, dropNode } = useDnd()
 
 const canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas')
 
@@ -24,9 +21,9 @@ const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
 
   expand.value = false
 
-  props.dragTree?.setFrom(treeNode)
+  props.dragTree!.setFrom(treeNode)
 
-  setDragNode(treeNode)
+  props.dnd!.setDragNode(treeNode)
 }
 
 const onDragOver = (e: DragEvent) => {
@@ -38,10 +35,13 @@ const onDragOver = (e: DragEvent) => {
 const onDragEnter = (e: Event, treeNode: TreeNode) => {
   e.stopPropagation()
 
-  setDropNode(treeNode)
+  props.dnd!.setDropNode(treeNode)
 
-  if (dragNode.value!.id !== dropNode.value!.id) {
-    props.dragTree?.toggleTreeNodeChange(dropNode.value as TreeNode)
+  const dragNode = props.dnd!.dragNode as TreeNode
+  const dropNode = props.dnd!.dropNode as TreeNode
+
+  if (dragNode.id !== dropNode.id) {
+    props.dragTree!.toggleTreeNodeChange(dropNode)
   }
 }
 
@@ -51,15 +51,15 @@ const onDrop = (e: DragEvent) => {
 
   props.dragTree?.submitTreeNodeChange()
 
-  setDropNode()
-  setDragNode()
+  props.dnd!.setDropNode()
+  props.dnd!.setDragNode()
 }
 </script>
 
 <template>
   <div
     :class="{
-      'varlet-low-code-draggable-tree-node--dragging': dragNode?.id == treeNode.id,
+      'varlet-low-code-draggable-tree-node--dragging': dnd.dragNode?.id == treeNode.id,
       'varlet-low-code-draggable-tree-node__holder': treeNode.id == 'holder',
     }"
     class="varlet-low-code-draggable-tree-node"
@@ -81,6 +81,7 @@ const onDrop = (e: DragEvent) => {
     <div style="padding-left: 20px" v-if="treeNode.children?.length && expand">
       <DraggableTreeNode
         :drag-tree="dragTree"
+        :dnd="dnd"
         v-show="expand"
         :tree-node="treeNode"
         v-for="treeNode of treeNode.children"

@@ -1,5 +1,6 @@
 import { PropType } from 'vue'
 import DragTree from './DragTree'
+import Dnd from './Dnd'
 
 export interface TreeNode {
   id: string
@@ -27,6 +28,10 @@ export const treeNodeProps = {
   },
   dragTree: {
     type: Object as PropType<DragTree>,
+    required: true,
+  },
+  dnd: {
+    type: Object as PropType<Dnd>,
     required: true,
   },
 }
