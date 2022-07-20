@@ -39,12 +39,14 @@ function mount(this: Renderer) {
   this.app = createApp({
     setup: () => {
       return () => {
-        return h(RendererComponent, {
-          schema: schema.value,
-          assets: assets.value,
-          mode: 'designer',
-          designerEventsManager: this.designerEventsManager,
-        })
+        return [
+          h(RendererComponent, {
+            schema: schema.value,
+            assets: assets.value,
+            mode: 'designer',
+            designerEventsManager: this.designerEventsManager,
+          }),
+        ]
       }
     },
   })

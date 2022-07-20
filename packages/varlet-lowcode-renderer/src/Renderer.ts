@@ -27,6 +27,7 @@ import {
 import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isObject, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
+import SelectorComponent from '@varlet/lowcode-selector'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import { createAxle } from '@varlet/axle'
 import { Snackbar } from '@varlet/ui'
@@ -498,7 +499,7 @@ export default defineComponent({
 
     return () =>
       props.mode === 'designer'
-        ? [
+        ? h(Fragment, [
             withDirectives(
               h(
                 'div',
@@ -510,7 +511,8 @@ export default defineComponent({
                 [DragOver, { eventsManager: props.designerEventsManager }],
               ]
             ),
-          ]
+            h(SelectorComponent.name, { designerEventsManager: props.designerEventsManager }),
+          ])
         : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema))
   },
 })
