@@ -25,6 +25,7 @@ packages/varlet-lowcode-renderer/lib
 packages/varlet-lowcode-renderer/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-renderer/public/varlet-lowcode-profile.umd.js
 packages/varlet-lowcode-renderer/public/varlet-lowcode-dnd.umd.js
+packages/varlet-lowcode-renderer/public/varlet-lowcode-selector.umd.js
 packages/varlet-lowcode-renderer/types
 
 packages/varlet-lowcode-dnd/lib
@@ -35,7 +36,6 @@ packages/varlet-lowcode-designer/lib
 packages/varlet-lowcode-designer/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-profile.umd.js
-packages/varlet-lowcode-designer/public/varlet-lowcode-selector.umd.js
 packages/varlet-lowcode-designer/types
 
 packages/varlet-lowcode-codegen/lib
