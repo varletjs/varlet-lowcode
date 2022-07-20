@@ -4,15 +4,20 @@ import { BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
 import type { App } from 'vue'
 import type { Assets, SchemaPageNode, EventsManager } from '@varlet/lowcode-core'
 
+type InitOptions = {
+  mountRoot: string
+  designerEventsManager: EventsManager
+}
+
 type Renderer = typeof RendererComponent & {
   app?: App
-  selector?: string
+  mountRoot?: string
   designerEventsManager?: EventsManager
 
   schema: ShallowRef<SchemaPageNode>
   assets: ShallowRef<Assets>
 
-  init(this: Renderer, selector: string, designerEventsManager: EventsManager): void
+  init(this: Renderer, options: InitOptions): void
   mount(this: Renderer): void
   unmount(this: Renderer): void
   rerender(this: Renderer): void
@@ -25,8 +30,8 @@ const schema = shallowRef<SchemaPageNode>({
 
 const assets = shallowRef<Assets>([])
 
-function init(this: Renderer, selector: string, designerEventsManager: EventsManager) {
-  this.selector = selector
+function init(this: Renderer, { mountRoot, designerEventsManager }: InitOptions) {
+  this.mountRoot = mountRoot
   this.designerEventsManager = designerEventsManager
 }
 
@@ -44,7 +49,7 @@ function mount(this: Renderer) {
     },
   })
 
-  this.app.mount(this.selector)
+  this.app.mount(this.mountRoot)
 }
 
 function unmount(this: Renderer) {
@@ -58,7 +63,7 @@ function rerender(this: Renderer) {
 
 const Renderer = Object.assign(RendererComponent, {
   app: undefined,
-  selector: undefined,
+  mountRoot: undefined,
   schema,
   assets,
   init,

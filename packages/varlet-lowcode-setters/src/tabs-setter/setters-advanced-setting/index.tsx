@@ -1,7 +1,7 @@
 import { defineComponent, reactive, ref, Ref, watchEffect } from 'vue'
 import { AppBar as VarAppBar, Icon } from '@varlet/ui'
 import { SwitchSetter, InputSetter } from '../../built-in-setters/index'
-import BindTypePopover from '../../component/bind-type/index.vue'
+import BindTypePopover from '../../component/bind-type/index'
 import BindDialog from '../../component/dialog-setter/index'
 import '@varlet/ui/es/app-bar/style/index.js'
 import './index.less'

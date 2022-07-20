@@ -5,3 +5,109 @@
 .var-dialog {
   overflow: hidden;
 }
+
+.varlet-low-code-field {
+  &__body {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  &__body-title {
+    width: 70px;
+    font-size: 12px;
+  }
+
+  &__body-content {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-right: 20px;
+    width: 100%;
+  }
+
+  &__body-setter-icon {
+    cursor: pointer;
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translate(100%, -50%);
+  }
+}
+
+.varlet-low-code-variable-bind {
+  &__content-props {
+    min-width: 240px;
+    margin-right: 10px;
+  }
+  &__content-variable {
+    display: flex;
+    flex: 1;
+    position: relative;
+  }
+  &__show {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(239, 239, 239, 0.576);
+  }
+
+  &__right {
+    flex: 1;
+  }
+
+  &__left {
+    width: 40%;
+    min-width: 320px;
+  }
+
+  &__title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #000;
+  }
+
+  &__select {
+    display: flex;
+    border: 1px solid rgba(31, 56, 88, 0.3);
+    height: calc(100% - 32px);
+    border-radius: 3px;
+  }
+
+  &__category {
+    width: 160px;
+    border-right: 1px solid rgba(31, 56, 88, 0.3);
+    height: 100%;
+    overflow: auto;
+
+    .active {
+      background: rgba(31, 56, 88, 0.06);
+    }
+  }
+
+  &__category > div,
+  &__select-items > div {
+    height: 28px;
+    line-height: 28px;
+    padding: 0 12px;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  &__category > div:hover,
+  &__select-items > div:hover {
+    background: rgba(31, 56, 88, 0.06);
+  }
+
+  &__select-items {
+    flex: 1;
+    overflow: auto;
+    height: 100%;
+  }
+}

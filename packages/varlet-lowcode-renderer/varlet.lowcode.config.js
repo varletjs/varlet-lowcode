@@ -1,4 +1,5 @@
 const { viteExternalsPlugin } = require('vite-plugin-externals')
+const { ensureDirSync, copySync } = require('fs-extra')
 
 module.exports = {
   name: 'varlet-lowcode-renderer',
@@ -20,14 +21,18 @@ module.exports = {
           name: 'copy-plugin',
           apply: 'build',
           closeBundle() {
-            require('fs').copyFileSync(
-              'lib/varlet-lowcode-renderer.umd.js',
-              '../varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js'
-            )
-            require('fs').copyFileSync(
-              'lib/varlet-lowcode-renderer.umd.js',
-              '../varlet-lowcode-skeleton/public/varlet-lowcode-renderer.umd.js'
-            )
+            if (process.env.COMMAND === 'compile') {
+              ensureDirSync('../varlet-lowcode-designer/public')
+              ensureDirSync('../varlet-lowcode-skeleton/public')
+              copySync(
+                'lib/varlet-lowcode-renderer.umd.js',
+                '../varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js'
+              )
+              copySync(
+                'lib/varlet-lowcode-renderer.umd.js',
+                '../varlet-lowcode-skeleton/public/varlet-lowcode-renderer.umd.js'
+              )
+            }
           },
         },
       ],

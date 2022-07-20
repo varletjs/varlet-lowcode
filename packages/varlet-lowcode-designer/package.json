@@ -23,7 +23,6 @@
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-code-editor": "workspace: *",
     "@varlet/lowcode-schema-editor": "workspace: *",
-    "@varlet/lowcode-selector": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/ui": "latest",
     "@varlet/touch-emulator": "latest",
