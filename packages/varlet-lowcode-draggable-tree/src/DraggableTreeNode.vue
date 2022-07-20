@@ -10,6 +10,8 @@ const expand = ref(false)
 
 const { setDragNode, setDropNode, dragNode, dropNode } = useDnd()
 
+const canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas')
+
 const toggleExpand = () => {
   expand.value = !expand.value
 }
@@ -17,6 +19,9 @@ const toggleExpand = () => {
 const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
   e.stopPropagation()
   e.dataTransfer!.effectAllowed = 'move'
+
+  e.dataTransfer!.setDragImage(canvas, 25, 25)
+
   expand.value = false
 
   props.dragTree?.setFrom(treeNode)
@@ -54,13 +59,13 @@ const onDrop = (e: DragEvent) => {
 <template>
   <div
     :class="{
-      'varlet-low-code-draggable-tree-node--dragging': dragNode?.id == props.treeNode.id,
+      'varlet-low-code-draggable-tree-node--dragging': dragNode?.id == treeNode.id,
       'varlet-low-code-draggable-tree-node__holder': treeNode.id == 'holder',
     }"
     class="varlet-low-code-draggable-tree-node"
     draggable="true"
-    @dragstart="onDragStart($event, props.treeNode)"
-    @dragenter="onDragEnter($event, props.treeNode)"
+    @dragstart="onDragStart($event, treeNode)"
+    @dragenter="onDragEnter($event, treeNode)"
     @dragover="onDragOver"
     @drop="onDrop"
   >
