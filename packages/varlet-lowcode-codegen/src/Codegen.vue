@@ -10,7 +10,7 @@ import parserHtml from 'prettier/esm/parser-html.mjs'
 import { saveAs } from 'file-saver'
 import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton } from '@varlet/ui'
-import { localeManager, schemaManager, SchemaNodeIn } from '@varlet/lowcode-core'
+import { localeManager, schemaManager } from '@varlet/lowcode-core'
 import { cloneDeep } from 'lodash-es'
 import { isArray, isPlainObject, isString, kebabCase, uniq } from '@varlet/shared'
 import '@varlet/ui/es/button/style/index.js'
@@ -37,6 +37,8 @@ const { t } = localeManager.useLocale({
 
 const vueApis = [
   'h',
+  'renderList',
+  'Fragment',
   'ref',
   'reactive',
   'computed',
@@ -103,30 +105,30 @@ const getRendererAssetsManager = (): AssetsManager => {
 
 const { traverseFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
 
-const convertExpressionBindingPropName = (key: string, schemaNode: SchemaNode, ignoreKeys: string[]) => {
+const convertExpressionBindingPropName = (propName: string, schemaNode: SchemaNode, ignoreKeys: string[]) => {
   const { props = {}, models = [] } = schemaNode
 
   // props
-  if (!key.startsWith('on')) {
-    const updateFunctionName = `onUpdate:${key}`
-    const isTwoWayBinding = props.hasOwnProperty(updateFunctionName) && models.includes(key)
+  if (!propName.startsWith('on')) {
+    const updateFunctionName = `onUpdate:${propName}`
+    const isTwoWayBinding = props.hasOwnProperty(updateFunctionName) && models.includes(propName)
 
     if (isTwoWayBinding) {
       ignoreKeys.push(updateFunctionName)
 
-      return key === 'modelValue' ? 'v-model' : `v-model:${key}`
+      return propName === 'modelValue' ? 'v-model' : `v-model:${propName}`
     }
 
-    return `:${kebabCase(key)}`
+    return `:${kebabCase(propName)}`
   }
 
   // events
-  const eventName = kebabCase(key.slice(2))
+  const eventName = kebabCase(propName.slice(2))
 
   return `@${eventName[0]!.toLowerCase()}${eventName.slice(1)}`
 }
 
-const normalizeObject = (record: Record<string, any> | any[], seenLibraries: Set<string>) => {
+const normalizeObject = (record: Record<string, any> | any[], seenLibraries: string[]) => {
   const clonedRecord = cloneDeep(record)
 
   for (const [key, value] of Object.entries(clonedRecord)) {
@@ -146,7 +148,19 @@ const normalizeObject = (record: Record<string, any> | any[], seenLibraries: Set
   return clonedRecord
 }
 
-const genProps = (schemaNode: SchemaNode, seenLibraries: Set<string>): string => {
+const getBindingValue = (value: any, seenLibrariesInRender: string[]) => {
+  if (schemaManager.isExpressionBinding(value)) {
+    return transformExpressionValue(value.value)
+  }
+
+  if (schemaManager.isObjectBinding(value) || isArray(value)) {
+    return stringifyObject(normalizeObject(value, seenLibrariesInRender))
+  }
+
+  return value
+}
+
+const genProps = (schemaNode: SchemaNode, seenLibrariesInRender: string[]): string => {
   const ignoreKeys: string[] = []
 
   return Object.entries(schemaNode.props ?? {}).reduce((propsString, [key, value]) => {
@@ -154,97 +168,79 @@ const genProps = (schemaNode: SchemaNode, seenLibraries: Set<string>): string =>
       return propsString
     }
 
+    const bindingValue = getBindingValue(value, seenLibrariesInRender)
+
     if (schemaManager.isExpressionBinding(value)) {
-      propsString += ` ${convertExpressionBindingPropName(key, schemaNode, ignoreKeys)}="${transformExpressionValue(
-        value.value
-      )}"`
-
-      return propsString
-    }
-
-    if (schemaManager.isObjectBinding(value) || isArray(value)) {
-      propsString += ` :${key}="${stringifyObject(normalizeObject(value, seenLibraries))}"`
+      propsString += ` ${convertExpressionBindingPropName(key, schemaNode, ignoreKeys)}="${bindingValue}"`
 
       return propsString
     }
 
     if (isString(value)) {
-      propsString += ` ${key}="${value}"`
+      propsString += ` ${key}="${bindingValue}"`
 
       return propsString
     }
 
-    propsString += ` :${key}="${value}"`
+    propsString += ` :${key}="${bindingValue}"`
 
     return propsString
   }, '')
 }
 
-const genCondition = (schemaNode: SchemaNode): string => {
+const genCondition = (schemaNode: SchemaNode, seenLibrariesInRender: string[]): string => {
   if (!schemaNode.hasOwnProperty('if')) {
     return ''
   }
 
-  if (schemaManager.isExpressionBinding(schemaNode.if)) {
-    return ` v-if="${transformExpressionValue(schemaNode.if.value)}"`
-  }
-
-  if (schemaManager.isObjectBinding(schemaNode.if) || isArray(schemaNode.if)) {
-    return ` v-if="${stringifyObject(schemaNode.if)}"`
-  }
+  const bindingValue = getBindingValue(schemaNode.if, seenLibrariesInRender)
 
   if (isString(schemaNode.if)) {
-    return ` v-if="'${schemaNode.if}'"`
+    return ` v-if="'${bindingValue}'"`
   }
 
-  return ` v-if="${schemaNode.if}"`
+  return ` v-if="${bindingValue}"`
 }
 
-const genLoop = (schemaNode: SchemaNode): string => {
+const genLoop = (schemaNode: SchemaNode, seenLibrariesInRender: string[]): string => {
   if (!schemaNode.hasOwnProperty('for')) {
     return ''
   }
 
-  if (schemaManager.isExpressionBinding(schemaNode.for)) {
-    return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${transformExpressionValue(
-      schemaNode.for.value
-    )}"`
-  }
-
-  if (schemaManager.isObjectBinding(schemaNode.for) || isArray(schemaNode.for)) {
-    return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${stringifyObject(schemaNode.for)}"`
-  }
+  const bindingValue = getBindingValue(schemaNode.for, seenLibrariesInRender)
+  const item = `$item_${schemaNode.id}`
+  const index = `$index_${schemaNode.id}`
 
   if (isString(schemaNode.for)) {
-    return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in '${schemaNode.for}'"`
+    return ` v-for="(${item}, ${index}) in '${bindingValue}'"`
   }
 
-  return ` v-for="($item_${schemaNode.id}, $index_${schemaNode.id}) in ${schemaNode.for}"`
+  return ` v-for="(${item}, ${index}) in ${bindingValue}"`
 }
 
 const genSlots = (
   schemaNodeSlots: Record<string, SchemaNodeSlot>,
   schemaNode: SchemaNode,
-  seenLibraries: Set<string>
+  seenLibrariesInRender: string[]
 ) => {
   return Object.entries(schemaNodeSlots)
     .map(([slotName, slot]) => {
       const slotPropsVariable = hasSlotProps(schemaNode, slotName) ? `="$slotProps_${schemaNode.id}"` : ''
 
       if (slotName === 'default' && !hasSlotProps) {
-        return slot.children.map((schemaNode) => genTag(schemaNode, seenLibraries)).join('\n')
+        return slot.children.map((schemaNode) => genTag(schemaNode, seenLibrariesInRender)).join('\n')
       }
 
       return `\
   <template #${slotName}${slotPropsVariable}>
-${slot.children.map((schemaNode) => genTag(schemaNode, seenLibraries)).join('\n')}</template>`
+${slot.children.map((schemaNode) => genTag(schemaNode, seenLibrariesInRender)).join('\n')}</template>`
     })
     .join('\n')
 }
 
-const genTag = (schemaNode: SchemaNode, seenLibraries: Set<string>): string => {
+const genTag = (schemaNode: SchemaNode, seenLibrariesInRender: string[]): string => {
   if (schemaManager.isSchemaPageNode(schemaNode) && isArray(schemaNode.slots?.default.children)) {
-    return schemaNode.slots!.default.children.map((schemaNode) => genTag(schemaNode, seenLibraries)).join('\n')
+    return schemaNode.slots!.default.children.map((schemaNode) => genTag(schemaNode, seenLibrariesInRender)).join('\n')
   }
 
   if (schemaManager.isSchemaPageNode(schemaNode) && !isArray(schemaNode.slots?.default.children)) {
@@ -252,23 +248,27 @@ const genTag = (schemaNode: SchemaNode, seenLibraries: Set<string>): string => {
   }
 
   if (schemaManager.isSchemaTextNode(schemaNode)) {
+    const bindingValue = getBindingValue(schemaNode.textContent, seenLibrariesInRender)
+
     if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `{{ ${transformExpressionValue(schemaNode.textContent.value)} }}`
+      return `{{ ${bindingValue} }}`
     }
-    return schemaNode.textContent
+
+    return bindingValue
   }
 
-  const { name } = getRendererMaterial(schemaNode).codegen
+  const props = genProps(schemaNode, seenLibrariesInRender)
+  const condition = genCondition(schemaNode, seenLibrariesInRender)
+  const loop = genLoop(schemaNode, seenLibrariesInRender)
+  const { name: tagName } = getRendererMaterial(schemaNode).codegen
 
   if (!isPlainObject(schemaNode.slots)) {
-    return `<${name}${genProps(schemaNode, seenLibraries)}${genCondition(schemaNode)}${genLoop(schemaNode)} />`
+    return `<${tagName}${props}${condition}${loop} />`
   }
 
-  return `<${name}${genProps(schemaNode, seenLibraries)}${genCondition(schemaNode)}${genLoop(schemaNode)}>\n${genSlots(
-    schemaNode.slots,
-    schemaNode,
-    seenLibraries
-  )}\n</${name}>`
+  const slots = genSlots(schemaNode.slots, schemaNode, seenLibrariesInRender)
+
+  return `<${tagName}${props}${condition}${loop}>${slots}</${tagName}>`
 }
 
 const genVueApis = (seenApis: string[]) => {
@@ -300,12 +300,12 @@ const genImports = (profiles: AssetProfile[], namedImports: Record<string, strin
     .join('')
 }
 
-const genSlotsRender = (schemaNode: SchemaNode, seenLibraries: Set<string>) => {
+const genSlotsRender = (schemaNode: SchemaNode, seenLibrariesInRender: string[]) => {
   let start = '{'
 
   for (const [slotName, slot] of Object.entries(schemaNode.slots ?? {})) {
     const slotProps = hasSlotProps(schemaNode, slotName) ? `$slotProps_${schemaNode.id}` : ''
-    const schemaNodeHs = slot.children.map((schemaNode) => genH(schemaNode, seenLibraries))
+    const schemaNodeHs = slot.children.map((schemaNode) => genH(schemaNode, seenLibrariesInRender))
 
     start += `\n${slotName}: (${slotProps}) => [${schemaNodeHs}],`
   }
@@ -315,26 +315,42 @@ const genSlotsRender = (schemaNode: SchemaNode, seenLibraries: Set<string>) => {
   return start
 }
 
-const genH = (schemaNode: SchemaNode, seenLibraries: Set<string>) => {
+const genH = (schemaNode: SchemaNode, seenLibrariesInRender: string[]) => {
   if (schemaManager.isSchemaTextNode(schemaNode)) {
-    if (schemaManager.isExpressionBinding(schemaNode.textContent)) {
-      return `${transformExpressionValue(schemaNode.textContent.value)}`
-    }
-    return `${schemaNode.textContent}`
+    return getBindingValue(schemaNode.textContent, seenLibrariesInRender)
   }
 
-  seenLibraries.add(schemaNode.library!)
+  seenLibrariesInRender.push(schemaNode.library!)
 
-  const props = stringifyObject(normalizeObject(schemaNode.props ?? {}, seenLibraries))
-  const slots = genSlotsRender(schemaNode, seenLibraries)
+  const component = `${schemaNode.library}.${schemaNode.name}`
+  const props = stringifyObject(normalizeObject(schemaNode.props ?? {}, seenLibrariesInRender))
+  const slots = genSlotsRender(schemaNode, seenLibrariesInRender)
+  const h = `h(${component}, ${props}, ${slots})`
 
-  return `\
-h(${schemaNode.library}.${schemaNode.name}, ${props}, ${slots})
+  if (schemaNode.hasOwnProperty('for')) {
+    const bindingValue = getBindingValue(schemaNode.for, seenLibrariesInRender)
+
+    return `\
+h(Fragment, null, renderList(${isString(schemaNode.if) ? `${bindingValue}` : bindingValue}, ($item_${
+      schemaNode.id
+    }, $index_${schemaNode.id}) => {
+  return ${h}
+}))
 `
+  }
+
+  if (schemaNode.hasOwnProperty('if')) {
+    const bindingValue = getBindingValue(schemaNode.if, seenLibrariesInRender)
+    return `\
+(${isString(schemaNode.if) ? `${bindingValue}` : bindingValue}) ? ${h} : null
+    `
+  }
+
+  return h
 }
 
-const genRender = (renderId: string, schemaNodes: SchemaNode[], seenLibraries: Set<string>) => {
-  const schemaNodeHs = schemaNodes.map((schemaNode: SchemaNode) => genH(schemaNode, seenLibraries))
+const genRender = (renderId: string, schemaNodes: SchemaNode[], seenLibrariesInRender: string[]) => {
+  const schemaNodeHs = schemaNodes.map((schemaNode: SchemaNode) => genH(schemaNode, seenLibrariesInRender))
   const renderArgs = `...$renderArgs_${renderId}`
 
   return `
@@ -344,28 +360,29 @@ function render_${renderId}(${renderArgs}) {
 `.replaceAll('\n', '')
 }
 
-const withReturn = (code: string, returns: string[]) =>
+const mergeReturn = (code: string, returns: string[]) =>
   code.replace(/(return\s*\{(.|\s)+)(?!return)\}(.|\s)*\}\s*$/, `$1,\n${returns}}}`)
 
 const genApp = (schema: SchemaPageNode, profiles: AssetProfile[]) => {
   const libraries = profiles.map((profile) => profile.library)
   const { seenApis, allImportedApis } = traverseFunction(schema.code ?? '')
   const transformed = transformNamedImports(schema.code ?? '', libraries)
-  const tagTreeSeenLibraries = new Set<string>()
-  const tagTree = genTag(schema, tagTreeSeenLibraries)
+  const seenLibrariesInRender: string[] = []
+  const tagTree = genTag(schema, seenLibrariesInRender)
 
   let { code } = transformed
 
-  if (tagTreeSeenLibraries.size > 0) {
-    code = withReturn(code, ['h', ...tagTreeSeenLibraries])
-    seenApis.push('h')
+  const hasRender = seenLibrariesInRender.length > 0
+  if (hasRender) {
+    code = mergeReturn(code, ['h', 'renderList', 'Fragment', ...seenLibrariesInRender])
+    seenApis.push('h', 'renderList', 'Fragment')
   }
 
   const vueImports = `import { defineComponent, ${genVueApis(seenApis)} } from 'vue'`
   const librariesImports = genImports(
     profiles,
     transformed.namedImports,
-    uniq([...allImportedApis, ...tagTreeSeenLibraries])
+    uniq([...allImportedApis, ...seenLibrariesInRender])
   )
   const dataSourcesImport = `${
     seenApis.includes('useDataSources') ? "import { useDataSources } from './dataSources'" : ''

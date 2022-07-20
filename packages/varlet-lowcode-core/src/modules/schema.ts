@@ -60,8 +60,6 @@ export interface SchemaNode {
   for?: SchemaNodeBinding
   key?: SchemaNodeBinding
   models?: string[]
-  _item?: Record<string, any>
-  _index?: Record<string, any>
 }
 
 export interface SchemaTextNode extends SchemaNode {
