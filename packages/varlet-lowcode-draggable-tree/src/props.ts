@@ -1,5 +1,5 @@
 import { PropType } from 'vue'
-import DragTree from './hooks/DragTree'
+import DragTree from './DragTree'
 
 export interface TreeNode {
   id: string

@@ -2,7 +2,7 @@
 import { TreeNode, treeProps } from './props'
 import DraggableTreeNode from './DraggableTreeNode.vue'
 import { defineProps, ref } from 'vue'
-import DragTree from './hooks/DragTree'
+import DragTree from './DragTree'
 import { eventsManager } from '@varlet/lowcode-core'
 
 const props = defineProps(treeProps)
