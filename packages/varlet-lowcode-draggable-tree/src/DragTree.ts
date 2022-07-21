@@ -39,6 +39,12 @@ class DragTree {
   }
 
   insertHolder(node: TreeNode) {
+    this.initHolder()
+
+    node?.children?.splice(0, 0, this.holder!)
+  }
+
+  initHolder() {
     if (this.holder) {
       this.removeNode(this.holder)
       this.holder = null
@@ -47,24 +53,14 @@ class DragTree {
     this.holder = {
       id: 'holder',
     }
-
-    node?.children?.splice(0, 0, this.holder)
   }
 
   toggleTreeNodeChange(to: TreeNode) {
     this.to = to
 
-    if (this.holder) {
-      this.removeNode(this.holder)
-    }
+    this.initHolder()
 
-    this.holder = {
-      id: 'holder',
-    }
-
-    if (!this.to.children) {
-      this.addNode(this.to, this.holder)
-    }
+    this.addNode(this.to, this.holder!)
 
     eventsManager.emit('treeUpdate', this.tree)
   }
@@ -76,7 +72,7 @@ class DragTree {
       return child.id === to.id
     })
 
-    parentChildren && parentChildren.splice(index < 0 ? 0 : index, 0, node)
+    parentChildren && parentChildren.splice(index, 0, node)
   }
 
   removeNode(node: TreeNode) {
@@ -92,15 +88,13 @@ class DragTree {
   }
 
   submitTreeNodeChange() {
-    if (this.to && this.from) {
-      this.addNode(<TreeNode>this.to, <TreeNode>this.from)
-      this.removeNode(<TreeNode>this.holder)
-      this.removeNode(<TreeNode>this.from)
+    this.removeNode(<TreeNode>this.holder)
+    this.removeNode(<TreeNode>this.from)
+    this.addNode(<TreeNode>this.to, <TreeNode>this.from)
 
-      this.from = undefined
-      this.to = undefined
-      this.holder = null
-    }
+    this.from = undefined
+    this.to = undefined
+    this.holder = null
   }
 
   findParentNode(treeNode: TreeNode) {

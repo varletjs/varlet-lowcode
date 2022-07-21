@@ -1,4 +1,5 @@
 import { TreeNode } from './props'
+import DragTree from './DragTree'
 
 export default class Dnd {
   dragNode: TreeNode | undefined
@@ -13,13 +14,13 @@ export default class Dnd {
     this.dragNode = treeNode ?? undefined
   }
 
-  setOverNode(treeNode: TreeNode) {
+  setOverNode(treeNode: TreeNode, dragTree: DragTree) {
     if (this.timer) {
       clearTimeout(this.timer)
     }
     this.timer = setTimeout(() => {
       this.overNode = treeNode
-      console.log(this.overNode)
+      dragTree.insertHolder(this.overNode)
     }, 1000)
   }
 

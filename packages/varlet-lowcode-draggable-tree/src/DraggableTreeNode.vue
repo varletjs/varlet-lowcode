@@ -30,12 +30,6 @@ const onDragOver = (e: DragEvent) => {
   e.preventDefault()
 
   e.dataTransfer!.dropEffect = 'move'
-
-  if (overNode.value?.id === props.dnd?.dropNode?.id) {
-    if (!overNode.value?.children?.length) {
-      props.dragTree!.insertHolder(overNode.value)
-    }
-  }
 }
 
 const onDragEnter = (e: Event, treeNode: TreeNode) => {
@@ -45,8 +39,7 @@ const onDragEnter = (e: Event, treeNode: TreeNode) => {
 
   props.dnd!.setDropNode(treeNode)
 
-  // console.log((e.target as HTMLElement).closest('.varlet-low-code-draggable-tree-node'))
-  props.dnd!.setOverNode(treeNode)
+  props.dnd!.setOverNode(treeNode, props.dragTree!)
 
   const dropNode = props.dnd!.dropNode as TreeNode
 
@@ -64,10 +57,15 @@ watch(
   }
 )
 
-const onDrop = (e: DragEvent) => {
+const onDrop = (e: DragEvent, treeNode: TreeNode) => {
   e.preventDefault()
   e.stopPropagation()
 
+  if (props.dnd?.timer) {
+    clearTimeout(props.dnd.timer)
+  }
+
+  console.log(treeNode.id)
   props.dragTree!.submitTreeNodeChange()
 
   props.dnd!.setDropNode()
@@ -86,7 +84,7 @@ const onDrop = (e: DragEvent) => {
     @dragstart="onDragStart($event, treeNode)"
     @dragenter="onDragEnter($event, treeNode)"
     @dragover="onDragOver"
-    @drop="onDrop"
+    @drop="onDrop($event, treeNode)"
   >
     <div class="varlet-low-code-draggable-tree-node__title">
       <Icon
