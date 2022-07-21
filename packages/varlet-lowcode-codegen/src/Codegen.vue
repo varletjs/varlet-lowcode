@@ -354,7 +354,7 @@ const genRender = (renderId: string, schemaNodes: SchemaNode[], seenLibrariesInR
   const renderArgs = `...$renderArgs_${renderId}`
 
   return `
-function render_${renderId}(${renderArgs}) {
+(${renderArgs}) => {
   return [${schemaNodeHs}]
 }
 `.replaceAll('\n', '')
