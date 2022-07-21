@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted, nextTick } from 'vue'
+import { ref, onUnmounted, onMounted, nextTick, computed } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
 // import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton, Divider as VarDivider } from '@varlet/ui'
@@ -32,7 +32,7 @@ dataSources.value = [
   {
     name: '我是假的数据源我是假的数据源我是假的数据源',
     url: '/aaaaaaaaaaaaaaaaaaa',
-    method: 'post',
+    method: 'optionsArrayBuffer',
     description: '这是假的数据源哦',
     headers: {},
     timeout: 1000,
@@ -80,6 +80,10 @@ function saveCode() {
   }
 }
 
+function getCapital(str: string): string[] {
+  return str.replace(/([A-Z])/, '#$1').split('#')
+}
+
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
 onMounted(() => {
@@ -104,11 +108,16 @@ onUnmounted(() => {
 
     <div class="data-source-list">
       <div v-for="item in dataSources" :key="item.name" class="data-source-card" @click="editDataSource(item)">
+        <div class="data-source-card-chip">
+          <div class="data-source-card-chip-word">
+            {{ getCapital(item.method)[0].toUpperCase() }}
+          </div>
+          <div v-if="getCapital(item.method)[1]" class="data-source-card-chip-word">
+            {{ getCapital(item.method)[1].toUpperCase() }}
+          </div>
+        </div>
         <div class="data-source-card-header">
           <div class="data-source-card-header-title">
-            <span class="data-source-card-header-title-chip">
-              {{ item.method }}
-            </span>
             {{ item.name }}
           </div>
           <div class="data-source-card-header-action">
@@ -143,6 +152,26 @@ onUnmounted(() => {
     padding: 8px;
     margin-bottom: 8px;
     cursor: pointer;
+    position: relative;
+    &-chip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      font-weight: normal;
+      font-size: 40px;
+      color: #3a7afe20;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      &-word {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
     &-header {
       display: flex;
       justify-content: space-between;
@@ -152,12 +181,6 @@ onUnmounted(() => {
         color: #555;
         white-space: nowrap;
         text-overflow: ellipsis;
-        &-chip {
-          font-weight: normal;
-          font-size: 14px;
-          color: #3a7afe;
-          border-radius: 3px;
-        }
       }
     }
     &-description {
@@ -168,5 +191,8 @@ onUnmounted(() => {
       color: rgba(31, 56, 88, 0.7);
     }
   }
+}
+.var-dialog {
+  --dialog-width: 40vw;
 }
 </style>
