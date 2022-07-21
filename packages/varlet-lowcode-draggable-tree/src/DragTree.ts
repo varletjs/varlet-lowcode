@@ -42,6 +42,24 @@ class DragTree {
     this.initHolder()
 
     node?.children?.splice(0, 0, this.holder!)
+
+    eventsManager.emit('treeUpdate', this.tree)
+  }
+
+  insertNode() {
+    if (this.holder) {
+      this.removeNode(this.holder)
+    }
+
+    this.removeNode(this.from!)
+
+    this.to?.children?.push(this.from!)
+
+    eventsManager.emit('treeUpdate', this.tree)
+
+    this.from = undefined
+    this.to = undefined
+    this.holder = null
   }
 
   initHolder() {

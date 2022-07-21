@@ -65,8 +65,11 @@ const onDrop = (e: DragEvent, treeNode: TreeNode) => {
     clearTimeout(props.dnd.timer)
   }
 
-  console.log(treeNode.id)
-  props.dragTree!.submitTreeNodeChange()
+  if (props.dnd!.dropNode?.id === props.dnd?.overNode?.id) {
+    props.dragTree!.insertNode()
+  } else {
+    props.dragTree!.submitTreeNodeChange()
+  }
 
   props.dnd!.setDropNode()
   props.dnd!.setDragNode()
