@@ -111,7 +111,7 @@ export default defineComponent({
               <div class="style-field-body">
                 <div class="style-field-body-title">布局模式</div>
                 <div class="style-field-body-content">
-                  <RadioSetter v-model={formData.disable} options={options} />
+                  <SelectSetter v-model={formData.disable} options={options} />
                 </div>
                 <div class="layout-box-container">
                   <div class="margin-top-div">

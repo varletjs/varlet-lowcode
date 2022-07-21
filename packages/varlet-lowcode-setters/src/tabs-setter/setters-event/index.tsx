@@ -2,11 +2,13 @@ import { defineComponent, reactive, ref, Ref, watchEffect } from 'vue'
 import { AppBar as VarAppBar, Select as VarSelect, Option as VarOption, Icon } from '@varlet/ui'
 import BindTypePopover from '../../component/bind-type/index'
 import BindDialog from '../../component/dialog-setter/index'
+import DialogEvent from '../../component/dialog-event/index'
+
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
 import './index.less'
-import edit from '../../../assets/edit.png'
+import accessory from '../../../assets/accessory.png'
 
 export default defineComponent({
   name: 'SETTERSADVANCEDSETTINGS',
@@ -21,7 +23,9 @@ export default defineComponent({
       keyCode: '888898978974545',
     })
     const showDialog = ref(false)
+    const showEventDialog = ref(false)
     const dialogCode: Ref<string> = ref('')
+    const dialogEventCode: Ref<string> = ref('')
     const selectContent: Ref<string> = ref('')
     const openBindDialog = (val: string) => {
       dialogCode.value = formData[val]
@@ -42,6 +46,9 @@ export default defineComponent({
 
     const saveCode = () => {
       formData[selectContent.value] = dialogCode.value
+    }
+    const editEvent = () => {
+      showEventDialog.value = true
     }
     const selectValue = ref([])
     return () => {
@@ -67,26 +74,34 @@ export default defineComponent({
               <div class="varlet-low-code-event__table-row">
                 <div>
                   <div>onChange</div>
-                  <div>saveCode</div>
+                  <div style={{ marginLeft: '10px' }}>
+                    <Icon name={accessory} size={20} />
+                    saveCode
+                  </div>
                 </div>
                 <div>
-                  <Icon name={edit} size={24} />
+                  <Icon name="cog-outline" size={24} onClick={editEvent} />
                   <Icon name="delete" size={24} />
                 </div>
               </div>
               <div class="varlet-low-code-event__table-row">
                 <div>
                   <div>rowSelection.onChange</div>
-                  <div>saveCode</div>
+                  <div style={{ marginLeft: '10px' }}>
+                    <Icon name={accessory} size={20} />
+                    saveCode
+                  </div>
                 </div>
                 <div>
-                  <Icon name={edit} size={24} />
+                  ·
+                  <Icon name="cog-outline" size={24} />
                   <Icon name="delete" size={24} />
                 </div>
               </div>
             </div>
           </div>
           <BindDialog v-model={showDialog.value} v-model:code={dialogCode.value} onConfirm={saveCode} />
+          <DialogEvent v-model={showEventDialog.value} v-model:code={dialogEventCode.value} onConfirm={saveCode} />
         </div>
       )
     }
