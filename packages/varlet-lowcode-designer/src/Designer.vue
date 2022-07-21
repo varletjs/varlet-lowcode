@@ -8,7 +8,6 @@ import {
   SchemaPageNode,
 } from '@varlet/lowcode-core'
 import { onMounted, ref } from 'vue'
-import Selector from '@varlet/lowcode-selector'
 import { SkeletonEvents, SkeletonLoaders } from '@varlet/lowcode-skeleton'
 import { DesignerEvents } from './types'
 
@@ -119,7 +118,7 @@ async function mountRenderer() {
 
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
-  renderer.init({ mountRoot: '#app', designerEventsManager: eventsManager, selector: Selector })
+  renderer.init({ mountRoot: '#app', designerEventsManager: eventsManager })
   renderer.mount()
 
   // @ts-ignore
