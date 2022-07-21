@@ -20,14 +20,12 @@ import {
 
 await runTask('cli', buildCli)
 await runTask('core', buildCore)
-await runTask('ast', buildAst)
 await runTask('skeleton', buildSkeleton)
 await runTask('dnd', buildDnd)
 await runTask('selector', buildSelector)
 await runTask('renderer', buildRenderer)
 await runTask('designer', buildDesigner)
-await runTask('monaco', buildMonaco)
-
+await runTask('ast and monaco', () => Promise.all([buildAst, buildMonaco]))
 await runTask('plugins and more', () => Promise.all([
   buildCodeEditor,
   buildSchemaEditor,

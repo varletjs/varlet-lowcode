@@ -28,11 +28,7 @@ function getProfiles(assets: Assets) {
   return rendererAssetsManager.getProfiles(assets)
 }
 
-function handleSkeletonLoaded(loader: any) {
-  if (loader !== 'designer') {
-    return
-  }
-
+function handleSkeletonLoaded() {
   profiles.value = getProfiles(assets)
 }
 

@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { onUnmounted, PropType, ref, defineProps } from 'vue'
+import { onUnmounted, ref, defineProps, watch } from 'vue'
 import { Button as VarButton, Icon as VarIcon, Menu as VarMenu, Cell as VarCell, Ripple as vRipple } from '@varlet/ui'
-import { eventsManager } from '@varlet/lowcode-core'
+import { eventsManager, localeManager } from '@varlet/lowcode-core'
 import { DesignerEvents } from '@varlet/lowcode-designer'
 import '@varlet/ui/es/button/style/index.js'
 import '@varlet/ui/es/icon/style/index.js'
 import '@varlet/ui/es/menu/style/index.js'
 import '@varlet/ui/es/cell/style/index.js'
-import type { Ref } from 'vue'
+import type { Ref, PropType } from 'vue'
+import type { Language } from './types'
 
-interface Language {
-  label: string
-  value: string
-}
+const defaultLocale = 'zh-CN'
 
 const { languages } = defineProps({
   languages: {
@@ -31,14 +29,48 @@ const { languages } = defineProps({
 })
 
 const showMenu: Ref<boolean> = ref(false)
+const locale: Ref<string> = ref(getCurrentLocale())
 
 function closeMenu() {
   showMenu.value = false
 }
 
+function getCurrentLocale() {
+  const query = new URLSearchParams(window.location.search)
+
+  return query.get('locale') ?? defaultLocale
+}
+
+function handlePopState() {
+  locale.value = getCurrentLocale()
+}
+
+function handleLanguageClick(value: string) {
+  const { origin, pathname, search } = window.location
+
+  const query = new URLSearchParams(search)
+  query.set('locale', value)
+  locale.value = value
+
+  window.history.pushState(null, '', `${origin}${pathname}?${query.toString()}`)
+
+  closeMenu()
+}
+
+watch(
+  () => locale.value,
+  (newLocale) => {
+    localeManager.use(newLocale)
+  },
+  { immediate: true }
+)
+
 eventsManager.on(DesignerEvents.IFRAME_CLICK, closeMenu)
+window.addEventListener('popstate', handlePopState)
+
 onUnmounted(() => {
   eventsManager.off(DesignerEvents.IFRAME_CLICK, closeMenu)
+  window.removeEventListener('popstate', handlePopState)
 })
 </script>
 
@@ -51,7 +83,14 @@ onUnmounted(() => {
 
       <template #menu>
         <div class="varlet-low-code-locale-switcher__language-list">
-          <var-cell class="varlet-low-code-locale-switcher__language" v-ripple v-for="l in languages" :key="l.value">
+          <var-cell
+            class="varlet-low-code-locale-switcher__language"
+            :class="[locale === l.value ? 'varlet-low-code-locale-switcher--active' : null]"
+            v-ripple
+            v-for="l in languages"
+            :key="l.value"
+            @click="handleLanguageClick(l.value)"
+          >
             {{ l.label }}
           </var-cell>
         </div>
@@ -77,6 +116,11 @@ onUnmounted(() => {
       color: #3a7afd;
       cursor: pointer;
     }
+  }
+
+  &--active {
+    background: #edf5ff;
+    color: #3a7afd;
   }
 }
 </style>
