@@ -5,6 +5,7 @@ import Draggable from '../../built-in-setters/draggable-setter/index.vue'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 import BindTypePopover from '../../component/bind-type/index'
+import './index.less'
 
 export default defineComponent({
   name: 'SettersAttribute',
@@ -93,12 +94,12 @@ export default defineComponent({
       let content
       if (item.layout === 'singRow') {
         content = (
-          <div class="attribute-field-body">
-            <div class="attribute-field-body-content__sing-row">
-              <div class="attribute-field-body-title">{item.description}</div>
-              <Icon name="dots-vertical" class="attribute-field-body__setter-icon" />
+          <div class="varlet-low-code-field-body">
+            <div class="varlet-low-code-field-body-content__sing-row">
+              <div class="varlet-low-code-field-body-title">{item.description}</div>
+              <Icon name="dots-vertical" class="varlet-low-code-field-body__setter-icon" />
             </div>
-            <div class="attribute-field-body-content__sing-row">
+            <div class="varlet-low-code-field-body-content__sing-row">
               {item.setter.map((itemSetter: any, index: number) => {
                 const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
                 const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
@@ -115,9 +116,9 @@ export default defineComponent({
         )
       } else {
         content = (
-          <div class="attribute-field-body">
-            <div class="attribute-field-body-title">{item.description}</div>
-            <div class="attribute-field-body-content">
+          <div class="varlet-low-code-field-body">
+            <div class="varlet-low-code-field-body-title">{item.description}</div>
+            <div class="varlet-low-code-field-body-content">
               {item.setter.map((itemSetter: any, index: number) => {
                 const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
                 const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component

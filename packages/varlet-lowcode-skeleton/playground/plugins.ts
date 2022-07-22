@@ -6,7 +6,7 @@ import UndoRedoPlugin from '@varlet/lowcode-undo-redo'
 import ResizerPlugin from '@varlet/lowcode-resizer'
 import CodegenPlugin from '@varlet/lowcode-codegen'
 import LocaleSwitcherPlugin from '@varlet/lowcode-locale-switcher'
-import SettersPlugin from '../../varlet-lowcode-setters/src'
+import SettersPlugin from '@varlet/lowcode-setters/src'
 
 import DataSource from '../../varlet-lowcode-data-source-panel/src/index'
 import { pluginsManager } from '@varlet/lowcode-core'
@@ -23,7 +23,7 @@ export function usePlugins() {
     .useSkeletonPlugin(DesignerPlugin)
     .useSkeletonPlugin(SettersPlugin)
     .useSkeletonPlugin(ResizerPlugin)
-    .useSkeletonPlugin(LocaleSwitcherPlugin)
+    // .useSkeletonPlugin(LocaleSwitcherPlugin)
     .useSkeletonPlugin(MaterialsPanelPlugin)
     .useSkeletonPlugin(CodeEditorPlugin)
     .useSkeletonPlugin(SchemaEditorPlugin)
