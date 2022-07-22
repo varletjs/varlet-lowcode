@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon as VarIcon, Input as VarInput } from '@varlet/ui'
-import { ref, reactive } from 'vue'
+import { ref, reactive, Ref, toRaw } from 'vue'
 import DialogDetail from '../../component/dialog-detail/index'
 import './index.less'
 import edit from '../../../assets/edit.png'
@@ -40,20 +40,47 @@ const openEdit = (index: any) => {
   showDialog.value = !showDialog.value
 }
 const showDialog = ref(false)
-const stopTouch = (e: any) => {
+
+const from: Ref<any> = ref()
+const to: Ref<any> = ref()
+
+const onDragStart = (e: DragEvent, item: any) => {
   e.stopPropagation()
+
+  e.dataTransfer!.effectAllowed = 'move'
+
+  from.value = item
+}
+
+const onDragEnter = (e: Event, item: any) => {
+  e.stopPropagation()
+  to.value = item
+
+  const { order } = from.value
+
+  from.value.order = to.value.order
+
+  to.value.order = order
+
+  myArray.value = myArray.value.sort((a: any, b: any) => a.order - b.order)
 }
 </script>
 
 <template>
-  <template v-for="(item, index) in myArray.value" :key="index">
-    <div class="varlet-low-code-setter__table--row">
-      <var-icon :name="edit" :size="24" @click="openEdit(item)" />
-      <var-input v-model="item.name"></var-input>
-      <var-icon name="delete" :size="24" @Click="deleteTableRow(index)" />
-      <var-icon :name="move" class="handle" :size="24" />
-    </div>
-  </template>
+  <div
+    class="varlet-low-code-setter__table--row"
+    v-for="(item, index) in myArray.value"
+    :key="index"
+    draggable="true"
+    @dragstart="onDragStart($event, item)"
+    @dragenter="onDragEnter($event, item)"
+  >
+    <var-icon :name="edit" :size="24" @click="openEdit(item)" />
+    <var-input v-model="item.name"></var-input>
+    <var-icon name="delete" :size="24" @Click="deleteTableRow(index)" />
+    <var-icon :name="move" class="handle" :size="24" />
+  </div>
+
   <span class="varlet-low-code-setter__add-button" @Click="addTableRow"> 添加一项 + </span>
   <DialogDetail v-model="showDialog" />
 </template>

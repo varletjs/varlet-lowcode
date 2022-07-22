@@ -57,7 +57,7 @@ watch(
   }
 )
 
-const onDrop = (e: DragEvent, treeNode: TreeNode) => {
+const onDrop = (e: DragEvent) => {
   e.preventDefault()
   e.stopPropagation()
 
