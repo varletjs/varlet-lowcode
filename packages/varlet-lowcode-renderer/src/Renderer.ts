@@ -23,12 +23,11 @@ import {
   onBeforeUnmount,
   onUnmounted,
   withDirectives,
-  Fragment
+  Fragment,
 } from 'vue'
 import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isObject, isPlainObject, isString } from '@varlet/shared'
 import { exec } from './exec'
-import SelectorComponent from '@varlet/lowcode-selector'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import { createAxle } from '@varlet/axle'
 import { Snackbar } from '@varlet/ui'
@@ -79,7 +78,7 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
               ...options,
               headers,
               timeout,
-              withCredentials
+              withCredentials,
             })
 
             const successHandlerFunction = schemaManager.isExpressionBinding(successHandler)
@@ -102,7 +101,7 @@ function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
 
         const rendererDataSource = reactive({
           value: undefined,
-          load
+          load,
         })
 
         rendererDataSources[name] = rendererDataSource
@@ -122,24 +121,24 @@ export default defineComponent({
   props: {
     mode: {
       type: String as PropType<'designer' | 'render'>,
-      default: 'render'
+      default: 'render',
     },
 
     schema: {
       type: Object as PropType<SchemaPageNode>,
       required: true,
-      default: () => ({})
+      default: () => ({}),
     },
 
     assets: {
       type: Array as PropType<Assets>,
       required: true,
-      default: () => []
+      default: () => [],
     },
 
     designerEventsManager: {
-      type: Object as PropType<EventsManager>
-    }
+      type: Object as PropType<EventsManager>,
+    },
   },
 
   setup(props) {
@@ -167,7 +166,7 @@ export default defineComponent({
       onBeforeUnmount,
       onUnmounted,
       axle,
-      useDataSources: createDataSources(props.schema.dataSources ?? [])
+      useDataSources: createDataSources(props.schema.dataSources ?? []),
     }
 
     hoistWindow(builtInApis)
@@ -244,7 +243,7 @@ export default defineComponent({
     function createNewScopeVariables(oldScopeVariables: ScopeVariables, partialScopeVariables: ScopeVariables) {
       return {
         ...oldScopeVariables,
-        ...partialScopeVariables
+        ...partialScopeVariables,
       }
     }
 
@@ -292,8 +291,8 @@ export default defineComponent({
           const newScopeVariables = createNewScopeVariables(scopeVariables, {
             $renderArgs: {
               ...scopeVariables.$renderArgs,
-              [value.renderId!]: args
-            }
+              [value.renderId!]: args,
+            },
           })
 
           const conditionedSchemaNodes = withCondition(value.value, newScopeVariables)
@@ -335,11 +334,11 @@ export default defineComponent({
 
       rawProps.id = `dragItem${schemaNode.id}`
       props.mode === 'designer' &&
-      (rawProps.onClick = (...arg: any) => {
-        props.designerEventsManager!.emit('selector', `dragItem${schemaNode.id}` || '')
+        (rawProps.onClick = (...arg: any) => {
+          props.designerEventsManager!.emit('selector', `dragItem${schemaNode.id}` || '')
 
-        clickEvent && clickEvent(...arg)
-      })
+          clickEvent && clickEvent(...arg)
+        })
 
       return rawProps
     }
@@ -349,8 +348,8 @@ export default defineComponent({
       const classes = isArray(propsBinding.class)
         ? propsBinding.class
         : isString(propsBinding.class)
-          ? propsBinding.class.split(' ')
-          : []
+        ? propsBinding.class.split(' ')
+        : []
 
       if (props.mode !== 'designer') {
         return h(
@@ -362,7 +361,7 @@ export default defineComponent({
 
       const directives: DirectiveArguments = [
         [Drag, { dragData: schemaNode, eventsManager: props.designerEventsManager }],
-        [Drop, { eventsManager: props.designerEventsManager }]
+        [Drop, { eventsManager: props.designerEventsManager }],
       ]
 
       classes.push('varlet-low-code--disable-events')
@@ -399,12 +398,12 @@ export default defineComponent({
             createNewScopeVariables(scopeVariables, {
               $item: {
                 ...scopeVariables.$item,
-                [schemaNode.id!]: item
+                [schemaNode.id!]: item,
               },
               $index: {
                 ...scopeVariables.$index,
-                [schemaNode.id!]: index
-              }
+                [schemaNode.id!]: index,
+              },
             })
           )
         })
@@ -432,8 +431,8 @@ export default defineComponent({
             const newScopeVariables = createNewScopeVariables(scopeVariables, {
               $slotProps: {
                 ...scopeVariables.$slotProps,
-                [schemaNode.id!]: slotProps
-              }
+                [schemaNode.id!]: slotProps,
+              },
             })
 
             return withCondition(slot.children ?? [], newScopeVariables).map((schemaNode) =>
@@ -462,8 +461,7 @@ export default defineComponent({
 
     return () =>
       props.mode === 'designer'
-        ? h(Fragment, [
-          withDirectives(
+        ? withDirectives(
             h(
               'div',
               { class: 'varlet-low-code-renderer varlet-low-code-renderer__designer', mode: props.mode },
@@ -471,11 +469,9 @@ export default defineComponent({
             ),
             [
               [Drop, { eventsManager: props.designerEventsManager }],
-              [DragOver, { eventsManager: props.designerEventsManager }]
+              [DragOver, { eventsManager: props.designerEventsManager }],
             ]
-          ),
-          h(SelectorComponent.name, { designerEventsManager: props.designerEventsManager })
-        ])
+          )
         : h('div', { class: 'varlet-low-code-renderer' }, renderSchemaNodeSlots(props.schema, {}))
-  }
+  },
 })

@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import type { SchemaNode } from '@varlet/lowcode-core'
-import { schemaManager } from '@varlet/lowcode-core'
+import { schemaManager, BuiltInEvents, BuiltInSchemaNodeNames } from '@varlet/lowcode-core'
+import type { SchemaNode, SchemaPageNode } from '@varlet/lowcode-core'
 import { Button, Icon } from '@varlet/ui'
 import { defineProps } from 'vue'
-import _props from './props'
+import _props from '../props'
 
 const props = defineProps(_props)
 
-function addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slotsName = 'default'): SchemaNode {
-  const rootSchemaNode = schemaManager.exportSchema()
+function addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slotsName = 'default'): SchemaPageNode {
+  const rootSchemaNode: SchemaPageNode =
+    props.schema ??
+    <SchemaPageNode>{
+      name: BuiltInSchemaNodeNames.PAGE,
+    }
   const { id } = schemaNode
 
-  schemaManager.visitSchemaNode(rootSchemaNode, (schemaNode) => {
+  schemaManager!.visitSchemaNode(rootSchemaNode, (schemaNode) => {
     if (schemaNode.id === id) {
       throw new Error("SchemaNode already added. The schema's id is repeatedly")
     }
@@ -26,6 +30,9 @@ function addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slots
 }
 
 const copyClick = () => {
+  // const newSchema = addSchemaNode()
+
+  // props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
   console.log('props', props.schemaId)
 }
 </script>

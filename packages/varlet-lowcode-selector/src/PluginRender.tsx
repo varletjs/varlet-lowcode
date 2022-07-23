@@ -1,25 +1,41 @@
 import type { DefineComponent } from 'vue'
 import { defineComponent } from 'vue'
-import { pluginsManager } from '@varlet/lowcode-core'
-import { SelectorPlugin } from '@varlet/lowcode-core/src/modules/plugins'
+import type { SelectorPlugin } from '@varlet/lowcode-core'
+import Copy from './selectorPlugins/copy.vue'
+import Remove from './selectorPlugins/remove.vue'
+import OpenSlots from './selectorPlugins/openSlots.vue'
+import props from './props'
 import './plugin.less'
+
+const builtInPlugins: SelectorPlugin[] = [
+  {
+    name: 'copy',
+    component: Copy,
+  },
+  {
+    name: 'remove',
+    component: Remove,
+  },
+  {
+    name: 'openSlots',
+    component: OpenSlots,
+  },
+]
 
 export default defineComponent({
   name: 'VarletLowCodeSelectorPluginRender',
-  props: {
-    schemaId: {
-      type: String,
-    },
-  },
+  props,
   setup(props) {
-    const plugins: SelectorPlugin[] = pluginsManager.exportSelectorPlugins()
+    const plugins: SelectorPlugin[] = props.pluginsManager?.exportSelectorPlugins() ?? []
+
+    plugins.unshift(...builtInPlugins)
 
     return () => {
       return (
         <div class="varlet-low-code-selector__plugins">
-          {plugins.map(({ component }) => {
-            const PluginComponent = component as DefineComponent
-            return <PluginComponent schemaId={props.schemaId} />
+          {plugins.map((plugin: SelectorPlugin) => {
+            const PluginComponent = plugin.component as DefineComponent
+            return <PluginComponent {...props} />
           })}
         </div>
       )

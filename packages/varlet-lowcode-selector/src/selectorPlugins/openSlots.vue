@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button, Icon } from '@varlet/ui'
 import { defineProps } from 'vue'
-import _props from './props'
+import _props from '../props'
 
 const props = defineProps(_props)
 

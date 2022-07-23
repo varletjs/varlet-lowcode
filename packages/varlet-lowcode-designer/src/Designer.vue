@@ -15,7 +15,8 @@ const presetAssets: Assets = [
   {
     additionResources: [
       'https://cdn.jsdelivr.net/npm/vue',
-      // TODO: env config
+      'https://cdn.jsdelivr.net/npm/@varlet/ui@1.27.18/umd/varlet.js',
+      'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator@1.27.18/index.min.js',
       './varlet-lowcode-core.umd.js',
       './varlet-lowcode-renderer.umd.js',
     ],
