@@ -1,0 +1,63 @@
+.setters-attribute-field {
+  font-size: 12px;
+  box-sizing: border-box;
+  height: calc(100vh - var(--tabs-item-horizontal-height) - var(--app-bar-height));
+  overflow-y: auto;
+}
+
+.varlet-low-code-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  height: 32px;
+  padding: 0 12px;
+  background: rgba(31, 56, 88, 0.06);
+}
+
+.varlet-low-code-field-body {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+
+  .varlet-low-code-field-body-title {
+    width: 70px;
+    font-size: 12px;
+  }
+
+  .varlet-low-code-field-body-content {
+    flex: 1;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-right: 20px;
+    position: relative;
+    width: 100%;
+
+    > i {
+      cursor: pointer;
+      position: absolute;
+      right: -4px;
+      top: 50%;
+      transform: translate(100%, -50%);
+    }
+
+    &__sing-row {
+      width: 100%;
+      position: relative;
+
+      > :first-child {
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  &__setter-icon {
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translate(100%, -50%);
+  }
+}

@@ -38,34 +38,58 @@ class DragTree {
     this.holder = null
   }
 
+  insertHolder(node: TreeNode) {
+    this.initHolder()
+
+    node?.children?.splice(0, 0, this.holder!)
+
+    eventsManager.emit('treeUpdate', this.tree)
+  }
+
+  insertNode() {
+    if (this.holder) {
+      this.removeNode(this.holder)
+    }
+
+    this.removeNode(this.from!)
+
+    this.to?.children?.push(this.from!)
+
+    eventsManager.emit('treeUpdate', this.tree)
+
+    this.from = undefined
+    this.to = undefined
+    this.holder = null
+  }
+
+  initHolder() {
+    if (this.holder) {
+      this.removeNode(this.holder)
+      this.holder = null
+    }
+
+    this.holder = {
+      id: 'holder',
+    }
+  }
+
   toggleTreeNodeChange(to: TreeNode) {
     this.to = to
 
-    const toParentNode = this.findParentNode(this.to)
-    const toParentChildren = toParentNode ? toParentNode?.children : this.tree
-    const toIndex = toParentChildren.findIndex((node: TreeNode) => {
-      return node.id === this.to!.id
-    })
+    this.initHolder()
 
-    if (this.holder) {
-      this.removeNode(this.holder)
-    } else {
-      this.holder = {
-        id: 'holder',
-      }
-    }
-
-    toParentChildren && toParentChildren.splice(toIndex, 0, this.holder)
+    this.addNode(this.to, this.holder!)
 
     eventsManager.emit('treeUpdate', this.tree)
   }
 
   addNode(to: TreeNode, node: TreeNode) {
     const parentNode = this.findParentNode(to)
-    const parentChildren = parentNode ? parentNode?.children : this.tree
+    const parentChildren = parentNode ? parentNode!.children : this.tree
     const index = parentChildren.findIndex((child: TreeNode) => {
       return child.id === to.id
     })
+
     parentChildren && parentChildren.splice(index, 0, node)
   }
 
@@ -76,15 +100,15 @@ class DragTree {
       return child.id === node.id
     })
 
+    if (index < 0) return
+
     parentChildren && parentChildren.splice(index, 1)
   }
 
   submitTreeNodeChange() {
-    this.removeNode(<TreeNode>this.from)
-
-    this.addNode(<TreeNode>this.to, <TreeNode>this.from)
-
     this.removeNode(<TreeNode>this.holder)
+    this.removeNode(<TreeNode>this.from)
+    this.addNode(<TreeNode>this.to, <TreeNode>this.from)
 
     this.from = undefined
     this.to = undefined

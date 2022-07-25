@@ -1,0 +1,26 @@
+.varlet-low-code-event {
+  &__table {
+    flex: 1;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+  }
+
+  &__table-row {
+    display: flex;
+    align-items: center;
+
+    > div {
+      word-wrap: break-word;
+      padding: 5px 10px;
+      box-sizing: border-box;
+    }
+
+    > :first-child {
+      flex: 1;
+    }
+
+    > :last-child {
+      width: 100px !important;
+    }
+  }
+}

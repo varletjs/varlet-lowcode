@@ -77,12 +77,6 @@ export default defineComponent({
               )}
             </div>
           </div>
-          <VarAppBar title="refId" color="rgba(31, 56, 88, 0.06)" text-color="#000" />
-          <div class="setters-advanced-settings__content">
-            <div class="setters-advanced-settings__attr">
-              <InputSetter v-model={formData.refId} />
-            </div>
-          </div>
           <VarAppBar title="循环" color="rgba(31, 56, 88, 0.06)" text-color="#000" />
           <div class="setters-advanced-settings__content">
             <div class="setters-attribute-field">
@@ -90,34 +84,22 @@ export default defineComponent({
                 <div class="attribute-field-body-title">循环数据</div>
                 <div class="attribute-field-body-content">
                   {/* <div>231546</div> */}
-                  <Icon name="dots-vertical" />
-                </div>
-              </div>
-              <div class="attribute-field-body">
-                <div class="attribute-field-body-title">迭代变量名</div>
-                <div class="attribute-field-body-content">
-                  <InputSetter v-model={formData.key} />
-                  <Icon name="dots-vertical" />
-                </div>
-              </div>
-              <div class="attribute-field-body">
-                <div class="attribute-field-body-title">索引变量名</div>
-                <div class="attribute-field-body-content">
-                  <InputSetter v-model={formData.key} />
-                  {/* <Icon name="dots-vertical" /> */}
-                  <span>
-                    <BindTypePopover
-                      v-model={formData.isShowType}
-                      onSelectVariable={() => openBindDialog('showCode')}
-                    />
-                  </span>
+                  <BindTypePopover
+                    v-model={formData.isShowType}
+                    onSelectVariable={() => openBindDialog('showCode')}
+                    class="varlet-low-code-field__body-setter-icon"
+                  />
                 </div>
               </div>
               <div class="attribute-field-body">
                 <div class="attribute-field-body-title">循环 Key</div>
                 <div class="attribute-field-body-content">
                   <InputSetter v-model={formData.key} />
-                  <Icon name="dots-vertical" />
+                  <BindTypePopover
+                    v-model={formData.isShowType}
+                    onSelectVariable={() => openBindDialog('showCode')}
+                    class="varlet-low-code-field__body-setter-icon"
+                  />
                 </div>
               </div>
             </div>

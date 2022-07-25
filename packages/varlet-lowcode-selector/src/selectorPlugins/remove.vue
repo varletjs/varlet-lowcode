@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { schemaManager, BuiltInEvents, eventsManager } from '@varlet/lowcode-core'
+import { BuiltInSchemaNodeNames, BuiltInEvents, schemaManager } from '@varlet/lowcode-core'
+import type { SchemaPageNode } from '@varlet/lowcode-core'
 import { Button, Icon } from '@varlet/ui'
 import { defineProps } from 'vue'
-import _props from './props'
+import _props from '../props'
 
 const props = defineProps(_props)
 
 const trashClick = () => {
-  const rootSchema = schemaManager.exportSchema()
-  const newSchema = schemaManager.removeSchemaNodeById(rootSchema, props.schemaId)
+  const rootSchema = props.schema ?? <SchemaPageNode>{ name: BuiltInSchemaNodeNames.PAGE }
+  const newSchema = schemaManager!.removeSchemaNodeById(rootSchema, props.schemaId)
 
-  eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+  props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
 }
 </script>
 <template>

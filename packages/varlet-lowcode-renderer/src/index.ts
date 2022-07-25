@@ -1,18 +1,21 @@
 import RendererComponent from './Renderer'
+import SelectorComponent from '@varlet/lowcode-selector'
 import { createApp, h, ShallowRef, shallowRef } from 'vue'
 import { BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
 import type { App } from 'vue'
-import type { Assets, SchemaPageNode, EventsManager } from '@varlet/lowcode-core'
+import type { Assets, SchemaPageNode, EventsManager, PluginsManager } from '@varlet/lowcode-core'
 
 type InitOptions = {
   mountRoot: string
   designerEventsManager: EventsManager
+  pluginsManager: PluginsManager
 }
 
 type Renderer = typeof RendererComponent & {
   app?: App
   mountRoot?: string
   designerEventsManager?: EventsManager
+  pluginsManager?: PluginsManager
 
   schema: ShallowRef<SchemaPageNode>
   assets: ShallowRef<Assets>
@@ -30,21 +33,29 @@ const schema = shallowRef<SchemaPageNode>({
 
 const assets = shallowRef<Assets>([])
 
-function init(this: Renderer, { mountRoot, designerEventsManager }: InitOptions) {
+function init(this: Renderer, { mountRoot, designerEventsManager, pluginsManager }: InitOptions) {
   this.mountRoot = mountRoot
   this.designerEventsManager = designerEventsManager
+  this.pluginsManager = pluginsManager
 }
 
 function mount(this: Renderer) {
   this.app = createApp({
     setup: () => {
       return () => {
-        return h(RendererComponent, {
-          schema: schema.value,
-          assets: assets.value,
-          mode: 'designer',
-          designerEventsManager: this.designerEventsManager,
-        })
+        return [
+          h(RendererComponent, {
+            schema: schema.value,
+            assets: assets.value,
+            mode: 'designer',
+            designerEventsManager: this.designerEventsManager,
+          }),
+          h(SelectorComponent, {
+            schema: schema.value,
+            designerEventsManager: this.designerEventsManager,
+            pluginsManager: this.pluginsManager,
+          }),
+        ]
       }
     },
   })

@@ -5,8 +5,9 @@ import SchemaEditorPlugin from '@varlet/lowcode-schema-editor'
 import UndoRedoPlugin from '@varlet/lowcode-undo-redo'
 import ResizerPlugin from '@varlet/lowcode-resizer'
 import CodegenPlugin from '@varlet/lowcode-codegen'
-// import LocaleSwitcherPlugin from '@varlet/lowcode-locale-switcher'
-import SettersPlugin from '../../varlet-lowcode-setters/src/index'
+import LocaleSwitcherPlugin from '@varlet/lowcode-locale-switcher'
+import SettersPlugin from '@varlet/lowcode-setters/src'
+
 import DataSource from '@varlet/lowcode-data-source-panel/src/index'
 import { pluginsManager } from '@varlet/lowcode-core'
 

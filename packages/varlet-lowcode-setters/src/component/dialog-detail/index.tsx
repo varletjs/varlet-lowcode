@@ -44,15 +44,6 @@ export default defineComponent({
         name: 'title',
         description: '标题',
         setterType: 'Setter',
-        options: [
-          {
-            value: '123',
-            label: '456',
-            fn: () => {
-              console.log(231456)
-            },
-          },
-        ],
         setter: [
           {
             type: 'InputSetter',
@@ -130,7 +121,7 @@ export default defineComponent({
       return (
         <div class="varlet-low-code-variable-bind__content">
           <div class="varlet-low-code-variable-bind__content-props">
-            {propsDetail.map((item) => {
+            {propsDetail.map((item: any) => {
               return (
                 <div class="varlet-low-code-field__body">
                   <div class="varlet-low-code-field__body-title">{item.description}</div>
@@ -174,11 +165,13 @@ export default defineComponent({
     return () => {
       return (
         <Teleport to="body">
-          <VarDialog.Component
-            v-model:show={show.value}
-            v-slots={childrenSlot}
-            onConfirm={saveCode}
-          ></VarDialog.Component>
+          <div class="min-dialog">
+            <VarDialog.Component
+              v-model:show={show.value}
+              v-slots={childrenSlot}
+              onConfirm={saveCode}
+            ></VarDialog.Component>
+          </div>
         </Teleport>
       )
     }

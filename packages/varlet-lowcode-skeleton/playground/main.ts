@@ -6,8 +6,10 @@ import '@varlet/touch-emulator'
 
 usePlugins()
 
+const parentRenderId = schemaManager.generateId()
 const countdownId = schemaManager.generateId()
 const childRenderId = schemaManager.generateId()
+
 const childRender = schemaManager.createRenderBinding(
   [
     {
@@ -20,7 +22,7 @@ const childRender = schemaManager.createRenderBinding(
             {
               id: schemaManager.generateId(),
               name: BuiltInSchemaNodeNames.TEXT,
-              textContent: schemaManager.createExpressionBinding(`$renderArgs['${childRenderId}'][0].title`),
+              textContent: schemaManager.createExpressionBinding(`$renderArgs['${parentRenderId}'][0].title`),
             },
           ],
         },
@@ -69,7 +71,6 @@ const childRender = schemaManager.createRenderBinding(
   childRenderId
 )
 
-const parentRenderId = schemaManager.generateId()
 const parentRender = schemaManager.createRenderBinding(
   [
     {

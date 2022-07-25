@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref } from 'vue'
-import { Collapse as VarCollapse, CollapseItem as VarCollapseItem, Counter as VarCounter } from '@varlet/ui'
-import { RadioSetter, SelectSetter, InputSetter, SliderSetter } from '../../built-in-setters/index'
+import { Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
+import { RadioSetter, SelectSetter, InputSetter, SliderSetter, CounterSetter } from '../../built-in-setters/index'
 import SetterPosition from '../../built-in-setters/positon-setter/index'
 import Popover from '../../component/popover/popover'
 import { ColorPicker } from 'vue3-colorpicker'
@@ -111,7 +111,7 @@ export default defineComponent({
               <div class="style-field-body">
                 <div class="style-field-body-title">布局模式</div>
                 <div class="style-field-body-content">
-                  <RadioSetter v-model={formData.disable} options={options} />
+                  <SelectSetter v-model={formData.disable} options={options} />
                 </div>
                 <div class="layout-box-container">
                   <div class="margin-top-div">
@@ -161,13 +161,13 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">宽度</div>
                 <div class="style-field-body-content">
-                  <VarCounter />
+                  <CounterSetter />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">高度</div>
                 <div class="style-field-body-content">
-                  <VarCounter />
+                  <CounterSetter />
                 </div>
               </div>
             </VarCollapseItem>
@@ -175,13 +175,13 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">字号:</div>
                 <div class="style-field-body-content">
-                  <VarCounter />
+                  <CounterSetter />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">行高:</div>
                 <div class="style-field-body-content">
-                  <VarCounter />
+                  <CounterSetter />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">
@@ -245,7 +245,7 @@ export default defineComponent({
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">叠成顺序:</div>
                 <div class="style-field-body-content">
-                  <VarCounter />
+                  <CounterSetter />
                 </div>
               </div>
               <div class="style-field-body style-field-body-flex">

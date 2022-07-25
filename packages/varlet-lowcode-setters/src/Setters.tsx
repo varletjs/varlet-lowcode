@@ -23,7 +23,6 @@ export default defineComponent({
       return (
         <div class="varlet-lowcode-setters">
           <div class="varlet-lowcode-setters-content">
-            {/* {isSelectDom.value ? <HeaderPath /> : null} */}
             {isSelectDom.value ? (
               <HeaderTabs
                 refCallback={(ref: any) => {

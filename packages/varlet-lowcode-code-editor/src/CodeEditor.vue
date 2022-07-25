@@ -66,6 +66,7 @@ async function handleSkeletonSidebarToggle() {
 function createApiSuggestions(range: IRange) {
   return [
     'h',
+    'renderList',
     'ref',
     'reactive',
     'computed',

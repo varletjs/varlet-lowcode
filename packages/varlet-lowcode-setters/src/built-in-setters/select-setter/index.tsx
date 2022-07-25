@@ -33,7 +33,7 @@ export default defineComponent({
     })
     return () => {
       return (
-        <VarSelect v-model={selectValue.value} placeholder="请选择一个选项" {...props.attr}>
+        <VarSelect v-model={selectValue.value} {...props.attr}>
           {props.options.map((item: any) => {
             return <VarOption label={item.label}>{item.value}</VarOption>
           })}

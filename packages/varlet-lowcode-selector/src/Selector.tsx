@@ -8,7 +8,6 @@ export default defineComponent({
   props: {
     designerEventsManager: {
       type: Object as PropType<EventsManager>,
-      required: true,
     },
   },
   setup(props) {
@@ -43,11 +42,11 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      props!.designerEventsManager.on('selector', computedSelectorStyles)
+      props.designerEventsManager!.on('selector', computedSelectorStyles)
     })
 
     onUnmounted(() => {
-      props!.designerEventsManager.off('selector', computedSelectorStyles)
+      props.designerEventsManager!.off('selector', computedSelectorStyles)
     })
 
     return () => {
@@ -57,7 +56,9 @@ export default defineComponent({
         selectorStyles.value.map((style: CSSProperties, i: number) => {
           return (
             <div key={Symbol(style.toString())} style={style}>
-              {style && i === selectorStyles.value!.length - 1 && <PluginRender schemaId={selectorId.value} />}
+              {style && i === selectorStyles.value!.length - 1 && (
+                <PluginRender {...props} schemaId={selectorId.value} />
+              )}
             </div>
           )
         })

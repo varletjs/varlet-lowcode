@@ -8,7 +8,6 @@ import {
   SchemaPageNode,
 } from '@varlet/lowcode-core'
 import { onMounted, ref } from 'vue'
-import Selector from '@varlet/lowcode-selector'
 import { SkeletonEvents, SkeletonLoaders } from '@varlet/lowcode-skeleton'
 import { DesignerEvents } from './types'
 
@@ -16,7 +15,8 @@ const presetAssets: Assets = [
   {
     additionResources: [
       'https://cdn.jsdelivr.net/npm/vue',
-      // TODO: env config
+      'https://cdn.jsdelivr.net/npm/@varlet/ui@1.27.18/umd/varlet.js',
+      'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator@1.27.18/index.min.js',
       './varlet-lowcode-core.umd.js',
       './varlet-lowcode-renderer.umd.js',
     ],
@@ -119,7 +119,7 @@ async function mountRenderer() {
 
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
-  renderer.init({ mountRoot: '#app', designerEventsManager: eventsManager, selector: Selector })
+  renderer.init({ mountRoot: '#app', designerEventsManager: eventsManager })
   renderer.mount()
 
   // @ts-ignore

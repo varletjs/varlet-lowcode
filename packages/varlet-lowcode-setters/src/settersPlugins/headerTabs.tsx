@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, Ref } from 'vue'
 import { Tabs as VarTabs, Tab as VarTab, TabsItems as VarTabsItems, TabItem as VarTabItems } from '@varlet/ui'
 import '@varlet/ui/es/tabs/style/index.js'
 import '@varlet/ui/es/tab/style/index.js'
@@ -7,6 +7,9 @@ import '@varlet/ui/es/tabs-items/style/index.js'
 import SettersAttribute from '../tabs-setter/setters-attribute/index'
 import SettersStyle from '../tabs-setter/setters-style/index'
 import SettersAdvancedSettings from '../tabs-setter/setters-advanced-setting/index'
+import SettersEvent from '../tabs-setter/setters-event/index'
+import { schemaManager } from '@varlet/lowcode-core'
+import { createAst } from '@varlet/lowcode-ast'
 import './headerTabs.less'
 
 const active = ref(0)
@@ -14,6 +17,8 @@ export default defineComponent({
   name: 'VarletLowCodeSelector',
   props: ['refCallback'],
   setup(props) {
+    const schema = schemaManager.exportSchema()
+    console.log(schema, createAst(), 'schema')
     return () => {
       return (
         <div class="setters-tabs-content">
@@ -28,7 +33,7 @@ export default defineComponent({
               <SettersAttribute />
             </VarTabItems>
             <VarTabItems>
-              <div>事件</div>
+              <SettersEvent />
             </VarTabItems>
             <VarTabItems>
               <SettersStyle />

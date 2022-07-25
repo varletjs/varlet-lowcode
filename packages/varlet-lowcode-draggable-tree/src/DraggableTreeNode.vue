@@ -1,6 +1,6 @@
 <script lang="ts" setup name="DraggableTreeNode">
 import { TreeNode, treeNodeProps } from './props'
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, ComputedRef, computed, watch } from 'vue'
 import { Icon } from '@varlet/ui'
 import '@varlet/ui/es/icon/style/index.js'
 
@@ -35,21 +35,41 @@ const onDragOver = (e: DragEvent) => {
 const onDragEnter = (e: Event, treeNode: TreeNode) => {
   e.stopPropagation()
 
+  if (treeNode.id === 'holder') return
+
   props.dnd!.setDropNode(treeNode)
 
-  const dragNode = props.dnd!.dragNode as TreeNode
+  props.dnd!.setOverNode(treeNode, props.dragTree!)
+
   const dropNode = props.dnd!.dropNode as TreeNode
 
-  if (dragNode.id !== dropNode.id) {
-    props.dragTree!.toggleTreeNodeChange(dropNode)
-  }
+  props.dragTree!.toggleTreeNodeChange(dropNode)
 }
+
+const overNode: ComputedRef<TreeNode | undefined> = computed(() => props.dnd!.overNode)
+
+watch(
+  () => overNode.value,
+  (newVal) => {
+    if (newVal && newVal.id === props.treeNode.id) {
+      expand.value = true
+    }
+  }
+)
 
 const onDrop = (e: DragEvent) => {
   e.preventDefault()
   e.stopPropagation()
 
-  props.dragTree?.submitTreeNodeChange()
+  if (props.dnd?.timer) {
+    clearTimeout(props.dnd.timer)
+  }
+
+  if (props.dnd!.dropNode?.id === props.dnd?.overNode?.id) {
+    props.dragTree!.insertNode()
+  } else {
+    props.dragTree!.submitTreeNodeChange()
+  }
 
   props.dnd!.setDropNode()
   props.dnd!.setDragNode()
@@ -67,18 +87,18 @@ const onDrop = (e: DragEvent) => {
     @dragstart="onDragStart($event, treeNode)"
     @dragenter="onDragEnter($event, treeNode)"
     @dragover="onDragOver"
-    @drop="onDrop"
+    @drop="onDrop($event, treeNode)"
   >
     <div class="varlet-low-code-draggable-tree-node__title">
       <Icon
-        v-if="treeNode.children?.length"
+        v-if="treeNode.children"
         @click="toggleExpand"
         name="chevron-right"
         :class="expand ? 'varlet-low-code-draggable-tree-node__icon-expand' : ''"
       />
       {{ treeNode.text }}
     </div>
-    <div style="padding-left: 20px" v-if="treeNode.children?.length && expand">
+    <div style="padding-left: 20px" v-if="treeNode.children && expand">
       <DraggableTreeNode
         :drag-tree="dragTree"
         :dnd="dnd"
