@@ -14,7 +14,6 @@ const toggleExpand = () => {
 }
 
 const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
-  e.stopPropagation()
   e.dataTransfer!.effectAllowed = 'move'
 
   e.dataTransfer!.setDragImage(canvas, 25, 25)
@@ -24,6 +23,8 @@ const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
   props.dragTree!.setFrom(treeNode)
 
   props.dnd!.setDragNode(treeNode)
+
+  e.stopPropagation()
 }
 
 const onDragOver = (e: DragEvent) => {

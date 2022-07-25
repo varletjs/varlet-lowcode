@@ -53,7 +53,11 @@ class DragTree {
 
     this.removeNode(this.from!)
 
-    this.to?.children?.push(this.from!)
+    if (this.to?.children?.length) {
+      this.to?.children?.splice(0, 0, this.from!)
+    } else {
+      this.to?.children?.push(this.from!)
+    }
 
     eventsManager.emit('treeUpdate', this.tree)
 
@@ -108,7 +112,7 @@ class DragTree {
   submitTreeNodeChange() {
     this.removeNode(<TreeNode>this.holder)
     this.removeNode(<TreeNode>this.from)
-    this.addNode(<TreeNode>this.to, <TreeNode>this.from)
+    this.addNode(<TreeNode>this.holder, <TreeNode>this.from)
 
     this.from = undefined
     this.to = undefined
