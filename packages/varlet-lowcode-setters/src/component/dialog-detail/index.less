@@ -108,14 +108,21 @@
     white-space: nowrap;
   }
 
-  &__category > div:hover,
-  &__select-items > div:hover {
-    background: rgba(31, 56, 88, 0.06);
-  }
-
   &__select-items {
     flex: 1;
     overflow: auto;
     height: 100%;
+    .disable {
+      cursor: not-allowed !important;
+      color: #ccc;
+    }
+    .disable:hover {
+      background: #fff;
+    }
+  }
+
+  &__category > div:hover,
+  &__select-items > div:hover {
+    background: rgba(31, 56, 88, 0.06);
   }
 }

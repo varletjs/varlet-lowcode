@@ -2,7 +2,7 @@ import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import { defineComponent, Teleport, computed, ref, Ref, reactive } from 'vue'
 import BindTypePopover from '../bind-type/index'
 import BindDialog from '../dialog-setter/index'
-import Monaco from '@varlet/lowcode-monaco'
+// import Monaco from '@varlet/lowcode-monaco'
 import { schemaManager } from '@varlet/lowcode-core'
 import { createAst } from '@varlet/lowcode-ast'
 import Component from '../../built-in-setters/index'
@@ -39,6 +39,7 @@ export default defineComponent({
       selectIndex.value = val
       selectItemData = returnDeclarations[val]
     }
+    console.log(selectCategory, selectItemData)
     const propsDetail = reactive([
       {
         name: 'title',
@@ -108,6 +109,7 @@ export default defineComponent({
     ])
     const showDialog = ref(false)
     const openBindDialog = (val: string) => {
+      console.log(val)
       showDialog.value = true
     }
     const saveCode = () => {
@@ -150,7 +152,7 @@ export default defineComponent({
               )
             })}
           </div>
-          <BindDialog v-model={showDialog.value} />
+          <BindDialog v-model={showDialog.value} v-model:code={code.value} />
         </div>
       )
     }

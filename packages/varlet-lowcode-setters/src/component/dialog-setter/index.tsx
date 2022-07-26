@@ -33,6 +33,13 @@ export default defineComponent({
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
     const { traverseFunction } = createAst()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
+    const slotProps = [`$slotProps['20112512a1sdas4d51as2d'][0].title`, `$slotProps['asdfas123fsa4f58sd45f'][0].title`]
+    const render = [
+      `$renderArgs['asdasfasfda4sd54as5d4a5sd14'][0].title`,
+      `$renderArgs['fdgdfg5fd41g5fd31gd53g14d5'][0].title`,
+    ]
+    returnDeclarations.slotProps = slotProps
+    returnDeclarations.render = render
     const code: Ref<string> = ref('')
     const show = computed({
       get: () => props.modelValue,
@@ -50,7 +57,9 @@ export default defineComponent({
     const selectCategory = (val: string) => {
       selectIndex.value = val
       selectItemData = returnDeclarations[val]
+      console.log(returnDeclarations, 'selectItemData')
     }
+
     const saveCode = () => {
       try {
         emit('update:code', code.value)

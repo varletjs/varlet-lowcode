@@ -1,5 +1,5 @@
 import { defineComponent, reactive, ref, Ref, watchEffect } from 'vue'
-import { AppBar as VarAppBar, Select as VarSelect, Option as VarOption, Icon } from '@varlet/ui'
+import { AppBar as VarAppBar, CollapseItem as VarCollapseItem, Icon, Collapse as VarCollapse } from '@varlet/ui'
 import BindTypePopover from '../../component/bind-type/index'
 import BindDialog from '../../component/dialog-setter/index'
 import DialogEvent from '../../component/dialog-event/index'
@@ -7,6 +7,8 @@ import DialogEvent from '../../component/dialog-event/index'
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
+import '@varlet/ui/es/collapse-item/style/index.js'
+import '@varlet/ui/es/collapse/style/index.js'
 import './index.less'
 import accessory from '../../../assets/accessory.png'
 
@@ -56,15 +58,15 @@ export default defineComponent({
         <div class="setters-advanced-settings">
           <VarAppBar title="事件设置" color="rgba(31, 56, 88, 0.06)" text-color="#000" v-slots={appBarSlots} />
           <div class="setters-advanced-settings__content">
-            <div class="setters-advanced-settings__attr">
-              <div class="varlet-low-code-field-body__title">绑定事件</div>
-              <div class="varlet-low-code-event__content">
-                <VarSelect multiple v-model={selectValue.value}>
-                  <VarOption label="onChange" />
-                  <VarOption label="onClick" />
-                  <VarOption label="rowSelection.onChange" />
-                </VarSelect>
-              </div>
+            <div class="varlet-low-code-field-body varlet-low-code-event__collapse">
+              <VarCollapse v-model={selectValue.value}>
+                <VarCollapseItem title="点击绑定事件" name="1">
+                  <div class="varlet-low-code-variable-bind__select-items" style={{ padding: '5px 0' }}>
+                    <div class="disable">onChange</div>
+                    <div>rowSelection.onChange</div>
+                  </div>
+                </VarCollapseItem>
+              </VarCollapse>
             </div>
             <div class="varlet-low-code-event__table">
               <div class="varlet-low-code-event__table-row">

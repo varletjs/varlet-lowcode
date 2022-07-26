@@ -1,7 +1,6 @@
 import { defineComponent, reactive, ref } from 'vue'
 import { Icon, Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
 import Component from '../../built-in-setters/index'
-import Draggable from '../../built-in-setters/draggable-setter/index.vue'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 import BindTypePopover from '../../component/bind-type/index'
