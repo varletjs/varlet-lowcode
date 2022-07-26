@@ -20,8 +20,9 @@ export default class Dnd {
     }
     this.timer = setTimeout(() => {
       this.overNode = treeNode
+
       dragTree.insertHolder(this.overNode)
-    }, 1000)
+    }, 500)
   }
 
   setDropNode(treeNode?: TreeNode) {

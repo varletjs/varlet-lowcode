@@ -9,6 +9,13 @@ const expand = ref(false)
 
 const canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas')
 
+const isNext = (e: DragEvent) => {
+  const { bottom, height } = (e.target as Element).getBoundingClientRect()
+  const { y } = e
+
+  return (bottom - y) / height >= 0.5
+}
+
 const toggleExpand = () => {
   expand.value = !expand.value
 }
@@ -27,24 +34,18 @@ const onDragStart = (e: DragEvent, treeNode: TreeNode) => {
   e.stopPropagation()
 }
 
-const onDragOver = (e: DragEvent) => {
-  e.preventDefault()
-
-  e.dataTransfer!.dropEffect = 'move'
-}
-
-const onDragEnter = (e: Event, treeNode: TreeNode) => {
+const onDragEnter = (e: DragEvent, treeNode: TreeNode) => {
   e.stopPropagation()
 
   if (treeNode.id === 'holder') return
 
   props.dnd!.setDropNode(treeNode)
 
-  props.dnd!.setOverNode(treeNode, props.dragTree!)
+  if (treeNode.children) {
+    props.dnd!.setOverNode(treeNode, props.dragTree!)
+  }
 
-  const dropNode = props.dnd!.dropNode as TreeNode
-
-  props.dragTree!.toggleTreeNodeChange(dropNode)
+  props.dragTree!.toggleTreeNodeChange(treeNode, isNext(e))
 }
 
 const overNode: ComputedRef<TreeNode | undefined> = computed(() => props.dnd!.overNode)
@@ -59,7 +60,6 @@ watch(
 )
 
 const onDrop = (e: DragEvent) => {
-  e.preventDefault()
   e.stopPropagation()
 
   if (props.dnd?.timer) {
@@ -69,7 +69,7 @@ const onDrop = (e: DragEvent) => {
   if (props.dnd!.dropNode?.id === props.dnd?.overNode?.id) {
     props.dragTree!.insertNode()
   } else {
-    props.dragTree!.submitTreeNodeChange()
+    props.dragTree!.submitTreeNodeChange(isNext(e))
   }
 
   props.dnd!.setDropNode()
@@ -80,15 +80,16 @@ const onDrop = (e: DragEvent) => {
 <template>
   <div
     :class="{
-      'varlet-low-code-draggable-tree-node--dragging': dnd.dragNode?.id == treeNode.id,
-      'varlet-low-code-draggable-tree-node__holder': treeNode.id == 'holder',
+      'varlet-low-code-draggable-tree-node--dragging': dnd.dragNode?.id === treeNode.id,
+      'varlet-low-code-draggable-tree-node__holder': treeNode.id === 'holder',
     }"
     class="varlet-low-code-draggable-tree-node"
     draggable="true"
     @dragstart="onDragStart($event, treeNode)"
-    @dragenter="onDragEnter($event, treeNode)"
-    @dragover="onDragOver"
-    @drop="onDrop($event, treeNode)"
+    @dragenter.prevent="onDragEnter($event, treeNode)"
+    @dragleave.prevent
+    @dragover.prevent
+    @drop.prevent="onDrop($event, treeNode)"
   >
     <div class="varlet-low-code-draggable-tree-node__title">
       <Icon
@@ -128,6 +129,7 @@ const onDrop = (e: DragEvent) => {
 
   &__holder {
     border: 1px #3a7afe dashed;
+    cursor: move;
   }
 }
 </style>
