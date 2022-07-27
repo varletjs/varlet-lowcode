@@ -3,7 +3,9 @@ import { AppBar as VarAppBar, CollapseItem as VarCollapseItem, Icon, Collapse as
 import BindTypePopover from '../../component/bind-type/index'
 import BindDialog from '../../component/dialog-setter/index'
 import DialogEvent from '../../component/dialog-event/index'
-
+import { eventsManager } from '@varlet/lowcode-core'
+// import { eventsManager } from '@varlet/lowcode-se'
+// SkeletonEvents
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
@@ -13,7 +15,7 @@ import './index.less'
 import accessory from '../../../assets/accessory.png'
 
 export default defineComponent({
-  name: 'SETTERSADVANCEDSETTINGS',
+  name: 'SETTEREVENT',
   setup() {
     const formData: any = reactive({
       isShow: false,
@@ -36,6 +38,8 @@ export default defineComponent({
       selectContent.value = val
     }
 
+    const eventData = reactive(['onChange', 'rowSelection.onChange'])
+    const boundEvents: any = reactive({})
     watchEffect(() => {
       console.log(123)
     })
@@ -52,6 +56,17 @@ export default defineComponent({
     const editEvent = () => {
       showEventDialog.value = true
     }
+
+    const bindEvent = (val: string) => {
+      boundEvents[val] = {}
+    }
+    const delBindEvent = (val: string) => {
+      delete boundEvents[val]
+    }
+    const openSchema = () => {
+      console.log(213)
+      eventsManager.emit('skeleton-sidebar-open', 'code-editor')
+    }
     const selectValue = ref([])
     return () => {
       return (
@@ -62,44 +77,46 @@ export default defineComponent({
               <VarCollapse v-model={selectValue.value}>
                 <VarCollapseItem title="点击绑定事件" name="1">
                   <div class="varlet-low-code-variable-bind__select-items" style={{ padding: '5px 0' }}>
-                    <div class="disable">onChange</div>
-                    <div>rowSelection.onChange</div>
+                    {eventData.map((item) => {
+                      return (
+                        <div
+                          class={boundEvents[item] ? 'disable' : null}
+                          onClick={() => boundEvents[item] ?? bindEvent(item)}
+                        >
+                          {item}
+                        </div>
+                      )
+                    })}
                   </div>
                 </VarCollapseItem>
               </VarCollapse>
             </div>
             <div class="varlet-low-code-event__table">
-              <div class="varlet-low-code-event__table-row">
+              <div class="varlet-low-code-event__table-row varlet-low-code-event__table-header">
                 <div>已绑事件</div>
                 <div>操作</div>
               </div>
-              <div class="varlet-low-code-event__table-row">
-                <div>
-                  <div>onChange</div>
-                  <div style={{ marginLeft: '10px' }}>
-                    <Icon name={accessory} size={20} />
-                    saveCode
-                  </div>
-                </div>
-                <div>
-                  <Icon name="cog-outline" size={24} onClick={editEvent} />
-                  <Icon name="delete" size={24} />
-                </div>
-              </div>
-              <div class="varlet-low-code-event__table-row">
-                <div>
-                  <div>rowSelection.onChange</div>
-                  <div style={{ marginLeft: '10px' }}>
-                    <Icon name={accessory} size={20} />
-                    saveCode
-                  </div>
-                </div>
-                <div>
-                  ·
-                  <Icon name="cog-outline" size={24} />
-                  <Icon name="delete" size={24} />
-                </div>
-              </div>
+              {Object.keys(boundEvents).length ? (
+                Object.keys(boundEvents).map((item) => {
+                  return (
+                    <div class="varlet-low-code-event__table-row">
+                      <div>
+                        <div>{item}</div>
+                        <div style={{ marginLeft: '10px' }} onClick={openSchema}>
+                          <Icon name={accessory} size={20} />
+                          saveCode
+                        </div>
+                      </div>
+                      <div>
+                        <Icon name="cog-outline" size={24} onClick={editEvent} />
+                        <Icon name="delete" size={24} onClick={() => delBindEvent(item)} />
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div class="varlet-low-code-event__empty">暂无绑定数据</div>
+              )}
             </div>
           </div>
           <BindDialog v-model={showDialog.value} v-model:code={dialogCode.value} onConfirm={saveCode} />

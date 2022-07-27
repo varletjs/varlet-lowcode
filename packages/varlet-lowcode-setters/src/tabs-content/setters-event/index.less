@@ -13,13 +13,18 @@
     border-radius: 5px;
   }
 
+  &__table-header {
+    font-size: var(--setter-font-size-sm);
+  }
+
   &__table-row {
     display: flex;
     align-items: center;
+    border-bottom: thin solid rgba(0, 0, 0, 0.12);
 
     > div {
       word-wrap: break-word;
-      padding: 5px 10px;
+      padding: 8px 10px;
       box-sizing: border-box;
     }
 
@@ -30,5 +35,12 @@
     > :last-child {
       width: 100px !important;
     }
+  }
+
+  &__empty {
+    color: #a0a2ad;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
   }
 }
