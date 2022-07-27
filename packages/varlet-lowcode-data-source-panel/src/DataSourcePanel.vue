@@ -7,6 +7,7 @@ import DataSourceModal from './DataSourceModal.vue'
 import '@varlet/ui/es/button/style/index.js'
 import '@varlet/ui/es/divider/style/index.js'
 import type { SchemaPageNode, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
+import { number } from 'yargs'
 
 // const { traverseFunction, transformCompatibleCode } = createAst()
 
@@ -45,7 +46,9 @@ dataSources.value = [
     url: '/aaaaaaaaaaaaaaaaaaa',
     method: 'get',
     description: '这是假的数据源哦',
-    headers: {},
+    headers: {
+      token: '我焯',
+    },
     timeout: 1000,
     withCredentials: true,
     successHandler: '',
@@ -53,9 +56,11 @@ dataSources.value = [
   },
 ]
 
-function editDataSource(dataSource: SchemaPageNodeDataSource): void {
-  console.log(dataSource)
-  Object.assign(formData.value, dataSource)
+const currentIndex = ref<number>(0)
+
+function editDataSource(dataSource: SchemaPageNodeDataSource, index: number): void {
+  currentIndex.value = index
+  formData.value = dataSource
   modalShow.value = true
 }
 
@@ -72,12 +77,16 @@ async function handleSkeletonSidebarToggle() {
   await nextTick()
 }
 
-function saveCode() {
-  try {
-    // schemaManager.importSchema({})
-  } catch (e: any) {
-    // Snackbar.error(e.toString())
-  }
+function updateDataSource(dataSourceForm: SchemaPageNodeDataSource) {
+  dataSources.value[currentIndex.value] = dataSourceForm
+  saveDataSource()
+}
+
+function saveDataSource() {
+  schemaManager.importSchema({
+    ...schema,
+    dataSources: dataSources.value,
+  })
 }
 
 function getCapital(str: string): string[] {
@@ -89,7 +98,7 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 onMounted(() => {
   eventsManager.on('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
 
-  saveCode()
+  // updateDataSource()
 })
 
 onUnmounted(() => {
@@ -107,7 +116,12 @@ onUnmounted(() => {
     <var-divider />
 
     <div class="data-source-list">
-      <div v-for="item in dataSources" :key="item.name" class="data-source-card" @click="editDataSource(item)">
+      <div
+        v-for="(item, index) in dataSources"
+        :key="item.name"
+        class="data-source-card"
+        @click="editDataSource(item, index)"
+      >
         <div class="data-source-card-chip">
           <div class="data-source-card-chip-word">
             {{ getCapital(item.method)[0].toUpperCase() }}
@@ -134,7 +148,12 @@ onUnmounted(() => {
     </div>
   </div>
 
-  <data-source-modal :form-data="formData" :modal-show="modalShow" @close="modalShow = false"></data-source-modal>
+  <data-source-modal
+    :form-data="formData"
+    :modal-show="modalShow"
+    @close="modalShow = false"
+    @confirm="updateDataSource"
+  ></data-source-modal>
 </template>
 
 <style lang="less">
