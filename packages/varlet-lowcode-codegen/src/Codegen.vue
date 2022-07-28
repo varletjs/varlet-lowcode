@@ -8,7 +8,7 @@ import prettier from 'prettier/esm/standalone.mjs'
 import parserBabel from 'prettier/esm/parser-babel.mjs'
 import parserHtml from 'prettier/esm/parser-html.mjs'
 import { saveAs } from 'file-saver'
-import { createAst } from '@varlet/lowcode-ast'
+import { createParser } from '@varlet/lowcode-parser'
 import { Button as VarButton } from '@varlet/ui'
 import { localeManager, schemaManager } from '@varlet/lowcode-core'
 import { cloneDeep } from 'lodash-es'
@@ -103,7 +103,7 @@ const getRendererAssetsManager = (): AssetsManager => {
   return getRendererWindow().VarletLowcodeCore.assetsManager
 }
 
-const { traverseFunction, transformExpressionValue, transformNamedImports } = createAst(getRendererWindow)
+const { traverseFunction, transformExpressionValue, transformNamedImports } = createParser(getRendererWindow)
 
 const convertExpressionBindingPropName = (propName: string, schemaNode: SchemaNode, ignoreKeys: string[]) => {
   const { props = {}, models = [] } = schemaNode

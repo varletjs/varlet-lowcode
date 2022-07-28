@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import { ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
-// import { createAst } from '@varlet/lowcode-ast'
 import { Button as VarButton, Divider as VarDivider } from '@varlet/ui'
 import DataSourceModal from './DataSourceModal.vue'
 import '@varlet/ui/es/button/style/index.js'
 import '@varlet/ui/es/divider/style/index.js'
 import type { SchemaPageNode, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
-
-// const { traverseFunction, transformCompatibleCode } = createAst()
 
 const modalShow = ref<boolean>(false)
 

@@ -12,7 +12,7 @@ export enum BuiltInEvents {
 const originImportSchema = schemaManager.importSchema
 const originImportAssets = assetsManager.importAssets
 
-schemaManager.importSchema = function (schemaPageNode: SchemaPageNode, payload?: any) {
+schemaManager.importSchema = function (schemaPageNode: any, payload?: any) {
   const newSchema = originImportSchema.call(this, schemaPageNode)
 
   if (newSchema) {

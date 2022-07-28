@@ -49,6 +49,7 @@ packages/varlet-lowcode-ast/dist/**
 packages/varlet-lowcode-ast/types/**
 
 packages/varlet-lowcode-cli/lib/**
+packages/varlet-lowcode-schema-jsx-vite-plugin/lib/**
 
 packages/varlet-lowcode-code-editor/lib/**
 packages/varlet-lowcode-code-editor/types/**

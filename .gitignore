@@ -18,6 +18,8 @@ packages/varlet-lowcode-cli/lib/config
 packages/varlet-lowcode-cli/lib/shared
 packages/varlet-lowcode-cli/lib/index.d.ts
 
+packages/varlet-lowcode-schema-jsx-vite-plugin/lib
+
 packages/varlet-lowcode-core/lib
 packages/varlet-lowcode-core/types
 
@@ -62,8 +64,8 @@ packages/varlet-lowcode-selector/types
 packages/varlet-lowcode-profile/lib
 packages/varlet-lowcode-profile/types
 
-packages/varlet-lowcode-ast/lib
-packages/varlet-lowcode-ast/types
+packages/varlet-lowcode-parser/lib
+packages/varlet-lowcode-parser/types
 
 packages/varlet-lowcode-code-editor/lib
 packages/varlet-lowcode-code-editor/types

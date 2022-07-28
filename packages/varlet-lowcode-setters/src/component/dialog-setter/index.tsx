@@ -2,7 +2,7 @@ import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import Monaco from '@varlet/lowcode-monaco'
 import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect } from 'vue'
 import { schemaManager } from '@varlet/lowcode-core'
-import { createAst } from '@varlet/lowcode-ast'
+import { createParser } from '@varlet/lowcode-parser'
 import '@varlet/ui/es/dialog/style/index.js'
 import '@varlet/ui/es/snackbar/style/index.js'
 import './index.less'
@@ -31,7 +31,7 @@ export default defineComponent({
     const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
-    const { traverseFunction } = createAst()
+    const { traverseFunction } = createParser()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
     const slotProps = [`$slotProps['20112512a1sdas4d51as2d'][0].title`, `$slotProps['asdfas123fsa4f58sd45f'][0].title`]
     const render = [

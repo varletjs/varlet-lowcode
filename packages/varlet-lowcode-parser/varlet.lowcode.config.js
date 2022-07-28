@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'varlet-lowcode-ast',
+  name: 'varlet-lowcode-parser',
 
   configureVite(command, config) {
     if (command === 'compile') {

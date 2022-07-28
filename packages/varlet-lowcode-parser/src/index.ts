@@ -25,8 +25,14 @@ export enum SetupReturnVariableDeclarationGroups {
   VARIABLE = 'variable',
 }
 
-export function createAst(rendererWindowGetter?: () => any) {
+export function createParser(rendererWindowGetter?: () => any) {
   function transformExpressionValue(value: string) {
+    if (!rendererWindowGetter) {
+      throw new Error('renderer window getter not found, please pass the rendererWindowGetter')
+    }
+
+    const rendererWindow = rendererWindowGetter()
+
     value = value
       .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
       .replace(/\$index\.(.+)(?![.\[])/g, '$index_$1')
@@ -48,7 +54,7 @@ export function createAst(rendererWindowGetter?: () => any) {
           t.isIdentifier(path.node.property) &&
           path.node.property.name === 'value'
         ) {
-          if (rendererWindowGetter?.().isRef(rendererWindowGetter().eval(`${path.node.object.name}`))) {
+          if (rendererWindow.isRef(rendererWindow.eval(`${path.node.object.name}`))) {
             path.replaceWith(t.identifier(path.node.object.name))
           }
         }

@@ -1,8 +1,8 @@
 {
-  "name": "@varlet/lowcode-ast",
+  "name": "@varlet/lowcode-parser",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-ast.es.js",
-  "module": "lib/varlet-lowcode-ast.es.js",
+  "main": "lib/varlet-lowcode-parser.es.js",
+  "module": "lib/varlet-lowcode-parser.es.js",
   "types": "types/index.d.ts",
   "files": [
     "lib",

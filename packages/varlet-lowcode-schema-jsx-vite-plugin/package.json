@@ -1,0 +1,25 @@
+{
+  "name": "@varlet/lowcode-schema-jsx-vite-plugin",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "files": [
+    "lib",
+    "types",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@babel/generator": "^7.18.7",
+    "@babel/parser": "^7.18.6",
+    "@babel/traverse": "^7.18.6",
+    "@babel/types": "^7.18.7"
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "vite": "^2.9.12"
+  }
+}

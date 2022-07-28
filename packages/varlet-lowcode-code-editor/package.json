@@ -20,7 +20,7 @@
   "devDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
+    "@varlet/lowcode-parser": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/lowcode-skeleton": "workspace: *",
     "@varlet/ui": "1.27.17",
@@ -35,7 +35,7 @@
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-skeleton": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
+    "@varlet/lowcode-parser": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
     "@varlet/ui": "1.27.17"
   },

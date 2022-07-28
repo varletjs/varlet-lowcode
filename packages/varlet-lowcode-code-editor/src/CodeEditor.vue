@@ -2,7 +2,7 @@
 import Monaco from '@varlet/lowcode-monaco'
 import { ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
-import { createAst } from '@varlet/lowcode-ast'
+import { createParser } from '@varlet/lowcode-parser'
 import {
   Snackbar,
   StyleProvider,
@@ -23,7 +23,7 @@ import type { IRange } from 'monaco-editor'
 
 const VarStyleProvider = StyleProvider.Component
 
-const { traverseFunction, transformCompatibleCode } = createAst()
+const { traverseFunction, transformCompatibleCode } = createParser()
 
 let schema = schemaManager.exportSchema()
 

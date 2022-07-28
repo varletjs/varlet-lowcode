@@ -13,7 +13,9 @@ export interface SchemaManager {
   generateId(): string
 
   createExpressionBinding(expression: string, compatibleExpression?: string): SchemaNodeBinding
+
   createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
+  createRenderBinding(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
 
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
   cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
@@ -21,8 +23,11 @@ export interface SchemaManager {
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
-  importSchema(schemaPageNode: SchemaPageNode): SchemaPageNode | boolean
+  importSchema(schema: JSX.Element): SchemaPageNode | boolean
+  importSchema(schema: SchemaPageNode): SchemaPageNode | boolean
   importSchema(schemaPageNode: SchemaPageNode, payload?: any): SchemaPageNode | boolean
+  importSchema(schemaPageNode: JSX.Element, payload?: any): SchemaPageNode | boolean
+
   exportSchema(): SchemaPageNode
 }
 
@@ -58,7 +63,6 @@ export interface SchemaNode {
   slots?: Record<string, SchemaNodeSlot>
   if?: SchemaNodeBinding
   for?: SchemaNodeBinding
-  key?: SchemaNodeBinding
   models?: string[]
 }
 
@@ -264,7 +268,9 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
-  function createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding {
+  function createRenderBinding(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
+  function createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
+  function createRenderBinding(schemaNodes: any[], renderId?: string): SchemaNodeBinding {
     return {
       type: BuiltInSchemaNodeBindingTypes.RENDER_BINDING,
       renderId: renderId ?? generateId(),
@@ -272,7 +278,9 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
-  function importSchema(schema: SchemaPageNode): SchemaPageNode | boolean {
+  function importSchema(schema: JSX.Element): SchemaPageNode | boolean
+  function importSchema(schema: SchemaPageNode): SchemaPageNode | boolean
+  function importSchema(schema: any): SchemaPageNode | boolean {
     const newSchema = normalizeSchemaNode(cloneSchemaNode(schema))
 
     if (JSON.stringify(newSchema) === JSON.stringify(_schema)) {

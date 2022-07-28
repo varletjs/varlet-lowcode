@@ -25,6 +25,7 @@
   "dependencies": {
     "@vitejs/plugin-vue": "2.2.0",
     "@vitejs/plugin-vue-jsx": "1.3.5",
+    "@varlet/lowcode-schema-jsx-vite-plugin": "workspace:*",
     "typescript": "^4.4.4",
     "vite": "2.9.5",
     "vue": "3.2.25",
