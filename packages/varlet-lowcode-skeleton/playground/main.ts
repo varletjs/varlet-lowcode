@@ -5,6 +5,8 @@ import { createApp } from 'vue'
 import { schemaManager, assetsManager } from '@varlet/lowcode-core'
 import '@varlet/touch-emulator'
 
+console.log(schema)
+
 usePlugins()
 
 schemaManager.importSchema(schema)

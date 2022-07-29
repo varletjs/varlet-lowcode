@@ -15,11 +15,15 @@ function setup() {
 `
 const css = 'body {\n  padding: 20px\n}'
 
+const spread = {
+  name: 'NDataTable',
+  library: 'naive',
+}
+
 const schema = (
   <page id={generateId()} code={code} css={css}>
     <node
-      name="NDataTable"
-      library="naive"
+      {...spread}
       props={{
         columns: [
           {

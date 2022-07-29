@@ -31,7 +31,7 @@ function getTag(node: t.JSXElement) {
 
 function getProperties(node: t.JSXElement) {
   const tag = getTag(node)
-  const properties: t.ObjectProperty[] = []
+  const properties: (t.ObjectProperty | t.SpreadElement)[] = []
 
   if (!tag || tag === Tags.SLOT_TAG) {
     return []
@@ -46,6 +46,11 @@ function getProperties(node: t.JSXElement) {
       // prop="Button"
       if (t.isJSXAttribute(attribute) && t.isJSXIdentifier(attribute.name) && t.isStringLiteral(attribute.value)) {
         properties.push(t.objectProperty(t.identifier(attribute.name.name), t.stringLiteral(attribute.value.value)))
+      }
+
+      // {...props}
+      if (t.isJSXSpreadAttribute(attribute)) {
+        properties.push(t.spreadElement(attribute.argument))
       }
 
       // prop={}
@@ -85,7 +90,7 @@ function transformJSXElement(node: t.JSXElement) {
 
   const slots = t.objectExpression([])
   const slotNameToChildren = new Map<string, t.ArrayExpression>()
-  const properties: t.ObjectProperty[] = getProperties(node)
+  const properties: (t.ObjectProperty | t.SpreadElement)[] = getProperties(node)
 
   function getChildren(slotName: string) {
     let children = slotNameToChildren.get(slotName)
