@@ -43,6 +43,7 @@ export enum BuiltInSchemaNodeBindingTypes {
 }
 
 export type SchemaNodeProps = Record<string, SchemaNodeBinding>
+export type SchemaNodeSlots = Record<string, SchemaNodeSlot>
 
 export type SchemaNodeBinding = any
 
@@ -60,7 +61,7 @@ export interface SchemaNode {
   library?: string
   id?: string
   props?: SchemaNodeProps
-  slots?: Record<string, SchemaNodeSlot>
+  slots?: SchemaNodeSlots
   if?: SchemaNodeBinding
   for?: SchemaNodeBinding
   models?: string[]
