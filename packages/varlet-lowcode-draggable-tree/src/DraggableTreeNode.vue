@@ -80,7 +80,7 @@ const onDrop = (e: DragEvent) => {
 <template>
   <div
     :class="{
-      'varlet-low-code-draggable-tree-node--dragging': dnd.dragNode?.id === treeNode.id,
+      'varlet-low-code-draggable-tree-node--dragging': dnd?.dragNode?.id === treeNode.id,
       'varlet-low-code-draggable-tree-node__holder': treeNode.id === 'holder',
     }"
     class="varlet-low-code-draggable-tree-node"
@@ -89,7 +89,7 @@ const onDrop = (e: DragEvent) => {
     @dragenter.prevent="onDragEnter($event, treeNode)"
     @dragleave.prevent
     @dragover.prevent
-    @drop.prevent="onDrop($event, treeNode)"
+    @drop.prevent="onDrop"
   >
     <div class="varlet-low-code-draggable-tree-node__title">
       <Icon
@@ -105,9 +105,9 @@ const onDrop = (e: DragEvent) => {
         :drag-tree="dragTree"
         :dnd="dnd"
         v-show="expand"
-        :tree-node="treeNode"
-        v-for="treeNode of treeNode.children"
-        :key="treeNode.id"
+        :tree-node="treeChildNode"
+        v-for="treeChildNode of treeNode.children"
+        :key="treeChildNode.id"
       />
     </div>
   </div>
@@ -116,6 +116,8 @@ const onDrop = (e: DragEvent) => {
 <style lang="less" scoped>
 .varlet-low-code-draggable-tree-node {
   &__title {
+    display: flex;
+    align-items: center;
     height: 30px;
   }
 
