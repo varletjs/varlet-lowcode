@@ -227,7 +227,7 @@ const genSlots = (
     .map(([slotName, slot]) => {
       const slotPropsVariable = hasSlotProps(schemaNode, slotName) ? `="$slotProps_${schemaNode.id}"` : ''
 
-      if (slotName === 'default' && !hasSlotProps) {
+      if (slotName === 'default' && !hasSlotProps(schemaNode, slotName)) {
         return slot.children.map((schemaNode) => genTag(schemaNode, seenLibrariesInRender)).join('\n')
       }
 
