@@ -1,6 +1,6 @@
 import { schemaManager } from '@varlet/lowcode-core'
 
-const { generateId, createRenderBinding, createExpressionBinding } = schemaManager
+const { id, render, expression } = schemaManager
 
 const code = `\
 function setup() {
@@ -20,8 +20,30 @@ const spread = {
   library: 'naive',
 }
 
+const props = {
+  style: {
+    marginBottom: '10px',
+  },
+  type: 'primary',
+  onClick: expression('() => { count.value++; }'),
+}
+
+const buttons = Array.from({ length: 4 }, () => {
+  return (
+    <node name="Button" library="Varlet" props={{ type: 'primary' }}>
+      <t textContent="hello" />
+    </node>
+  )
+})
+
+const button = (
+  <node name="Button" library="Varlet" props={{ type: 'success' }}>
+    <t textContent={expression('count.value')} />
+  </node>
+)
+
 const schema = (
-  <page id={generateId()} code={code} css={css}>
+  <page id={id()} code={code} css={css}>
     <node
       {...spread}
       props={{
@@ -37,24 +59,13 @@ const schema = (
           {
             title: 'Action',
             key: 'actions',
-            render: createRenderBinding(
+            render: render(
               [
-                <node
-                  id={generateId()}
-                  name="NButton"
-                  library="naive"
-                  props={{
-                    style: {
-                      marginBottom: '10px',
-                    },
-                    type: 'primary',
-                    onClick: createExpressionBinding('() => { count.value++; }'),
-                  }}
-                >
-                  <t id={generateId()} textContent={createExpressionBinding('count.value')} />
+                <node id={id()} name="NButton" library="naive" props={props}>
+                  <t id={id()} textContent={expression('count.value')} />
                 </node>,
               ],
-              generateId()
+              id()
             ),
           },
         ],
@@ -65,7 +76,11 @@ const schema = (
         ],
       }}
     />
+    {buttons}
+    {button}
   </page>
 )
+
+console.log(schema)
 
 export default schema

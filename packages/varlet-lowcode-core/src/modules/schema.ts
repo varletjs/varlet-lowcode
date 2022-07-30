@@ -4,10 +4,13 @@ import { v4 as uuid } from 'uuid'
 
 export interface SchemaManager {
   isSchemaPageNode(schemaNode: unknown): schemaNode is SchemaPageNode
+
   isSchemaTextNode(schemaNode: unknown): schemaNode is SchemaTextNode
 
   isExpressionBinding(value: unknown): boolean
+
   isObjectBinding(value: unknown): boolean
+
   isRenderBinding(value: unknown): boolean
 
   generateId(): string
@@ -18,9 +21,14 @@ export interface SchemaManager {
   createRenderBinding(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
 
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
-  cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T
+  visitSchemaNode(schemaNode: JSX.Element, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
 
+  cloneSchemaNode<T extends SchemaNode | JSX.Element>(schemaNode: T): T
+
+  findSchemaNodeById(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element | null
   findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
+
+  removeSchemaNodeById(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element
   removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
 
   importSchema(schema: JSX.Element): SchemaPageNode | boolean
@@ -29,6 +37,19 @@ export interface SchemaManager {
   importSchema(schemaPageNode: JSX.Element, payload?: any): SchemaPageNode | boolean
 
   exportSchema(): SchemaPageNode
+
+  // shorthand
+  id(): string
+  expression(expression: string, compatibleExpression?: string): SchemaNodeBinding
+  render(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
+  render(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
+  remove(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element
+  remove(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
+  find(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element | null
+  find(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
+  visit(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
+  visit(schemaNode: JSX.Element, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
+  clone<T extends SchemaNode | JSX.Element>(schemaNode: T): T
 }
 
 export enum BuiltInSchemaNodeNames {
@@ -167,7 +188,7 @@ export function createSchemaManager(): SchemaManager {
     return removeHyphen(uuid())
   }
 
-  function cloneSchemaNode<T extends SchemaNode>(schemaNode: T): T {
+  function cloneSchemaNode<T extends SchemaNode | JSX.Element>(schemaNode: T): T {
     return JSON.parse(JSON.stringify(schemaNode))
   }
 
@@ -195,8 +216,10 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
+  function visitSchemaNode(schemaNode: JSX.Element, visitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
+  function visitSchemaNode(schemaNode: SchemaNode, visitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
   function visitSchemaNode(
-    schemaNode: SchemaNode,
+    schemaNode: any,
     visitor: SchemaNodeVisitor,
     include: SchemaNodeIn[] = [SchemaNodeIn.SLOTS, SchemaNodeIn.PROPS]
   ) {
@@ -207,7 +230,7 @@ export function createSchemaManager(): SchemaManager {
     }
 
     if (isPlainObject(schemaNode.slots) && include.includes(SchemaNodeIn.SLOTS)) {
-      for (const slot of Object.values(schemaNode.slots)) {
+      for (const slot of Object.values(schemaNode.slots as SchemaNodeSlot[])) {
         if (isArray(slot.children) && slot.children.length > 0) {
           for (const schemaNodeChild of slot.children) {
             if (visitor(schemaNodeChild, slot.children, SchemaNodeIn.SLOTS)) {
@@ -221,7 +244,9 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
-  function findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null {
+  function findSchemaNodeById(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element | null
+  function findSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode | null
+  function findSchemaNodeById(schemaNode: any, id: any): any {
     let founded = null
 
     visitSchemaNode(schemaNode, (schemaNode) => {
@@ -234,7 +259,9 @@ export function createSchemaManager(): SchemaManager {
     return founded
   }
 
-  function removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode {
+  function removeSchemaNodeById(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element
+  function removeSchemaNodeById(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
+  function removeSchemaNodeById(schemaNode: any, id: any): any {
     visitSchemaNode(schemaNode, (schemaNode, schemaNodeSiblings) => {
       if (schemaNode.id === id) {
         removeItem(schemaNodeSiblings!, schemaNode)
@@ -318,6 +345,15 @@ export function createSchemaManager(): SchemaManager {
 
     importSchema,
     exportSchema,
+
+    // shorthand
+    id: generateId,
+    expression: createExpressionBinding,
+    render: createRenderBinding,
+    clone: cloneSchemaNode,
+    visit: visitSchemaNode,
+    find: findSchemaNodeById,
+    remove: removeSchemaNodeById,
   }
 }
 

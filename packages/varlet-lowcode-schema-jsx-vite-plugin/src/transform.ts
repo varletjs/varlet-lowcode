@@ -81,6 +81,16 @@ function getSlotName(node: t.JSXElement) {
   }
 }
 
+function transformJSXExpression(expression: t.Expression) {
+  return t.spreadElement(
+    t.conditionalExpression(
+      t.callExpression(t.memberExpression(t.identifier('Array'), t.identifier('isArray')), [expression]),
+      expression,
+      t.arrayExpression([expression])
+    )
+  )
+}
+
 function transformJSXElement(node: t.JSXElement) {
   const tag = getTag(node)
 
@@ -134,7 +144,7 @@ function transformJSXElement(node: t.JSXElement) {
             }
           } else if (t.isJSXExpressionContainer(slotChildNode) && !t.isJSXEmptyExpression(slotChildNode.expression)) {
             // { render() }
-            children.elements.push(slotChildNode.expression)
+            children.elements.push(transformJSXExpression(slotChildNode.expression))
           }
         }
       }
@@ -147,7 +157,7 @@ function transformJSXElement(node: t.JSXElement) {
       }
     } else if (t.isJSXExpressionContainer(childNode) && !t.isJSXEmptyExpression(childNode.expression)) {
       // { render() }
-      getChildren('default').elements.push(childNode.expression)
+      getChildren('default').elements.push(transformJSXExpression(childNode.expression))
     }
   }
 
