@@ -25,7 +25,6 @@ eventsManager.on('treeUpdate', handleTreeUpdate)
 </script>
 
 <template>
-  {{ dnd.overNode?.id }}
   <div @dragover="onDragOver" class="varlet-low-code-draggable-tree">
     <DraggableTreeNode
       v-for="treeNode of props.tree"
