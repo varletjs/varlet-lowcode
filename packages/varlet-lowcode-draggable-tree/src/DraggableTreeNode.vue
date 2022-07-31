@@ -53,7 +53,7 @@ const overNode: ComputedRef<TreeNode | undefined> = computed(() => props.dnd!.ov
 watch(
   () => overNode.value,
   (newVal) => {
-    if (newVal && newVal.id === props.treeNode.id) {
+    if (newVal && newVal.id === props.treeNode.id && props.dnd?.dragNode?.id !== overNode.value?.id) {
       expand.value = true
     }
   }
@@ -90,6 +90,9 @@ const onDrop = (e: DragEvent) => {
     @dragleave.prevent
     @dragover.prevent
     @drop.prevent="onDrop"
+    :style="{
+      paddingLeft: `${20 * zIndex}px`,
+    }"
   >
     <div class="varlet-low-code-draggable-tree-node__title">
       <Icon
@@ -100,11 +103,12 @@ const onDrop = (e: DragEvent) => {
       />
       {{ treeNode.text }}
     </div>
-    <div style="padding-left: 20px" v-if="treeNode.children && expand">
+    <div v-if="treeNode.children && expand">
       <DraggableTreeNode
         :drag-tree="dragTree"
         :dnd="dnd"
         v-show="expand"
+        :z-index="zIndex + 1"
         :tree-node="treeChildNode"
         v-for="treeChildNode of treeNode.children"
         :key="treeChildNode.id"
