@@ -464,7 +464,11 @@ export default defineComponent({
         ? withDirectives(
             h(
               'div',
-              { class: 'varlet-low-code-renderer varlet-low-code-renderer__designer', mode: props.mode },
+              {
+                style: 'min-height:100vh',
+                class: 'varlet-low-code-renderer varlet-low-code-renderer__designer',
+                mode: props.mode,
+              },
               renderSchemaNodeSlots(props.schema, {})
             ),
             [
