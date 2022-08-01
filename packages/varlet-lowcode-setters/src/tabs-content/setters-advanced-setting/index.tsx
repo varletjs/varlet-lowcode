@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref, Ref, watchEffect } from 'vue'
-import { AppBar as VarAppBar } from '@varlet/ui'
-import { SwitchSetter, InputSetter } from '../../built-in-setters/index'
+import { AppBar as VarAppBar, Icon } from '@varlet/ui'
+import { SwitchSetter, InputSetter, TextSetter } from '../../built-in-setters/index'
 import BindTypePopover from '../../component/bind-type/index'
 import BindDialog from '../../component/dialog-setter/index'
 import '@varlet/ui/es/app-bar/style/index.js'
@@ -23,14 +23,9 @@ export default defineComponent({
     const selectContent: Ref<string> = ref('')
     const openBindDialog = (val: string) => {
       dialogCode.value = formData[val]
-
       showDialog.value = true
       selectContent.value = val
     }
-
-    watchEffect(() => {
-      console.log(123)
-    })
 
     const appBarSlots = {
       right: () => {
@@ -48,61 +43,51 @@ export default defineComponent({
     }
     return () => {
       return (
-        <div class="setters-advanced-settings">
+        <div class="varlet-low-code-setters-advanced-settings">
           <VarAppBar title="是否渲染" color="rgba(31, 56, 88, 0.06)" text-color="#000" v-slots={appBarSlots} />
-          <div class="setters-advanced-settings__content">
-            <div class="setters-advanced-settings__attr">
+          <div class="varlet-low-code-setters-advanced-settings__content">
+            <div class="varlet-low-code-setters-advanced-settings__attr">
               {formData.isShowType === 'Setter' ? (
                 <SwitchSetter v-model={formData.isShow} />
               ) : (
-                <div onClick={() => openBindDialog('showCode')} class="setters-advanced-settings__bind-content">
-                  已绑定:
-                  <br />
-                  {formData.showCode}
-                </div>
+                <TextSetter v-model={formData.showCode} onClickText={() => openBindDialog('showCode')} />
               )}
             </div>
           </div>
           <VarAppBar title="唯一渲染标识" color="rgba(31, 56, 88, 0.06)" text-color="#000" v-slots={keySlots} />
-          <div class="setters-advanced-settings__content">
-            <div class="setters-advanced-settings__attr">
+          <div class="varlet-low-code-setters-advanced-settings__content">
+            <div class="varlet-low-code-setters-advanced-settings__attr">
               {formData.keyType === 'Setter' ? (
                 <InputSetter v-model={formData.key} />
               ) : (
-                <div onClick={() => openBindDialog('keyCode')} class="setters-advanced-settings__bind-content">
-                  已绑定:
-                  <br />
-                  {formData.keyCode}
-                </div>
+                <TextSetter v-model={formData.keyCode} onClickText={() => openBindDialog('keyCode')} />
               )}
             </div>
           </div>
           <VarAppBar title="循环" color="rgba(31, 56, 88, 0.06)" text-color="#000" />
-          <div class="setters-advanced-settings__content">
-            <div class="setters-attribute-field">
-              <div class="attribute-field-body">
-                <div class="attribute-field-body-title">循环数据</div>
-                <div class="attribute-field-body-content">
-                  {/* <div>231546</div> */}
-                  <BindTypePopover
-                    v-model={formData.isShowType}
-                    onSelectVariable={() => openBindDialog('showCode')}
-                    class="varlet-low-code-field__body-setter-icon"
-                  />
-                </div>
-              </div>
-              <div class="attribute-field-body">
-                <div class="attribute-field-body-title">循环 Key</div>
-                <div class="attribute-field-body-content">
-                  <InputSetter v-model={formData.key} />
-                  <BindTypePopover
-                    v-model={formData.isShowType}
-                    onSelectVariable={() => openBindDialog('showCode')}
-                    class="varlet-low-code-field__body-setter-icon"
-                  />
-                </div>
+          <div class="varlet-low-code-setters-advanced-settings__content">
+            <div class="varlet-low-code-field-body">
+              <div class="varlet-low-code-field-body-content">
+                <div class="varlet-low-code-field-body-title">循环数据</div>
+                <TextSetter v-model={formData.key} />
+                <BindTypePopover
+                  v-model={formData.isShowType}
+                  onSelectVariable={() => openBindDialog('showCode')}
+                  class="varlet-low-code-field__body-setter-icon"
+                />
               </div>
             </div>
+            {/* <div class="attribute-field-body">
+              <div class="attribute-field-body-title">循环 Key</div>
+              <div class="attribute-field-body-content">
+                <InputSetter v-model={formData.key} />
+                <BindTypePopover
+                  v-model={formData.isShowType}
+                  onSelectVariable={() => openBindDialog('showCode')}
+                  class="varlet-low-code-field__body-setter-icon"
+                />
+              </div>
+            </div> */}
           </div>
           <BindDialog v-model={showDialog.value} v-model:code={dialogCode.value} onConfirm={saveCode} />
         </div>

@@ -10,7 +10,7 @@ import SettersStyle from './tabs-content/setters-style/index'
 import SettersAdvancedSettings from './tabs-content/setters-advanced-setting/index'
 import SettersEvent from './tabs-content/setters-event/index'
 import { schemaManager } from '@varlet/lowcode-core'
-import { createParser } from '@varlet/lowcode-parser'
+// import { createParser } from '@varlet/lowcode-parser'
 import './index.less'
 
 const active = ref(0)
@@ -57,7 +57,6 @@ export default defineComponent({
       setTree(schema, params)
     }
     weakMapTree()
-    console.log(schema, createParser(), 'schema')
     return () => {
       return (
         <div class="varlet-lowcode-setters">

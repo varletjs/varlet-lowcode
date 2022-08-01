@@ -27,7 +27,6 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'update:code', 'Confirm'],
   setup(props, { emit }) {
-    console.log(emit, 'emit')
     const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
@@ -57,7 +56,6 @@ export default defineComponent({
     const selectCategory = (val: string) => {
       selectIndex.value = val
       selectItemData = returnDeclarations[val]
-      console.log(returnDeclarations, 'selectItemData')
     }
 
     const saveCode = () => {

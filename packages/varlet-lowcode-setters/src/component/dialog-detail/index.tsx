@@ -39,7 +39,6 @@ export default defineComponent({
       selectIndex.value = val
       selectItemData = returnDeclarations[val]
     }
-    console.log(selectCategory, selectItemData)
     const propsDetail = reactive([
       {
         name: 'title',
@@ -109,12 +108,12 @@ export default defineComponent({
     ])
     const showDialog = ref(false)
     const openBindDialog = (val: string) => {
-      console.log(val)
       showDialog.value = true
+      return val
     }
     const saveCode = () => {
       try {
-        console.log(1)
+        return
       } catch (e: any) {
         Snackbar.error(e.toString())
       }

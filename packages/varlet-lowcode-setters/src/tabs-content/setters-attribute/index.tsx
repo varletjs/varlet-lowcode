@@ -1,9 +1,10 @@
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, Ref } from 'vue'
 import { Icon, Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
 import Component from '../../built-in-setters/index'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
 import BindTypePopover from '../../component/bind-type/index'
+import BindDialog from '../../component/dialog-setter/index'
 import './index.less'
 
 export default defineComponent({
@@ -88,7 +89,14 @@ export default defineComponent({
     })
 
     const values = ref(['1'])
-
+    const openBindDialog = (val: string) => {
+      showDialog.value = true
+    }
+    const showDialog = ref(false)
+    const dialogCode: Ref<any> = ref()
+    const saveCode = () => {
+      showDialog.value = false
+    }
     const layoutContent = (item: any) => {
       let content
       if (item.layout === 'singRow') {
@@ -133,7 +141,7 @@ export default defineComponent({
                 class="varlet-low-code-field__body-setter-icon"
                 v-model={item.setterType}
                 options={item.options ?? undefined}
-                // onSelectVariable={() => openBindDialog('showCode')}
+                onSelectVariable={() => openBindDialog('showCode')}
               />
             </div>
           </div>
@@ -152,6 +160,7 @@ export default defineComponent({
               })}
             </VarCollapseItem>
           </VarCollapse>
+          <BindDialog v-model={showDialog.value} v-model:code={dialogCode.value} onConfirm={saveCode} />
         </div>
       )
     }

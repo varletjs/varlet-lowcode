@@ -2,6 +2,7 @@ import { defineComponent, reactive, ref } from 'vue'
 import { Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
 import { RadioSetter, SelectSetter, InputSetter, SliderSetter, CounterSetter } from '../../built-in-setters/index'
 import SetterPosition from '../../built-in-setters/positon-setter/index'
+import BackGauge from '../../component/back-gauge/index'
 import Popover from '../../component/popover/popover'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
@@ -108,56 +109,13 @@ export default defineComponent({
         <div class="setters-style-field">
           <VarCollapse v-model={values.value}>
             <VarCollapseItem title="布局" name="1">
-              <div class="style-field-body">
+              <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">布局模式</div>
                 <div class="style-field-body-content">
                   <SelectSetter v-model={formData.disable} options={options} />
                 </div>
-                <div class="layout-box-container">
-                  <div class="margin-top-div">
-                    <span class="explain-txt">MARGIN</span>
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="margin-right-div">
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="margin-bottom-div">
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="margin-left-div">
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="padding-top-div">
-                    <span class="explain-txt">PADDING</span>
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="padding-right-div">
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="padding-bottom-div">
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div class="padding-left-div">
-                    <span class="next-input">
-                      <input type="text" />
-                    </span>
-                  </div>
-                </div>
               </div>
+              <BackGauge />
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">宽度</div>
                 <div class="style-field-body-content">

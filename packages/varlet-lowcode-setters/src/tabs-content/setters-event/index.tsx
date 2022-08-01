@@ -40,9 +40,6 @@ export default defineComponent({
 
     const eventData = reactive(['onChange', 'rowSelection.onChange'])
     const boundEvents: any = reactive({})
-    watchEffect(() => {
-      console.log(123)
-    })
 
     const appBarSlots = {
       right: () => {
@@ -64,7 +61,6 @@ export default defineComponent({
       delete boundEvents[val]
     }
     const openSchema = () => {
-      console.log(213)
       eventsManager.emit('skeleton-sidebar-open', 'code-editor')
     }
     const selectValue = ref([])
