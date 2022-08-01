@@ -1,15 +1,11 @@
-import { EventsManager } from '@varlet/lowcode-core'
 import type { CSSProperties, Ref } from 'vue'
-import { onMounted, onUnmounted, defineComponent, ref, PropType } from 'vue'
+import { onMounted, onUnmounted, defineComponent, ref } from 'vue'
 import PluginRender from './PluginRender'
+import props from './props'
 
 export default defineComponent({
   name: 'VarletLowCodeSelector',
-  props: {
-    designerEventsManager: {
-      type: Object as PropType<EventsManager>,
-    },
-  },
+  props,
   setup(props) {
     const initStyle: CSSProperties = {
       border: '2px solid red',

@@ -7,33 +7,46 @@ import _props from '../props'
 
 const props = defineProps(_props)
 
-function addSchemaNode(schemaNode: SchemaNode, parentId: SchemaNode['id'], slotsName = 'default'): SchemaPageNode {
+function addSchemaNode(id: SchemaNode['id'], slotsName = 'default'): SchemaPageNode {
   const rootSchemaNode: SchemaPageNode =
     props.schema ??
     <SchemaPageNode>{
       name: BuiltInSchemaNodeNames.PAGE,
     }
-  const { id } = schemaNode
+
+  const firstChildren = rootSchemaNode.slots![slotsName].children ?? []
+
+  for (const schemaChildNode of firstChildren) {
+    if (schemaChildNode.id === id) {
+      const newSchema = schemaManager.clone(schemaChildNode)
+      newSchema.id = schemaManager.generateId()
+
+      rootSchemaNode.slots![slotsName].children.push(newSchema)
+
+      return rootSchemaNode
+    }
+  }
 
   schemaManager!.visitSchemaNode(rootSchemaNode, (schemaNode) => {
-    if (schemaNode.id === id) {
-      throw new Error("SchemaNode already added. The schema's id is repeatedly")
-    }
+    !schemaManager.isSchemaTextNode(schemaNode) &&
+      schemaNode.slots![slotsName].children.forEach((schemaChildNode: SchemaNode) => {
+        if (schemaChildNode.id === id) {
+          const newSchema = schemaManager.clone(schemaChildNode)
+          newSchema.id = schemaManager.generateId()
 
-    if (schemaNode.id === parentId) {
-      schemaNode.slots![slotsName].children!.push(schemaNode)
-      return true
-    }
+          schemaNode.slots![slotsName].children.push(newSchema)
+          return true
+        }
+      })
   })
 
   return rootSchemaNode
 }
 
 const copyClick = () => {
-  // const newSchema = addSchemaNode()
+  const newSchema = addSchemaNode(props.schemaId)
 
-  // props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
-  console.log('props', props.schemaId)
+  props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
 }
 </script>
 
