@@ -27,15 +27,15 @@ await runTask('dnd', buildDnd)
 await runTask('selector', buildSelector)
 await runTask('renderer', buildRenderer)
 await runTask('designer', buildDesigner)
-await runTask('parser and monaco', () => Promise.all([buildParser, buildMonaco]))
+await runTask('parser and monaco', () => Promise.all([buildParser(), buildMonaco()]))
 await runTask('plugins and more', () => Promise.all([
-  buildCodeEditor,
-  buildSchemaEditor,
-  buildCodegen,
-  buildUndoRedo,
-  buildResizer,
-  buildMaterialsPanel,
-  buildProfile,
-  buildLocaleSwitcher
+  buildCodeEditor(),
+  buildSchemaEditor(),
+  buildCodegen(),
+  buildUndoRedo(),
+  buildResizer(),
+  buildMaterialsPanel(),
+  buildProfile(),
+  buildLocaleSwitcher()
 ]))
 
