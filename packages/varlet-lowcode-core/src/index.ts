@@ -1,4 +1,4 @@
-import schemaManager, { SchemaPageNode } from './modules/schema'
+import schemaManager from './modules/schema'
 import assetsManager, { Assets } from './modules/assets'
 import eventsManager from './modules/events'
 import pluginsManager from './modules/plugins'

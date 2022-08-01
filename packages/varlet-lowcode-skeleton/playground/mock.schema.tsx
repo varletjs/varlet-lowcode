@@ -30,14 +30,14 @@ const props = {
 
 const buttons = Array.from({ length: 4 }, () => {
   return (
-    <node name="Button" library="Varlet" props={{ type: 'primary' }}>
+    <node id={id()} name="Button" library="Varlet" props={{ type: 'primary' }}>
       <t textContent="hello" />
     </node>
   )
 })
 
 const button = (
-  <node name="Button" library="Varlet" props={{ type: 'success' }}>
+  <node id={id()} for={4} name="Button" library="Varlet" props={{ type: 'success' }}>
     <t textContent={expression('count.value')} />
   </node>
 )
@@ -45,6 +45,7 @@ const button = (
 const schema = (
   <page id={id()} code={code} css={css}>
     <node
+      id={id()}
       {...spread}
       props={{
         columns: [
