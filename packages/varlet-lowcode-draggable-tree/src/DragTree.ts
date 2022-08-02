@@ -8,17 +8,21 @@ class DragTree {
 
   holder: null | TreeNode = null
 
+  holderParentNode: null | TreeNode = null
+
   from?: TreeNode
 
   to?: TreeNode
 
-  constructor(tree: TreeNode[]) {
-    this.tree = tree
+  onChange: any
+
+  constructor(tree: TreeNode[], onChange: any) {
+    this.tree = JSON.parse(JSON.stringify(tree))
+    this.onChange = onChange
     this.setRelation(this.tree)
   }
 
-  setTree(tree: TreeNode[]) {
-    this.tree = tree
+  resetRelation() {
     this.relation = new WeakMap()
     this.setRelation(this.tree)
   }
@@ -35,7 +39,7 @@ class DragTree {
 
   setFrom(fromNode: TreeNode) {
     this.from = fromNode
-    this.holder = null
+    this.clearHolder()
   }
 
   insertHolder(node: TreeNode) {
@@ -43,12 +47,22 @@ class DragTree {
 
     node?.children?.splice(0, 0, this.holder!)
 
-    eventsManager.emit('treeUpdate', this.tree)
+    this.resetRelation()
+  }
+
+  clearHolder() {
+    if (this.holder) {
+      this.removeNode(<TreeNode>this.holder)
+      this.relation.delete(this.holder)
+      this.holder = null
+      this.holderParentNode = null
+    }
   }
 
   insertNode() {
     if (this.holder) {
       this.removeNode(this.holder)
+      this.holderParentNode = null
     }
 
     this.removeNode(this.from!)
@@ -67,10 +81,7 @@ class DragTree {
   }
 
   initHolder() {
-    if (this.holder) {
-      this.removeNode(this.holder)
-      this.holder = null
-    }
+    this.clearHolder()
 
     this.holder = {
       id: 'holder',
@@ -84,7 +95,9 @@ class DragTree {
 
     this.addNode(this.to, this.holder!, isNext)
 
-    eventsManager.emit('treeUpdate', this.tree)
+    this.resetRelation()
+
+    this.holderParentNode = this.findParentNode(this.holder!)
   }
 
   addNode(to: TreeNode, node: TreeNode, isNext: boolean) {
@@ -110,13 +123,15 @@ class DragTree {
   }
 
   submitTreeNodeChange(isNext: boolean) {
-    this.removeNode(<TreeNode>this.holder)
+    this.clearHolder()
+
     this.removeNode(<TreeNode>this.from)
     this.addNode(<TreeNode>this.to, <TreeNode>this.from, isNext)
 
     this.from = undefined
     this.to = undefined
-    this.holder = null
+
+    this.onChange(this.tree)
   }
 
   findParentNode(treeNode: TreeNode) {

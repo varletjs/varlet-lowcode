@@ -22,7 +22,7 @@ export default class Dnd {
       this.overNode = treeNode
 
       dragTree.insertHolder(this.overNode)
-    }, 200)
+    }, 1000)
   }
 
   setDropNode(treeNode?: TreeNode) {

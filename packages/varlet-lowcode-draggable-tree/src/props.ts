@@ -30,7 +30,7 @@ export const treeNodeProps = {
     type: Object as PropType<DragTree>,
     required: true,
   },
-  zIndex: {
+  indent: {
     type: Number,
     required: true,
   },

@@ -91,10 +91,17 @@ const onDrop = (e: DragEvent) => {
     @dragover.prevent
     @drop.prevent="onDrop"
     :style="{
-      paddingLeft: `${20 * zIndex}px`,
+      width: treeNode.id === 'holder' ? `calc(100% - ${indent * 20}px)` : undefined,
+      transform: treeNode.id === 'holder' ? `translateX(${indent * 20}px)` : undefined,
     }"
   >
-    <div class="varlet-low-code-draggable-tree-node__title">
+    <div
+      class="varlet-low-code-draggable-tree-node__title"
+      :style="{
+        paddingLeft: `${indent * 20}px`,
+        color: dragTree.holderParentNode === treeNode ? 'blue' : undefined,
+      }"
+    >
       <Icon
         v-if="treeNode.children"
         @click="toggleExpand"
@@ -108,7 +115,7 @@ const onDrop = (e: DragEvent) => {
         :drag-tree="dragTree"
         :dnd="dnd"
         v-show="expand"
-        :z-index="zIndex + 1"
+        :indent="indent + 1"
         :tree-node="treeChildNode"
         v-for="treeChildNode of treeNode.children"
         :key="treeChildNode.id"

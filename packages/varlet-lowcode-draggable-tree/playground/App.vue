@@ -44,7 +44,6 @@ const tree = ref<TreeNode[]>([
 </script>
 
 <template>
-  <!--  <div class="ttt">1</div>-->
   <div style="width: 400px; background: #eee">
     <DraggableTree v-model:tree="tree" />
   </div>
