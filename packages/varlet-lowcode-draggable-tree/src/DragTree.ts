@@ -37,8 +37,20 @@ class DragTree {
     })
   }
 
+  findNodeById(id: string | number, tree = this.tree): any {
+    for (const node of tree) {
+      if (node.id === id) {
+        return node
+      }
+      if (node.children) {
+        return this.findNodeById(id, node.children)
+      }
+    }
+  }
+
   setFrom(fromNode: TreeNode) {
     this.from = fromNode
+
     this.clearHolder()
   }
 
@@ -60,10 +72,7 @@ class DragTree {
   }
 
   insertNode() {
-    if (this.holder) {
-      this.removeNode(this.holder)
-      this.holderParentNode = null
-    }
+    this.clearHolder()
 
     this.removeNode(this.from!)
 
@@ -73,11 +82,11 @@ class DragTree {
       this.to?.children?.push(this.from!)
     }
 
-    eventsManager.emit('treeUpdate', this.tree)
+    this.onChange(this.tree)
 
     this.from = undefined
     this.to = undefined
-    this.holder = null
+    // this.holder = null
   }
 
   initHolder() {
@@ -93,6 +102,7 @@ class DragTree {
 
     this.initHolder()
 
+    console.log(this.to, this.holder!, isNext)
     this.addNode(this.to, this.holder!, isNext)
 
     this.resetRelation()
@@ -123,6 +133,9 @@ class DragTree {
   }
 
   submitTreeNodeChange(isNext: boolean) {
+    if (!this.from || !this.to) {
+      return
+    }
     this.clearHolder()
 
     this.removeNode(<TreeNode>this.from)
@@ -135,7 +148,9 @@ class DragTree {
   }
 
   findParentNode(treeNode: TreeNode) {
-    return this.relation.get(treeNode)
+    const node = this.findNodeById(treeNode.id)
+
+    return this.relation.get(node)
   }
 }
 

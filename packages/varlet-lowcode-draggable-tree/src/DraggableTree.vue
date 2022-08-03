@@ -27,7 +27,7 @@ const onDragOver = (e: DragEvent) => {
 </script>
 
 <template>
-  <div @dragover="onDragOver" class="varlet-low-code-draggable-tree">
+  <div class="varlet-low-code-draggable-tree">
     <DraggableTreeNode
       v-for="treeNode of dragTree.tree"
       :key="treeNode.id"
