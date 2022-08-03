@@ -49,7 +49,6 @@ export default defineComponent({
       }
     }
     const blurInput = async (val: any, str: string, type: string) => {
-      console.log(boxData[type], ' boxData[type]')
       if (!Number.isNaN(Number(val.target.value)) && val.target.value !== '') {
         boxData[type][str] = Number(val.target.value) + 'px'
       } else {

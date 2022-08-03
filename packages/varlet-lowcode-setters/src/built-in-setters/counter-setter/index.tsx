@@ -18,7 +18,6 @@ export default defineComponent({
         emit('update:modelValue', val)
       },
     })
-    console.log(counterValue.value, '123')
     return () => {
       return <VarCounter v-model={counterValue.value} />
     }

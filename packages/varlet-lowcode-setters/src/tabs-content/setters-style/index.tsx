@@ -65,7 +65,12 @@ const textAlignOptions = [
 ]
 export default defineComponent({
   name: 'SettersStyle',
-  setup() {
+  props: {
+    schemaId: {
+      type: String,
+    },
+  },
+  setup(props) {
     const pureColor = ref('#71afe5')
     const values = ref(['4'])
     const formData = reactive({

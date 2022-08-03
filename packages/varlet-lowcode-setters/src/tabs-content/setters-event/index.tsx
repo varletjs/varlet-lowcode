@@ -4,8 +4,6 @@ import BindTypePopover from '../../component/bind-type/index'
 import BindDialog from '../../component/dialog-setter/index'
 import DialogEvent from '../../component/dialog-event/index'
 import { eventsManager } from '@varlet/lowcode-core'
-// import { eventsManager } from '@varlet/lowcode-se'
-// SkeletonEvents
 import '@varlet/ui/es/app-bar/style/index.js'
 import '@varlet/ui/es/select/style/index.js'
 import '@varlet/ui/es/option/style/index.js'
@@ -16,7 +14,12 @@ import accessory from '../../../assets/accessory.png'
 
 export default defineComponent({
   name: 'SETTEREVENT',
-  setup() {
+  props: {
+    schemaId: {
+      type: String,
+    },
+  },
+  setup(props) {
     const formData: any = reactive({
       isShow: false,
       isShowType: 'Setter',
@@ -40,7 +43,6 @@ export default defineComponent({
 
     const eventData = reactive(['onChange', 'rowSelection.onChange'])
     const boundEvents: any = reactive({})
-
     const appBarSlots = {
       right: () => {
         return <BindTypePopover v-model={formData.isShowType} onSelectVariable={() => openBindDialog('showCode')} />
@@ -53,7 +55,6 @@ export default defineComponent({
     const editEvent = () => {
       showEventDialog.value = true
     }
-
     const bindEvent = (val: string) => {
       boundEvents[val] = {}
     }

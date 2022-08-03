@@ -1,7 +1,7 @@
 import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import Monaco from '@varlet/lowcode-monaco'
-import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect } from 'vue'
-import { schemaManager } from '@varlet/lowcode-core'
+import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect, onMounted, onUpdated } from 'vue'
+import { schemaManager, eventsManager } from '@varlet/lowcode-core'
 import { createParser } from '@varlet/lowcode-parser'
 import '@varlet/ui/es/dialog/style/index.js'
 import '@varlet/ui/es/snackbar/style/index.js'
@@ -24,11 +24,45 @@ export default defineComponent({
         return {}
       },
     },
+    schemaId: {
+      type: String,
+    },
   },
   emits: ['update:modelValue', 'update:code', 'Confirm'],
   setup(props, { emit }) {
-    const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
+    const weakMapTree = () => {
+      const wm = new WeakMap()
+      const params: any = {
+        slotProps: [],
+        render: [],
+      }
+      let slotProps = null
+      let render = null
+      const setTree = (val: any, params?: any) => {
+        Object.keys(val).forEach((item) => {
+          const paramsItem = JSON.parse(JSON.stringify(params))
+          if (item === 'slots') {
+            paramsItem.slotProps.push(val.id)
+            wm.set(val, paramsItem)
+          }
+          if (item === 'render') {
+            paramsItem.render.push(val[item].renderId)
+            wm.set(val, paramsItem)
+          }
+          if (props.schemaId === val.id) {
+            slotProps = wm.get(val)
+            render = wm.get(val)
+          }
+          if (typeof val[item] === 'object') {
+            setTree(val[item], paramsItem)
+          }
+        })
+      }
+      setTree(schema, params)
+    }
+
+    const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
     const { traverseFunction } = createParser()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
@@ -49,6 +83,7 @@ export default defineComponent({
     watchEffect(() => {
       if (show.value) {
         code.value = props.code
+        weakMapTree()
       }
     })
     const selectIndex = ref('')

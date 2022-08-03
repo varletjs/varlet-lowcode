@@ -8,7 +8,12 @@ import './index.less'
 
 export default defineComponent({
   name: 'SETTERSADVANCEDSETTINGS',
-  setup() {
+  props: {
+    schemaId: {
+      type: String,
+    },
+  },
+  setup(props) {
     const formData: any = reactive({
       isShow: false,
       isShowType: 'Setter',
@@ -89,7 +94,12 @@ export default defineComponent({
               </div>
             </div> */}
           </div>
-          <BindDialog v-model={showDialog.value} v-model:code={dialogCode.value} onConfirm={saveCode} />
+          <BindDialog
+            v-model={showDialog.value}
+            v-model:code={dialogCode.value}
+            onConfirm={saveCode}
+            schemaId={props.schemaId}
+          />
         </div>
       )
     }

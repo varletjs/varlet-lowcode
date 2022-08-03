@@ -9,6 +9,11 @@ import './index.less'
 
 export default defineComponent({
   name: 'SettersAttribute',
+  props: {
+    schemaId: {
+      type: String,
+    },
+  },
   setup() {
     const testSettersObject = reactive({
       name: 'Card',
@@ -87,7 +92,6 @@ export default defineComponent({
         },
       ],
     })
-
     const values = ref(['1'])
     const openBindDialog = (val: string) => {
       showDialog.value = true
