@@ -93,14 +93,13 @@ function getCapital(str: string): string[] {
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
 onMounted(() => {
-  eventsManager.on('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
+  // eventsManager.on('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
 
-  // updateDataSource()
+  saveDataSource()
 })
 
 onUnmounted(() => {
   eventsManager.off(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
-  eventsManager.off('skeleton-sidebar-toggle', handleSkeletonSidebarToggle)
 })
 </script>
 

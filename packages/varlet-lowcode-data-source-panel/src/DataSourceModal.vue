@@ -10,7 +10,6 @@ import {
   Option as VarOption,
   Row as VarRow,
   Col as VarCol,
-  Divider as VarDivider,
   Button as VarButton,
   Icon as VarIcon,
 } from '@varlet/ui'
@@ -36,7 +35,7 @@ const props = defineProps({
 })
 
 const dataSourceForm = ref(JSON.parse(JSON.stringify(props.formData)))
-const show: Ref<Boolean> = ref(false)
+const show: Ref<boolean | undefined> = ref(false)
 const headersMockList: Ref<any[]> = ref([])
 
 const NOOP_SUCCESS = 'function successHandler() {\n  return {\n}\n}'
@@ -244,7 +243,7 @@ function createApiSuggestions(range: IRange) {
         </div>
       </div>
       <div class="data-source-modal-form-item row">
-        <div class="data-source-modal-form-item-label">请求头信息:</div>
+        <div class="data-source-modal-form-item-label">成功回调:</div>
         <div class="data-source-modal-form-item-input">
           <monaco
             :create-suggestions="createApiSuggestions"
