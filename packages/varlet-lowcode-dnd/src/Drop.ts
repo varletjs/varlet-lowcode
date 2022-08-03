@@ -76,7 +76,7 @@ function onDrop(this: DropHTMLElement, e: DragEvent) {
 function mounted(el: DropHTMLElement, props: DirectiveBinding<DropOptions>) {
   const defaultProps = {
     dropStyle: {
-      background: 'red',
+      background: '#bfcef5',
     },
     type: 'move',
   } as DropOptions

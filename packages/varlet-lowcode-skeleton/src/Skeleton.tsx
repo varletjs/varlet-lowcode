@@ -137,11 +137,11 @@ export default defineComponent({
     }
 
     eventsManager.on(SkeletonEvents.SIDEBAR_OPEN, sidebarOpen)
-    eventsManager.on(SkeletonEvents.SIDEBAR_OPEN, sidebarClose)
+    eventsManager.on(SkeletonEvents.SIDEBAR_CLOSE, sidebarClose)
 
     onUnmounted(() => {
       eventsManager.off(SkeletonEvents.SIDEBAR_OPEN, sidebarOpen)
-      eventsManager.off(SkeletonEvents.SIDEBAR_OPEN, sidebarClose)
+      eventsManager.off(SkeletonEvents.SIDEBAR_CLOSE, sidebarClose)
     })
 
     const toggleSidebarActive = (name: string) => {

@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
+import schemaJsx from '@varlet/lowcode-schema-jsx-vite-plugin'
 import { injectHtml } from 'vite-plugin-html'
 import {
   PLAYGROUND_DIR,
@@ -27,7 +28,7 @@ export function getEntry() {
   }
 }
 
-const commonPlugins = [vue(), jsx() as PluginOption]
+const commonPlugins = [vue(), jsx(), schemaJsx()] as PluginOption[]
 
 export function getBaseConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
   const host = get(varletLowCodeConfig, 'host')
@@ -134,7 +135,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
           'vue',
           /@varlet\/ui/,
           '@varlet/lowcode-core',
-          '@varlet/lowcode-ast',
+          '@varlet/lowcode-parser',
           '@varlet/lowcode-monaco',
           '@varlet/lowcode-skeleton',
           '@varlet/lowcode-designer',

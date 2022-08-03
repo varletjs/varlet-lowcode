@@ -6,6 +6,12 @@
   overflow: hidden;
 }
 
+.min-dialog {
+  .var-dialog {
+    width: 300px;
+  }
+}
+
 .varlet-low-code-field {
   &__body {
     display: flex;
@@ -43,11 +49,13 @@
     min-width: 240px;
     margin-right: 10px;
   }
+
   &__content-variable {
     display: flex;
     flex: 1;
     position: relative;
   }
+
   &__show {
     position: absolute;
     top: 0;
@@ -100,14 +108,21 @@
     white-space: nowrap;
   }
 
-  &__category > div:hover,
-  &__select-items > div:hover {
-    background: rgba(31, 56, 88, 0.06);
-  }
-
   &__select-items {
     flex: 1;
     overflow: auto;
     height: 100%;
+    .disable {
+      cursor: not-allowed !important;
+      color: #ccc;
+    }
+    .disable:hover {
+      background: #fff;
+    }
+  }
+
+  &__category > div:hover,
+  &__select-items > div:hover {
+    background: rgba(31, 56, 88, 0.06);
   }
 }

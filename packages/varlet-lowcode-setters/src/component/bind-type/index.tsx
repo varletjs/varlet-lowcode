@@ -9,7 +9,7 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: '',
+      default: 'Setter',
     },
     options: {
       type: Array as any,
@@ -43,9 +43,6 @@ export default defineComponent({
       } else {
         fn()
       }
-    }
-    const asd = () => {
-      // emit('SelectVariable')
     }
     const childrenSlot = {
       default: () => {

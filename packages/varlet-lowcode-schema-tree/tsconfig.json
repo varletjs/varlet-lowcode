@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "strict": true,
+    "downlevelIteration": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "declarationDir": "./types",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"]
+  },
+  "include": ["src/**/*"]
+}

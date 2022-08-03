@@ -1,28 +1,41 @@
 <script lang="ts" setup name="VarletLowcodeDraggableTree">
-import { TreeNode, treeProps } from './props'
+import { treeProps } from './props'
 import DraggableTreeNode from './DraggableTreeNode.vue'
-import { defineProps } from 'vue'
-import useTree from './hooks/useTree'
-import { eventsManager } from '@varlet/lowcode-core'
+import { defineProps, ref, watch } from 'vue'
+import DragTree from './DragTree'
+import Dnd from './Dnd'
 
 const props = defineProps(treeProps)
+
+const dragTree = ref()
+
+watch(
+  () => props.tree,
+  (newVal) => {
+    dragTree.value = new DragTree(newVal, props['onUpdate:tree'])
+  },
+  {
+    immediate: true,
+  }
+)
+
+const dnd = ref(new Dnd())
 
 const onDragOver = (e: DragEvent) => {
   e.dataTransfer!.dropEffect = 'move'
 }
-
-const handleTreeUpdate = (newTree: TreeNode[]) => {
-  props['onUpdate:tree']?.(newTree)
-}
-
-useTree(props.tree)
-
-eventsManager.on('treeUpdate', handleTreeUpdate)
 </script>
 
 <template>
-  <div @dragover="onDragOver" class="varlet-low-code-draggable-tree">
-    <DraggableTreeNode v-for="treeNode of props.tree" :key="treeNode.id" :tree-node="treeNode" />
+  <div class="varlet-low-code-draggable-tree">
+    <DraggableTreeNode
+      v-for="treeNode of dragTree.tree"
+      :key="treeNode.id"
+      :tree-node="treeNode"
+      :drag-tree="dragTree"
+      :dnd="dnd"
+      :indent="0"
+    />
   </div>
 </template>
 
@@ -34,6 +47,6 @@ eventsManager.on('treeUpdate', handleTreeUpdate)
 
 .varlet-low-code-draggable-tree {
   width: 100%;
-  margin-left: -20px;
+  overflow-x: hidden;
 }
 </style>

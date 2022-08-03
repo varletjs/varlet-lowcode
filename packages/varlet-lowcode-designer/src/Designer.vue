@@ -7,7 +7,6 @@ import {
   Assets,
   SchemaPageNode,
 } from '@varlet/lowcode-core'
-import Selector from '@varlet/lowcode-selector'
 import { onMounted, ref } from 'vue'
 import { SkeletonEvents, SkeletonLoaders } from '@varlet/lowcode-skeleton'
 import { DesignerEvents } from './types'
@@ -16,7 +15,8 @@ const presetAssets: Assets = [
   {
     additionResources: [
       'https://cdn.jsdelivr.net/npm/vue',
-      // TODO: env config
+      'https://cdn.jsdelivr.net/npm/@varlet/ui@1.27.18/umd/varlet.js',
+      'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator@1.27.18/iife.js',
       './varlet-lowcode-core.umd.js',
       './varlet-lowcode-renderer.umd.js',
     ],
@@ -41,7 +41,6 @@ eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, async (newSchema) => {
 
   renderer.schema.value = schema
 
-  // TODO: I reported an error after here. I'm not sure if it's renderer.render () or something else.
   if (
     oldSchema?.code !== schema.code ||
     oldSchema?.compatibleCode !== schema.compatibleCode ||
@@ -119,7 +118,7 @@ async function mountRenderer() {
 
   renderer.schema.value = schema
   renderer.assets.value = mergedAssets
-  renderer.init('#app', eventsManager)
+  renderer.init({ mountRoot: '#app', designerEventsManager: eventsManager })
   renderer.mount()
 
   // @ts-ignore
@@ -134,9 +133,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="container" class="varlet-low-code-designer">
-    <Selector />
-  </div>
+  <div ref="container" class="varlet-low-code-designer"></div>
 </template>
 
 <style lang="less">

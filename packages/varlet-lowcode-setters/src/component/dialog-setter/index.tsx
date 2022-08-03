@@ -1,8 +1,8 @@
 import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import Monaco from '@varlet/lowcode-monaco'
-import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect } from 'vue'
-import { schemaManager } from '@varlet/lowcode-core'
-import { createAst } from '@varlet/lowcode-ast'
+import { defineComponent, Teleport, computed, ref, Ref, reactive, watchEffect, onMounted, onUpdated } from 'vue'
+import { schemaManager, eventsManager } from '@varlet/lowcode-core'
+import { createParser } from '@varlet/lowcode-parser'
 import '@varlet/ui/es/dialog/style/index.js'
 import '@varlet/ui/es/snackbar/style/index.js'
 import './index.less'
@@ -24,15 +24,55 @@ export default defineComponent({
         return {}
       },
     },
+    schemaId: {
+      type: String,
+    },
   },
   emits: ['update:modelValue', 'update:code', 'Confirm'],
   setup(props, { emit }) {
-    console.log(emit, 'emit')
-    const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
+    const weakMapTree = () => {
+      const wm = new WeakMap()
+      const params: any = {
+        slotProps: [],
+        render: [],
+      }
+      let slotProps = null
+      let render = null
+      const setTree = (val: any, params?: any) => {
+        Object.keys(val).forEach((item) => {
+          const paramsItem = JSON.parse(JSON.stringify(params))
+          if (item === 'slots') {
+            paramsItem.slotProps.push(val.id)
+            wm.set(val, paramsItem)
+          }
+          if (item === 'render') {
+            paramsItem.render.push(val[item].renderId)
+            wm.set(val, paramsItem)
+          }
+          if (props.schemaId === val.id) {
+            slotProps = wm.get(val)
+            render = wm.get(val)
+          }
+          if (typeof val[item] === 'object') {
+            setTree(val[item], paramsItem)
+          }
+        })
+      }
+      setTree(schema, params)
+    }
+
+    const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
-    const { traverseFunction } = createAst()
+    const { traverseFunction } = createParser()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
+    const slotProps = [`$slotProps['20112512a1sdas4d51as2d'][0].title`, `$slotProps['asdfas123fsa4f58sd45f'][0].title`]
+    const render = [
+      `$renderArgs['asdasfasfda4sd54as5d4a5sd14'][0].title`,
+      `$renderArgs['fdgdfg5fd41g5fd31gd53g14d5'][0].title`,
+    ]
+    returnDeclarations.slotProps = slotProps
+    returnDeclarations.render = render
     const code: Ref<string> = ref('')
     const show = computed({
       get: () => props.modelValue,
@@ -43,6 +83,7 @@ export default defineComponent({
     watchEffect(() => {
       if (show.value) {
         code.value = props.code
+        weakMapTree()
       }
     })
     const selectIndex = ref('')
@@ -51,6 +92,7 @@ export default defineComponent({
       selectIndex.value = val
       selectItemData = returnDeclarations[val]
     }
+
     const saveCode = () => {
       try {
         emit('update:code', code.value)

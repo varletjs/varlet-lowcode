@@ -18,6 +18,11 @@ packages/varlet-lowcode-cli/lib/config
 packages/varlet-lowcode-cli/lib/shared
 packages/varlet-lowcode-cli/lib/index.d.ts
 
+packages/varlet-lowcode-schema-jsx-vite-plugin/lib
+
+packages/varlet-lowcode-schema-tree/lib
+packages/varlet-lowcode-schema-tree/types
+
 packages/varlet-lowcode-core/lib
 packages/varlet-lowcode-core/types
 
@@ -25,6 +30,7 @@ packages/varlet-lowcode-renderer/lib
 packages/varlet-lowcode-renderer/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-renderer/public/varlet-lowcode-profile.umd.js
 packages/varlet-lowcode-renderer/public/varlet-lowcode-dnd.umd.js
+packages/varlet-lowcode-renderer/public/varlet-lowcode-selector.umd.js
 packages/varlet-lowcode-renderer/types
 
 packages/varlet-lowcode-dnd/lib
@@ -35,8 +41,8 @@ packages/varlet-lowcode-designer/lib
 packages/varlet-lowcode-designer/public/varlet-lowcode-core.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-renderer.umd.js
 packages/varlet-lowcode-designer/public/varlet-lowcode-profile.umd.js
-packages/varlet-lowcode-designer/public/varlet-lowcode-selector.umd.js
 packages/varlet-lowcode-designer/types
+
 
 packages/varlet-lowcode-codegen/lib
 packages/varlet-lowcode-codegen/public/varlet-lowcode-profile.umd.js
@@ -60,8 +66,8 @@ packages/varlet-lowcode-selector/types
 packages/varlet-lowcode-profile/lib
 packages/varlet-lowcode-profile/types
 
-packages/varlet-lowcode-ast/lib
-packages/varlet-lowcode-ast/types
+packages/varlet-lowcode-parser/lib
+packages/varlet-lowcode-parser/types
 
 packages/varlet-lowcode-code-editor/lib
 packages/varlet-lowcode-code-editor/types
@@ -84,8 +90,8 @@ packages/varlet-lowcode-setters/types
 packages/varlet-lowcode-data-source-panel/lib
 packages/varlet-lowcode-data-source-panel/types
 
-packages/varlet-lowcode-dragable-tree/lib
-packages/varlet-lowcode-dragable-tree/types
+packages/varlet-lowcode-draggable-tree/lib
+packages/varlet-lowcode-draggable-tree/types
 
 packages/varlet-lowcode-locale-switcher/lib
 packages/varlet-lowcode-locale-switcher/types

@@ -4,12 +4,13 @@ import { resolve } from 'path'
 
 const CWD = process.cwd()
 const PKG_CLI = resolve(CWD, './packages/varlet-lowcode-cli')
+const PKG_SCHEMA_JSX_VITE_PLUGIN = resolve(CWD, './packages/varlet-lowcode-schema-jsx-vite-plugin')
 const PKG_CORE = resolve(CWD, './packages/varlet-lowcode-core')
 const PKG_DESIGNER = resolve(CWD, './packages/varlet-lowcode-designer')
 const PKG_DND = resolve(CWD, './packages/varlet-lowcode-dnd')
 const PKG_PROFILE = resolve(CWD, './packages/varlet-lowcode-profile')
 const PKG_RENDERER = resolve(CWD, './packages/varlet-lowcode-renderer')
-const PKG_AST = resolve(CWD, './packages/varlet-lowcode-ast')
+const PKG_PARSER = resolve(CWD, './packages/varlet-lowcode-parser')
 const PKG_CODEGEN = resolve(CWD, './packages/varlet-lowcode-codegen')
 const PKG_MONACO = resolve(CWD, './packages/varlet-lowcode-monaco')
 const PKG_CODE_EDITOR = resolve(CWD, './packages/varlet-lowcode-code-editor')
@@ -20,6 +21,8 @@ const PKG_RESIZER = resolve(CWD, './packages/varlet-lowcode-resizer')
 const PKG_MATERIALS_PANEL =  resolve(CWD, './packages/varlet-lowcode-materials-panel')
 const PKG_SKELETON = resolve(CWD,'./packages/varlet-lowcode-skeleton')
 const PKG_LOCALE_SWITCHER = resolve(CWD,'./packages/varlet-lowcode-locale-switcher')
+
+export const buildSchemaJsxVitePlugin = () => execa('pnpm', ['build'], { cwd: PKG_SCHEMA_JSX_VITE_PLUGIN })
 
 export const buildCli = () => execa('pnpm', ['build'], { cwd: PKG_CLI })
 
@@ -33,7 +36,7 @@ export const buildProfile = () => execa('pnpm', ['compile'], { cwd: PKG_PROFILE 
 
 export const buildRenderer = () => execa('pnpm', ['compile'], { cwd: PKG_RENDERER })
 
-export const buildAst = () => execa('pnpm', ['compile'], { cwd: PKG_AST })
+export const buildParser = () => execa('pnpm', ['compile'], { cwd: PKG_PARSER })
 
 export const buildCodegen = () => execa('pnpm', ['compile'], { cwd: PKG_CODEGEN })
 

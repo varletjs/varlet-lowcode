@@ -1,0 +1,46 @@
+.varlet-low-code-event {
+  &__collapse {
+    .var-collapse {
+      .var-collapse-item__content-wrap {
+        padding: 0;
+      }
+    }
+  }
+
+  &__table {
+    flex: 1;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+  }
+
+  &__table-header {
+    font-size: var(--setter-font-size-sm);
+  }
+
+  &__table-row {
+    display: flex;
+    align-items: center;
+    border-bottom: thin solid rgba(0, 0, 0, 0.12);
+
+    > div {
+      word-wrap: break-word;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
+
+    > :first-child {
+      flex: 1;
+    }
+
+    > :last-child {
+      width: 100px !important;
+    }
+  }
+
+  &__empty {
+    color: #a0a2ad;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+  }
+}

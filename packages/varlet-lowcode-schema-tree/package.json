@@ -1,0 +1,26 @@
+{
+  "name": "@varlet/lowcode-schema-tree",
+  "version": "0.0.0",
+  "main": "lib/varlet-lowcode-schema-tree.es.js",
+  "module": "lib/varlet-lowcode-schema-tree.es.js",
+  "types": "./types/index.d.ts",
+  "files": [
+    "lib",
+    "types",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "dev": "varlet-lowcode-cli dev",
+    "compile": "varlet-lowcode-cli compile",
+    "compile:watch": "varlet-lowcode-cli compile -w"
+  },
+  "dependencies": {
+    "@varlet/shared": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4",
+    "vue-tsc": "^0.37.3",
+    "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-cli": "workspace: *"
+  }
+}

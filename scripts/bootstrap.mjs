@@ -6,7 +6,7 @@ import {
   buildProfile,
   buildRenderer,
   runTask,
-  buildAst,
+  buildParser,
   buildCodegen,
   buildMonaco,
   buildCodeEditor,
@@ -15,27 +15,27 @@ import {
   buildUndoRedo,
   buildResizer,
   buildMaterialsPanel,
-  buildSkeleton, buildLocaleSwitcher
+  buildSkeleton, buildLocaleSwitcher,
+  buildSchemaJsxVitePlugin
 } from './build.mjs'
 
+await runTask('schema jsx vite plugin', buildSchemaJsxVitePlugin)
 await runTask('cli', buildCli)
 await runTask('core', buildCore)
-await runTask('ast', buildAst)
 await runTask('skeleton', buildSkeleton)
 await runTask('dnd', buildDnd)
 await runTask('selector', buildSelector)
 await runTask('renderer', buildRenderer)
 await runTask('designer', buildDesigner)
-await runTask('monaco', buildMonaco)
-
+await runTask('parser and monaco', () => Promise.all([buildParser(), buildMonaco()]))
 await runTask('plugins and more', () => Promise.all([
-  buildCodeEditor,
-  buildSchemaEditor,
-  buildCodegen,
-  buildUndoRedo,
-  buildResizer,
-  buildMaterialsPanel,
-  buildProfile,
-  buildLocaleSwitcher
+  buildCodeEditor(),
+  buildSchemaEditor(),
+  buildCodegen(),
+  buildUndoRedo(),
+  buildResizer(),
+  buildMaterialsPanel(),
+  buildProfile(),
+  buildLocaleSwitcher()
 ]))
 

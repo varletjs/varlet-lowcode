@@ -2,9 +2,9 @@ import { Dialog as VarDialog, Snackbar } from '@varlet/ui'
 import { defineComponent, Teleport, computed, ref, Ref, reactive } from 'vue'
 import BindTypePopover from '../bind-type/index'
 import BindDialog from '../dialog-setter/index'
-import Monaco from '@varlet/lowcode-monaco'
+// import Monaco from '@varlet/lowcode-monaco'
 import { schemaManager } from '@varlet/lowcode-core'
-import { createAst } from '@varlet/lowcode-ast'
+import { createParser } from '@varlet/lowcode-parser'
 import Component from '../../built-in-setters/index'
 import '@varlet/ui/es/dialog/style/index.js'
 import '@varlet/ui/es/snackbar/style/index.js'
@@ -23,7 +23,7 @@ export default defineComponent({
     const NOOP_SETUP = 'function setup() {\n  return {\n}\n}'
     const schema = schemaManager.exportSchema()
     const codeSelect: Ref<string> = ref(schema.code ?? NOOP_SETUP)
-    const { traverseFunction } = createAst()
+    const { traverseFunction } = createParser()
     const { returnDeclarations } = traverseFunction(codeSelect.value)
     const code: Ref<string> = ref('')
     const show = computed({
@@ -44,15 +44,6 @@ export default defineComponent({
         name: 'title',
         description: '标题',
         setterType: 'Setter',
-        options: [
-          {
-            value: '123',
-            label: '456',
-            fn: () => {
-              console.log(231456)
-            },
-          },
-        ],
         setter: [
           {
             type: 'InputSetter',
@@ -118,10 +109,11 @@ export default defineComponent({
     const showDialog = ref(false)
     const openBindDialog = (val: string) => {
       showDialog.value = true
+      return val
     }
     const saveCode = () => {
       try {
-        console.log(1)
+        return
       } catch (e: any) {
         Snackbar.error(e.toString())
       }
@@ -130,7 +122,7 @@ export default defineComponent({
       return (
         <div class="varlet-low-code-variable-bind__content">
           <div class="varlet-low-code-variable-bind__content-props">
-            {propsDetail.map((item) => {
+            {propsDetail.map((item: any) => {
               return (
                 <div class="varlet-low-code-field__body">
                   <div class="varlet-low-code-field__body-title">{item.description}</div>
@@ -159,7 +151,7 @@ export default defineComponent({
               )
             })}
           </div>
-          <BindDialog v-model={showDialog.value} />
+          <BindDialog v-model={showDialog.value} v-model:code={code.value} />
         </div>
       )
     }
@@ -174,11 +166,13 @@ export default defineComponent({
     return () => {
       return (
         <Teleport to="body">
-          <VarDialog.Component
-            v-model:show={show.value}
-            v-slots={childrenSlot}
-            onConfirm={saveCode}
-          ></VarDialog.Component>
+          <div class="min-dialog">
+            <VarDialog.Component
+              v-model:show={show.value}
+              v-slots={childrenSlot}
+              onConfirm={saveCode}
+            ></VarDialog.Component>
+          </div>
         </Teleport>
       )
     }

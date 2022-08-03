@@ -29,7 +29,7 @@
     "@varlet/lowcode-setters": "workspace: *",
     "@varlet/lowcode-codegen": "workspace: *",
     "@varlet/lowcode-monaco": "workspace: *",
-    "@varlet/lowcode-ast": "workspace: *",
+    "@varlet/lowcode-parser": "workspace: *",
     "@varlet/ui": "^1.27.17",
     "@varlet/touch-emulator": "^1.27.17",
     "live-server": "^1.2.1",
