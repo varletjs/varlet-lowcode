@@ -26,7 +26,6 @@ export function usePlugins() {
     .useSkeletonPlugin(LocaleSwitcherPlugin)
     .useSkeletonPlugin(MaterialsPanelPlugin)
     .useSkeletonPlugin(CodeEditorPlugin)
-    .useSkeletonPlugin(SettersPlugin)
     .useSkeletonPlugin(SchemaEditorPlugin)
     .useSkeletonPlugin(UndoRedoPlugin)
     .useSkeletonPlugin(CodegenPlugin)
