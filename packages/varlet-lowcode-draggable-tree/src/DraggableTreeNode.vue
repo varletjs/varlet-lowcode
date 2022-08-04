@@ -9,8 +9,6 @@ const expand = ref(false)
 
 const clearDragEvents = ref()
 
-const canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas')
-
 const isNext = (e: DragEvent) => {
   const { bottom, height } = (e.target as Element).getBoundingClientRect()
   const { y } = e
@@ -33,9 +31,14 @@ watch(
   }
 )
 
-const dragstart = (e: any, treeNode: TreeNode) => {
-  expand.value = false
+const dragstart = (e: TouchEvent, treeNode: TreeNode) => {
+  e.preventDefault()
+
+  props.dnd!.startY = e.touches[0].clientY
   props.dnd!.setDragNode(treeNode)
+
+  expand.value = false
+
   props.dragTree!.setFrom(treeNode)
 
   clearDragEvents.value = initDragEvents()
@@ -54,24 +57,16 @@ const initDragEvents = () => {
 const onDrag = (e: any) => {
   e.preventDefault()
   e.stopPropagation()
-  const t: HTMLElement | null = (e.target as Element).closest('.varlet-low-code-draggable-tree-node')
-  // while (!t?.dataset?.id){
-  //   t = t.parentNode
-  // }
 
-  if (!t?.dataset.id) return
+  props.dnd!.setOffsetY(e.clientY, props.dragTree!)
 
-  const treeNode = props.dragTree!.findNodeById(t.dataset.id)
+  if (e.target.dataset.id === 'holder') return
 
-  if (treeNode.id === 'holder') return
-
-  props.dnd!.setDropNode(treeNode)
-
-  if (treeNode.children) {
-    props.dnd!.setOverNode(treeNode, props.dragTree!)
+  if (props.dnd!.dropNode!.children) {
+    props.dnd!.setOverNode(props.dnd!.dropNode!, props.dragTree!)
   }
 
-  props.dragTree!.toggleTreeNodeChange(treeNode, isNext(e))
+  props.dragTree!.toggleTreeNodeChange(props.dnd!.dropNode!, isNext(e))
 }
 
 const onDrop = (e: any) => {
@@ -83,14 +78,13 @@ const onDrop = (e: any) => {
     clearTimeout(props.dnd.timer)
   }
 
-  if (props.dnd!.dropNode?.id && props.dnd?.overNode?.id && props.dnd!.dropNode?.id === props.dnd?.overNode?.id) {
+  if (props.dnd!.dropNode?.id && props.dnd?.overNode?.id && props.dnd!.dropNode.id === props.dnd?.overNode.id) {
     props.dragTree!.insertNode()
   } else {
     props.dragTree!.submitTreeNodeChange(isNext(e))
   }
 
-  props.dnd!.setDropNode()
-  props.dnd!.setDragNode()
+  props.dnd!.clearDrag()
 }
 </script>
 
@@ -102,7 +96,6 @@ const onDrop = (e: any) => {
     }"
     class="varlet-low-code-draggable-tree-node"
     draggable="true"
-    :data-id="treeNode.id"
     :style="{
       width: treeNode.id === 'holder' ? `calc(100% - ${indent * 20}px)` : undefined,
       transform: treeNode.id === 'holder' ? `translateX(${indent * 20}px)` : undefined,
@@ -114,13 +107,12 @@ const onDrop = (e: any) => {
         paddingLeft: `${indent * 20}px`,
         color: dragTree.holderParentNode === treeNode ? 'blue' : undefined,
       }"
+      :data-id="treeNode.id"
       @touchstart="dragstart($event, treeNode)"
-      @dragstart="dragstart($event, treeNode)"
     >
       <Icon
         v-if="treeNode.children"
-        @click="toggleExpand"
-        @touch.prevent="toggleExpand"
+        @touchstart.stop="toggleExpand"
         name="chevron-right"
         :class="expand ? 'varlet-low-code-draggable-tree-node__icon-expand' : ''"
       />

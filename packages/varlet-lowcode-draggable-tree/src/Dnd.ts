@@ -10,8 +10,20 @@ export default class Dnd {
 
   timer: any = null
 
+  startY = 0
+
+  nodeList: HTMLElement[] | undefined
+
   setDragNode(treeNode?: TreeNode) {
     this.dragNode = treeNode ?? undefined
+  }
+
+  clearDrag() {
+    this.startY = 0
+    this.setDragNode()
+    this.overNode = undefined
+    this.setDropNode()
+    this.nodeList = undefined
   }
 
   setOverNode(treeNode: TreeNode, dragTree: DragTree) {
@@ -27,5 +39,19 @@ export default class Dnd {
 
   setDropNode(treeNode?: TreeNode) {
     this.dropNode = treeNode ?? undefined
+  }
+
+  setOffsetY(y: number, dragTree: DragTree) {
+    const offsetY = y - this.startY
+
+    this.nodeList = Array.from(document.querySelectorAll('.varlet-low-code-draggable-tree-node__title'))
+
+    const dragNodeIndex = this.nodeList.findIndex((node) => node.dataset.id === this.dragNode?.id)
+    const i = Math.round(offsetY / 30) + dragNodeIndex
+    const dropNodeIndex = i < 0 ? 0 : i > this.nodeList.length ? this.nodeList.length - 1 : i
+
+    this.dropNode = dragTree.findNodeById(this.nodeList[dropNodeIndex].dataset!.id!)
+
+    console.log(this.dropNode, dropNodeIndex)
   }
 }
