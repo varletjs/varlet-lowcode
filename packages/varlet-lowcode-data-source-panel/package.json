@@ -1,5 +1,5 @@
 {
-  "name": "@varlet/lowcode-code-data-source",
+  "name": "@varlet/lowcode-data-source-panel",
   "version": "0.0.0",
   "main": "lib/varlet-lowcode-code-data-source.es.js",
   "module": "lib/varlet-lowcode-code-data-source.es.js",

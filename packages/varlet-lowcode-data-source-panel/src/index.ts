@@ -3,7 +3,7 @@ import { SkeletonLayouts } from '@varlet/lowcode-core'
 import type { SkeletonPlugin } from '@varlet/lowcode-core'
 
 const DataSourcePanelPlugin: SkeletonPlugin = {
-  name: 'materials-panel',
+  name: 'data-source-panel',
   component: DataSourcePanel,
   layout: SkeletonLayouts.SIDEBAR_TOP,
   layoutProps: {

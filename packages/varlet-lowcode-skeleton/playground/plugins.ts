@@ -7,8 +7,8 @@ import ResizerPlugin from '@varlet/lowcode-resizer'
 import CodegenPlugin from '@varlet/lowcode-codegen'
 import LocaleSwitcherPlugin from '@varlet/lowcode-locale-switcher'
 import SettersPlugin from '@varlet/lowcode-setters/src'
+import DataSource from '@varlet/lowcode-data-source-panel/src'
 
-import DataSource from '../../varlet-lowcode-data-source-panel/src/index'
 import { pluginsManager } from '@varlet/lowcode-core'
 
 CodegenPlugin.componentProps = {
