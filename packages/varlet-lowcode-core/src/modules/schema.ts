@@ -13,12 +13,17 @@ export interface SchemaManager {
 
   isRenderBinding(value: unknown): boolean
 
+  isVNodeBinding(value: unknown): boolean
+
   generateId(): string
 
   createExpressionBinding(expression: string, compatibleExpression?: string): SchemaNodeBinding
 
   createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
   createRenderBinding(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
+
+  createVNodeBinding(schemaNode: SchemaNode): SchemaNodeBinding
+  createVNodeBinding(schemaNode: JSX.Element): SchemaNodeBinding
 
   visitSchemaNode(schemaNode: SchemaNode, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
   visitSchemaNode(schemaNode: JSX.Element, schemaNodeVisitor: SchemaNodeVisitor, include?: SchemaNodeIn[]): void
@@ -43,6 +48,8 @@ export interface SchemaManager {
   expression(expression: string, compatibleExpression?: string): SchemaNodeBinding
   render(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
   render(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
+  vNode(schemaNode: SchemaNode): SchemaNodeBinding
+  vNode(schemaNode: JSX.Element): SchemaNodeBinding
   remove(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element
   remove(schemaNode: SchemaNode, id: SchemaNode['id']): SchemaNode
   find(schemaNode: JSX.Element, id: SchemaNode['id']): JSX.Element | null
@@ -58,9 +65,9 @@ export enum BuiltInSchemaNodeNames {
 }
 
 export enum BuiltInSchemaNodeBindingTypes {
-  OBJECT_BINDING = 'Object',
   EXPRESSION_BINDING = 'Expression',
   RENDER_BINDING = 'Render',
+  V_NODE_BINDING = 'VNode',
 }
 
 export type SchemaNodeProps = Record<string, SchemaNodeBinding>
@@ -155,6 +162,7 @@ export type SchemaNodeVisitor = (
   schemaNode: SchemaNode,
   schemaNodeSiblings: SchemaNode[] | null,
   schemaNodeIn: SchemaNodeIn,
+  vNodeBinding?: SchemaNodeBinding,
   renderBinding?: SchemaNodeBinding
 ) => boolean | void
 
@@ -177,11 +185,15 @@ export function createSchemaManager(): SchemaManager {
   }
 
   function isObjectBinding(value: unknown): boolean {
-    return isPlainObject(value) && !isExpressionBinding(value) && !isRenderBinding(value)
+    return isPlainObject(value) && !isExpressionBinding(value) && !isRenderBinding(value) && !isVNodeBinding(value)
   }
 
   function isRenderBinding(value: unknown): boolean {
     return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.RENDER_BINDING && value.renderId
+  }
+
+  function isVNodeBinding(value: unknown): boolean {
+    return isPlainObject(value) && value.type === BuiltInSchemaNodeBindingTypes.V_NODE_BINDING
   }
 
   function generateId() {
@@ -204,9 +216,17 @@ export function createSchemaManager(): SchemaManager {
         }
       }
 
+      if (isVNodeBinding(value)) {
+        if (visitor(value.value, [], SchemaNodeIn.PROPS, value, undefined)) {
+          return true
+        }
+
+        visitSchemaNode(value.value, visitor, include)
+      }
+
       if (isRenderBinding(value)) {
         for (const schemaNode of value.value) {
-          if (visitor(schemaNode, value.value, SchemaNodeIn.PROPS, value)) {
+          if (visitor(schemaNode, value.value, SchemaNodeIn.PROPS, undefined, value)) {
             return true
           }
 
@@ -296,6 +316,15 @@ export function createSchemaManager(): SchemaManager {
     }
   }
 
+  function createVNodeBinding(schemaNode: JSX.Element): SchemaNodeBinding
+  function createVNodeBinding(schemaNode: SchemaNode): SchemaNodeBinding
+  function createVNodeBinding(schemaNode: any): SchemaNodeBinding {
+    return {
+      type: BuiltInSchemaNodeBindingTypes.V_NODE_BINDING,
+      value: schemaNode,
+    }
+  }
+
   function createRenderBinding(schemaNodes: JSX.Element[], renderId?: string): SchemaNodeBinding
   function createRenderBinding(schemaNodes: SchemaNode[], renderId?: string): SchemaNodeBinding
   function createRenderBinding(schemaNodes: any[], renderId?: string): SchemaNodeBinding {
@@ -333,9 +362,11 @@ export function createSchemaManager(): SchemaManager {
     isExpressionBinding,
     isObjectBinding,
     isRenderBinding,
+    isVNodeBinding,
 
     createExpressionBinding,
     createRenderBinding,
+    createVNodeBinding,
 
     visitSchemaNode,
 
@@ -350,6 +381,7 @@ export function createSchemaManager(): SchemaManager {
     id: generateId,
     expression: createExpressionBinding,
     render: createRenderBinding,
+    vNode: createVNodeBinding,
     clone: cloneSchemaNode,
     visit: visitSchemaNode,
     find: findSchemaNodeById,

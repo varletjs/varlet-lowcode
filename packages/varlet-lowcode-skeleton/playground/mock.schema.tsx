@@ -1,6 +1,9 @@
 import { schemaManager } from '@varlet/lowcode-core'
 
-const { id, render, expression } = schemaManager
+const { id, render, expression, vNode } = schemaManager
+
+const v = (name) => ({ id: id(), name, library: 'Varlet' })
+const n = (name) => ({ id: id(), name, library: 'naive' })
 
 const code = `\
 function setup() {
@@ -15,70 +18,86 @@ function setup() {
 `
 const css = 'body {\n  padding: 20px\n}'
 
-const spread = {
-  name: 'NDataTable',
-  library: 'naive',
-}
+// const props = {
+//   style: {
+//     marginBottom: '10px',
+//   },
+//   type: 'primary',
+//   onClick: expression('() => { count.value++; }'),
+// }
+//
+// const buttons = Array.from({ length: 4 }, () => {
+//   return (
+//     <node id={id()} {...v('Button')} props={{ type: 'primary' }}>
+//       <t textContent="hello" />
+//     </node>
+//   )
+// })
+//
+// const button = (
+//   <node {...v('Button')} for={4} props={{ type: 'success' }}>
+//     <t textContent={expression('count.value')} />
+//   </node>
+// )
 
-const props = {
-  style: {
-    marginBottom: '10px',
-  },
-  type: 'primary',
-  onClick: expression('() => { count.value++; }'),
-}
-
-const buttons = Array.from({ length: 4 }, () => {
-  return (
-    <node id={id()} name="Button" library="Varlet" props={{ type: 'primary' }}>
-      <t textContent="hello" />
-    </node>
-  )
-})
-
-const button = (
-  <node id={id()} for={4} name="Button" library="Varlet" props={{ type: 'success' }}>
-    <t textContent={expression('count.value')} />
-  </node>
-)
+// const schema = (
+//   <page id={id()} code={code} css={css}>
+//     <node
+//       {...n('NDataTable')}
+//       props={{
+//         columns: [
+//           {
+//             title: 'No',
+//             key: 'no',
+//           },
+//           {
+//             title: 'Title',
+//             key: 'title',
+//           },
+//           {
+//             title: 'Action',
+//             key: 'actions',
+//             render: render(
+//               [
+//                 <node {...n('NButton')} props={props}>
+//                   <t id={id()} textContent={expression('count.value')} />
+//                 </node>,
+//               ],
+//               id()
+//             ),
+//           },
+//         ],
+//         data: [
+//           { no: 3, title: '搞一下' },
+//           { no: 4, title: '搞两下' },
+//           { no: 12, title: '搞三下' },
+//         ],
+//       }}
+//     />
+//     {buttons}
+//     {button}
+//   </page>
+// )
 
 const schema = (
   <page id={id()} code={code} css={css}>
-    <node
-      id={id()}
-      {...spread}
-      props={{
-        columns: [
-          {
-            title: 'No',
-            key: 'no',
-          },
-          {
-            title: 'Title',
-            key: 'title',
-          },
-          {
-            title: 'Action',
-            key: 'actions',
-            render: render(
-              [
-                <node id={id()} name="NButton" library="naive" props={props}>
-                  <t id={id()} textContent={expression('count.value')} />
-                </node>,
-              ],
-              id()
-            ),
-          },
-        ],
-        data: [
-          { no: 3, title: '搞一下' },
-          { no: 4, title: '搞两下' },
-          { no: 12, title: '搞三下' },
-        ],
-      }}
-    />
-    {buttons}
-    {button}
+    <node {...n('NTabs')}>
+      <node
+        {...n('NTabPane')}
+        props={{
+          name: 'hi',
+          tab: vNode(
+            <node {...v('Button')}>
+              <t id={id()} textContent="hi" />
+            </node>
+          ),
+        }}
+      >
+        <node {...v('Button')}>
+          <t id={id()} textContent="hello" />
+        </node>
+      </node>
+    </node>
   </page>
 )
 

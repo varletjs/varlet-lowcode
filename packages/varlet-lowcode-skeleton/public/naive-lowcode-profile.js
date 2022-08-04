@@ -15,6 +15,18 @@ window.NaiveLowcodeProfile = {
       codegen: {
         name: 'n-data-table'
       }
+    },
+    {
+      name: 'NTabs',
+      codegen: {
+        name: 'n-tabs'
+      }
+    },
+    {
+      name: 'NTabPane',
+      codegen: {
+        name: 'n-tab-pane'
+      }
     }
   ]
 }

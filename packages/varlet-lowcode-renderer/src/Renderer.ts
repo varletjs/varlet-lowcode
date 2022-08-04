@@ -219,10 +219,6 @@ export default defineComponent({
       styles && document.body.removeChild(styles)
     }
 
-    function cloneSchemaNode(schemaNode: SchemaNode) {
-      return JSON.parse(JSON.stringify(schemaNode))
-    }
-
     function hoistWindow(apis: any) {
       Object.keys(apis).forEach((name: string) => {
         if (name in window) {
@@ -302,6 +298,12 @@ export default defineComponent({
             conditionedSchemaNodes.map((schemaNode) => renderSchemaNode(schemaNode, newScopeVariables))
           )
         }
+      }
+
+      if (schemaManager.isVNodeBinding(value)) {
+        const condition = getBindingValue(value.value.if, scopeVariables) ?? true
+
+        return condition ? renderSchemaNode(value.value, scopeVariables) : undefined
       }
 
       if (schemaManager.isExpressionBinding(value)) {
@@ -391,7 +393,7 @@ export default defineComponent({
         Fragment,
         null,
         renderList(bindingValue, (item, index) => {
-          const clonedSchemaNode = cloneSchemaNode(schemaNode)
+          const clonedSchemaNode = schemaManager.cloneSchemaNode(schemaNode)
 
           return withDesigner(
             clonedSchemaNode,
