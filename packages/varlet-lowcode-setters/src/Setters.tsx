@@ -9,10 +9,20 @@ import SettersAttribute from './tabs-content/setters-attribute/index'
 import SettersStyle from './tabs-content/setters-style/index'
 import SettersAdvancedSettings from './tabs-content/setters-advanced-setting/index'
 import SettersEvent from './tabs-content/setters-event/index'
-import { schemaManager, eventsManager } from '@varlet/lowcode-core'
+import { schemaManager, eventsManager, assetsManager, Assets, AssetsManager } from '@varlet/lowcode-core'
 import { createParser } from '@varlet/lowcode-parser'
 import './index.less'
 
+function getProfiles(assets: Assets) {
+  const rendererWindow = Array.from(window).find((w) => w.name === 'rendererWindow') as any
+  const rendererAssetsManager = rendererWindow?.VarletLowcodeCore?.assetsManager as AssetsManager | undefined
+
+  if (!rendererAssetsManager) {
+    return []
+  }
+
+  return rendererAssetsManager.getProfiles(assets)
+}
 const active = ref(0)
 export default defineComponent({
   name: 'VarletLowCodeSetter',
@@ -27,10 +37,16 @@ export default defineComponent({
     onMounted(() => {
       eventsManager.on('selector', computedSelectorStyles)
     })
+
+    const schema = schemaManager.exportSchema()
     onUpdated(() => {
       refTab.value?.swipe.resize()
+      const assets = getProfiles(assetsManager.exportAssets())
+      const schemaNode = schemaManager.findSchemaNodeById(schema, schemaId.value)
+      if (schemaNode && schemaNode.library && schemaNode.name) {
+        // const materials = assetsManager.findMaterial(assets as Assets, schemaNode.name, schemaNode.library)
+      }
     })
-
     return () => {
       return (
         <div class="varlet-lowcode-setters">
@@ -51,10 +67,10 @@ export default defineComponent({
                     <SettersEvent schemaId={schemaId.value} />
                   </VarTabItems>
                   <VarTabItems>
-                    <SettersStyle />
+                    <SettersStyle schemaId={schemaId.value} />
                   </VarTabItems>
                   <VarTabItems>
-                    <SettersAdvancedSettings />
+                    <SettersAdvancedSettings schemaId={schemaId.value} />
                   </VarTabItems>
                 </VarTabsItems>
               </div>

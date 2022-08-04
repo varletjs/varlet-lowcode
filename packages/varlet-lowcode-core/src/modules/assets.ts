@@ -27,6 +27,7 @@ export interface AssetProfileMaterialSlot {
 
 export interface AssetProfileMaterialSetterOptions {
   setter: string | Component | DefineComponent
+  visible?: Function
   block?: boolean
   props?: Record<string, any>
 }
@@ -108,7 +109,6 @@ export function createAssetsManager(): AssetsManager {
       }
 
       const assetProfile = get(window, asset.profileLibrary) as AssetProfile
-
       if (assetProfile.library === library) {
         for (const material of assetProfile.materials ?? []) {
           if (material.name === name) {
