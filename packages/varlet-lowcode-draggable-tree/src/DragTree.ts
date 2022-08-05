@@ -1,5 +1,4 @@
 import { TreeNode } from './props'
-import { eventsManager } from '@varlet/lowcode-core'
 
 class DragTree {
   tree: TreeNode[] = []
@@ -43,7 +42,8 @@ class DragTree {
         return node
       }
       if (node.children) {
-        return this.findNodeById(id, node.children)
+        const r = this.findNodeById(id, node.children)
+        if (r) return r
       }
     }
   }
@@ -102,7 +102,6 @@ class DragTree {
 
     this.initHolder()
 
-    console.log(this.to, this.holder!, isNext, 'aaaaa')
     this.addNode(this.to, this.holder!, isNext)
 
     this.resetRelation()
@@ -111,7 +110,6 @@ class DragTree {
   }
 
   addNode(to: TreeNode, node: TreeNode, isNext: boolean) {
-    console.log(to, node, isNext, 'bbbbb')
     const parentNode = this.findParentNode(to)
     const parentChildren = parentNode ? parentNode!.children : this.tree
     const index = parentChildren.findIndex((child: TreeNode) => {
@@ -122,8 +120,6 @@ class DragTree {
   }
 
   removeNode(node: TreeNode) {
-    console.log(node, 'ddddd')
-
     const parentNode = this.findParentNode(node)
     const parentChildren = parentNode ? parentNode?.children : this.tree
     const index = parentChildren.findIndex((child: TreeNode) => {

@@ -48,10 +48,18 @@ export default class Dnd {
 
     const dragNodeIndex = this.nodeList.findIndex((node) => node.dataset.id === this.dragNode?.id)
     const i = Math.round(offsetY / 30) + dragNodeIndex
+
+    console.log(i, 'iiiiii')
     const dropNodeIndex = i < 0 ? 0 : i > this.nodeList.length ? this.nodeList.length - 1 : i
 
-    this.dropNode = dragTree.findNodeById(this.nodeList[dropNodeIndex].dataset!.id!)
+    console.log(dropNodeIndex, 'dropNodeIndex')
 
-    console.log(this.dropNode, dropNodeIndex)
+    const node = dragTree.findNodeById(this.nodeList[dropNodeIndex].dataset!.id!)
+
+    if (node.id === this.dropNode?.id) return false
+
+    this.dropNode = node
+
+    return true
   }
 }

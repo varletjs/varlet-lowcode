@@ -56,13 +56,10 @@ const initDragEvents = () => {
 
 const onDrag = (e: any) => {
   e.preventDefault()
-  e.stopPropagation()
-
-  props.dnd!.setOffsetY(e.clientY, props.dragTree!)
 
   if (e.target.dataset.id === 'holder') return
 
-  if (props.dnd!.dropNode!.children) {
+  if (props.dnd!.setOffsetY(e.clientY, props.dragTree!) && props.dnd!.dropNode!.children) {
     props.dnd!.setOverNode(props.dnd!.dropNode!, props.dragTree!)
   }
 
@@ -108,6 +105,7 @@ const onDrop = (e: any) => {
         color: dragTree.holderParentNode === treeNode ? 'blue' : undefined,
       }"
       :data-id="treeNode.id"
+      @dragstart="dragstart($event, treeNode)"
       @touchstart="dragstart($event, treeNode)"
     >
       <Icon
