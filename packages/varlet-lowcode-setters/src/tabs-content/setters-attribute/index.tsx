@@ -1,5 +1,6 @@
-import { defineComponent, reactive, ref, Ref } from 'vue'
-import { Icon, Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
+import { defineComponent, ref, Ref, watchEffect } from 'vue'
+import { Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
+import { AssetProfileMaterialProp } from '@varlet/lowcode-core'
 import Component from '../../built-in-setters/index'
 import '@varlet/ui/es/collapse/style/index.js'
 import '@varlet/ui/es/collapse-item/style/index.js'
@@ -13,88 +14,19 @@ export default defineComponent({
     schemaId: {
       type: String,
     },
+    materialsData: {
+      type: Object,
+    },
   },
-  setup() {
-    const testSettersObject = reactive({
-      name: 'Card',
-      description: 'A varlet button component',
-      props: [
-        {
-          name: 'title',
-          description: '卡片标题',
-          setter: [
-            {
-              type: 'InputSetter',
-              value: '789',
-            },
-          ],
-        },
-        {
-          name: 'titleChildren',
-          description: '子标题',
-          setter: [
-            {
-              type: 'SwitchInputSetter',
-              value: '789',
-            },
-          ],
-        },
-        {
-          name: 'ripple',
-          description: '开启水波',
-          setter: [
-            {
-              type: 'SwitchSetter',
-              value: true,
-            },
-          ],
-        },
-        {
-          name: 'padding',
-          description: '区块行距',
-          setter: [
-            {
-              type: 'CounterSetter',
-              value: 12,
-            },
-          ],
-        },
-        {
-          name: 'widthType',
-          description: '宽度类型',
-          setter: [
-            {
-              type: 'RadioSetter',
-              options: [
-                {
-                  value: '自适应',
-                  label: 'adaptive',
-                },
-                {
-                  value: '固定',
-                  label: 'fixed',
-                },
-              ],
-              value: 'adaptive',
-            },
-          ],
-        },
-        {
-          name: 'titleEdit',
-          description: '主标题操作',
-          layout: 'singRow',
-          setter: [
-            {
-              type: 'DraggableSetter',
-              value: 12,
-            },
-          ],
-        },
-      ],
+  setup(props) {
+    watchEffect(() => {
+      // console.log(props.schemaId,123456)
+      // console.log(props.materialsData,123456)
     })
     const values = ref(['1'])
     const openBindDialog = (val: string) => {
       showDialog.value = true
+      return val
     }
     const showDialog = ref(false)
     const dialogCode: Ref<any> = ref()
@@ -104,39 +36,41 @@ export default defineComponent({
     const layoutContent = (item: any) => {
       let content
       if (item.layout === 'singRow') {
-        content = (
-          <div class="varlet-low-code-field-body">
-            <div class="varlet-low-code-field-body-content__sing-row">
-              <div class="varlet-low-code-field-body-title">{item.description}</div>
-              <Icon name="dots-vertical" class="varlet-low-code-field-body__setter-icon" />
-            </div>
-            <div class="varlet-low-code-field-body-content__sing-row">
-              {item.setter.map((itemSetter: any, index: number) => {
-                const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
-                const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
-                return (
-                  <SetterComponent
-                    v-model={itemSetter.value}
-                    options={itemSetter.options ?? undefined}
-                    style={{ marginLeft: index > 0 ? '10px' : 0 }}
-                  />
-                )
-              })}
-            </div>
-          </div>
-        )
+        // content = (
+        //   <div class="varlet-low-code-field-body">
+        //     <div class="varlet-low-code-field-body-content__sing-row">
+        //       <div class="varlet-low-code-field-body-title">{item.description}</div>
+        //       <Icon name="dots-vertical" class="varlet-low-code-field-body__setter-icon" />
+        //     </div>
+        //     <div class="varlet-low-code-field-body-content__sing-row">
+        //       {item.setters.map((itemSetter: any, index: number) => {
+        //         const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
+        //         const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
+        //         return (
+        //           <SetterComponent
+        //             v-model={itemSetter.value}
+        //             options={itemSetter.options ?? undefined}
+        //             style={{ marginLeft: index > 0 ? '10px' : 0 }}
+        //           />
+        //         )
+        //       })}
+        //     </div>
+        //   </div>
+        // )
       } else {
         content = (
           <div class="varlet-low-code-field-body">
-            <div class="varlet-low-code-field-body-title">{item.description}</div>
+            <div class="varlet-low-code-field-body-title">{item.label}</div>
             <div class="varlet-low-code-field-body-content">
-              {item.setter.map((itemSetter: any, index: number) => {
-                const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
+              {item.setters.map((itemSetter: any, index: number) => {
+                const setterTypeComponents = Component.filter(
+                  (itemComponent) => itemComponent.name === itemSetter.setter
+                )
                 const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
                 return (
                   <SetterComponent
-                    v-model={itemSetter.value}
-                    options={itemSetter.options ?? undefined}
+                    v-model={item.defaultValue}
+                    options={itemSetter.props?.options ?? undefined}
                     style={{ marginLeft: index > 0 ? '10px' : 0 }}
                   />
                 )
@@ -159,7 +93,7 @@ export default defineComponent({
         <div class="setters-attribute-field">
           <VarCollapse v-model={values.value}>
             <VarCollapseItem title="布局" name="1">
-              {testSettersObject.props.map((item) => {
+              {props.materialsData?.attrs.map((item: AssetProfileMaterialProp) => {
                 return layoutContent(item)
               })}
             </VarCollapseItem>

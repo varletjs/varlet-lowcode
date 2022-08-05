@@ -37,6 +37,7 @@ export type AssetProfileMaterialSetter = string | AssetProfileMaterialSetterOpti
 export interface AssetProfileMaterialProp {
   name: string
   label?: string
+  defaultValue?: any
   setters: AssetProfileMaterialSetter[]
 }
 
@@ -109,6 +110,7 @@ export function createAssetsManager(): AssetsManager {
       }
 
       const assetProfile = get(window, asset.profileLibrary) as AssetProfile
+
       if (assetProfile.library === library) {
         for (const material of assetProfile.materials ?? []) {
           if (material.name === name) {

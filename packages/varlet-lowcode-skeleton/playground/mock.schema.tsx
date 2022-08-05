@@ -1,6 +1,6 @@
 import { schemaManager } from '@varlet/lowcode-core'
 
-const { id, render, expression, vNode } = schemaManager
+const { id, vNode } = schemaManager
 
 const v = (name) => ({ id: id(), name, library: 'Varlet' })
 const n = (name) => ({ id: id(), name, library: 'naive' })
@@ -39,6 +39,27 @@ const css = 'body {\n  padding: 20px\n}'
 //     <t textContent={expression('count.value')} />
 //   </node>
 // )
+
+// const spread = {
+//   name: 'NDataTable',
+//   library: 'naive',
+// }
+
+// const props = {
+//   style: {
+//     marginBottom: '10px',
+//   },
+//   type: 'primary',
+//   onClick: expression('() => { count.value++; }'),
+// }
+
+// const buttons = Array.from({ length: 4 }, () => {
+//   return (
+//     <node id={id()} name="Button" library="Varlet" props={{ type: 'warning' }}>
+//       <t textContent="hello" />
+//     </node>
+//   )
+// })
 
 // const schema = (
 //   <page id={id()} code={code} css={css}>
