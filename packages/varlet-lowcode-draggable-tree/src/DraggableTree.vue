@@ -19,11 +19,7 @@ watch(
   }
 )
 
-const dnd = ref(new Dnd())
-
-const onDragOver = (e: DragEvent) => {
-  e.dataTransfer!.dropEffect = 'move'
-}
+const dnd = ref(Dnd)
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 import { TreeNode } from './props'
 import DragTree from './DragTree'
 
-export default class Dnd {
+class Dnd {
   dragNode: TreeNode | undefined
 
   dropNode: TreeNode | undefined
@@ -63,3 +63,5 @@ export default class Dnd {
     return true
   }
 }
+
+export default new Dnd()
