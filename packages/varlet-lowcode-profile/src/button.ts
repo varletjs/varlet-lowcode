@@ -33,11 +33,12 @@ const material: AssetProfileMaterial = {
     {
       name: 'type',
       label: '类型',
+      defaultValue: 'default',
       setters: [
         {
           setter: 'SelectSetter',
           props: {
-            option: [
+            options: [
               {
                 value: 'default',
                 label: 'default',
@@ -63,7 +64,6 @@ const material: AssetProfileMaterial = {
                 label: 'danger',
               },
             ],
-            defaultValue: 'default',
           },
         },
       ],
@@ -71,11 +71,12 @@ const material: AssetProfileMaterial = {
     {
       name: 'size',
       label: '尺寸',
+      defaultValue: 'normal',
       setters: [
         {
           setter: 'SelectSetter',
           props: {
-            option: [
+            options: [
               {
                 value: 'normal',
                 label: 'normal',
@@ -93,7 +94,6 @@ const material: AssetProfileMaterial = {
                 label: 'large',
               },
             ],
-            defaultValue: 'normal',
           },
         },
       ],
@@ -101,23 +101,22 @@ const material: AssetProfileMaterial = {
     {
       name: 'loading',
       label: '加载状态',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'loadingType',
       label: 'loading类型',
+      defaultValue: 'circle',
       setters: [
         {
           setter: 'SelectSetter',
           props: {
-            option: [
+            options: [
               {
                 value: 'circle',
                 label: 'circle',
@@ -139,7 +138,6 @@ const material: AssetProfileMaterial = {
                 label: 'disappear',
               },
             ],
-            defaultValue: 'circle',
           },
         },
       ],
@@ -147,14 +145,12 @@ const material: AssetProfileMaterial = {
     {
       name: 'loadingRadius',
       label: 'loading半径',
+      defaultValue: '12',
       setters: [
         {
           setter: 'InputSetter',
           visible: (values: any) => {
             return values.loadingType === 'circle'
-          },
-          props: {
-            defaultValue: '12',
           },
         },
       ],
@@ -162,6 +158,7 @@ const material: AssetProfileMaterial = {
     {
       name: 'loadingSize',
       label: 'loading尺寸',
+      defaultValue: 'normal',
       setters: [
         {
           setter: 'SelectSetter',
@@ -169,7 +166,7 @@ const material: AssetProfileMaterial = {
             return values.loadingType !== 'circle'
           },
           props: {
-            option: [
+            options: [
               {
                 value: 'large',
                 label: 'large',
@@ -187,7 +184,6 @@ const material: AssetProfileMaterial = {
                 label: 'mini',
               },
             ],
-            defaultValue: 'normal',
           },
         },
       ],
@@ -195,84 +191,70 @@ const material: AssetProfileMaterial = {
     {
       name: 'autoLoading',
       label: '自动加载',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'round',
       label: '圆形按钮',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'block',
       label: '块级元素',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'text',
       label: '文字按钮',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'outline',
       label: '外边框',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'disabled',
       label: '禁用状态',
+      defaultValue: false,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: false,
-          },
         },
       ],
     },
     {
       name: 'ripple',
       label: '水波纹',
+      defaultValue: true,
       setters: [
         {
           setter: 'SwitchSetter',
-          props: {
-            defaultValue: true,
-          },
         },
       ],
     },
