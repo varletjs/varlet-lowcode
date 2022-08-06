@@ -1,37 +1,32 @@
 <script lang="ts" setup name="VarletLowcodeDraggableTree">
-import { treeProps } from './props'
+import { PropType, defineProps, onMounted } from 'vue'
 import DraggableTreeNode from './DraggableTreeNode.vue'
-import { defineProps, ref, watch } from 'vue'
-import DragTree from './DragTree'
-import Dnd from './Dnd'
+import { dndTree } from './provider'
 
-const props = defineProps(treeProps)
+export interface TreeNode {
+  id: string
+  text?: string
+  children?: TreeNode[]
+}
 
-const dragTree = ref()
-
-watch(
-  () => props.tree,
-  (newVal) => {
-    dragTree.value = new DragTree(newVal, props['onUpdate:tree'])
+const props = defineProps({
+  tree: {
+    type: Object as PropType<TreeNode>,
+    required: true,
+    default: () => ({}),
   },
-  {
-    immediate: true,
-  }
-)
+})
 
-const dnd = ref(Dnd)
+// TODO: linstener tree change or the undo-redo EventBus
+
+onMounted(() => {
+  dndTree.value = JSON.parse(JSON.stringify(props.tree))
+})
 </script>
 
 <template>
   <div class="varlet-low-code-draggable-tree">
-    <DraggableTreeNode
-      v-for="treeNode of dragTree.tree"
-      :key="treeNode.id"
-      :tree-node="treeNode"
-      :drag-tree="dragTree"
-      :dnd="dnd"
-      :indent="0"
-    />
+    <DraggableTreeNode :tree-node="dndTree" />
   </div>
 </template>
 

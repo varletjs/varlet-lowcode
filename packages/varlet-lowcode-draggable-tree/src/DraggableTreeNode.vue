@@ -1,130 +1,101 @@
 <script lang="ts" setup name="DraggableTreeNode">
-import { TreeNode, treeNodeProps } from './props'
-import { ref, defineProps, ComputedRef, computed, watch } from 'vue'
+import { ref, defineProps, PropType, toRaw } from 'vue'
 import { Icon } from '@varlet/ui'
+import { onChangeNodeTree, onSubmit, dragData } from './provider'
 import '@varlet/ui/es/icon/style/index.js'
 
-const props = defineProps(treeNodeProps)
-const expand = ref(false)
-
-const clearDragEvents = ref()
-
-const isNext = (e: DragEvent) => {
-  const { bottom, height } = (e.target as Element).getBoundingClientRect()
-  const { y } = e
-
-  return (bottom - y) / height >= 0.5
+export interface TreeNode {
+  id: string
+  text?: string
+  children?: TreeNode[]
 }
 
-const toggleExpand = () => {
+const finallyTree = ref<string>('')
+const expand = ref(false)
+
+const props = defineProps({
+  treeNode: {
+    type: Object as PropType<TreeNode>,
+    required: true,
+    default: () => ({}),
+  },
+  level: {
+    type: Number,
+    default: 1,
+  },
+})
+
+const handleIconClick = () => {
   expand.value = !expand.value
 }
 
-const overNode: ComputedRef<TreeNode | undefined> = computed(() => props.dnd!.overNode)
+const onDragStart = (e: DragEvent) => {
+  const _treeNode = JSON.stringify(props.treeNode)
+  dragData.value = props.treeNode
 
-watch(
-  () => overNode.value,
-  (newVal) => {
-    if (newVal && newVal.id === props.treeNode.id && props.dnd?.dragNode?.id !== overNode.value?.id) {
-      expand.value = true
-    }
-  }
-)
+  e.dataTransfer && e.dataTransfer?.setData('text', _treeNode)
 
-const dragstart = (e: TouchEvent, treeNode: TreeNode) => {
-  e.preventDefault()
-
-  props.dnd!.startY = e.touches[0].clientY
-  props.dnd!.setDragNode(treeNode)
-
-  expand.value = false
-
-  props.dragTree!.setFrom(treeNode)
-
-  clearDragEvents.value = initDragEvents()
+  e.dataTransfer && (e.dataTransfer.effectAllowed = 'move')
 }
 
-const initDragEvents = () => {
-  document.addEventListener('mousemove', onDrag)
-  document.addEventListener('mouseup', onDrop)
-
-  return () => {
-    document.removeEventListener('mousemove', onDrag)
-    document.removeEventListener('mouseup', onDrop)
-  }
+const onDragOver = (e: DragEvent) => {
+  e.preventDefault()
+  e.dataTransfer && (e.dataTransfer.dropEffect = 'move')
 }
 
-const onDrag = (e: any) => {
+const onDragEnter = (e: DragEvent) => {
   e.preventDefault()
 
-  if (e.target.dataset.id === 'holder') return
+  if (e.target !== e.currentTarget) return
 
-  if (props.dnd!.setOffsetY(e.clientY, props.dragTree!) && props.dnd!.dropNode!.children) {
-    props.dnd!.setOverNode(props.dnd!.dropNode!, props.dragTree!)
-  }
+  if (toRaw(dragData.value)?.id === props.treeNode.id) return
 
-  props.dragTree!.toggleTreeNodeChange(props.dnd!.dropNode!, isNext(e))
+  onChangeNodeTree({ start: toRaw(dragData.value), end: JSON.parse(JSON.stringify(props.treeNode)) })
 }
 
-const onDrop = (e: any) => {
-  e.preventDefault()
-  e.stopPropagation()
-  clearDragEvents.value?.()
+const onEnterChildren = (e: DragEvent) => {
+  expand.value = true
+}
 
-  if (props.dnd?.timer) {
-    clearTimeout(props.dnd.timer)
-  }
+const onDragEnd = (e: DragEvent) => {}
 
-  if (props.dnd!.dropNode?.id && props.dnd?.overNode?.id && props.dnd!.dropNode.id === props.dnd?.overNode.id) {
-    props.dragTree!.insertNode()
-  } else {
-    props.dragTree!.submitTreeNodeChange(isNext(e))
-  }
-
-  props.dnd!.clearDrag()
+const onDrop = (e: DragEvent) => {
+  finallyTree.value && onSubmit(finallyTree.value)
 }
 </script>
 
 <template>
-  <div
-    :class="{
-      'varlet-low-code-draggable-tree-node--dragging': dnd?.dragNode?.id === treeNode.id,
-      'varlet-low-code-draggable-tree-node__holder': treeNode.id === 'holder',
-    }"
-    class="varlet-low-code-draggable-tree-node"
-    draggable="true"
-    :style="{
-      width: treeNode.id === 'holder' ? `calc(100% - ${indent * 20}px)` : undefined,
-      transform: treeNode.id === 'holder' ? `translateX(${indent * 20}px)` : undefined,
-    }"
-  >
+  <div class="varlet-low-code-draggable-tree-node">
     <div
+      @dragstart.stop="onDragStart"
+      @dragover.prevent="onDragOver"
+      @dragend="onDragEnd"
+      @dragenter.stop="onDragEnter"
       class="varlet-low-code-draggable-tree-node__title"
+      draggable="true"
       :style="{
-        paddingLeft: `${indent * 20}px`,
-        color: dragTree.holderParentNode === treeNode ? 'blue' : undefined,
+        paddingLeft: `${(level ? level : 1) * 20}px`,
       }"
-      :data-id="treeNode.id"
-      @dragstart="dragstart($event, treeNode)"
-      @touchstart="dragstart($event, treeNode)"
     >
       <Icon
         v-if="treeNode.children"
-        @touchstart.stop="toggleExpand"
+        :style="{ left: `${((level ? level : 1) - 1) * 20}px` }"
+        class="varlet-low-code-draggable-tree-node__title-icon"
         name="chevron-right"
         :class="expand ? 'varlet-low-code-draggable-tree-node__icon-expand' : ''"
+        @click="handleIconClick"
       />
-      {{ treeNode.text }}
+      <div @dragenter="onEnterChildren" class="varlet-low-code-draggable-tree-node__title-name">
+        {{ treeNode.text }}
+      </div>
     </div>
     <div v-if="treeNode.children && expand">
       <DraggableTreeNode
-        :drag-tree="dragTree"
-        :dnd="dnd"
         v-show="expand"
-        :indent="indent + 1"
         :tree-node="treeChildNode"
         v-for="treeChildNode of treeNode.children"
         :key="treeChildNode.id"
+        :level="level + 1"
       />
     </div>
   </div>
@@ -136,6 +107,22 @@ const onDrop = (e: any) => {
     display: flex;
     align-items: center;
     height: 30px;
+    padding-left: 20px;
+    position: relative;
+
+    &-icon {
+      position: absolute;
+      left: 0;
+    }
+
+    &-name {
+      height: 30px;
+      line-height: 30px;
+    }
+
+    &:hover {
+      background: rgba(31, 56, 88, 0.06);
+    }
   }
 
   &__icon-expand {
