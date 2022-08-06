@@ -27,7 +27,7 @@ const props = defineProps({
   },
   level: {
     type: Number,
-    default: 1,
+    default: 0,
   },
 })
 
@@ -85,14 +85,14 @@ const onDrop = () => {
       @dragover.prevent="onDragOver"
       @dragenter.stop="onDragEnter"
       class="varlet-low-code-draggable-tree-node__title"
-      draggable="true"
+      :draggable="Boolean(level)"
       :style="{
-        paddingLeft: `${(level ? level : 1) * 20}px`,
+        paddingLeft: `${(level + 1) * 20}px`,
       }"
     >
       <Icon
         v-if="treeNode.children"
-        :style="{ left: `${((level ? level : 1) - 1) * 20}px` }"
+        :style="{ left: `${level * 20}px` }"
         class="varlet-low-code-draggable-tree-node__title-icon"
         name="chevron-right"
         :class="expand ? 'varlet-low-code-draggable-tree-node__icon-expand' : ''"
