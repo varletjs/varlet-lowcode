@@ -3,7 +3,7 @@ import DraggableTree, { TreeNode } from '../src/index'
 import { ref } from 'vue'
 
 const tree = ref<TreeNode>({
-  id: '66',
+  id: 'page',
   text: 'page',
   children: [
     {

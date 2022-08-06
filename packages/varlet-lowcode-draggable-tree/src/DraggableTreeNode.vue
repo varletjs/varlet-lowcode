@@ -1,7 +1,7 @@
 <script lang="ts" setup name="DraggableTreeNode">
 import { ref, defineProps, PropType, toRaw } from 'vue'
 import { Icon } from '@varlet/ui'
-import { onChangeNodeTree, onSubmit, dragData } from './provider'
+import { onChangeNodeTree, onSubmit, dragData, onEnterNodeTree, dndTree } from './provider'
 import '@varlet/ui/es/icon/style/index.js'
 
 export interface TreeNode {
@@ -10,8 +10,14 @@ export interface TreeNode {
   children?: TreeNode[]
 }
 
-const finallyTree = ref<string>('')
 const expand = ref(false)
+
+const calcPosition = (e: DragEvent) => {
+  const { bottom, height } = (e.target as Element).getBoundingClientRect()
+  const { y } = e
+
+  return (bottom - y) / height >= 0.5 ? 'down' : 'up'
+}
 
 const props = defineProps({
   treeNode: {
@@ -33,7 +39,7 @@ const onDragStart = (e: DragEvent) => {
   const _treeNode = JSON.stringify(props.treeNode)
   dragData.value = props.treeNode
 
-  e.dataTransfer && e.dataTransfer?.setData('text', _treeNode)
+  e.dataTransfer && e.dataTransfer.setData('text', _treeNode)
 
   e.dataTransfer && (e.dataTransfer.effectAllowed = 'move')
 }
@@ -48,19 +54,27 @@ const onDragEnter = (e: DragEvent) => {
 
   if (e.target !== e.currentTarget) return
 
-  if (toRaw(dragData.value)?.id === props.treeNode.id) return
+  if (dragData.value?.id === props.treeNode.id) return
 
-  onChangeNodeTree({ start: toRaw(dragData.value), end: JSON.parse(JSON.stringify(props.treeNode)) })
+  onChangeNodeTree({ start: toRaw(dragData.value), end: JSON.parse(JSON.stringify(props.treeNode)) }, calcPosition(e))
 }
 
 const onEnterChildren = (e: DragEvent) => {
   expand.value = true
+
+  if (e.target !== e.currentTarget) return
+
+  if (dragData.value?.id === props.treeNode.id) return
+
+  if (props.treeNode?.children && !props.treeNode.children.length) {
+    e.stopPropagation()
+
+    onEnterNodeTree({ start: toRaw(dragData.value), end: JSON.parse(JSON.stringify(props.treeNode)) })
+  }
 }
 
-const onDragEnd = (e: DragEvent) => {}
-
-const onDrop = (e: DragEvent) => {
-  finallyTree.value && onSubmit(finallyTree.value)
+const onDrop = () => {
+  onSubmit.value?.(dndTree.value)
 }
 </script>
 
@@ -69,7 +83,6 @@ const onDrop = (e: DragEvent) => {
     <div
       @dragstart.stop="onDragStart"
       @dragover.prevent="onDragOver"
-      @dragend="onDragEnd"
       @dragenter.stop="onDragEnter"
       class="varlet-low-code-draggable-tree-node__title"
       draggable="true"

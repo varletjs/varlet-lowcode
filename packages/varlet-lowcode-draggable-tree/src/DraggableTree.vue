@@ -1,7 +1,7 @@
 <script lang="ts" setup name="VarletLowcodeDraggableTree">
-import { PropType, defineProps, onMounted } from 'vue'
+import { PropType, defineProps, onMounted, watch } from 'vue'
 import DraggableTreeNode from './DraggableTreeNode.vue'
-import { dndTree } from './provider'
+import { dndTree, onSubmit } from './provider'
 
 export interface TreeNode {
   id: string
@@ -15,12 +15,23 @@ const props = defineProps({
     required: true,
     default: () => ({}),
   },
+  'onUpdate:tree': {
+    type: Function as PropType<(value: TreeNode) => void>,
+  },
 })
 
-// TODO: linstener tree change or the undo-redo EventBus
+watch(
+  () => props.tree,
+  (newVal) => {
+    dndTree.value = JSON.parse(JSON.stringify(newVal))
+  },
+  {
+    immediate: true,
+  }
+)
 
 onMounted(() => {
-  dndTree.value = JSON.parse(JSON.stringify(props.tree))
+  onSubmit.value = props['onUpdate:tree']
 })
 </script>
 
