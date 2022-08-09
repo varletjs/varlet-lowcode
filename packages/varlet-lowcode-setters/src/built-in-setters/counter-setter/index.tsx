@@ -1,4 +1,5 @@
-import { defineComponent, computed } from 'vue'
+import { defineComponent, Ref, ref, watch } from 'vue'
+import { eventsManager } from '@varlet/lowcode-core'
 import { Counter as VarCounter } from '@varlet/ui'
 
 import '@varlet/ui/es/input/style/index.js'
@@ -6,20 +7,23 @@ import '@varlet/ui/es/input/style/index.js'
 export default defineComponent({
   name: 'COUNTERSETTER',
   props: {
-    modelValue: {
-      type: Number,
-      default: 0,
+    setter: {
+      type: Object,
     },
   },
-  setup(props, { emit }) {
-    const counterValue = computed({
-      get: () => props.modelValue,
-      set: (val) => {
-        emit('update:modelValue', val)
+  setup(props) {
+    const setter: Ref<any> = ref()
+    setter.value = { ...props.setter }
+    watch(
+      setter.value,
+      (newValue) => {
+        eventsManager.emit('setter-value-change', newValue)
       },
-    })
+      { deep: true }
+    )
+
     return () => {
-      return <VarCounter v-model={counterValue.value} />
+      return <VarCounter v-model={setter.value.defaultValue} />
     }
   },
 })

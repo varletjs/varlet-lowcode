@@ -2,7 +2,6 @@ import { defineComponent, reactive, ref } from 'vue'
 import { Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
 import { RadioSetter, SelectSetter, InputSetter, SliderSetter, CounterSetter } from '../../built-in-setters/index'
 import SetterPosition from '../../built-in-setters/positon-setter/index'
-import BackGauge from '../../component/back-gauge/index'
 import Popover from '../../component/popover/popover'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
@@ -70,7 +69,7 @@ export default defineComponent({
       type: String,
     },
   },
-  setup(props) {
+  setup() {
     const pureColor = ref('#71afe5')
     const values = ref(['4'])
     const formData = reactive({
@@ -114,22 +113,27 @@ export default defineComponent({
         <div class="setters-style-field">
           <VarCollapse v-model={values.value}>
             <VarCollapseItem title="布局" name="1">
-              <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">布局模式</div>
-                <div class="style-field-body-content">
+              <div class="varlet-low-code-field-body">
+                <div class="varlet-low-code-field-body-title">布局模式</div>
+                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
                   <SelectSetter v-model={formData.disable} options={options} />
                 </div>
               </div>
-              <BackGauge />
-              <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">宽度</div>
-                <div class="style-field-body-content">
+              <div class="varlet-low-code-field-body">
+                <div class="varlet-low-code-field-body-title">定位</div>
+                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
+                  <SelectSetter v-model={formData.disable} options={options} />
+                </div>
+              </div>
+              <div class="varlet-low-code-field-body">
+                <div class="varlet-low-code-field-body-title">宽度</div>
+                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
                   <CounterSetter />
                 </div>
               </div>
-              <div class="style-field-body style-field-body-flex">
-                <div class="style-field-body-title">高度</div>
-                <div class="style-field-body-content">
+              <div class="varlet-low-code-field-body">
+                <div class="varlet-low-code-field-body-title">高度</div>
+                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
                   <CounterSetter />
                 </div>
               </div>

@@ -27,7 +27,6 @@ export interface AssetProfileMaterialSlot {
 
 export interface AssetProfileMaterialSetterOptions {
   setter: string | Component | DefineComponent
-  visible?: Function
   block?: boolean
   props?: Record<string, any>
 }
@@ -38,6 +37,7 @@ export interface AssetProfileMaterialProp {
   name: string
   label?: string
   defaultValue?: any
+  visible?: Function
   setters: AssetProfileMaterialSetter[]
 }
 

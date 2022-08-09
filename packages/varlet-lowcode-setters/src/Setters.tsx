@@ -18,7 +18,6 @@ import {
   BuiltInEvents,
   AssetProfileMaterialProp,
 } from '@varlet/lowcode-core'
-// import { createParser } from '@varlet/lowcode-parser'
 import './index.less'
 
 const active = ref(0)
@@ -35,11 +34,14 @@ export default defineComponent({
     const materialsData: any = reactive({
       attrs: [],
       event: [],
+      materialsProps: {},
     })
+
     const computedSelectorStyles = (id: string) => {
       isSelectDom.value = true
       schemaId.value = id.split('dragItem')[1]
       schemaNode.value = schemaManager.findSchemaNodeById(schema, schemaId.value)
+      console.log(schemaNode.value, 'schemaNode.value')
       if (schemaNode.value && schemaNode.value.library && schemaNode.value.name) {
         materials = getRendererAssetsManager(assets)
         materials.props ? setSetterData(materials.props) : null
@@ -47,9 +49,9 @@ export default defineComponent({
     }
 
     const setSetterData = (props: AssetProfileMaterialProp[]) => {
-      console.log(props, schemaNode.value, 'props')
       const event: AssetProfileMaterialProp[] = []
       const attrs: AssetProfileMaterialProp[] = []
+      const materialsProps: any = {}
       props?.forEach((item) => {
         if (item.name.indexOf('on') === 0 && item.name[2] === item.name[2].toUpperCase()) {
           event.push(item)
@@ -61,10 +63,12 @@ export default defineComponent({
             item.defaultValue = schemaNode.value.props[schemaName]
           }
           attrs.push(item)
+          materialsProps[item.name] = item.defaultValue
         }
       })
       materialsData.event = event
       materialsData.attrs = attrs
+      materialsData.materialsProps = materialsProps
     }
 
     const getRendererAssetsManager = (assets: Assets) => {
@@ -83,15 +87,23 @@ export default defineComponent({
     const handleAssetsChange = (newAssets: Assets) => {
       assets = newAssets
     }
-
+    const setterValueChange = (prop: any) => {
+      schemaNode.value.props
+        ? (schemaNode.value.props[prop.name] = prop.defaultValue)
+        : (schemaNode.value.props = { [prop.name]: prop.defaultValue })
+      materialsData.materialsProps[prop.name] = prop.defaultValue
+      schemaManager.importSchema(schema, { emitter: 'schema-editor' })
+    }
     eventsManager.on(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
     eventsManager.on('selector', computedSelectorStyles)
     eventsManager.on('skeleton-loaded', handleSkeletonLoaded)
+    eventsManager.on('setter-value-change', setterValueChange)
 
     onUnmounted(() => {
       eventsManager.off(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
       eventsManager.off('skeleton-loaded', handleSkeletonLoaded)
       eventsManager.off('selector', computedSelectorStyles)
+      eventsManager.off('setter-value-change', setterValueChange)
     })
 
     onUpdated(() => {

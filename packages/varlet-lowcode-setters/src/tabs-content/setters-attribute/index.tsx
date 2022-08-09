@@ -1,5 +1,5 @@
-import { defineComponent, ref, Ref, watchEffect } from 'vue'
-import { Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
+import { defineComponent, ref, Ref } from 'vue'
+import { Collapse as VarCollapse, CollapseItem as VarCollapseItem, Icon } from '@varlet/ui'
 import { AssetProfileMaterialProp } from '@varlet/lowcode-core'
 import Component from '../../built-in-setters/index'
 import '@varlet/ui/es/collapse/style/index.js'
@@ -19,10 +19,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    watchEffect(() => {
-      // console.log(props.schemaId,123456)
-      // console.log(props.materialsData,123456)
-    })
     const values = ref(['1'])
     const openBindDialog = (val: string) => {
       showDialog.value = true
@@ -36,27 +32,27 @@ export default defineComponent({
     const layoutContent = (item: any) => {
       let content
       if (item.layout === 'singRow') {
-        // content = (
-        //   <div class="varlet-low-code-field-body">
-        //     <div class="varlet-low-code-field-body-content__sing-row">
-        //       <div class="varlet-low-code-field-body-title">{item.description}</div>
-        //       <Icon name="dots-vertical" class="varlet-low-code-field-body__setter-icon" />
-        //     </div>
-        //     <div class="varlet-low-code-field-body-content__sing-row">
-        //       {item.setters.map((itemSetter: any, index: number) => {
-        //         const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
-        //         const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
-        //         return (
-        //           <SetterComponent
-        //             v-model={itemSetter.value}
-        //             options={itemSetter.options ?? undefined}
-        //             style={{ marginLeft: index > 0 ? '10px' : 0 }}
-        //           />
-        //         )
-        //       })}
-        //     </div>
-        //   </div>
-        // )
+        content = (
+          <div class="varlet-low-code-field-body">
+            <div class="varlet-low-code-field-body-content__sing-row">
+              <div class="varlet-low-code-field-body-title">{item.description}</div>
+              <Icon name="dots-vertical" class="varlet-low-code-field-body__setter-icon" />
+            </div>
+            <div class="varlet-low-code-field-body-content__sing-row">
+              {item.setters.map((itemSetter: any, index: number) => {
+                const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
+                const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
+                return (
+                  <SetterComponent
+                    v-model={itemSetter.value}
+                    options={itemSetter.options ?? undefined}
+                    style={{ marginLeft: index > 0 ? '10px' : 0 }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        )
       } else {
         content = (
           <div class="varlet-low-code-field-body">
@@ -69,7 +65,7 @@ export default defineComponent({
                 const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
                 return (
                   <SetterComponent
-                    v-model={item.defaultValue}
+                    setter={item}
                     options={itemSetter.props?.options ?? undefined}
                     style={{ marginLeft: index > 0 ? '10px' : 0 }}
                   />
@@ -94,7 +90,11 @@ export default defineComponent({
           <VarCollapse v-model={values.value}>
             <VarCollapseItem title="布局" name="1">
               {props.materialsData?.attrs.map((item: AssetProfileMaterialProp) => {
-                return layoutContent(item)
+                if (item.visible && !item.visible(props.materialsData?.materialsProps)) {
+                  return null
+                } 
+                  return layoutContent(item)
+                
               })}
             </VarCollapseItem>
           </VarCollapse>

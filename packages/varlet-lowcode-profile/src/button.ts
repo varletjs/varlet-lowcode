@@ -146,12 +146,12 @@ const material: AssetProfileMaterial = {
       name: 'loadingRadius',
       label: 'loading半径',
       defaultValue: '12',
+      visible: (values: any) => {
+        return values.loadingType === 'circle'
+      },
       setters: [
         {
           setter: 'InputSetter',
-          visible: (values: any) => {
-            return values.loadingType === 'circle'
-          },
         },
       ],
     },
@@ -159,12 +159,12 @@ const material: AssetProfileMaterial = {
       name: 'loadingSize',
       label: 'loading尺寸',
       defaultValue: 'normal',
+      visible: (values: any) => {
+        return values.loadingType !== 'circle'
+      },
       setters: [
         {
           setter: 'SelectSetter',
-          visible: (values: any) => {
-            return values.loadingType !== 'circle'
-          },
           props: {
             options: [
               {

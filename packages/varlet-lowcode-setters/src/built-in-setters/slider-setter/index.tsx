@@ -1,30 +1,33 @@
-import { defineComponent, computed } from 'vue'
+import { defineComponent, Ref, ref, watch } from 'vue'
 import { Slider as VarSlider } from '@varlet/ui'
+import { eventsManager } from '@varlet/lowcode-core'
 import '@varlet/ui/es/slider/style/index.js'
 
 export default defineComponent({
   name: 'SLIDERSETTER',
   props: {
-    modelValue: {
-      type: [Number, Array],
-      default: 0,
+    setter: {
+      type: Object,
     },
   },
-  setup(props, { emit, slots }) {
-    const sliderValue = computed({
-      get: () => props.modelValue,
-      set: (val) => {
-        emit('update:modelValue', val)
+  setup(props, { slots }) {
+    const setter: Ref<any> = ref()
+    setter.value = { ...props.setter }
+    watch(
+      setter.value,
+      (newValue) => {
+        eventsManager.emit('setter-value-change', newValue)
       },
-    })
+      { deep: true }
+    )
+
     const childrenSlot = {
       button: (props: any) => {
         return slots.default ? slots.default(props.currentValue) : null
       },
     }
-    sliderValue.value = props.modelValue
     return () => {
-      return <VarSlider v-model={sliderValue.value} v-slots={childrenSlot}></VarSlider>
+      return <VarSlider v-model={setter.value.defaultValue} v-slots={childrenSlot}></VarSlider>
     }
   },
 })

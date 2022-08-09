@@ -5,7 +5,6 @@ import SelectSetter from './select-setter/index'
 import TextSetter from './text-setter/index'
 import SliderSetter from './slider-setter/index'
 import CounterSetter from './counter-setter/index'
-import SwitchInputSetter from './switch-input-setter/index'
 import DraggableSetter from './draggable-setter/index.vue'
 
 const Component = [
@@ -32,11 +31,6 @@ const Component = [
   {
     component: CounterSetter,
     name: 'CounterSetter',
-    value: 0,
-  },
-  {
-    component: SwitchInputSetter,
-    name: 'SwitchInputSetter',
     value: 0,
   },
   {
