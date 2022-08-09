@@ -23,6 +23,8 @@
     "buffer": "^6.0.3"
   },
   "devDependencies": {
+    "@types/babel__generator": "^7.6.4",
+    "@types/babel__traverse": "^7.18.0",
     "@varlet/lowcode-core": "workspace: *",
     "@varlet/lowcode-cli": "workspace: *",
     "@types/node": "*",
