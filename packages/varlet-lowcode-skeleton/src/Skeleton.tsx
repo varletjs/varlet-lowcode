@@ -225,8 +225,6 @@ export default defineComponent({
       const renderSidebarPlugins: () => JSX.Element = () => {
         const sidebarPlugins = [...sidebarTopPlugins, ...sidebarBottomPlugins]
 
-        console.log(sidebarPlugins, '我是plugins')
-
         return (
           <div
             class={`varlet-low-code-skeleton__sidebar-component ${

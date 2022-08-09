@@ -6,6 +6,7 @@ const CWD = process.cwd()
 const PKG_CLI = resolve(CWD, './packages/varlet-lowcode-cli')
 const PKG_SCHEMA_JSX_VITE_PLUGIN = resolve(CWD, './packages/varlet-lowcode-schema-jsx-vite-plugin')
 const PKG_CORE = resolve(CWD, './packages/varlet-lowcode-core')
+const PKG_DATA_SOURCE_PANEL = resolve(CWD, './packages/varlet-lowcode-data-source-panel')
 const PKG_DESIGNER = resolve(CWD, './packages/varlet-lowcode-designer')
 const PKG_DND = resolve(CWD, './packages/varlet-lowcode-dnd')
 const PKG_PROFILE = resolve(CWD, './packages/varlet-lowcode-profile')
@@ -27,6 +28,8 @@ export const buildSchemaJsxVitePlugin = () => execa('pnpm', ['build'], { cwd: PK
 export const buildCli = () => execa('pnpm', ['build'], { cwd: PKG_CLI })
 
 export const buildCore = () => execa('pnpm', ['compile'], { cwd: PKG_CORE })
+
+export const buildDataSourcePanel = () => execa('pnpm', ['compile'], { cwd: PKG_DATA_SOURCE_PANEL })
 
 export const buildDnd = () => execa('pnpm', ['compile'], { cwd: PKG_DND })
 

@@ -1,19 +1,18 @@
-<script setup lang="ts">
-import { ref, onUnmounted, onMounted, nextTick, computed } from 'vue'
+<script lang="ts" setup>
+import { ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { BuiltInEvents, eventsManager, schemaManager } from '@varlet/lowcode-core'
-import { Button as VarButton, Divider as VarDivider } from '@varlet/ui'
+import { Button as VarButton, Divider as VarDivider, Dialog } from '@varlet/ui'
 import DataSourceModal from './DataSourceModal.vue'
 import '@varlet/ui/es/button/style/index.js'
 import '@varlet/ui/es/divider/style/index.js'
 import type { SchemaPageNode, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
-import { number } from 'yargs'
 
 const modalShow = ref<boolean>(false)
 
 const formData = ref<SchemaPageNodeDataSource>({
   name: '',
   url: '',
-  method: 'post',
+  method: 'get',
   description: '',
   headers: {},
   timeout: 5000,
@@ -25,13 +24,12 @@ const formData = ref<SchemaPageNodeDataSource>({
 let schema = schemaManager.exportSchema()
 
 const dataSources = ref(schema.dataSources || [])
-
 dataSources.value = [
   {
-    name: '我是假的数据源我是假的数据源我是假的数据源',
-    url: '/aaaaaaaaaaaaaaaaaaa',
+    name: 'name_1',
+    url: '/url_1',
     method: 'optionsArrayBuffer',
-    description: '这是假的数据源哦',
+    description: 'description_1',
     headers: {},
     timeout: 1000,
     withCredentials: true,
@@ -39,13 +37,11 @@ dataSources.value = [
     errorHandler: '',
   },
   {
-    name: '齐皓是个大老鼠',
-    url: '/aaaaaaaaaaaaaaaaaaa',
+    name: 'name_2',
+    url: '/url_2',
     method: 'get',
-    description: '这是假的数据源哦',
-    headers: {
-      token: '我焯',
-    },
+    description: 'description_2',
+    headers: { token: 'token' },
     timeout: 1000,
     withCredentials: true,
     successHandler: '',
@@ -61,8 +57,12 @@ function editDataSource(dataSource: SchemaPageNodeDataSource, index: number): vo
   modalShow.value = true
 }
 
-function delDataSource() {
-  //
+async function delDataSource(index: number) {
+  const res = await Dialog({ title: '删除确认', message: '是否删除该条数据源' })
+
+  if (res === 'confirm') {
+    dataSources.value.splice(index, 1)
+  }
 }
 
 function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
@@ -86,9 +86,7 @@ function saveDataSource() {
   })
 }
 
-function getCapital(str: string): string[] {
-  return str.replace(/([A-Z])/, '#$1').split('#')
-}
+const getCapital = (str: string): string[] => str.replace(/([A-Z])/, '#$1').split('#')
 
 eventsManager.on(BuiltInEvents.SCHEMA_CHANGE, handleSchemaChange)
 
@@ -119,34 +117,26 @@ onUnmounted(() => {
         @click="editDataSource(item, index)"
       >
         <div class="data-source-card-chip">
-          <div class="data-source-card-chip-word">
-            {{ getCapital(item.method)[0].toUpperCase() }}
-          </div>
-          <div v-if="getCapital(item.method)[1]" class="data-source-card-chip-word">
-            {{ getCapital(item.method)[1].toUpperCase() }}
-          </div>
+          <span v-for="(word, wIndex) in getCapital(item.method)" :key="wIndex">{{ word.toUpperCase() }}</span>
         </div>
+
         <div class="data-source-card-header">
-          <div class="data-source-card-header-title">
-            {{ item.name }}
-          </div>
+          <span class="data-source-card-header-title">{{ item.name }}</span>
           <div class="data-source-card-header-action">
-            <var-button text type="primary" @click="delDataSource">删除</var-button>
+            <var-button text type="primary" @click.stop="delDataSource(index)">删除</var-button>
           </div>
         </div>
 
         <var-divider />
 
-        <div class="data-source-card-description">
-          {{ item.description }}
-        </div>
+        <div class="data-source-card-description">{{ item.description }}</div>
       </div>
     </div>
   </div>
 
   <data-source-modal
     :form-data="formData"
-    :modal-show="modalShow"
+    v-model="modalShow"
     @close="modalShow = false"
     @confirm="updateDataSource"
   ></data-source-modal>
@@ -155,58 +145,68 @@ onUnmounted(() => {
 <style lang="less">
 .varlet-low-code-code-data-source {
   width: 400px;
-  background-color: #fff;
   padding: 10px;
+  background-color: #fff;
+
   .data-source-header {
     display: flex;
     justify-content: flex-end;
   }
+
   .data-source-card {
+    position: relative;
+    margin-bottom: 8px;
+    padding: 8px;
+    cursor: pointer;
     border: 1px solid rgba(31, 56, 88, 0.1);
     border-radius: 6px;
-    padding: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    position: relative;
+
     &-chip {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      font-weight: normal;
-      font-size: 40px;
-      color: #3a7afe20;
       display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
       align-items: center;
-      flex-wrap: wrap;
-      &-word {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      user-select: none;
+      color: #3a7afe20;
+      font-size: 40px;
     }
+
     &-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 14px;
+
       &-title {
+        flex: 1;
         color: #555;
+        overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
       }
+
+      &-action {
+        margin-left: 20px;
+      }
     }
+
     &-description {
-      height: 40px;
+      width: 100%;
+      min-height: 36px;
       display: flex;
       align-items: center;
-      font-size: 14px;
       color: rgba(31, 56, 88, 0.7);
+      font-size: 14px;
+      word-break: break-word;
     }
   }
 }
+
 .var-dialog {
   --dialog-width: 40vw;
 }
