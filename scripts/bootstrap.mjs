@@ -1,6 +1,7 @@
 import {
   buildCli,
   buildCore,
+  buildDataSourcePanel,
   buildDnd,
   buildDesigner,
   buildProfile,
@@ -22,6 +23,7 @@ import {
 await runTask('schema jsx vite plugin', buildSchemaJsxVitePlugin)
 await runTask('cli', buildCli)
 await runTask('core', buildCore)
+await runTask('dataSourcePanel', buildDataSourcePanel)
 await runTask('skeleton', buildSkeleton)
 await runTask('dnd', buildDnd)
 await runTask('selector', buildSelector)
