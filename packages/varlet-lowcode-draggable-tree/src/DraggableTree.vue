@@ -1,37 +1,43 @@
 <script lang="ts" setup name="VarletLowcodeDraggableTree">
-import { treeProps } from './props'
+import { PropType, defineProps, onMounted, watch } from 'vue'
 import DraggableTreeNode from './DraggableTreeNode.vue'
-import { defineProps, ref, watch } from 'vue'
-import DragTree from './DragTree'
-import Dnd from './Dnd'
+import { dndTree, onSubmit } from './provider'
 
-const props = defineProps(treeProps)
+export interface TreeNode {
+  id: string
+  text?: string
+  children?: TreeNode[]
+}
 
-const dragTree = ref()
+const props = defineProps({
+  tree: {
+    type: Object as PropType<TreeNode>,
+    required: true,
+    default: () => ({}),
+  },
+  'onUpdate:tree': {
+    type: Function as PropType<(value: TreeNode) => void>,
+  },
+})
 
 watch(
   () => props.tree,
   (newVal) => {
-    dragTree.value = new DragTree(newVal, props['onUpdate:tree'])
+    dndTree.value = JSON.parse(JSON.stringify(newVal))
   },
   {
     immediate: true,
   }
 )
 
-const dnd = ref(Dnd)
+onMounted(() => {
+  onSubmit.value = props['onUpdate:tree']
+})
 </script>
 
 <template>
   <div class="varlet-low-code-draggable-tree">
-    <DraggableTreeNode
-      v-for="treeNode of dragTree.tree"
-      :key="treeNode.id"
-      :tree-node="treeNode"
-      :drag-tree="dragTree"
-      :dnd="dnd"
-      :indent="0"
-    />
+    <DraggableTreeNode :tree-node="dndTree" />
   </div>
 </template>
 
