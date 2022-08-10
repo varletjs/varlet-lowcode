@@ -92,9 +92,8 @@ export default defineComponent({
               {props.materialsData?.attrs.map((item: AssetProfileMaterialProp) => {
                 if (item.visible && !item.visible(props.materialsData?.materialsProps)) {
                   return null
-                } 
-                  return layoutContent(item)
-                
+                }
+                return layoutContent(item)
               })}
             </VarCollapseItem>
           </VarCollapse>

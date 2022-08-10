@@ -12,6 +12,186 @@ import '@varlet/ui/es/option/style/index.js'
 import '@varlet/ui/es/slider/style/index.js'
 import './index.less'
 
+// const styleMaterials = [
+//   {
+//     name: 'type',
+//     label: '状态',
+//     defaultValue: 'default',
+//     setters: [
+//       {
+//         setter: 'SelectSetter',
+//         props: {
+//           options: [
+//             {
+//               value: '默认状态',
+//               label: 'default',
+//             },
+//             {
+//               value: ':hover',
+//               label: ':hover',
+//             },
+//             {
+//               value: ':focus',
+//               label: ':focus',
+//             },
+//             {
+//               value: ':active',
+//               label: ':active',
+//             },
+//           ],
+//         },
+//       },
+//     ],
+//   },
+//   {
+//     name: 'width',
+//     label: '宽',
+//     defaultValue: '350px',
+//     setters: [
+//       {
+//         setter: 'InputSetter',
+//       },
+//     ],
+//   },
+//   {
+//     name: 'height',
+//     label: '高',
+//     defaultValue: '350px',
+//     setters: [
+//       {
+//         setter: 'InputSetter',
+//       },
+//     ],
+//   },
+//   {
+//     name: 'display',
+//     label: '显示',
+//     defaultValue: '350px',
+//     setters: [
+//       {
+//         setter: 'SelectSetter',
+//         props: {
+//           options: [
+//             {
+//               value: 'block',
+//               label: 'block',
+//             },
+//             {
+//               value: 'inline-block',
+//               label: 'inline-block',
+//             },
+//             {
+//               value: 'inline',
+//               label: 'inline',
+//             },
+//             {
+//               value: 'flex',
+//               label: 'flex',
+//             },
+//           ],
+//         },
+//       },
+//     ],
+//   },
+//   {
+//     name: 'flexDirection',
+//     label: '方向',
+//     defaultValue: '350px',
+//     setters: [
+//       {
+//         setter: 'SelectSetter',
+//         props: {
+//           options: [
+//             {
+//               value: 'Direction:row',
+//               label: 'Direction:row',
+//             },
+//             {
+//               value: 'Direction:column',
+//               label: 'Direction:column',
+//             },
+//             {
+//               value: 'Direction:row-reverse',
+//               label: 'Direction:row-reverse',
+//             },
+//             {
+//               value: 'Direction:column-reverse',
+//               label: 'Direction:column-reverse',
+//             },
+//           ],
+//         },
+//       },
+//     ],
+//   },
+//   {
+//     name: 'flexAlign',
+//     label: '上下',
+//     defaultValue: 'flex-start',
+//     setters: [
+//       {
+//         setter: 'SelectSetter',
+//         props: {
+//           options: [
+//             {
+//               value: 'Align:flex-start',
+//               label: 'flex-start',
+//             },
+//             {
+//               value: 'Align:center',
+//               label: 'center',
+//             },
+//             {
+//               value: 'Align:flex-end',
+//               label: 'flex-end',
+//             },
+//             {
+//               value: 'Align:stretch',
+//               label: 'stretch',
+//             },
+//             {
+//               value: 'Align:baseline',
+//               label: 'baseline',
+//             },
+//           ],
+//         },
+//       },
+//     ],
+//   },
+//   {
+//     name: 'flexJustify',
+//     label: '左右',
+//     defaultValue: '350px',
+//     setters: [
+//       {
+//         setter: 'SelectSetter',
+//         props: {
+//           options: [
+//             {
+//               value: 'Align:flex-start',
+//               label: 'Align:flex-start',
+//             },
+//             {
+//               value: 'Align:center',
+//               label: 'Align:center',
+//             },
+//             {
+//               value: 'Align:flex-end',
+//               label: 'Align:flex-end',
+//             },
+//             {
+//               value: 'Align:stretch',
+//               label: 'Align:stretch',
+//             },
+//             {
+//               value: 'Align:baseline',
+//               label: 'Align:baseline',
+//             },
+//           ],
+//         },
+//       },
+//     ],
+//   },
+// ]
 const positionOptions = [
   { value: 'static', label: 'static' },
   { value: 'relative', label: 'relative' },

@@ -116,6 +116,9 @@ const schema = (
       ></node>
     </node>
     <node {...v('Button')}>
+      <t id={id()} textContent="hi" />
+    </node>
+    <node {...v('Button')}>
       <t id={id()} textContent="hello" />
     </node>
   </page>

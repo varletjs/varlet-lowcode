@@ -1,4 +1,4 @@
-import { defineComponent, ref, onUpdated, Ref, onUnmounted, reactive } from 'vue'
+import { defineComponent, ref, onUpdated, Ref, onUnmounted, reactive, nextTick } from 'vue'
 import Empty from './empty'
 import { Tabs as VarTabs, Tab as VarTab, TabsItems as VarTabsItems, TabItem as VarTabItems } from '@varlet/ui'
 import '@varlet/ui/es/tabs/style/index.js'
@@ -30,25 +30,41 @@ export default defineComponent({
     const schema = schemaManager.exportSchema()
     let assets = assetsManager.exportAssets()
     const schemaNode: Ref<any> = ref({})
-    let materials: any
     const materialsData: any = reactive({
       attrs: [],
+      materialsProps: [],
       event: [],
-      materialsProps: {},
     })
+    const SelectorChange = ref(true)
 
+    const deepClone = (source: any) => {
+      const targetObj: any = Array.isArray(source) ? [] : {}
+      console.log(targetObj, source, source.constructor, 123)
+      for (const keys in source) {
+        if (source.hasOwnProperty(keys)) {
+          if (source[keys] && typeof source[keys] === 'object') {
+            targetObj[keys] = Array.isArray(source[keys]) ? [] : {}
+            targetObj[keys] = deepClone(source[keys])
+          } else {
+            targetObj[keys] = source[keys]
+          }
+        }
+      }
+      return targetObj
+    }
     const computedSelectorStyles = (id: string) => {
       isSelectDom.value = true
+      SelectorChange.value = false
       schemaId.value = id.split('dragItem')[1]
       schemaNode.value = schemaManager.findSchemaNodeById(schema, schemaId.value)
-      console.log(schemaNode.value, 'schemaNode.value')
       if (schemaNode.value && schemaNode.value.library && schemaNode.value.name) {
-        materials = getRendererAssetsManager(assets)
+        const materials: any = deepClone(getRendererAssetsManager(assets))
         materials.props ? setSetterData(materials.props) : null
       }
     }
 
     const setSetterData = (props: AssetProfileMaterialProp[]) => {
+      console.log(props, 'props')
       const event: AssetProfileMaterialProp[] = []
       const attrs: AssetProfileMaterialProp[] = []
       const materialsProps: any = {}
@@ -69,6 +85,9 @@ export default defineComponent({
       materialsData.event = event
       materialsData.attrs = attrs
       materialsData.materialsProps = materialsProps
+      nextTick(() => {
+        SelectorChange.value = true
+      })
     }
 
     const getRendererAssetsManager = (assets: Assets) => {
@@ -124,7 +143,11 @@ export default defineComponent({
                 </VarTabs>
                 <VarTabsItems v-model:active={active.value} ref={refTab}>
                   <VarTabItems>
-                    <SettersAttribute schemaId={schemaId.value} materialsData={materialsData} />
+                    {SelectorChange.value ? (
+                      <SettersAttribute schemaId={schemaId.value} materialsData={materialsData} />
+                    ) : (
+                      <SettersAttribute />
+                    )}
                   </VarTabItems>
                   <VarTabItems>
                     <SettersEvent schemaId={schemaId.value} />
