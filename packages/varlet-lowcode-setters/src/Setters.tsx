@@ -39,7 +39,6 @@ export default defineComponent({
 
     const deepClone = (source: any) => {
       const targetObj: any = Array.isArray(source) ? [] : {}
-      console.log(targetObj, source, source.constructor, 123)
       for (const keys in source) {
         if (source.hasOwnProperty(keys)) {
           if (source[keys] && typeof source[keys] === 'object') {
@@ -64,7 +63,6 @@ export default defineComponent({
     }
 
     const setSetterData = (props: AssetProfileMaterialProp[]) => {
-      console.log(props, 'props')
       const event: AssetProfileMaterialProp[] = []
       const attrs: AssetProfileMaterialProp[] = []
       const materialsProps: any = {}
@@ -106,12 +104,33 @@ export default defineComponent({
     const handleAssetsChange = (newAssets: Assets) => {
       assets = newAssets
     }
+
     const setterValueChange = (prop: any) => {
-      schemaNode.value.props
-        ? (schemaNode.value.props[prop.name] = prop.defaultValue)
-        : (schemaNode.value.props = { [prop.name]: prop.defaultValue })
-      materialsData.materialsProps[prop.name] = prop.defaultValue
+      const changeType = prop?.name.split(':')
+      schemaNode.value.props ? schemaNode.value.props : (schemaNode.value.props = {})
+      if (!changeType[1]) {
+        schemaNode.value.props = {
+          ...schemaNode.value.props,
+          ...{ [prop.name]: prop.defaultValue },
+        }
+        materialsData.materialsProps[prop.name] = prop.defaultValue
+      } else {
+        schemaNode.value.props = {
+          ...schemaNode.value.props,
+          ...{
+            [changeType[0]]: {
+              ...schemaNode.value.props[changeType[0]],
+              ...{ [changeType[1]]: prop.defaultValue },
+            },
+          },
+        }
+        materialsData.materialsProps[changeType[0]] = {
+          ...materialsData.materialsProps[changeType[0]],
+          ...{ [changeType[1]]: prop.defaultValue },
+        }
+      }
       schemaManager.importSchema(schema, { emitter: 'schema-editor' })
+      eventsManager.emit('DOMRectChange', schemaId.value)
     }
     eventsManager.on(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
     eventsManager.on('selector', computedSelectorStyles)

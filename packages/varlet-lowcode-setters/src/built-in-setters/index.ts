@@ -52,7 +52,6 @@ export {
   SelectSetter,
   SliderSetter,
   CounterSetter,
-  SwitchInputSetter,
   DraggableSetter,
   TextSetter,
 }

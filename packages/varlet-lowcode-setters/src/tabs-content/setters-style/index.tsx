@@ -1,8 +1,9 @@
 import { defineComponent, reactive, ref } from 'vue'
-import { Collapse as VarCollapse, CollapseItem as VarCollapseItem } from '@varlet/ui'
-import { RadioSetter, SelectSetter, InputSetter, SliderSetter, CounterSetter } from '../../built-in-setters/index'
+import { Collapse as VarCollapse, CollapseItem as VarCollapseItem, Icon } from '@varlet/ui'
+import Component, { RadioSetter, SelectSetter, InputSetter, SliderSetter, CounterSetter } from '../../built-in-setters/index'
 import SetterPosition from '../../built-in-setters/positon-setter/index'
 import Popover from '../../component/popover/popover'
+import { AssetProfileMaterialProp } from '@varlet/lowcode-core'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import '@varlet/ui/es/collapse/style/index.js'
@@ -12,186 +13,195 @@ import '@varlet/ui/es/option/style/index.js'
 import '@varlet/ui/es/slider/style/index.js'
 import './index.less'
 
-// const styleMaterials = [
-//   {
-//     name: 'type',
-//     label: '状态',
-//     defaultValue: 'default',
-//     setters: [
-//       {
-//         setter: 'SelectSetter',
-//         props: {
-//           options: [
-//             {
-//               value: '默认状态',
-//               label: 'default',
-//             },
-//             {
-//               value: ':hover',
-//               label: ':hover',
-//             },
-//             {
-//               value: ':focus',
-//               label: ':focus',
-//             },
-//             {
-//               value: ':active',
-//               label: ':active',
-//             },
-//           ],
-//         },
-//       },
-//     ],
-//   },
-//   {
-//     name: 'width',
-//     label: '宽',
-//     defaultValue: '350px',
-//     setters: [
-//       {
-//         setter: 'InputSetter',
-//       },
-//     ],
-//   },
-//   {
-//     name: 'height',
-//     label: '高',
-//     defaultValue: '350px',
-//     setters: [
-//       {
-//         setter: 'InputSetter',
-//       },
-//     ],
-//   },
-//   {
-//     name: 'display',
-//     label: '显示',
-//     defaultValue: '350px',
-//     setters: [
-//       {
-//         setter: 'SelectSetter',
-//         props: {
-//           options: [
-//             {
-//               value: 'block',
-//               label: 'block',
-//             },
-//             {
-//               value: 'inline-block',
-//               label: 'inline-block',
-//             },
-//             {
-//               value: 'inline',
-//               label: 'inline',
-//             },
-//             {
-//               value: 'flex',
-//               label: 'flex',
-//             },
-//           ],
-//         },
-//       },
-//     ],
-//   },
-//   {
-//     name: 'flexDirection',
-//     label: '方向',
-//     defaultValue: '350px',
-//     setters: [
-//       {
-//         setter: 'SelectSetter',
-//         props: {
-//           options: [
-//             {
-//               value: 'Direction:row',
-//               label: 'Direction:row',
-//             },
-//             {
-//               value: 'Direction:column',
-//               label: 'Direction:column',
-//             },
-//             {
-//               value: 'Direction:row-reverse',
-//               label: 'Direction:row-reverse',
-//             },
-//             {
-//               value: 'Direction:column-reverse',
-//               label: 'Direction:column-reverse',
-//             },
-//           ],
-//         },
-//       },
-//     ],
-//   },
-//   {
-//     name: 'flexAlign',
-//     label: '上下',
-//     defaultValue: 'flex-start',
-//     setters: [
-//       {
-//         setter: 'SelectSetter',
-//         props: {
-//           options: [
-//             {
-//               value: 'Align:flex-start',
-//               label: 'flex-start',
-//             },
-//             {
-//               value: 'Align:center',
-//               label: 'center',
-//             },
-//             {
-//               value: 'Align:flex-end',
-//               label: 'flex-end',
-//             },
-//             {
-//               value: 'Align:stretch',
-//               label: 'stretch',
-//             },
-//             {
-//               value: 'Align:baseline',
-//               label: 'baseline',
-//             },
-//           ],
-//         },
-//       },
-//     ],
-//   },
-//   {
-//     name: 'flexJustify',
-//     label: '左右',
-//     defaultValue: '350px',
-//     setters: [
-//       {
-//         setter: 'SelectSetter',
-//         props: {
-//           options: [
-//             {
-//               value: 'Align:flex-start',
-//               label: 'Align:flex-start',
-//             },
-//             {
-//               value: 'Align:center',
-//               label: 'Align:center',
-//             },
-//             {
-//               value: 'Align:flex-end',
-//               label: 'Align:flex-end',
-//             },
-//             {
-//               value: 'Align:stretch',
-//               label: 'Align:stretch',
-//             },
-//             {
-//               value: 'Align:baseline',
-//               label: 'Align:baseline',
-//             },
-//           ],
-//         },
-//       },
-//     ],
-//   },
-// ]
+const styleMaterials = [
+  {
+    name: 'style:type',
+    label: '状态',
+    defaultValue: 'default',
+    setters: [
+      {
+        setter: 'SelectSetter',
+        props: {
+          options: [
+            {
+              value: '默认状态',
+              label: 'default',
+            },
+            {
+              value: ':hover',
+              label: ':hover',
+            },
+            {
+              value: ':focus',
+              label: ':focus',
+            },
+            {
+              value: ':active',
+              label: ':active',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    name: 'style:width',
+    label: '宽',
+    defaultValue: '350px',
+    setters: [
+      {
+        setter: 'InputSetter',
+      },
+    ],
+  },
+  {
+    name: 'style:height',
+    label: '高',
+    defaultValue: '350px',
+    setters: [
+      {
+        setter: 'InputSetter',
+      },
+    ],
+  },
+  {
+    name: 'style:display',
+    label: '显示',
+    defaultValue: '350px',
+    setters: [
+      {
+        setter: 'SelectSetter',
+        props: {
+          options: [
+            {
+              value: 'block',
+              label: 'block',
+            },
+            {
+              value: 'inline-block',
+              label: 'inline-block',
+            },
+            {
+              value: 'inline',
+              label: 'inline',
+            },
+            {
+              value: 'flex',
+              label: 'flex',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    name: 'style:flex-direction',
+    label: '方向',
+    defaultValue: '350px',
+    visible: (values: any) => {
+      return values.display === 'flex'
+    },
+    setters: [
+      {
+        setter: 'SelectSetter',
+        props: {
+          options: [
+            {
+              value: 'Direction:row',
+              label: 'row',
+            },
+            {
+              value: 'Direction:column',
+              label: 'column',
+            },
+            {
+              value: 'Direction:row-reverse',
+              label: 'row-reverse',
+            },
+            {
+              value: 'Direction:column-reverse',
+              label: 'column-reverse',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    name: 'style:align-items',
+    label: '上下',
+    defaultValue: 'flex-start',
+    visible: (values: any) => {
+      return values.display === 'flex'
+    },
+    setters: [
+      {
+        setter: 'SelectSetter',
+        props: {
+          options: [
+            {
+              value: 'Align:flex-start',
+              label: 'flex-start',
+            },
+            {
+              value: 'Align:center',
+              label: 'center',
+            },
+            {
+              value: 'Align:flex-end',
+              label: 'flex-end',
+            },
+            {
+              value: 'Align:stretch',
+              label: 'stretch',
+            },
+            {
+              value: 'Align:baseline',
+              label: 'baseline',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    name: 'style:justify-content',
+    label: '左右',
+    defaultValue: '350px',
+    visible: (values: any) => {
+      return values.display === 'flex'
+    },
+    setters: [
+      {
+        setter: 'SelectSetter',
+        props: {
+          options: [
+            {
+              value: 'Justify:flex-start',
+              label: 'flex-start',
+            },
+            {
+              value: 'Justify:center',
+              label: 'center',
+            },
+            {
+              value: 'Justify:flex-end',
+              label: 'flex-end',
+            },
+            {
+              value: 'Justify:space-between',
+              label: 'space-between',
+            },
+            {
+              value: 'Justify:space-around',
+              label: 'space-around',
+            },
+          ],
+        },
+      },
+    ],
+  },
+]
 const positionOptions = [
   { value: 'static', label: 'static' },
   { value: 'relative', label: 'relative' },
@@ -251,7 +261,7 @@ export default defineComponent({
   },
   setup() {
     const pureColor = ref('#71afe5')
-    const values = ref(['4'])
+    const values = ref(['1'])
     const formData = reactive({
       opacity: 50,
       textAlign: 'center',
@@ -288,37 +298,69 @@ export default defineComponent({
       ),
     })
 
+    const layoutContent = (item: any) => {
+      let content
+      if (item.layout === 'singRow') {
+        content = (
+          <div class="varlet-low-code-field-body">
+            <div class="varlet-low-code-field-body-content__sing-row">
+              <div class="varlet-low-code-field-body-title">{item.description}</div>
+              <Icon name="dots-vertical" class="varlet-low-code-field-body__setter-icon" />
+            </div>
+            <div class="varlet-low-code-field-body-content__sing-row">
+              {item.setters.map((itemSetter: any, index: number) => {
+                const setterTypeComponents = Component.filter((itemComponent) => itemComponent.name === itemSetter.type)
+                const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
+                return (
+                  <SetterComponent
+                    v-model={itemSetter.value}
+                    options={itemSetter.options ?? undefined}
+                    style={{ marginLeft: index > 0 ? '10px' : 0 }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        )
+      } else {
+        content = (
+          <div class="varlet-low-code-field-body">
+            <div class="varlet-low-code-field-body-title">{item.label}</div>
+            <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
+              {item.setters.map((itemSetter: any, index: number) => {
+                const setterTypeComponents = Component.filter(
+                  (itemComponent) => itemComponent.name === itemSetter.setter
+                )
+                const SetterComponent = setterTypeComponents[setterTypeComponents.length - 1]!.component
+                return (
+                  <SetterComponent
+                    setter={item}
+                    options={itemSetter.props?.options ?? undefined}
+                    style={{ marginLeft: index > 0 ? '10px' : 0 }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        )
+      }
+      return content
+    }
+
     const RenderContent = () => {
       return (
         <div class="setters-style-field">
           <VarCollapse v-model={values.value}>
-            <VarCollapseItem title="布局" name="1">
-              <div class="varlet-low-code-field-body">
-                <div class="varlet-low-code-field-body-title">布局模式</div>
-                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
-                  <SelectSetter v-model={formData.disable} options={options} />
-                </div>
-              </div>
-              <div class="varlet-low-code-field-body">
-                <div class="varlet-low-code-field-body-title">定位</div>
-                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
-                  <SelectSetter v-model={formData.disable} options={options} />
-                </div>
-              </div>
-              <div class="varlet-low-code-field-body">
-                <div class="varlet-low-code-field-body-title">宽度</div>
-                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
-                  <CounterSetter />
-                </div>
-              </div>
-              <div class="varlet-low-code-field-body">
-                <div class="varlet-low-code-field-body-title">高度</div>
-                <div class="varlet-low-code-field-body-content varlet-low-code-field-body__content-style">
-                  <CounterSetter />
-                </div>
-              </div>
+            <VarCollapseItem title="样式布局" name="1">
+              {styleMaterials.map((item: AssetProfileMaterialProp) => {
+                if (item.visible) {
+                  return null
+                }
+                return layoutContent(item)
+              })}
             </VarCollapseItem>
-            <VarCollapseItem title="文字" name="2">
+
+            {/* <VarCollapseItem title="文字" name="2">
               <div class="style-field-body style-field-body-flex">
                 <div class="style-field-body-title">字号:</div>
                 <div class="style-field-body-content">
@@ -407,7 +449,7 @@ export default defineComponent({
                   <SelectSetter v-model={formData.clear} options={clearOptions} attr={{ clearable: true }} />
                 </div>
               </div>
-            </VarCollapseItem>
+            </VarCollapseItem> */}
           </VarCollapse>
         </div>
       )
