@@ -1,5 +1,5 @@
 import type { CSSProperties, Ref } from 'vue'
-import { onMounted, onUnmounted, defineComponent, ref } from 'vue'
+import { onMounted, onUnmounted, defineComponent, ref, watch } from 'vue'
 import PluginRender from './PluginRender'
 import props from './props'
 
@@ -37,13 +37,44 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
-      props.designerEventsManager!.on('selector', computedSelectorStyles)
-    })
+    function clickFn(event: Event) {
+      const { id } = event.target as HTMLElement
 
-    onUnmounted(() => {
-      props.designerEventsManager!.off('selector', computedSelectorStyles)
-    })
+      props.designerEventsManager!.emit('selector', `${id}` || '')
+
+      computedSelectorStyles(id)
+    }
+
+    function init() {
+      const list = Array.from(document.querySelectorAll('.varlet-low-code--disable-events'))
+
+      list.forEach((itemDom: Element) => {
+        itemDom.removeEventListener('click', clickFn)
+        itemDom.addEventListener('click', clickFn, { passive: false })
+      })
+    }
+
+    function dispose() {
+      const list = Array.from(document.querySelectorAll('.varlet-low-code--disable-events'))
+
+      list.forEach((itemDom: Element) => {
+        itemDom.removeEventListener('click', clickFn)
+      })
+    }
+
+    watch(
+      () => props.schema,
+      (newSchemaNode) => {
+        if (newSchemaNode) {
+          init()
+        }
+      },
+      { deep: true }
+    )
+
+    onMounted(init)
+
+    onUnmounted(dispose)
 
     return () => {
       return (

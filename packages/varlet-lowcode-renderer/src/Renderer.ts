@@ -332,14 +332,8 @@ export default defineComponent({
         return rawProps
       }, {} as RawProps)
 
-      const clickEvent = rawProps.onClick
-
       rawProps.id = `dragItem${schemaNode.id}`
-      props.mode === 'designer' &&
-        (rawProps.onClick = (...arg: any) => {
-          props.designerEventsManager!.emit('selector', `dragItem${schemaNode.id}` || '')
-          clickEvent && clickEvent(...arg)
-        })
+
       return rawProps
     }
 
