@@ -1,4 +1,4 @@
-import type { EventsManager, PluginsManager, SchemaPageNode } from '@varlet/lowcode-core'
+import type { EventsManager, Assets, PluginsManager, SchemaPageNode } from '@varlet/lowcode-core'
 import { PropType } from 'vue'
 
 export default {
@@ -7,6 +7,9 @@ export default {
   },
   designerEventsManager: {
     type: Object as PropType<EventsManager>,
+  },
+  assets: {
+    type: Object as PropType<Assets>,
   },
   pluginsManager: {
     type: Object as PropType<PluginsManager>,

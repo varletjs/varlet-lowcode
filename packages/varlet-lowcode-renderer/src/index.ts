@@ -53,6 +53,7 @@ function mount(this: Renderer) {
           h(SelectorComponent, {
             schema: schema.value,
             designerEventsManager: this.designerEventsManager,
+            assets: assets.value,
             pluginsManager: this.pluginsManager,
           }),
         ]
