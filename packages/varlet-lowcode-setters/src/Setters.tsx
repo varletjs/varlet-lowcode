@@ -9,6 +9,7 @@ import SettersAttribute from './tabs-content/setters-attribute/index'
 import SettersStyle from './tabs-content/setters-style/index'
 import SettersAdvancedSettings from './tabs-content/setters-advanced-setting/index'
 import SettersEvent from './tabs-content/setters-event/index'
+import styleMaterials from './style'
 import {
   schemaManager,
   eventsManager,
@@ -34,6 +35,7 @@ export default defineComponent({
       attrs: [],
       materialsProps: [],
       event: [],
+      style: [],
     })
     const SelectorChange = ref(true)
 
@@ -51,6 +53,7 @@ export default defineComponent({
       }
       return targetObj
     }
+
     const computedSelectorStyles = (id: string) => {
       isSelectDom.value = true
       SelectorChange.value = false
@@ -64,6 +67,7 @@ export default defineComponent({
 
     const setSetterData = (props: AssetProfileMaterialProp[]) => {
       const event: AssetProfileMaterialProp[] = []
+      const style: AssetProfileMaterialProp[] = deepClone(styleMaterials)
       const attrs: AssetProfileMaterialProp[] = []
       const materialsProps: any = {}
       props?.forEach((item) => {
@@ -80,9 +84,26 @@ export default defineComponent({
           materialsProps[item.name] = item.defaultValue
         }
       })
+      style.forEach((item) => {
+        const changeType = item?.name.split(':')
+        const schemaName =
+          schemaNode.value.props && schemaNode.value.props.style
+            ? Object.keys(schemaNode.value.props.style).filter((itemSchema) => `style:${itemSchema}` === item.name)[0]
+            : null
+        if (schemaName) {
+          item.defaultValue = schemaNode.value.props.style[schemaName]
+        }
+        materialsProps[changeType[0]] = {
+          ...materialsProps[changeType[0]],
+          ...{ [changeType[1]]: item.defaultValue },
+        }
+      })
+
       materialsData.event = event
       materialsData.attrs = attrs
+      materialsData.style = style
       materialsData.materialsProps = materialsProps
+      console.log(materialsData, 'materialsData')
       nextTick(() => {
         SelectorChange.value = true
       })
@@ -128,6 +149,7 @@ export default defineComponent({
           ...materialsData.materialsProps[changeType[0]],
           ...{ [changeType[1]]: prop.defaultValue },
         }
+        console.log(materialsData.materialsProps, 'materialsData.materialsProps')
       }
       schemaManager.importSchema(schema, { emitter: 'schema-editor' })
       eventsManager.emit('DOMRectChange', schemaId.value)
@@ -172,7 +194,11 @@ export default defineComponent({
                     <SettersEvent schemaId={schemaId.value} />
                   </VarTabItems>
                   <VarTabItems>
-                    <SettersStyle schemaId={schemaId.value} />
+                    {SelectorChange.value ? (
+                      <SettersStyle schemaId={schemaId.value} materialsData={materialsData} />
+                    ) : (
+                      <SettersStyle />
+                    )}
                   </VarTabItems>
                   <VarTabItems>
                     <SettersAdvancedSettings schemaId={schemaId.value} />

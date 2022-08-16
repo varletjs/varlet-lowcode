@@ -1,6 +1,12 @@
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, onUpdated } from 'vue'
 import { Collapse as VarCollapse, CollapseItem as VarCollapseItem, Icon } from '@varlet/ui'
-import Component, { RadioSetter, SelectSetter, InputSetter, SliderSetter, CounterSetter } from '../../built-in-setters/index'
+import Component, {
+  RadioSetter,
+  SelectSetter,
+  InputSetter,
+  SliderSetter,
+  CounterSetter,
+} from '../../built-in-setters/index'
 import SetterPosition from '../../built-in-setters/positon-setter/index'
 import Popover from '../../component/popover/popover'
 import { AssetProfileMaterialProp } from '@varlet/lowcode-core'
@@ -13,195 +19,6 @@ import '@varlet/ui/es/option/style/index.js'
 import '@varlet/ui/es/slider/style/index.js'
 import './index.less'
 
-const styleMaterials = [
-  {
-    name: 'style:type',
-    label: '状态',
-    defaultValue: 'default',
-    setters: [
-      {
-        setter: 'SelectSetter',
-        props: {
-          options: [
-            {
-              value: '默认状态',
-              label: 'default',
-            },
-            {
-              value: ':hover',
-              label: ':hover',
-            },
-            {
-              value: ':focus',
-              label: ':focus',
-            },
-            {
-              value: ':active',
-              label: ':active',
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    name: 'style:width',
-    label: '宽',
-    defaultValue: '350px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:height',
-    label: '高',
-    defaultValue: '350px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:display',
-    label: '显示',
-    defaultValue: '350px',
-    setters: [
-      {
-        setter: 'SelectSetter',
-        props: {
-          options: [
-            {
-              value: 'block',
-              label: 'block',
-            },
-            {
-              value: 'inline-block',
-              label: 'inline-block',
-            },
-            {
-              value: 'inline',
-              label: 'inline',
-            },
-            {
-              value: 'flex',
-              label: 'flex',
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    name: 'style:flex-direction',
-    label: '方向',
-    defaultValue: '350px',
-    visible: (values: any) => {
-      return values.display === 'flex'
-    },
-    setters: [
-      {
-        setter: 'SelectSetter',
-        props: {
-          options: [
-            {
-              value: 'Direction:row',
-              label: 'row',
-            },
-            {
-              value: 'Direction:column',
-              label: 'column',
-            },
-            {
-              value: 'Direction:row-reverse',
-              label: 'row-reverse',
-            },
-            {
-              value: 'Direction:column-reverse',
-              label: 'column-reverse',
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    name: 'style:align-items',
-    label: '上下',
-    defaultValue: 'flex-start',
-    visible: (values: any) => {
-      return values.display === 'flex'
-    },
-    setters: [
-      {
-        setter: 'SelectSetter',
-        props: {
-          options: [
-            {
-              value: 'Align:flex-start',
-              label: 'flex-start',
-            },
-            {
-              value: 'Align:center',
-              label: 'center',
-            },
-            {
-              value: 'Align:flex-end',
-              label: 'flex-end',
-            },
-            {
-              value: 'Align:stretch',
-              label: 'stretch',
-            },
-            {
-              value: 'Align:baseline',
-              label: 'baseline',
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    name: 'style:justify-content',
-    label: '左右',
-    defaultValue: '350px',
-    visible: (values: any) => {
-      return values.display === 'flex'
-    },
-    setters: [
-      {
-        setter: 'SelectSetter',
-        props: {
-          options: [
-            {
-              value: 'Justify:flex-start',
-              label: 'flex-start',
-            },
-            {
-              value: 'Justify:center',
-              label: 'center',
-            },
-            {
-              value: 'Justify:flex-end',
-              label: 'flex-end',
-            },
-            {
-              value: 'Justify:space-between',
-              label: 'space-between',
-            },
-            {
-              value: 'Justify:space-around',
-              label: 'space-around',
-            },
-          ],
-        },
-      },
-    ],
-  },
-]
 const positionOptions = [
   { value: 'static', label: 'static' },
   { value: 'relative', label: 'relative' },
@@ -258,28 +75,15 @@ export default defineComponent({
     schemaId: {
       type: String,
     },
+    materialsData: {
+      type: Object,
+    },
   },
-  setup() {
+  setup(props) {
     const pureColor = ref('#71afe5')
     const values = ref(['1'])
-    const formData = reactive({
-      opacity: 50,
-      textAlign: 'center',
-      disable: '',
-      fontWeight: '200',
-      background: '',
-      backgroundIndex: 0,
-      position: '',
-      positionData: {
-        left: '',
-        top: '',
-        right: '',
-        bottom: '',
-      },
-      float: '',
-      clear: '',
-    })
     const isReady = ref(false)
+    const styleData = reactive([])
     const childrenSlot = reactive({
       default: () => {
         return (
@@ -352,8 +156,8 @@ export default defineComponent({
         <div class="setters-style-field">
           <VarCollapse v-model={values.value}>
             <VarCollapseItem title="样式布局" name="1">
-              {styleMaterials.map((item: AssetProfileMaterialProp) => {
-                if (item.visible) {
+              {props?.materialsData?.style.map((item: AssetProfileMaterialProp) => {
+                if (item.visible && !item.visible(props.materialsData?.materialsProps.style ?? {})) {
                   return null
                 }
                 return layoutContent(item)
