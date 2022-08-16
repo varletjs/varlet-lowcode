@@ -1,10 +1,13 @@
+import DraggableTree from './DraggableTree.vue'
 import { isPlainObject, isArray } from '@varlet/shared'
 import type { SchemaNode, SchemaNodeProps, SchemaTextNode, SchemaNodeSlots } from '@varlet/lowcode-core'
+
+export default DraggableTree
 
 export interface Tree {
   renderType: string
   type: string
-  id?: string
+  id: string
   tag: string
   children?: Array<Tree>
 }

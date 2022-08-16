@@ -15,12 +15,15 @@
     "compile:watch": "varlet-lowcode-cli compile -w"
   },
   "dependencies": {
-    "@varlet/shared": "latest"
+    "@varlet/shared": "latest",
+    "@varlet/touch-emulator": "^1.27.20",
+    "@varlet/ui": "^1.27.20"
   },
   "devDependencies": {
-    "typescript": "^4.4.4",
-    "vue-tsc": "^0.37.3",
+    "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-core": "workspace: *",
-    "@varlet/lowcode-cli": "workspace: *"
+    "typescript": "^4.4.4",
+    "vue": "3.2.25",
+    "vue-tsc": "^0.37.3"
   }
 }

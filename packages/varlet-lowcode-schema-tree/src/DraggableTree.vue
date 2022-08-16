@@ -2,21 +2,16 @@
 import { PropType, defineProps, onMounted, watch } from 'vue'
 import DraggableTreeNode from './DraggableTreeNode.vue'
 import { dndTree, onSubmit } from './provider'
-
-export interface TreeNode {
-  id: string
-  text?: string
-  children?: TreeNode[]
-}
+import type { Tree } from '../index'
 
 const props = defineProps({
   tree: {
-    type: Object as PropType<TreeNode>,
+    type: Object as PropType<Tree>,
     required: true,
     default: () => ({}),
   },
   'onUpdate:tree': {
-    type: Function as PropType<(value: TreeNode) => void>,
+    type: Function as PropType<(value: Tree) => void>,
   },
 })
 

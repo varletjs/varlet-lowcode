@@ -3,12 +3,7 @@ import { ref, defineProps, PropType, toRaw } from 'vue'
 import { Icon } from '@varlet/ui'
 import { onChangeNodeTree, onSubmit, dragData, onEnterNodeTree, dndTree } from './provider'
 import '@varlet/ui/es/icon/style/index.js'
-
-export interface TreeNode {
-  id: string
-  text?: string
-  children?: TreeNode[]
-}
+import type { Tree } from '../index'
 
 const expand = ref(false)
 
@@ -21,7 +16,7 @@ const calcPosition = (e: DragEvent) => {
 
 const props = defineProps({
   treeNode: {
-    type: Object as PropType<TreeNode>,
+    type: Object as PropType<Tree>,
     required: true,
     default: () => ({}),
   },
@@ -99,7 +94,7 @@ const onDrop = () => {
         @click="handleIconClick"
       />
       <div @dragenter="onEnterChildren" class="varlet-low-code-draggable-tree-node__title-name">
-        {{ treeNode.text }}
+        {{ treeNode.tag }}
       </div>
     </div>
     <div v-if="treeNode.children && expand">

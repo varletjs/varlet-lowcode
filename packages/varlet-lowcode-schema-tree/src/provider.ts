@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import { TreeNode } from '.'
+import type { Tree } from './index'
 
-export const dndTree: Ref<TreeNode | undefined> = ref()
-export const dragData: Ref<TreeNode | undefined> = ref()
+export const dndTree: Ref<Tree | undefined> = ref()
+export const dragData: Ref<Tree | undefined> = ref()
 export const onSubmit = ref()
 
 export const onChangeNodeTree = ({ start, end }: any, direction: 'up' | 'down') => {
@@ -20,11 +20,9 @@ export const onEnterNodeTree = ({ start, end }: any) => {
   const endIndex = findIndexById(dndTree.value?.children || [], end?.id) ?? -1
 
   addInId(dndTree.value?.children || [], start, { id: end.id, endIndex }, 'insert')
-
-  console.log('endIndex', dndTree.value)
 }
 
-const deleteById = (tree: TreeNode[], id: string): any => {
+const deleteById = (tree: Tree[], id: string): any => {
   for (const [i, treeNode] of tree.entries()) {
     if (treeNode.id === id) {
       tree.splice(i, 1)
@@ -35,12 +33,7 @@ const deleteById = (tree: TreeNode[], id: string): any => {
   }
 }
 
-const addInId = (
-  tree: TreeNode[],
-  node: TreeNode,
-  { id, endIndex }: any,
-  direction: 'up' | 'down' | 'insert' = 'up'
-): any => {
+const addInId = (tree: Tree[], node: Tree, { id, endIndex }: any, direction: 'up' | 'down' | 'insert' = 'up'): any => {
   for (const [i, treeNode] of tree.entries()) {
     if (treeNode.id === id) {
       if (direction === 'insert') {
@@ -59,7 +52,7 @@ const addInId = (
   }
 }
 
-const findIndexById = (tree: TreeNode[], id: string): number | undefined => {
+const findIndexById = (tree: Tree[], id: string): number | undefined => {
   for (const [i, treeNode] of tree.entries()) {
     if (treeNode.id === id) {
       return i
