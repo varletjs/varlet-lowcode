@@ -578,6 +578,7 @@ importers:
       '@varlet/lowcode-parser': 'workspace: *'
       '@varlet/lowcode-resizer': 'workspace: *'
       '@varlet/lowcode-schema-editor': 'workspace: *'
+      '@varlet/lowcode-schema-tree': workspace:^0.0.0
       '@varlet/lowcode-setters': 'workspace: *'
       '@varlet/lowcode-undo-redo': 'workspace: *'
       '@varlet/touch-emulator': ^1.27.19
@@ -599,6 +600,7 @@ importers:
       '@varlet/lowcode-parser': link:../varlet-lowcode-parser
       '@varlet/lowcode-resizer': link:../varlet-lowcode-resizer
       '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
+      '@varlet/lowcode-schema-tree': link:../varlet-lowcode-schema-tree
       '@varlet/lowcode-setters': link:../varlet-lowcode-setters
       '@varlet/lowcode-undo-redo': link:../varlet-lowcode-undo-redo
       '@varlet/touch-emulator': 1.27.19

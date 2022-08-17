@@ -2,7 +2,7 @@
 import { PropType, defineProps, onMounted, watch } from 'vue'
 import DraggableTreeNode from './DraggableTreeNode.vue'
 import { dndTree, onSubmit } from './provider'
-import type { Tree } from '../index'
+import type { Tree } from '../shared'
 
 const props = defineProps({
   tree: {

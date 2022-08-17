@@ -3,7 +3,7 @@ import { ref, defineProps, PropType, toRaw } from 'vue'
 import { Icon } from '@varlet/ui'
 import { onChangeNodeTree, onSubmit, dragData, onEnterNodeTree, dndTree } from './provider'
 import '@varlet/ui/es/icon/style/index.js'
-import type { Tree } from '../index'
+import type { Tree } from '../shared'
 
 const expand = ref(false)
 

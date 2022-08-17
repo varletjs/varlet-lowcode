@@ -29,6 +29,7 @@
     "@varlet/lowcode-parser": "workspace: *",
     "@varlet/lowcode-resizer": "workspace: *",
     "@varlet/lowcode-schema-editor": "workspace: *",
+    "@varlet/lowcode-schema-tree": "workspace:^0.0.0",
     "@varlet/lowcode-setters": "workspace: *",
     "@varlet/lowcode-undo-redo": "workspace: *",
     "@varlet/touch-emulator": "^1.27.19",

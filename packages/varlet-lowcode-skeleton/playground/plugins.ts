@@ -8,6 +8,7 @@ import CodegenPlugin from '@varlet/lowcode-codegen'
 import LocaleSwitcherPlugin from '@varlet/lowcode-locale-switcher'
 import SettersPlugin from '@varlet/lowcode-setters/src'
 import DataSource from '@varlet/lowcode-data-source-panel/src'
+import SchemaTreePlugin from '@varlet/lowcode-schema-tree'
 
 import { pluginsManager } from '@varlet/lowcode-core'
 
@@ -23,6 +24,7 @@ export function usePlugins() {
     .useSkeletonPlugin(DesignerPlugin)
     .useSkeletonPlugin(SettersPlugin)
     .useSkeletonPlugin(ResizerPlugin)
+    .useSkeletonPlugin(SchemaTreePlugin)
     .useSkeletonPlugin(LocaleSwitcherPlugin)
     .useSkeletonPlugin(MaterialsPanelPlugin)
     .useSkeletonPlugin(CodeEditorPlugin)

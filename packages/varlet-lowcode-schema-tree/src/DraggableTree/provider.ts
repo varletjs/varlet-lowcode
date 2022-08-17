@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import type { Tree } from './index'
+import type { Tree } from '../shared'
 
 export const dndTree: Ref<Tree | undefined> = ref()
 export const dragData: Ref<Tree | undefined> = ref()
