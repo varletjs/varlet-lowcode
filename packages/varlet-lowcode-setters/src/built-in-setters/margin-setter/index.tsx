@@ -1,4 +1,4 @@
-import { defineComponent, nextTick, reactive } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 import './index.less'
 
 export default defineComponent({
@@ -10,14 +10,10 @@ export default defineComponent({
         return {}
       },
     },
-    positionValue: {
-      type: String,
-      default: '',
-    },
   },
   setup(props, { emit }) {
     return () => {
-      return <div style={{ width: '100%' }}>132465</div>
+      return <div>132456 132465</div>
     }
   },
 })

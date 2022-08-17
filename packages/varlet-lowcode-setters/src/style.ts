@@ -187,49 +187,10 @@ const styleMaterials = [
     ],
   },
   {
-    name: 'style:margin-top',
-    label: `上间距`,
+    name: 'style:margin',
+    label: 'margin',
     defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:margin-bottom',
-    label: '下间距',
-    defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:margin-left',
-    label: '左间距',
-    defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:margin-right',
-    label: '右间距',
-    defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:margin-right',
-    label: 'padding',
-    defaultValue: '0px',
+    custom: true,
     setters: [
       {
         setter: 'MarginSetter',
@@ -237,42 +198,13 @@ const styleMaterials = [
     ],
   },
   {
-    name: 'style:padding-top',
-    label: `上间距`,
+    name: 'style:padding',
+    label: 'padding',
     defaultValue: '0px',
+    custom: true,
     setters: [
       {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:padding-bottom',
-    label: '下间距',
-    defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:padding-left',
-    label: '左间距',
-    defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
-      },
-    ],
-  },
-  {
-    name: 'style:padding-right',
-    label: '右间距',
-    defaultValue: '0px',
-    setters: [
-      {
-        setter: 'InputSetter',
+        setter: 'MarginSetter',
       },
     ],
   },
