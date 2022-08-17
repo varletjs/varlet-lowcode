@@ -7,7 +7,7 @@ import Component, {
   SliderSetter,
   CounterSetter,
 } from '../../built-in-setters/index'
-import SetterPosition from '../../built-in-setters/positon-setter/index'
+// import SetterPosition from '../../built-in-setters/positon-setter/index'
 import Popover from '../../component/popover/popover'
 import { AssetProfileMaterialProp } from '@varlet/lowcode-core'
 import { ColorPicker } from 'vue3-colorpicker'

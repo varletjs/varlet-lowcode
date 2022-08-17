@@ -29,6 +29,7 @@ export default defineComponent({
     const isSelectDom = ref(false)
     const refTab: any = ref(null)
     const schema = schemaManager.exportSchema()
+
     let assets = assetsManager.exportAssets()
     const schemaNode: Ref<any> = ref({})
     const materialsData: any = reactive({
@@ -41,6 +42,7 @@ export default defineComponent({
 
     const deepClone = (source: any) => {
       const targetObj: any = Array.isArray(source) ? [] : {}
+
       for (const keys in source) {
         if (source.hasOwnProperty(keys)) {
           if (source[keys] && typeof source[keys] === 'object') {
@@ -51,6 +53,7 @@ export default defineComponent({
           }
         }
       }
+
       return targetObj
     }
 
@@ -59,6 +62,7 @@ export default defineComponent({
       SelectorChange.value = false
       schemaId.value = id.split('dragItem')[1]
       schemaNode.value = schemaManager.findSchemaNodeById(schema, schemaId.value)
+
       if (schemaNode.value && schemaNode.value.library && schemaNode.value.name) {
         const materials: any = deepClone(getRendererAssetsManager(assets))
         materials.props ? setSetterData(materials.props) : null
@@ -70,6 +74,7 @@ export default defineComponent({
       const style: AssetProfileMaterialProp[] = deepClone(styleMaterials)
       const attrs: AssetProfileMaterialProp[] = []
       const materialsProps: any = {}
+
       props?.forEach((item) => {
         if (item.name.indexOf('on') === 0 && item.name[2] === item.name[2].toUpperCase()) {
           event.push(item)
@@ -77,9 +82,11 @@ export default defineComponent({
           const schemaName = schemaNode.value.props
             ? Object.keys(schemaNode.value.props).filter((itemSchema) => itemSchema === item.name)[0]
             : null
+
           if (schemaName) {
             item.defaultValue = schemaNode.value.props[schemaName]
           }
+
           attrs.push(item)
           materialsProps[item.name] = item.defaultValue
         }
@@ -90,9 +97,11 @@ export default defineComponent({
           schemaNode.value.props && schemaNode.value.props.style
             ? Object.keys(schemaNode.value.props.style).filter((itemSchema) => `style:${itemSchema}` === item.name)[0]
             : null
+
         if (schemaName) {
           item.defaultValue = schemaNode.value.props.style[schemaName]
         }
+
         materialsProps[changeType[0]] = {
           ...materialsProps[changeType[0]],
           ...{ [changeType[1]]: item.defaultValue },
@@ -103,7 +112,9 @@ export default defineComponent({
       materialsData.attrs = attrs
       materialsData.style = style
       materialsData.materialsProps = materialsProps
+
       console.log(materialsData, 'materialsData')
+
       nextTick(() => {
         SelectorChange.value = true
       })
@@ -134,6 +145,7 @@ export default defineComponent({
           ...schemaNode.value.props,
           ...{ [prop.name]: prop.defaultValue },
         }
+
         materialsData.materialsProps[prop.name] = prop.defaultValue
       } else {
         schemaNode.value.props = {
@@ -145,15 +157,18 @@ export default defineComponent({
             },
           },
         }
+
         materialsData.materialsProps[changeType[0]] = {
           ...materialsData.materialsProps[changeType[0]],
           ...{ [changeType[1]]: prop.defaultValue },
         }
+
         console.log(materialsData.materialsProps, 'materialsData.materialsProps')
       }
-      schemaManager.importSchema(schema, { emitter: 'schema-editor' })
+      eventsManager.emit(BuiltInEvents.SCHEMA_CHANGE, schema)
       eventsManager.emit('DOMRectChange', schemaId.value)
     }
+
     eventsManager.on(BuiltInEvents.ASSETS_CHANGE, handleAssetsChange)
     eventsManager.on('selector', computedSelectorStyles)
     eventsManager.on('skeleton-loaded', handleSkeletonLoaded)
