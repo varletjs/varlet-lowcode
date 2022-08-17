@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AssetProfileMaterialSlot, SchemaNode , schemaManager, assetsManager } from '@varlet/lowcode-core'
+import { AssetProfileMaterialSlot, SchemaNode, schemaManager, assetsManager } from '@varlet/lowcode-core'
 import { Button, Icon, Menu, Cell } from '@varlet/ui'
 import { defineProps, ref } from 'vue'
 import _props from '../props'
@@ -18,7 +18,7 @@ function getProfiles() {
 
 const getMenu = () => {
   const profiles = getProfiles()
-  if (profiles && profiles.length) {
+  if (profiles && profiles.length && props.schemaId) {
     const schema = props.schema as SchemaNode
     const schemaNode = schemaManager.findSchemaNodeById(schema, props.schemaId)
     const { name, library } = schemaNode || {}

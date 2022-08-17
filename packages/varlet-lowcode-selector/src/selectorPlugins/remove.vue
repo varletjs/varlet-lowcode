@@ -8,10 +8,12 @@ import _props from '../props'
 const props = defineProps(_props)
 
 const trashClick = () => {
-  const rootSchema = props.schema ?? <SchemaPageNode>{ name: BuiltInSchemaNodeNames.PAGE }
-  const newSchema = schemaManager!.removeSchemaNodeById(rootSchema, props.schemaId)
+  if (props.schemaId) {
+    const rootSchema = props.schema ?? ({ name: BuiltInSchemaNodeNames.PAGE } as SchemaPageNode)
+    const newSchema = schemaManager!.removeSchemaNodeById(rootSchema, props.schemaId)
 
-  props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+    props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+  }
 }
 </script>
 <template>

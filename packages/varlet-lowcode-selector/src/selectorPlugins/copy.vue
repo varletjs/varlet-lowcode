@@ -10,9 +10,9 @@ const props = defineProps(_props)
 function addSchemaNode(id: SchemaNode['id'], slotsName = 'default'): SchemaPageNode {
   const rootSchemaNode: SchemaPageNode =
     props.schema ??
-    <SchemaPageNode>{
+    ({
       name: BuiltInSchemaNodeNames.PAGE,
-    }
+    } as SchemaPageNode)
 
   const firstChildren = rootSchemaNode.slots![slotsName].children ?? []
 
@@ -44,9 +44,11 @@ function addSchemaNode(id: SchemaNode['id'], slotsName = 'default'): SchemaPageN
 }
 
 const copyClick = () => {
-  const newSchema = addSchemaNode(props.schemaId)
+  if (props.schemaId) {
+    const newSchema = addSchemaNode(props.schemaId)
 
-  props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+    props.designerEventsManager!.emit(BuiltInEvents.SCHEMA_CHANGE, newSchema)
+  }
 }
 </script>
 

@@ -62,8 +62,6 @@ import type { Assets } from '@varlet/lowcode-core'
 `
 
   const cardId = schemaManager.generateId()
-  const countdownId = schemaManager.generateId()
-  const countdown2Id = schemaManager.generateId()
 
   const schema = {
     id: schemaManager.generateId(),
