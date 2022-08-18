@@ -21,7 +21,8 @@ const PKG_UNDO_REDO = resolve(CWD, './packages/varlet-lowcode-undo-redo')
 const PKG_RESIZER = resolve(CWD, './packages/varlet-lowcode-resizer')
 const PKG_MATERIALS_PANEL =  resolve(CWD, './packages/varlet-lowcode-materials-panel')
 const PKG_SKELETON = resolve(CWD,'./packages/varlet-lowcode-skeleton')
-const PKG_LOCALE_SWITCHER = resolve(CWD,'./packages/varlet-lowcode-locale-switcher')
+const PKG_LOCALE_SWITCHER = resolve(CWD, './packages/varlet-lowcode-locale-switcher')
+const PKG_SCHEMA_TREE = resolve(CWD, './packages/varlet-lowcode-schema-tree')
 
 export const buildSchemaJsxVitePlugin = () => execa('pnpm', ['build'], { cwd: PKG_SCHEMA_JSX_VITE_PLUGIN })
 
@@ -51,15 +52,18 @@ export const buildSchemaEditor = () => execa('pnpm', ['compile'], { cwd: PKG_SCH
 
 export const buildSelector = () => execa('pnpm', ['compile'], { cwd: PKG_SELECTOR })
 
-export const buildUndoRedo = () => execa('pnpm', ['compile'], { cwd: PKG_UNDO_REDO })
+export const buildUndoRedo = () => execa('pnpm', ['compile'], {cwd: PKG_UNDO_REDO})
 
-export const buildResizer = () => execa('pnpm', ['compile'], { cwd: PKG_RESIZER })
+export const buildResizer = () => execa('pnpm', ['compile'], {cwd: PKG_RESIZER})
 
-export const buildMaterialsPanel = () => execa('pnpm', ['compile'], { cwd: PKG_MATERIALS_PANEL })
+export const buildMaterialsPanel = () => execa('pnpm', ['compile'], {cwd: PKG_MATERIALS_PANEL})
 
-export const buildSkeleton =  () => execa('pnpm', ['compile'], { cwd: PKG_SKELETON })
+export const buildSkeleton = () => execa('pnpm', ['compile'], {cwd: PKG_SKELETON})
 
-export const buildLocaleSwitcher =  () => execa('pnpm', ['compile'], { cwd: PKG_LOCALE_SWITCHER })
+export const buildLocaleSwitcher = () => execa('pnpm', ['compile'], {cwd: PKG_LOCALE_SWITCHER})
+
+export const buildSchemaTree = () => execa('pnpm', ['compile'], {cwd: PKG_SCHEMA_TREE})
+
 
 export async function runTask(taskName, task) {
   const s = ora().start(`Building ${taskName}`)

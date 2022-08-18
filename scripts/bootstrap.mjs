@@ -17,7 +17,8 @@ import {
   buildResizer,
   buildMaterialsPanel,
   buildSkeleton, buildLocaleSwitcher,
-  buildSchemaJsxVitePlugin
+  buildSchemaJsxVitePlugin,
+  buildSchemaTree
 } from './build.mjs'
 
 await runTask('schema jsx vite plugin', buildSchemaJsxVitePlugin)
@@ -25,6 +26,7 @@ await runTask('cli', buildCli)
 await runTask('core', buildCore)
 await runTask('dataSourcePanel', buildDataSourcePanel)
 await runTask('skeleton', buildSkeleton)
+await runTask('schemaTree', buildSchemaTree)
 await runTask('dnd', buildDnd)
 await runTask('selector', buildSelector)
 await runTask('renderer', buildRenderer)
