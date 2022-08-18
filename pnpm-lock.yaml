@@ -1,4 +1,4 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 importers:
 
@@ -17,7 +17,7 @@ importers:
       typescript: ^4.7.2
     devDependencies:
       '@varlet/cli': 1.27.20
-      '@varlet/eslint-config': 1.27.20_eslint@7.32.0+typescript@4.7.2
+      '@varlet/eslint-config': 1.27.20_r6wgjs2cmdapk4bysm6dglulo4
       '@varlet/stylelint-config': 1.27.20_stylelint@13.13.1
       eslint: 7.32.0
       execa: 5.1.1
@@ -119,7 +119,7 @@ importers:
       vue: 3.2.25
       vue-tsc: ^0.37.3
     dependencies:
-      '@varlet/shared': 1.27.19
+      '@varlet/shared': 1.27.20
       file-saver: 2.0.5
       get-own-enumerable-property-symbols: 3.0.2
       is-obj: 3.0.0
@@ -156,7 +156,7 @@ importers:
       vue: ^3.2.25
       vue-tsc: ^0.37.3
     dependencies:
-      '@varlet/shared': 1.27.19
+      '@varlet/shared': 1.27.20
       lodash-es: 4.17.21
       uuid: 8.3.2
     devDependencies:
@@ -220,8 +220,8 @@ importers:
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
       '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
       '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
-      '@varlet/touch-emulator': 1.27.19
-      '@varlet/ui': 1.27.19_vue@3.2.25
+      '@varlet/touch-emulator': 1.27.20
+      '@varlet/ui': 1.27.20_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
       vue: 3.2.25
@@ -248,30 +248,6 @@ importers:
       live-server: 1.2.2
       typescript: 4.7.2
       uuid: 8.3.2
-      vue: 3.2.25
-      vue-tsc: 0.37.3_typescript@4.7.2
-
-  packages/varlet-lowcode-draggable-tree:
-    specifiers:
-      '@varlet/lowcode-cli': 'workspace: *'
-      '@varlet/lowcode-core': 'workspace: *'
-      '@varlet/lowcode-schema-editor': 'workspace: *'
-      '@varlet/lowcode-skeleton': 'workspace: *'
-      '@varlet/touch-emulator': latest
-      '@varlet/ui': latest
-      live-server: ^1.2.1
-      typescript: ^4.4.4
-      vue: 3.2.25
-      vue-tsc: ^0.37.3
-    devDependencies:
-      '@varlet/lowcode-cli': link:../varlet-lowcode-cli
-      '@varlet/lowcode-core': link:../varlet-lowcode-core
-      '@varlet/lowcode-schema-editor': link:../varlet-lowcode-schema-editor
-      '@varlet/lowcode-skeleton': link:../varlet-lowcode-skeleton
-      '@varlet/touch-emulator': 1.27.19
-      '@varlet/ui': 1.27.19_vue@3.2.25
-      live-server: 1.2.2
-      typescript: 4.7.2
       vue: 3.2.25
       vue-tsc: 0.37.3_typescript@4.7.2
 
@@ -363,7 +339,7 @@ importers:
       '@babel/standalone': 7.18.7
       '@babel/traverse': 7.18.6
       '@babel/types': 7.18.7
-      '@varlet/shared': 1.27.19
+      '@varlet/shared': 1.27.20
       buffer: 6.0.3
     devDependencies:
       '@types/babel__generator': 7.6.4
@@ -416,7 +392,7 @@ importers:
       vue-tsc: ^0.37.3
     dependencies:
       '@varlet/axle': 0.0.3
-      '@varlet/shared': 1.27.19
+      '@varlet/shared': 1.27.20
       lodash-es: 4.17.21
       uuid: 8.3.2
     devDependencies:
@@ -471,7 +447,7 @@ importers:
       '@varlet/lowcode-cli': link:../varlet-lowcode-cli
       '@varlet/lowcode-core': link:../varlet-lowcode-core
       '@varlet/lowcode-monaco': link:../varlet-lowcode-monaco
-      '@varlet/ui': 1.27.19_vue@3.2.25
+      '@varlet/ui': 1.27.20_vue@3.2.25
       live-server: 1.2.2
       typescript: 4.7.2
       vite: 2.9.12
@@ -2394,7 +2370,7 @@ packages:
       '@sinonjs/commons': 1.8.3
     dev: true
 
-  /@stylelint/postcss-css-in-js/0.37.3_4f7b71a942b8b7a555b8adf78f88122b:
+  /@stylelint/postcss-css-in-js/0.37.3_j55xdkkcxc32kvnyvx3y7casfm:
     resolution: {integrity: sha512-scLk3cSH1H9KggSniseb2KNAU5D9FWc3H7BxCSAIdtU9OWIyw0zkEZ9qEKHryRM+SExYXRKNb7tOOVNAsQ3iwg==}
     peerDependencies:
       postcss: '>=7.0.0'
@@ -2402,12 +2378,12 @@ packages:
     dependencies:
       '@babel/core': 7.18.5
       postcss: 7.0.39
-      postcss-syntax: 0.36.2_postcss@7.0.39
+      postcss-syntax: 0.36.2_kei4jy7wdgbhc236h4oijypxom
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@stylelint/postcss-markdown/0.36.2_4f7b71a942b8b7a555b8adf78f88122b:
+  /@stylelint/postcss-markdown/0.36.2_j55xdkkcxc32kvnyvx3y7casfm:
     resolution: {integrity: sha512-2kGbqUVJUGE8dM+bMzXG/PYUWKkjLIkRLWNh39OaADkiabDRdw8ATFCgbMz5xdIcvwspPAluSL7uY+ZiTWdWmQ==}
     deprecated: 'Use the original unforked package instead: postcss-markdown'
     peerDependencies:
@@ -2415,7 +2391,7 @@ packages:
       postcss-syntax: '>=0.36.2'
     dependencies:
       postcss: 7.0.39
-      postcss-syntax: 0.36.2_postcss@7.0.39
+      postcss-syntax: 0.36.2_kei4jy7wdgbhc236h4oijypxom
       remark: 13.0.0
       unist-util-find-all-after: 3.0.2
     transitivePeerDependencies:
@@ -2574,7 +2550,7 @@ packages:
       '@types/yargs-parser': 21.0.0
     dev: true
 
-  /@typescript-eslint/eslint-plugin/4.33.0_2b16db8efd93d95946a7f39d4a99f36e:
+  /@typescript-eslint/eslint-plugin/4.33.0_fmlnxdx5spmvsrvh6oouvgptny:
     resolution: {integrity: sha512-aINiAxGVdOl1eJyVjaWn/YcVAq4Gi/Yo35qHGCnqbWVz61g39D0h23veY/MA0rFFGfxK7TySg2uwDeNv+JgVpg==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -2585,8 +2561,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/experimental-utils': 4.33.0_eslint@7.32.0+typescript@4.7.2
-      '@typescript-eslint/parser': 4.33.0_eslint@7.32.0+typescript@4.7.2
+      '@typescript-eslint/experimental-utils': 4.33.0_r6wgjs2cmdapk4bysm6dglulo4
+      '@typescript-eslint/parser': 4.33.0_r6wgjs2cmdapk4bysm6dglulo4
       '@typescript-eslint/scope-manager': 4.33.0
       debug: 4.3.4
       eslint: 7.32.0
@@ -2600,7 +2576,7 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/experimental-utils/4.33.0_eslint@7.32.0+typescript@4.7.2:
+  /@typescript-eslint/experimental-utils/4.33.0_r6wgjs2cmdapk4bysm6dglulo4:
     resolution: {integrity: sha512-zeQjOoES5JFjTnAhI5QY7ZviczMzDptls15GFsI6jyUOq0kOf9+WonkhtlIhh0RgHRnqj5gdNxW5j1EvAyYg6Q==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -2618,7 +2594,7 @@ packages:
       - typescript
     dev: true
 
-  /@typescript-eslint/parser/4.33.0_eslint@7.32.0+typescript@4.7.2:
+  /@typescript-eslint/parser/4.33.0_r6wgjs2cmdapk4bysm6dglulo4:
     resolution: {integrity: sha512-ZohdsbXadjGBSK0/r+d87X0SBmKzOq4/S5nzK6SBgJspFo9/CUDJ7hjayuze+JK7CZQLDMroqytp7pOcFKTxZA==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -2728,12 +2704,12 @@ packages:
       ora: 5.4.1
       semver: 7.3.7
       slash: 3.0.0
-      ts-jest: 26.5.6_jest@26.6.3+typescript@4.7.2
+      ts-jest: 26.5.6_f76bpxtbiaefn23m64irtgzxbe
       typescript: 4.7.2
       vite: 2.9.14_less@3.13.1
       vite-plugin-html: 2.1.2_vite@2.9.14
       vue: 3.2.25
-      vue-jest: 5.0.0-alpha.10_854e8bd946049ed6ae12153af11c88b1
+      vue-jest: 5.0.0-alpha.10_qvhixwkgaspnnlqscu5pcheiwe
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -2744,17 +2720,19 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@varlet/eslint-config/1.27.20_eslint@7.32.0+typescript@4.7.2:
+  /@varlet/eslint-config/1.27.20_r6wgjs2cmdapk4bysm6dglulo4:
     resolution: {integrity: sha512-xP/CVH8ViCUUo/THrhhJvSOOCH82rHOOC/qzev090g1JuTq15GCXW/E0Clpg4Qs+HiDcDLT5hJeB3w6Fw3EuQg==}
     dependencies:
-      '@typescript-eslint/eslint-plugin': 4.33.0_2b16db8efd93d95946a7f39d4a99f36e
-      '@typescript-eslint/parser': 4.33.0_eslint@7.32.0+typescript@4.7.2
-      eslint-config-airbnb-base: 14.2.1_3bd94fa9be989baab6ef2e6b5dec3766
+      '@typescript-eslint/eslint-plugin': 4.33.0_fmlnxdx5spmvsrvh6oouvgptny
+      '@typescript-eslint/parser': 4.33.0_r6wgjs2cmdapk4bysm6dglulo4
+      eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
       eslint-config-prettier: 6.15.0_eslint@7.32.0
-      eslint-plugin-import: 2.26.0_eslint@7.32.0
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       eslint-plugin-vue: 7.20.0_eslint@7.32.0
     transitivePeerDependencies:
       - eslint
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
       - supports-color
       - typescript
     dev: true
@@ -2768,6 +2746,7 @@ packages:
       webfont: 9.0.0
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/icons/1.27.17:
@@ -2779,6 +2758,7 @@ packages:
       webfont: 9.0.0
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/icons/1.27.19:
@@ -2790,6 +2770,7 @@ packages:
       webfont: 9.0.0
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/icons/1.27.20:
@@ -2801,7 +2782,7 @@ packages:
       webfont: 9.0.0
     transitivePeerDependencies:
       - chokidar
-    dev: false
+      - supports-color
 
   /@varlet/icons/1.27.20_chokidar@3.5.3:
     resolution: {integrity: sha512-5nQZ1mZv4xCBRFoW8M0X6EjQZOF9eBe+69hXjGSP3T050rPAv8/cYWaXNd4Iv74na9cdK461k4JGjfzFQMtI7A==}
@@ -2812,6 +2793,7 @@ packages:
       webfont: 9.0.0_chokidar@3.5.3
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/markdown-vite-plugin/1.27.20:
@@ -2831,6 +2813,7 @@ packages:
 
   /@varlet/shared/1.27.19:
     resolution: {integrity: sha512-329PrCTzmhIC9kxPsTcvDIoZyBjjSLU1TkeoHjAnUvskS4YDPohpUUC1JCqz2O6OBLffkoVOM86E4ddBPQqliw==}
+    dev: true
 
   /@varlet/shared/1.27.20:
     resolution: {integrity: sha512-qtCcsClM0H/7UmZFr2c0PWqIP5eHclITew8rVGTKSfJdJKAWXSHy+KA+42T2yZ1cyOK1fsjulVsbqGSubAmI0Q==}
@@ -2863,6 +2846,7 @@ packages:
       vue: 3.2.25
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/ui/1.27.17_vue@3.2.25:
@@ -2877,6 +2861,7 @@ packages:
       vue: 3.2.25
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/ui/1.27.19_vue@3.2.25:
@@ -2891,6 +2876,7 @@ packages:
       vue: 3.2.25
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /@varlet/ui/1.27.20_vue@3.2.25:
@@ -2905,7 +2891,7 @@ packages:
       vue: 3.2.25
     transitivePeerDependencies:
       - chokidar
-    dev: false
+      - supports-color
 
   /@vitejs/plugin-vue-jsx/1.3.5:
     resolution: {integrity: sha512-iBxRQS8SOGxI4c8/cucgumD9a1SO4ngn91YbluyWe1L2k0D7+3v64XbjZxXX2O964LubY8Tehl3ihr0W7f3+/g==}
@@ -3312,6 +3298,8 @@ packages:
     dependencies:
       micromatch: 3.1.10
       normalize-path: 2.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /anymatch/3.1.2:
@@ -3674,6 +3662,8 @@ packages:
       snapdragon-node: 2.1.1
       split-string: 3.1.0
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   /braces/3.0.2:
     resolution: {integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==}
@@ -3884,6 +3874,8 @@ packages:
       upath: 1.2.0
     optionalDependencies:
       fsevents: 1.2.13
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /chokidar/3.5.3:
@@ -4073,6 +4065,8 @@ packages:
       finalhandler: 1.1.2
       parseurl: 1.3.3
       utils-merge: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /conventional-changelog-angular/5.0.13:
@@ -4213,8 +4207,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -4358,11 +4352,21 @@ packages:
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.0.0
 
   /debug/3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.3
     dev: true
@@ -4899,7 +4903,7 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  /eslint-config-airbnb-base/14.2.1_3bd94fa9be989baab6ef2e6b5dec3766:
+  /eslint-config-airbnb-base/14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy:
     resolution: {integrity: sha512-GOrQyDtVEc1Xy20U7vsB2yAoB4nBlfH5HZJeatRXHleO+OS5Ot+MWij4Dpltw4/DyIkqUfqz1epfhVR5XWWQPA==}
     engines: {node: '>= 6'}
     peerDependencies:
@@ -4908,7 +4912,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0_eslint@7.32.0
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       object.assign: 4.1.2
       object.entries: 1.1.5
     dev: true
@@ -4928,29 +4932,54 @@ packages:
     dependencies:
       debug: 3.2.7
       resolve: 1.22.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
-  /eslint-module-utils/2.7.3:
+  /eslint-module-utils/2.7.3_lkzaig2qiyp6elizstfbgvzhie:
     resolution: {integrity: sha512-088JEC7O3lDZM9xGe0RerkOMd0EjFl+Yvd1jPWIkMT5u3H9+HC34mWWPnqPrN13gieT9pBOO+Qt07Nb/6TresQ==}
     engines: {node: '>=4'}
+    peerDependencies:
+      '@typescript-eslint/parser': '*'
+      eslint-import-resolver-node: '*'
+      eslint-import-resolver-typescript: '*'
+      eslint-import-resolver-webpack: '*'
+    peerDependenciesMeta:
+      '@typescript-eslint/parser':
+        optional: true
+      eslint-import-resolver-node:
+        optional: true
+      eslint-import-resolver-typescript:
+        optional: true
+      eslint-import-resolver-webpack:
+        optional: true
     dependencies:
+      '@typescript-eslint/parser': 4.33.0_r6wgjs2cmdapk4bysm6dglulo4
       debug: 3.2.7
+      eslint-import-resolver-node: 0.3.6
       find-up: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
-  /eslint-plugin-import/2.26.0_eslint@7.32.0:
+  /eslint-plugin-import/2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry:
     resolution: {integrity: sha512-hYfi3FXaM8WPLf4S1cikh/r4IxnO6zrhZbEGz2b660EJRbuxgpDS5gkCuYgGWg2xxh2rBuIr4Pvhve/7c31koA==}
     engines: {node: '>=4'}
     peerDependencies:
+      '@typescript-eslint/parser': '*'
       eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8
+    peerDependenciesMeta:
+      '@typescript-eslint/parser':
+        optional: true
     dependencies:
+      '@typescript-eslint/parser': 4.33.0_r6wgjs2cmdapk4bysm6dglulo4
       array-includes: 3.1.5
       array.prototype.flat: 1.3.0
       debug: 2.6.9
       doctrine: 2.1.0
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.6
-      eslint-module-utils: 2.7.3
+      eslint-module-utils: 2.7.3_lkzaig2qiyp6elizstfbgvzhie
       has: 1.0.3
       is-core-module: 2.9.0
       is-glob: 4.0.3
@@ -4958,6 +4987,10 @@ packages:
       object.values: 1.1.5
       resolve: 1.22.1
       tsconfig-paths: 3.14.1
+    transitivePeerDependencies:
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
+      - supports-color
     dev: true
 
   /eslint-plugin-vue/7.20.0_eslint@7.32.0:
@@ -5200,6 +5233,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   /expect/26.6.2:
     resolution: {integrity: sha512-9/hlOBkQl2l/PLHJx6JjoDF6xPKcJEsUlWKb23rKE7KzeDqUZKXKNMW27KIue5JMdBV9HgmoJPcc8HtO85t9IA==}
@@ -5251,6 +5286,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   /extract-from-css/0.4.4:
     resolution: {integrity: sha512-41qWGBdtKp9U7sgBxAQ7vonYqSXzgW/SiAYzq4tdWSVhAShvpVCH1nyvPQgjse6EdgbW7Y7ERdT3674/lKr65A==}
@@ -5273,6 +5310,8 @@ packages:
       is-glob: 4.0.3
       merge2: 1.4.1
       micromatch: 3.1.10
+    transitivePeerDependencies:
+      - supports-color
 
   /fast-glob/3.2.11:
     resolution: {integrity: sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew==}
@@ -5375,6 +5414,8 @@ packages:
       parseurl: 1.3.3
       statuses: 1.5.0
       unpipe: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /find-up/2.1.0:
@@ -5442,7 +5483,7 @@ packages:
       map-cache: 0.2.2
 
   /fresh/0.5.2:
-    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
+    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -5704,6 +5745,8 @@ packages:
       ignore: 4.0.6
       pify: 4.0.1
       slash: 2.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   /globjoin/0.1.4:
     resolution: {integrity: sha512-xYfnw62CKG8nLkZBfWbhWwDw02CHty86jfPcc2cr3ZfeuK9ysoVPPEUxf21bAD/rWAgk52SuBrLJlefNy8mvFg==}
@@ -6608,6 +6651,8 @@ packages:
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /jest-jasmine2/26.6.3:
@@ -6705,6 +6750,8 @@ packages:
       '@jest/types': 26.6.2
       jest-regex-util: 26.0.0
       jest-snapshot: 26.6.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /jest-resolve/26.6.2:
@@ -6821,6 +6868,8 @@ packages:
       natural-compare: 1.4.0
       pretty-format: 26.6.2
       semver: 7.3.7
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /jest-util/26.6.2:
@@ -7152,6 +7201,8 @@ packages:
       proxy-middleware: 0.15.0
       send: 0.18.0
       serve-index: 1.9.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /load-json-file/4.0.0:
@@ -7430,6 +7481,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   /micromatch/4.0.5:
     resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
@@ -7531,6 +7584,8 @@ packages:
       depd: 2.0.0
       on-finished: 2.3.0
       on-headers: 1.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /ms/2.0.0:
@@ -7573,6 +7628,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   /native-request/1.1.0:
     resolution: {integrity: sha512-uZ5rQaeRn15XmpgE0xoPL8YWqcX90VtCFglYwAgkvKM5e8fog+vePLAhHxuuv/gRkrQxIeh5U3q9sMNUrENqWw==}
@@ -8066,7 +8123,7 @@ packages:
     resolution: {integrity: sha512-xTgYBc3fuo7Yt7JbiuFxSYGToMoz8fLoE6TC9Wx1P/u+LfeThMOAqmuyECnlBaaJb+u1m9hHiXUEtwW4OzfUJg==}
     engines: {node: '>=0.10.0'}
 
-  /postcss-html/0.36.0_4f7b71a942b8b7a555b8adf78f88122b:
+  /postcss-html/0.36.0_j55xdkkcxc32kvnyvx3y7casfm:
     resolution: {integrity: sha512-HeiOxGcuwID0AFsNAL0ox3mW6MHH5cstWN1Z3Y+n6H+g12ih7LHdYxWwEA/QmrebctLjo79xz9ouK3MroHwOJw==}
     peerDependencies:
       postcss: '>=5.0.0'
@@ -8074,7 +8131,7 @@ packages:
     dependencies:
       htmlparser2: 3.10.1
       postcss: 7.0.39
-      postcss-syntax: 0.36.2_postcss@7.0.39
+      postcss-syntax: 0.36.2_kei4jy7wdgbhc236h4oijypxom
     dev: true
 
   /postcss-less/3.1.4:
@@ -8121,12 +8178,31 @@ packages:
       util-deprecate: 1.0.2
     dev: true
 
-  /postcss-syntax/0.36.2_postcss@7.0.39:
+  /postcss-syntax/0.36.2_kei4jy7wdgbhc236h4oijypxom:
     resolution: {integrity: sha512-nBRg/i7E3SOHWxF3PpF5WnJM/jQ1YpY9000OaVXlAQj6Zp/kIqJxEDWIZ67tAd7NLuk7zqN4yqe9nc0oNAOs1w==}
     peerDependencies:
       postcss: '>=5.0.0'
+      postcss-html: '*'
+      postcss-jsx: '*'
+      postcss-less: '*'
+      postcss-markdown: '*'
+      postcss-scss: '*'
+    peerDependenciesMeta:
+      postcss-html:
+        optional: true
+      postcss-jsx:
+        optional: true
+      postcss-less:
+        optional: true
+      postcss-markdown:
+        optional: true
+      postcss-scss:
+        optional: true
     dependencies:
       postcss: 7.0.39
+      postcss-html: 0.36.0_j55xdkkcxc32kvnyvx3y7casfm
+      postcss-less: 3.1.4
+      postcss-scss: 2.1.1
     dev: true
 
   /postcss-value-parser/4.2.0:
@@ -8331,6 +8407,8 @@ packages:
       graceful-fs: 4.2.10
       micromatch: 3.1.10
       readable-stream: 2.3.7
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /readdirp/3.6.0:
@@ -8599,6 +8677,8 @@ packages:
       micromatch: 3.1.10
       minimist: 1.2.6
       walker: 1.0.8
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /sax/1.2.4:
@@ -8653,6 +8733,8 @@ packages:
       on-finished: 2.4.1
       range-parser: 1.2.1
       statuses: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /serve-index/1.9.1:
@@ -8666,6 +8748,8 @@ packages:
       http-errors: 1.6.3
       mime-types: 2.1.35
       parseurl: 1.3.3
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /set-blocking/2.0.0:
@@ -8793,6 +8877,8 @@ packages:
       source-map: 0.5.7
       source-map-resolve: 0.5.3
       use: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
 
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
@@ -9074,8 +9160,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dependencies:
-      '@stylelint/postcss-css-in-js': 0.37.3_4f7b71a942b8b7a555b8adf78f88122b
-      '@stylelint/postcss-markdown': 0.36.2_4f7b71a942b8b7a555b8adf78f88122b
+      '@stylelint/postcss-css-in-js': 0.37.3_j55xdkkcxc32kvnyvx3y7casfm
+      '@stylelint/postcss-markdown': 0.36.2_j55xdkkcxc32kvnyvx3y7casfm
       autoprefixer: 9.8.8
       balanced-match: 2.0.0
       chalk: 4.1.2
@@ -9101,7 +9187,7 @@ packages:
       micromatch: 4.0.5
       normalize-selector: 0.2.0
       postcss: 7.0.39
-      postcss-html: 0.36.0_4f7b71a942b8b7a555b8adf78f88122b
+      postcss-html: 0.36.0_j55xdkkcxc32kvnyvx3y7casfm
       postcss-less: 3.1.4
       postcss-media-query-parser: 0.2.3
       postcss-resolve-nested-selector: 0.1.1
@@ -9109,7 +9195,7 @@ packages:
       postcss-sass: 0.4.4
       postcss-scss: 2.1.1
       postcss-selector-parser: 6.0.10
-      postcss-syntax: 0.36.2_postcss@7.0.39
+      postcss-syntax: 0.36.2_kei4jy7wdgbhc236h4oijypxom
       postcss-value-parser: 4.2.0
       resolve-from: 5.0.0
       slash: 3.0.0
@@ -9123,6 +9209,8 @@ packages:
       v8-compile-cache: 2.3.0
       write-file-atomic: 3.0.3
     transitivePeerDependencies:
+      - postcss-jsx
+      - postcss-markdown
       - supports-color
     dev: true
 
@@ -9346,7 +9434,7 @@ packages:
     resolution: {integrity: sha512-rvuRbTarPXmMb79SmzEp8aqXNKcK+y0XaB298IXueQ8I2PsrATcPBCSPyK/dDNa2iWOhKlfNnOjdAOTBU/nkFA==}
     dev: true
 
-  /ts-jest/26.5.6_jest@26.6.3+typescript@4.7.2:
+  /ts-jest/26.5.6_f76bpxtbiaefn23m64irtgzxbe:
     resolution: {integrity: sha512-rua+rCP8DxpA8b4DQD/6X2HQS8Zy/xzViVYfEs2OQu68tkCuKLV0Md8pmX55+W24uRIyAsf/BajRfxOs+R2MKA==}
     engines: {node: '>= 10'}
     hasBin: true
@@ -9839,7 +9927,7 @@ packages:
       - supports-color
     dev: true
 
-  /vue-jest/5.0.0-alpha.10_854e8bd946049ed6ae12153af11c88b1:
+  /vue-jest/5.0.0-alpha.10_qvhixwkgaspnnlqscu5pcheiwe:
     resolution: {integrity: sha512-iN62cTi4AL0UsgxEyVeJtHG6qXEv+8Ci2wX1vP3b/dAZvyBRmqy5aJHQrP6VCEuio+HgHQ1LAZ+ccM2pouBmlg==}
     peerDependencies:
       '@babel/core': 7.x
@@ -9862,7 +9950,7 @@ packages:
       extract-from-css: 0.4.4
       jest: 26.6.3
       source-map: 0.5.6
-      ts-jest: 26.5.6_jest@26.6.3+typescript@4.7.2
+      ts-jest: 26.5.6_f76bpxtbiaefn23m64irtgzxbe
       tsconfig: 7.0.0
       typescript: 4.7.2
       vue: 3.2.25
@@ -10010,6 +10098,7 @@ packages:
       xml2js: 0.4.23
     transitivePeerDependencies:
       - chokidar
+      - supports-color
 
   /webfont/9.0.0_chokidar@3.5.3:
     resolution: {integrity: sha512-Sn8KnTXroWAbBHYKUXCUq2rKwqbluupUd7krYqluT+kFGV4dvMuKXaL84Fm/Kfv+5rz2S81jNRvcyQ6ySBiC2Q==}
@@ -10032,6 +10121,7 @@ packages:
       xml2js: 0.4.23
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   /webidl-conversions/5.0.0:
@@ -10304,6 +10394,7 @@ packages:
       webfont: registry.npmmirror.com/webfont/9.0.0
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   registry.npmmirror.com/@varlet/shared/1.27.17:
@@ -10327,6 +10418,7 @@ packages:
       vue: 3.2.25
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   registry.npmmirror.com/a-sync-waterfall/1.0.1:
@@ -10487,6 +10579,8 @@ packages:
       snapdragon-node: registry.npmmirror.com/snapdragon-node/2.1.1
       split-string: registry.npmmirror.com/split-string/3.1.0
       to-regex: registry.npmmirror.com/to-regex/3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/cache-base/1.0.1:
@@ -10669,6 +10763,11 @@ packages:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/debug/-/debug-2.6.9.tgz}
     name: debug
     version: 2.6.9
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: registry.npmmirror.com/ms/2.0.0
     dev: true
@@ -10828,6 +10927,8 @@ packages:
       regex-not: registry.npmmirror.com/regex-not/1.0.2
       snapdragon: registry.npmmirror.com/snapdragon/0.8.2
       to-regex: registry.npmmirror.com/to-regex/3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/extend-shallow/2.0.1:
@@ -10863,6 +10964,8 @@ packages:
       regex-not: registry.npmmirror.com/regex-not/1.0.2
       snapdragon: registry.npmmirror.com/snapdragon/0.8.2
       to-regex: registry.npmmirror.com/to-regex/3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/fast-glob/2.2.7:
@@ -10877,6 +10980,8 @@ packages:
       is-glob: registry.npmmirror.com/is-glob/4.0.3
       merge2: registry.npmmirror.com/merge2/1.4.1
       micromatch: registry.npmmirror.com/micromatch/3.1.10
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/fill-range/4.0.0:
@@ -11044,6 +11149,8 @@ packages:
       ignore: registry.npmmirror.com/ignore/4.0.6
       pify: registry.npmmirror.com/pify/4.0.1
       slash: registry.npmmirror.com/slash/2.0.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/graceful-fs/4.2.10:
@@ -11649,6 +11756,8 @@ packages:
       regex-not: registry.npmmirror.com/regex-not/1.0.2
       snapdragon: registry.npmmirror.com/snapdragon/0.8.2
       to-regex: registry.npmmirror.com/to-regex/3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/minimatch/3.1.2:
@@ -11702,6 +11811,8 @@ packages:
       regex-not: registry.npmmirror.com/regex-not/1.0.2
       snapdragon: registry.npmmirror.com/snapdragon/0.8.2
       to-regex: registry.npmmirror.com/to-regex/3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/neatequal/1.0.0:
@@ -12152,6 +12263,8 @@ packages:
       source-map: registry.npmmirror.com/source-map/0.5.7
       source-map-resolve: registry.npmmirror.com/source-map-resolve/0.5.3
       use: registry.npmmirror.com/use/3.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/source-map-resolve/0.5.3:
@@ -12526,6 +12639,7 @@ packages:
       xml2js: registry.npmmirror.com/xml2js/0.4.23
     transitivePeerDependencies:
       - chokidar
+      - supports-color
     dev: true
 
   registry.npmmirror.com/which-boxed-primitive/1.0.2:
