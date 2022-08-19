@@ -7,11 +7,3 @@ import SchemaTree from '../src/index.vue'
     <SchemaTree />
   </div>
 </template>
-
-<style scoped>
-.ttt {
-  position: fixed;
-  top: 118px;
-  left: 118px;
-}
-</style>

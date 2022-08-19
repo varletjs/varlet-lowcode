@@ -9,15 +9,5 @@ const tree = ref<Tree>(transform(schemaManager.exportSchema()))
 </script>
 
 <template>
-  <div style="width: 400px; background: #eee">
-    <DraggableTree v-model:tree="tree" />
-  </div>
+  <DraggableTree v-model:tree="tree" />
 </template>
-
-<style scoped>
-.ttt {
-  position: fixed;
-  top: 118px;
-  left: 118px;
-}
-</style>
