@@ -47,7 +47,7 @@ function handleSchemaChange(newSchema: SchemaPageNode, payload?: any) {
     code.value = newSchema.code ?? NOOP_SETUP
   }
 
-  if (payload?.emitter === 'undo-redo' || payload?.emitter === 'schema-editor') {
+  if (payload?.emitter === 'undo-redo') {
     return
   }
 
