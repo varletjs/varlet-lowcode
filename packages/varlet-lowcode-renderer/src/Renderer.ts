@@ -24,13 +24,14 @@ import {
   onUnmounted,
   withDirectives,
   Fragment,
+  getCurrentInstance,
 } from 'vue'
 import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isObject, isPlainObject, isString } from '@varlet/shared'
-import { exec } from './exec'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import { createAxle } from '@varlet/axle'
 import { Snackbar } from '@varlet/ui'
+import _exec from '@varlet/lowcode-exec'
 import '@varlet/ui/es/snackbar/style/index'
 import './renderer.less'
 
@@ -43,6 +44,7 @@ declare const window: Window & {
   $index?: Record<string, any>
   $slotProps?: Record<string, any>
   $renderArgs?: Record<string, any[]>
+  _rendererCtx: any
 }
 
 interface ScopeVariables {
@@ -67,53 +69,6 @@ interface RendererDataSource {
 type RendererDataSources = Record<string, RendererDataSource>
 
 const axle = createAxle({})
-
-function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
-  function useDataSources() {
-    return schemaDataSources.reduce(
-      (rendererDataSources, { name, url, method, headers, timeout, withCredentials, successHandler, errorHandler }) => {
-        const load = async (params?: Record<string, any>, options?: Record<string, any>) => {
-          try {
-            const response = await axle.helpers[method](url, params, {
-              ...options,
-              headers,
-              timeout,
-              withCredentials,
-            })
-
-            const successHandlerFunction = schemaManager.isExpressionBinding(successHandler)
-              ? exec(`(${successHandler.compatibleValue ?? successHandler.value})`)
-              : undefined
-
-            const value = await (successHandlerFunction?.(response) ?? response)
-
-            rendererDataSource.value = value
-
-            return value
-          } catch (e: any) {
-            const errorHandlerFunction = schemaManager.isExpressionBinding(errorHandler)
-              ? exec(`(${errorHandler.compatibleValue ?? errorHandler.value})`)
-              : undefined
-
-            return errorHandlerFunction?.(e) ?? e
-          }
-        }
-
-        const rendererDataSource = reactive({
-          value: undefined,
-          load,
-        })
-
-        rendererDataSources[name] = rendererDataSource
-
-        return rendererDataSources
-      },
-      {} as RendererDataSources
-    )
-  }
-
-  return useDataSources
-}
 
 export default defineComponent({
   name: 'VarletLowCodeRenderer',
@@ -142,8 +97,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const hoistedApis: string[] = []
-    const builtInApis = {
+    const ctx = {
       h,
       ref,
       reactive,
@@ -165,15 +119,75 @@ export default defineComponent({
       onUpdated,
       onBeforeUnmount,
       onUnmounted,
+      exec,
       axle,
       useDataSources: createDataSources(props.schema.dataSources ?? []),
     }
 
-    hoistWindow(builtInApis)
-
+    const { uid } = getCurrentInstance()!
     const code = props.schema.compatibleCode ?? props.schema.code ?? 'function setup() { return {} }'
     const setup = exec(code)
-    const ctx = setup()
+    const setupCtx = setup()
+
+    Object.assign(ctx, setupCtx)
+
+    if (props.mode === 'designer') {
+      window._rendererCtx = ctx
+    }
+
+    function exec(expression: string, context?: any) {
+      return _exec(expression, context ?? ctx)
+    }
+
+    function createDataSources(schemaDataSources: SchemaPageNodeDataSource[]) {
+      function useDataSources() {
+        return schemaDataSources.reduce(
+          (
+            rendererDataSources,
+            { name, url, method, headers, timeout, withCredentials, successHandler, errorHandler }
+          ) => {
+            const load = async (params?: Record<string, any>, options?: Record<string, any>) => {
+              try {
+                const response = await axle.helpers[method](url, params, {
+                  ...options,
+                  headers,
+                  timeout,
+                  withCredentials,
+                })
+
+                const successHandlerFunction = schemaManager.isExpressionBinding(successHandler)
+                  ? exec(`(${successHandler.compatibleValue ?? successHandler.value})`, window)
+                  : undefined
+
+                const value = await (successHandlerFunction?.(response) ?? response)
+
+                rendererDataSource.value = value
+
+                return value
+              } catch (e: any) {
+                const errorHandlerFunction = schemaManager.isExpressionBinding(errorHandler)
+                  ? exec(`(${errorHandler.compatibleValue ?? errorHandler.value})`, window)
+                  : undefined
+
+                return errorHandlerFunction?.(e) ?? e
+              }
+            }
+
+            const rendererDataSource = reactive({
+              value: undefined,
+              load,
+            })
+
+            rendererDataSources[name] = rendererDataSource
+
+            return rendererDataSources
+          },
+          {} as RendererDataSources
+        )
+      }
+
+      return useDataSources
+    }
 
     function mountCss() {
       if (!props.schema.css) {
@@ -182,13 +196,13 @@ export default defineComponent({
 
       const style = document.createElement('style')
       style.innerHTML = props.schema.css
-      style.id = 'varlet-low-code-css'
+      style.id = `varlet-low-code-css_${uid}`
 
       document.head.appendChild(style)
     }
 
     function unmountCss() {
-      const style = document.querySelector('#varlet-low-code-css')
+      const style = document.querySelector(`#varlet-low-code-css_${uid}`)
 
       if (style) {
         document.head.removeChild(style)
@@ -217,23 +231,6 @@ export default defineComponent({
       const styles = document.querySelector('#varlet-low-code-events')
 
       styles && document.body.removeChild(styles)
-    }
-
-    function hoistWindow(apis: any) {
-      Object.keys(apis).forEach((name: string) => {
-        if (name in window) {
-          throw new Error(`Property [${name}] is the built-in api of window, please replace the property name`)
-        }
-
-        Object.assign(window, { [name]: apis[name] })
-        hoistedApis.push(name)
-      })
-    }
-
-    function restoreWindow() {
-      hoistedApis.forEach((name) => {
-        Reflect.deleteProperty(window, name)
-      })
     }
 
     function createNewScopeVariables(oldScopeVariables: ScopeVariables, partialScopeVariables: ScopeVariables) {
@@ -442,14 +439,12 @@ export default defineComponent({
       }
     }
 
-    hoistWindow(ctx)
     setDndDisabledStyle()
 
     onMounted(mountCss)
 
     onUnmounted(() => {
       uninstallDndDisabledStyle()
-      restoreWindow()
       unmountCss()
     })
 

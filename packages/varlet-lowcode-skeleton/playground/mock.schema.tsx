@@ -1,6 +1,6 @@
 import { schemaManager } from '@varlet/lowcode-core'
 
-const { id, vNode } = schemaManager
+const { id, vNode, expression } = schemaManager
 
 const v = (name) => ({ id: id(), name, library: 'Varlet' })
 const n = (name) => ({ id: id(), name, library: 'naive' })
@@ -10,9 +10,14 @@ function setup() {
   const count = ref(1)
   const doubleCount = computed(() => count.value * 2)
 
+  const handleClick = () => {
+    count.value++
+  }
+
   return {
     count,
     doubleCount,
+    handleClick,
   }
 }
 `
@@ -100,9 +105,11 @@ const css = 'body {\n  padding: 20px\n}'
 //   </page>
 // )
 
+const i = id()
+
 const schema = (
   <page id={id()} code={code} css={css}>
-    <node {...n('NTabs')}>
+    <node {...n('NTabs')} props={{ defaultValue: '1' }}>
       <node
         {...n('NTabPane')}
         props={{
@@ -115,15 +122,19 @@ const schema = (
         }}
       ></node>
     </node>
-    <node {...v('Button')}>
-      <t id={id()} textContent="hi" />
+
+    <node {...v('Button')} props={{ onClick: expression('handleClick') }}>
+      <t id={id()} textContent={expression('doubleCount.value')} />
     </node>
-    <node {...v('Button')}>
-      <t id={id()} textContent="hello" />
+
+    <node {...v('Button')} props={{ onClick: expression('handleClick') }}>
+      <t id={id()} textContent={expression('count.value')} />
+    </node>
+
+    <node name={'Button'} library={'Varlet'} id={i} for={4}>
+      <t id={id()} textContent={expression(`$item['${i}']`)} />
     </node>
   </page>
 )
-
-console.log(schema)
 
 export default schema

@@ -1,7 +1,7 @@
 module.exports = {
   name: 'varlet-lowcode-designer',
 
-  configureVite(command, config) {
+  configureVite(config, command) {
     if (command === 'compile') {
       config.build.lib.formats = ['es']
     }

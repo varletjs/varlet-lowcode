@@ -32,6 +32,7 @@ export function createParser(rendererWindowGetter?: () => any) {
     }
 
     const rendererWindow = rendererWindowGetter()
+    const { _rendererCtx } = rendererWindow
 
     value = value
       .replace(/\$index\[['"](.+)['"]\]/g, '$index_$1')
@@ -54,7 +55,7 @@ export function createParser(rendererWindowGetter?: () => any) {
           t.isIdentifier(path.node.property) &&
           path.node.property.name === 'value'
         ) {
-          if (rendererWindow.isRef(rendererWindow.eval(`${path.node.object.name}`))) {
+          if (_rendererCtx.isRef(_rendererCtx.exec(`${path.node.object.name}`))) {
             path.replaceWith(t.identifier(path.node.object.name))
           }
         }

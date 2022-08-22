@@ -86,6 +86,8 @@
       "no-continue": "off",
       "no-restricted-syntax": "off",
       "no-prototype-builtins": "off",
+      "import/no-named-default": "off",
+      "no-with": "off",
       "vue/no-setup-props-destructure": "off",
       "@typescript-eslint/ban-types": "off",
       "@typescript-eslint/ban-ts-comment": "off"

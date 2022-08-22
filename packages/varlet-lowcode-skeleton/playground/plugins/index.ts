@@ -7,10 +7,17 @@ import ResizerPlugin from '@varlet/lowcode-resizer'
 import CodegenPlugin from '@varlet/lowcode-codegen'
 import LocaleSwitcherPlugin from '@varlet/lowcode-locale-switcher'
 import SettersPlugin from '@varlet/lowcode-setters/src'
-import DataSource from '@varlet/lowcode-data-source-panel/src'
+import DataSourcePlugin from '@varlet/lowcode-data-source-panel/src'
 import SchemaTreePlugin from '@varlet/lowcode-schema-tree'
 
+// custom plugin
+import PreviewPlugin from './preview'
+
 import { pluginsManager } from '@varlet/lowcode-core'
+
+PreviewPlugin.componentProps = {
+  style: { marginLeft: '4px' },
+}
 
 CodegenPlugin.componentProps = {
   style: {
@@ -30,6 +37,7 @@ export function usePlugins() {
     .useSkeletonPlugin(CodeEditorPlugin)
     .useSkeletonPlugin(SchemaEditorPlugin)
     .useSkeletonPlugin(UndoRedoPlugin)
+    .useSkeletonPlugin(PreviewPlugin)
     .useSkeletonPlugin(CodegenPlugin)
-    .useSkeletonPlugin(DataSource)
+    .useSkeletonPlugin(DataSourcePlugin)
 }

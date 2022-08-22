@@ -1,26 +1,9 @@
-const { ensureDirSync, copySync } = require('fs-extra')
-
-const destPaths = ['../varlet-lowcode-designer/public', '../varlet-lowcode-skeleton/public']
-
 module.exports = {
   name: 'varlet-lowcode-core',
 
-  configureVite(command) {
+  configureVite(config, command) {
     if (command === 'compile') {
-      return {
-        plugins: [
-          {
-            name: 'copy-plugin',
-            apply: 'build',
-            closeBundle() {
-              destPaths.forEach((destPath) => {
-                ensureDirSync(destPath)
-                copySync('lib/varlet-lowcode-core.umd.js', `${destPath}/varlet-lowcode-core.umd.js`)
-              })
-            },
-          },
-        ],
-      }
+      config.build.lib.formats = ['umd']
     }
   },
 }

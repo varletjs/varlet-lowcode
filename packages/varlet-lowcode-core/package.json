@@ -2,8 +2,8 @@
   "name": "@varlet/lowcode-core",
   "version": "0.0.0",
   "description": "core of varlet low-code",
-  "main": "lib/varlet-lowcode-core.es.js",
-  "module": "lib/varlet-lowcode-core.es.js",
+  "main": "lib/varlet-lowcode-core.umd.js",
+  "module": "lib/varlet-lowcode-core.umd.js",
   "types": "./types/index.d.ts",
   "keywords": [
     "core",

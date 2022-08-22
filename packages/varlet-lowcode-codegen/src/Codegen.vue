@@ -567,7 +567,7 @@ const genDataSources = (dataSources: SchemaPageNodeDataSource[], profiles: Asset
     ...options,\
 ${timeout ? `\n    timeout: ${timeout},` : ''}\
 ${withCredentials ? `\n    withCredentials: ${withCredentials},` : ''}\
-${headers ? `\n    headers: ${stringifyObject(headers, null, 6).replace(/\}$/, '    }')}` : ''}
+${headers ? `\n    headers: ${stringifyObject(headers)}` : ''}
   }
 `
       let successHandlerTemplate = ''

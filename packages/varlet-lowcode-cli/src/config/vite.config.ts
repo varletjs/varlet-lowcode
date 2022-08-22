@@ -2,6 +2,7 @@ import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
 import schemaJsx from '@varlet/lowcode-schema-jsx-vite-plugin'
 import { injectHtml } from 'vite-plugin-html'
+import { viteExternalsPlugin } from 'vite-plugin-externals'
 import {
   PLAYGROUND_DIR,
   PLAYGROUND_OUTPUT_PATH,
@@ -48,6 +49,11 @@ export function getBaseConfig(varletLowCodeConfig: Record<string, any>): InlineC
       injectHtml({
         data: get(varletLowCodeConfig, 'playground', {}),
       }),
+      viteExternalsPlugin({
+        vue: 'Vue',
+        '@varlet/lowcode-core': 'VarletLowcodeCore',
+        '@varlet/lowcode-renderer': 'VarletLowcodeRenderer',
+      }),
     ],
   }
 }
@@ -56,7 +62,7 @@ export function getDevConfig(varletLowCodeConfig: Record<string, any>): InlineCo
   const configureVite = get(varletLowCodeConfig, 'configureVite', () => ({}))
   const baseConfig = getBaseConfig(varletLowCodeConfig)
 
-  return merge(getBaseConfig(varletLowCodeConfig), configureVite('dev', baseConfig) ?? {})
+  return merge(baseConfig, configureVite(baseConfig, 'dev') ?? {})
 }
 
 export function getBuildConfig(varletLowCodeConfig: Record<string, any>): InlineConfig {
@@ -79,7 +85,7 @@ export function getBuildConfig(varletLowCodeConfig: Record<string, any>): Inline
     },
   }
 
-  return merge(buildConfig, configureVite('build', buildConfig) ?? {})
+  return merge(buildConfig, configureVite(buildConfig, 'build') ?? {})
 }
 
 function inlineCSS(name: string): PluginOption {
@@ -139,6 +145,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
           '@varlet/lowcode-monaco',
           '@varlet/lowcode-skeleton',
           '@varlet/lowcode-designer',
+          '@varlet/lowcode-exec',
         ],
         output: {
           exports: 'named',
@@ -146,6 +153,7 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
             vue: 'Vue',
             '@varlet/ui': 'Varlet',
             '@varlet/lowcode-core': 'VarletLowcodeCore',
+            '@varlet/lowcode-exec': 'VarletLowcodeExec',
           },
         },
       },
@@ -153,5 +161,5 @@ export function getLibConfig(varletLowCodeConfig: Record<string, any>): InlineCo
     plugins: [...commonPlugins, inlineCSS(name)],
   }
 
-  return merge(libConfig, configureVite('compile', libConfig) ?? {})
+  return merge(libConfig, configureVite(libConfig, 'compile') ?? {})
 }

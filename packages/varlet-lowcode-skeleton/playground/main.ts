@@ -5,15 +5,13 @@ import { createApp } from 'vue'
 import { schemaManager, assetsManager } from '@varlet/lowcode-core'
 import '@varlet/touch-emulator'
 
-console.log(schema)
-
 usePlugins()
 
 schemaManager.importSchema(schema)
 assetsManager.importAssets([
   {
     profileLibrary: 'VarletLowcodeProfile',
-    profileResource: './varlet-lowcode-profile.umd.js',
+    profileResource: '/varlet-lowcode-profile.umd.js',
     additionResources: [
       'https://cdn.jsdelivr.net/npm/@varlet/ui/umd/varlet.js',
       'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator/iife.js',
@@ -24,12 +22,12 @@ assetsManager.importAssets([
   },
   {
     profileLibrary: 'VueUseLowcodeProfile',
-    profileResource: './vue-use-lowcode-profile.js',
+    profileResource: '/vue-use-lowcode-profile.js',
     additionResources: ['https://unpkg.com/@vueuse/shared', 'https://unpkg.com/@vueuse/core'],
   },
   {
     profileLibrary: 'NaiveLowcodeProfile',
-    profileResource: './naive-lowcode-profile.js',
+    profileResource: '/naive-lowcode-profile.js',
     additionResources: ['https://unpkg.com/naive-ui'],
   },
 ])

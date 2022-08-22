@@ -32,6 +32,7 @@
     "@varlet/lowcode-schema-tree": "workspace:^0.0.0",
     "@varlet/lowcode-setters": "workspace: *",
     "@varlet/lowcode-undo-redo": "workspace: *",
+    "@varlet/lowcode-renderer": "workspace: *",
     "@varlet/touch-emulator": "^1.27.19",
     "@varlet/ui": "^1.27.19",
     "live-server": "^1.2.1",

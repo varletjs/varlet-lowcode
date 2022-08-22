@@ -1,8 +1,8 @@
 {
   "name": "@varlet/lowcode-renderer",
   "version": "0.0.0",
-  "main": "lib/varlet-lowcode-renderer.es.js",
-  "module": "lib/varlet-lowcode-renderer.es.js",
+  "main": "lib/varlet-lowcode-renderer.umd.js",
+  "module": "lib/varlet-lowcode-renderer.umd.js",
   "types": "./types/index.d.ts",
   "files": [
     "lib",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@varlet/shared": "latest",
     "@varlet/axle": "latest",
+    "@varlet/lowcode-exec": "workspace: *",
     "lodash-es": "^4.17.21",
     "uuid": "^8.3.2"
   },
@@ -29,7 +30,6 @@
     "@varlet/lowcode-cli": "workspace: *",
     "@varlet/lowcode-selector": "workspace: *",
     "@varlet/ui": "^1.27.17",
-    "vite-plugin-externals": "^0.5.0",
     "@types/lodash-es": "^4.17.6",
     "@types/uuid": "^8.3.4",
     "live-server": "^1.2.1",
@@ -39,6 +39,7 @@
   },
   "peerDependencies": {
     "@varlet/lowcode-core": "workspace: *",
+    "@varlet/lowcode-exec": "workspace: *",
     "@varlet/ui": "^1.27.17"
   },
   "browserslist": [

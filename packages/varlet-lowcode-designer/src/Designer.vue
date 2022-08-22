@@ -18,6 +18,7 @@ const presetAssets: Assets = [
       'https://cdn.jsdelivr.net/npm/@varlet/ui@1.27.18/umd/varlet.js',
       'https://cdn.jsdelivr.net/npm/@varlet/touch-emulator@1.27.18/iife.js',
       './varlet-lowcode-core.umd.js',
+      './varlet-lowcode-exec.js',
       './varlet-lowcode-renderer.umd.js',
     ],
   },
