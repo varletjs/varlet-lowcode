@@ -20,7 +20,7 @@ function preview() {
     assets,
   })
 
-  location.href = '/preview/index.html'
+  window.open('/preview/index.html')
 }
 </script>
 
