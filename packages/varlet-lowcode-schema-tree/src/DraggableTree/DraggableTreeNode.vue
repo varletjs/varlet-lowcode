@@ -41,6 +41,7 @@ const onDragStart = (e: DragEvent) => {
 
 const onDragOver = (e: DragEvent) => {
   e.preventDefault()
+
   e.dataTransfer && (e.dataTransfer.dropEffect = 'move')
 }
 
@@ -50,6 +51,10 @@ const onDragEnter = (e: DragEvent) => {
   if (e.target !== e.currentTarget) return
 
   if (dragData.value?.id === props.treeNode.id) return
+
+  if (props.treeNode.renderType === 'root') {
+    return onEnterChildren(e)
+  }
 
   onChangeNodeTree({ start: toRaw(dragData.value), end: JSON.parse(JSON.stringify(props.treeNode)) }, calcPosition(e))
 }
@@ -93,7 +98,7 @@ const onDrop = () => {
         :class="expand ? 'varlet-low-code-draggable-tree-node__icon-expand' : ''"
         @click="handleIconClick"
       />
-      <div @dragenter="onEnterChildren" class="varlet-low-code-draggable-tree-node__title-name">
+      <div @dragenter.stop="onEnterChildren" class="varlet-low-code-draggable-tree-node__title-name">
         {{ treeNode.tag }}
       </div>
     </div>

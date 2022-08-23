@@ -7,6 +7,9 @@ export const dragData: Ref<Tree | undefined> = ref()
 export const onSubmit = ref()
 
 export const onChangeNodeTree = ({ start, end }: any, direction: 'up' | 'down') => {
+  if ((findIndexById(start.children || [], end?.id) ?? -1) !== -1) {
+    return
+  }
   deleteById(dndTree.value?.children || [], start.id)
 
   const endIndex = findIndexById(dndTree.value?.children || [], end?.id) ?? -1
@@ -15,6 +18,10 @@ export const onChangeNodeTree = ({ start, end }: any, direction: 'up' | 'down') 
 }
 
 export const onEnterNodeTree = ({ start, end }: any) => {
+  if ((findIndexById(start.children || [], end?.id) ?? -1) !== -1) {
+    return
+  }
+
   deleteById(dndTree.value?.children || [], start.id)
 
   const endIndex = findIndexById(dndTree.value?.children || [], end?.id) ?? -1

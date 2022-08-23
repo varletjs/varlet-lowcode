@@ -1,5 +1,5 @@
 <script lang="ts" setup name="VarletLowcodeDraggableTree">
-import { PropType, defineProps, onMounted, watch } from 'vue'
+import { PropType, defineProps, onMounted, watch, defineEmits } from 'vue'
 import DraggableTreeNode from './DraggableTreeNode.vue'
 import { dndTree, onSubmit } from './provider'
 import type { Tree } from '../shared'
@@ -14,6 +14,8 @@ const props = defineProps({
     type: Function as PropType<(value: Tree) => void>,
   },
 })
+
+const emit = defineEmits(['schema-change'])
 
 watch(
   () => props.tree,
