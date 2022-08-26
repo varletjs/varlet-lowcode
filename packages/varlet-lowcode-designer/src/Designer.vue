@@ -67,7 +67,6 @@ eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
 
 eventsManager.on(ResizerEvents.RESIZER_CHANGE, () => {
   if (renderer) {
-    console.info('render')
     renderer.rerender()
   }
 })
