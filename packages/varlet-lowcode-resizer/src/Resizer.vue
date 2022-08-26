@@ -4,6 +4,8 @@ import type { Ref } from 'vue'
 import { Button as VarButton, Input as VarInput } from '@varlet/ui'
 import '@varlet/ui/es/button/style/index'
 import '@varlet/ui/es/input/style/index'
+import { eventsManager } from '@varlet/lowcode-core'
+import { ResizerEvents } from './types'
 
 const size: Ref<string> = ref('100%')
 
@@ -22,6 +24,7 @@ function resize(size: string) {
   }
 
   designer.style.width = size
+  eventsManager.emit(ResizerEvents.RESIZER_CHANGE)
 }
 </script>
 

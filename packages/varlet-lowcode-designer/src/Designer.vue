@@ -9,6 +9,7 @@ import {
 } from '@varlet/lowcode-core'
 import { onMounted, ref } from 'vue'
 import { SkeletonEvents, SkeletonLoaders } from '@varlet/lowcode-skeleton'
+import { ResizerEvents } from '@varlet/lowcode-resizer'
 import { DesignerEvents } from './types'
 
 const presetAssets: Assets = [
@@ -61,6 +62,12 @@ eventsManager.on(BuiltInEvents.ASSETS_CHANGE, async (newAssets) => {
 
   if (renderer) {
     await mountRenderer()
+  }
+})
+
+eventsManager.on(ResizerEvents.RESIZER_CHANGE, () => {
+  if (renderer) {
+    renderer.rerender()
   }
 })
 
