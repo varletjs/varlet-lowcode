@@ -88,6 +88,7 @@ export default defineComponent({
   directives: { ripple: Ripple },
   setup() {
     const plugins = pluginsManager.exportSkeletonPlugins()
+
     const {
       headerLeftPlugins,
       headerCenterPlugins,
@@ -97,11 +98,13 @@ export default defineComponent({
       designerPlugin,
       settersPlugin,
     } = distributePlugins(plugins)
+
     const sidebarPinned = ref(false)
     const sidebarActiveComponent: Ref<string | undefined> = ref()
     const sidebarFocusComponent: Ref<SkeletonPlugin | undefined> = ref()
-    const { layoutLoadingsComputed } = useLoading()
     const sidebarRefs: Ref<Record<string, HTMLElement>> = ref({})
+
+    const { layoutLoadingsComputed } = useLoading()
 
     const sidebarRef = (el: any, pluginName: string) => {
       if (!sidebarRefs.value[pluginName]) {
