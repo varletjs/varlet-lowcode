@@ -6,7 +6,7 @@ export const dndTree: Ref<Tree | undefined> = ref()
 export const dragData: Ref<Tree | undefined> = ref()
 export const onSubmit = ref()
 
-export const onChangeNodeTree = ({ start, end }: any, direction: 'up' | 'down') => {
+export const onChangeNodeTree = ({ start, end }: { start: Tree; end: Tree }, direction: 'up' | 'down') => {
   if ((findIndexById(start.children || [], end?.id) ?? -1) !== -1) {
     return
   }
@@ -17,7 +17,7 @@ export const onChangeNodeTree = ({ start, end }: any, direction: 'up' | 'down') 
   addInId(dndTree.value?.children || [], start, { id: end.id, endIndex }, direction)
 }
 
-export const onEnterNodeTree = ({ start, end }: any) => {
+export const onEnterNodeTree = ({ start, end }: { start: Tree; end: Tree }) => {
   if ((findIndexById(start.children || [], end?.id) ?? -1) !== -1) {
     return
   }
@@ -29,7 +29,7 @@ export const onEnterNodeTree = ({ start, end }: any) => {
   addInId(dndTree.value?.children || [], start, { id: end.id, endIndex }, 'insert')
 }
 
-const deleteById = (tree: Tree[], id: string): any => {
+const deleteById = (tree: Tree[], id: string) => {
   for (const [i, treeNode] of tree.entries()) {
     if (treeNode.id === id) {
       tree.splice(i, 1)
@@ -40,7 +40,7 @@ const deleteById = (tree: Tree[], id: string): any => {
   }
 }
 
-const addInId = (tree: Tree[], node: Tree, { id, endIndex }: any, direction: 'up' | 'down' | 'insert' = 'up'): any => {
+const addInId = (tree: Tree[], node: Tree, { id, endIndex }: any, direction: 'up' | 'down' | 'insert' = 'up') => {
   for (const [i, treeNode] of tree.entries()) {
     if (treeNode.id === id) {
       if (direction === 'insert') {
