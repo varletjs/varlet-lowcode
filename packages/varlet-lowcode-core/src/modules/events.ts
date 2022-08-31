@@ -1,7 +1,5 @@
 export type Listener = (...args: any[]) => void
 
-export type Callback = () => void
-
 export interface ListenerDescriptor {
   listener: Listener
   event: string

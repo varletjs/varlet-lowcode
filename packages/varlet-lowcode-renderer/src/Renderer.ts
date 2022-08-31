@@ -318,6 +318,29 @@ export default defineComponent({
       return value
     }
 
+    function renderText(textContent: string) {
+      return isObject(textContent) ? JSON.stringify(textContent) : (textContent ?? '').toString()
+    }
+
+    function renderVNode(
+      schemaNode: SchemaNode,
+      scopeVariables: ScopeVariables,
+      propsBinding: RawProps,
+      classes: string[]
+    ) {
+      if (schemaManager.isSchemaTextNode(schemaNode)) {
+        const { textContent } = schemaNode
+
+        return h('span', { ...propsBinding, class: classes }, renderText(textContent))
+      }
+
+      return h(
+        getComponent(schemaNode.name, schemaNode.library!),
+        { ...propsBinding, class: classes },
+        renderSchemaNodeSlots(schemaNode, scopeVariables)
+      )
+    }
+
     function getComponent(schemaNodeName: string, schemaNodeLibrary: string) {
       return assetsManager.findComponent(props.assets, schemaNodeName, schemaNodeLibrary)
     }
@@ -334,20 +357,16 @@ export default defineComponent({
       return rawProps
     }
 
+    function normalizeClasses(value: unknown): string[] {
+      return isArray(value) ? value : isString(value) ? value.split(' ') : []
+    }
+
     function withDesigner(schemaNode: SchemaNode, scopeVariables: ScopeVariables) {
       const propsBinding = getPropsBinding(schemaNode, scopeVariables)
-      const classes = isArray(propsBinding.class)
-        ? propsBinding.class
-        : isString(propsBinding.class)
-        ? propsBinding.class.split(' ')
-        : []
+      const classes = normalizeClasses(propsBinding.class)
 
       if (props.mode !== 'designer') {
-        return h(
-          getComponent(schemaNode.name, schemaNode.library!),
-          { ...propsBinding, class: classes },
-          renderSchemaNodeSlots(schemaNode, scopeVariables)
-        )
+        return renderVNode(schemaNode, scopeVariables, propsBinding, classes)
       }
 
       const directives: DirectiveArguments = [
@@ -357,21 +376,14 @@ export default defineComponent({
 
       classes.push('varlet-low-code--disable-events')
 
-      return withDirectives(
-        h(
-          getComponent(schemaNode.name, schemaNode.library!),
-          { ...propsBinding, class: classes },
-          renderSchemaNodeSlots(schemaNode, scopeVariables)
-        ),
-        directives
-      )
+      return withDirectives(renderVNode(schemaNode, scopeVariables, propsBinding, classes), directives)
     }
 
     function withCondition(schemaNodes: SchemaNode[], scopeVariables: ScopeVariables): SchemaNode[] {
       return schemaNodes.filter((schemaNode) => !!getBindingValue(schemaNode.if ?? true, scopeVariables))
     }
 
-    function renderVNode(schemaNode: SchemaNode, scopeVariables: ScopeVariables): VNode {
+    function renderSchemaNode(schemaNode: SchemaNode, scopeVariables: ScopeVariables): VNode {
       if (!schemaNode.hasOwnProperty('for')) {
         return withDesigner(schemaNode, scopeVariables)
       }
@@ -399,16 +411,6 @@ export default defineComponent({
           )
         })
       )
-    }
-
-    function renderSchemaNode(schemaNode: SchemaNode, scopeVariables: ScopeVariables): VNode | string {
-      if (schemaNode.name === BuiltInSchemaNodeNames.TEXT) {
-        const textContent = getBindingValue((schemaNode as SchemaTextNode).textContent, scopeVariables)
-
-        return isObject(textContent) ? JSON.stringify(textContent) : (textContent ?? '').toString()
-      }
-
-      return renderVNode(schemaNode, scopeVariables)
     }
 
     function renderSchemaNodeSlots(schemaNode: SchemaNode, scopeVariables: ScopeVariables): RawSlots {
