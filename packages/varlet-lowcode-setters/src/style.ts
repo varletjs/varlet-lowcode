@@ -189,7 +189,7 @@ const styleMaterials = [
   {
     name: 'style:margin',
     label: 'margin',
-    defaultValue: '0px',
+    defaultValue: '0px 10px 20px 30px',
     custom: true,
     setters: [
       {

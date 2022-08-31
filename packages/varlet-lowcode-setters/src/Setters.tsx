@@ -190,7 +190,7 @@ export default defineComponent({
         <div class="varlet-lowcode-setters">
           <div class="varlet-lowcode-setters-content">
             {isSelectDom.value ? (
-              <div class="setters-tabs-content">
+              <div class="varlet-low-code-setters__tabs-content">
                 <VarTabs elevation v-model:active={active.value}>
                   <VarTab>属性</VarTab>
                   <VarTab>事件</VarTab>

@@ -2,7 +2,7 @@ import { defineComponent, Ref, ref, watch } from 'vue'
 import { eventsManager } from '@varlet/lowcode-core'
 import { Counter as VarCounter } from '@varlet/ui'
 
-import '@varlet/ui/es/input/style/index.js'
+import '@varlet/ui/es/counter/style/index.js'
 
 export default defineComponent({
   name: 'COUNTERSETTER',
