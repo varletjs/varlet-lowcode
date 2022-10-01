@@ -4,6 +4,7 @@ import { Space as VarSpace, Icon as VarIcon } from '@varlet/ui'
 import '@varlet/ui/es/space/style/index'
 import '@varlet/ui/es/icon/style/index'
 import { AssetProfile, Assets, assetsManager, BuiltInEvents, eventsManager } from '@varlet/lowcode-core'
+import { Drag as VDrag } from '@varlet/lowcode-dnd'
 import type { Ref } from 'vue'
 import type { AssetsManager, AssetProfileMaterialSnapshot } from '@varlet/lowcode-core'
 
@@ -49,7 +50,6 @@ watch(
         })
       })
     })
-
     snapshots.value = newSnapshots
   }
 )
@@ -66,10 +66,15 @@ onUnmounted(() => {
 <template>
   <div class="varlet-low-code-materials-panel">
     <var-space :size="[18, 18]">
-      <div class="varlet-low-code-materials-panel__snapshot" v-for="(snapshot, index) in snapshots" :key="index">
+      <div
+        class="varlet-low-code-materials-panel__snapshot"
+        v-for="(snapshot, index) in snapshots"
+        :key="index"
+        v-drag="{ dragData: snapshot.schemas, eventsManager: eventsManager }"
+      >
         <img class="varlet-low-code-materials-panel__image" :src="snapshot.image" v-if="snapshot.image" />
         <var-icon name="image-outline" :size="30" v-else />
-
+        345
         <div class="varlet-low-code-materials-panel__label">{{ snapshot.label ?? '暂无名称' }}</div>
       </div>
     </var-space>
