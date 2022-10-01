@@ -19,11 +19,11 @@ interface NearestOptions {
 }
 
 export interface DragOverOption {
-  blockStyle?: Partial<CSSStyleDeclaration>
+  nearestInfo?: NearestOptions | null
   eventsManager: EventsManager
 }
 
-interface DragOverHTMLElement extends HTMLElement {
+export interface DragOverHTMLElement extends HTMLElement {
   _dragover?: DragOverOption
 }
 
@@ -151,8 +151,13 @@ function renderBorder(nearestNodeInfo: NearestOptions) {
     })
 }
 
-function onDragOver(event: DragEvent) {
+function onDragOver(this: DragOverHTMLElement, event: DragEvent) {
+  event.stopPropagation()
+  event.preventDefault()
+
   const nearestNodeInfo = calculateStyle(event)
+
+  this._dragover && (this._dragover.nearestInfo = nearestNodeInfo)
 
   nearestNodeInfo && renderBorder(nearestNodeInfo)
 }

@@ -26,7 +26,7 @@ import {
   Fragment,
   getCurrentInstance,
 } from 'vue'
-import { assetsManager, BuiltInSchemaNodeNames, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
+import { assetsManager, schemaManager, SchemaPageNodeDataSource } from '@varlet/lowcode-core'
 import { isArray, isObject, isPlainObject, isString } from '@varlet/shared'
 import { Drag, DragOver, Drop } from '@varlet/lowcode-dnd'
 import { createAxle } from '@varlet/axle'
@@ -36,7 +36,7 @@ import '@varlet/ui/es/snackbar/style/index'
 import './renderer.less'
 
 import type { PropType, VNode, DirectiveArguments } from 'vue'
-import type { SchemaPageNode, SchemaNode, SchemaTextNode, EventsManager, Assets } from '@varlet/lowcode-core'
+import type { SchemaPageNode, SchemaNode, EventsManager, Assets } from '@varlet/lowcode-core'
 
 declare const window: Window & {
   setup(): any

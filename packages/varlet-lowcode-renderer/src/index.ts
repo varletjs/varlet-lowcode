@@ -3,7 +3,8 @@ import SelectorComponent from '@varlet/lowcode-selector'
 import { createApp, h, ShallowRef, shallowRef } from 'vue'
 import { BuiltInSchemaNodeNames, schemaManager } from '@varlet/lowcode-core'
 import type { App } from 'vue'
-import type { Assets, SchemaPageNode, EventsManager, PluginsManager } from '@varlet/lowcode-core'
+import type { Assets, SchemaPageNode, SchemaNode, EventsManager, PluginsManager } from '@varlet/lowcode-core'
+import type { DragOverHTMLElement, DropHTMLElement } from '@varlet/lowcode-dnd'
 
 type InitOptions = {
   mountRoot: string
@@ -61,16 +62,38 @@ function mount(this: Renderer) {
     },
   })
 
+  this.designerEventsManager?.on('drop', onDropSchameChange)
+
   this.app.mount(this.mountRoot)
 }
 
 function unmount(this: Renderer) {
+  this.designerEventsManager?.off('drop', onDropSchameChange)
+
   this.app!.unmount()
 }
 
 function rerender(this: Renderer) {
   this.unmount()
   this.mount()
+}
+
+function onDropSchameChange(dragData: { el: DropHTMLElement; data: SchemaNode }) {
+  const rendererDom: DragOverHTMLElement | null = document.querySelector('.varlet-low-code-renderer__designer')
+
+  if (rendererDom) {
+    const { _dragover } = rendererDom
+    if (_dragover?.nearestInfo) {
+      const startSchame = dragData.data
+      const targetId = _dragover?.nearestInfo.id
+
+      // TODO: if this action is a move, we should remove Schema By id and append Schema thought id and direction
+      // if (startSchame.id) {
+      // }
+
+      // TODO: just append Schema thought id and direction
+    }
+  }
 }
 
 const Renderer = Object.assign(RendererComponent, {

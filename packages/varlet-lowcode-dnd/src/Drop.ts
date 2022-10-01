@@ -9,7 +9,7 @@ export interface DropOptions {
   eventsManager: EventsManager
 }
 
-interface DropHTMLElement extends HTMLElement {
+export interface DropHTMLElement extends HTMLElement {
   _drop?: DropOptions
 }
 
@@ -41,7 +41,6 @@ function onDragOver(this: DropHTMLElement, e: DragEvent) {
   const { type = 'none' } = _drop
 
   e.dataTransfer!.dropEffect = type
-  // eventBroadcast('drop-over', this)
 }
 
 function onDropEnd(this: DropHTMLElement, e: DragEvent) {
@@ -59,6 +58,8 @@ function onDropEnd(this: DropHTMLElement, e: DragEvent) {
 }
 
 function onDrop(this: DropHTMLElement, e: DragEvent) {
+  e.stopPropagation()
+
   const _data = e.dataTransfer!.getData('text/plain')
 
   if (!_data) return
