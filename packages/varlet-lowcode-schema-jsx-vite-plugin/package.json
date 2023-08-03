@@ -22,6 +22,6 @@
     "@types/babel__generator": "^7.6.4",
     "@types/babel__traverse": "^7.18.0",
     "@types/node": "*",
-    "vite": "^2.9.12"
+    "vite": "^2.9.16"
   }
 }
